@@ -1,0 +1,8 @@
+/* App-level overrides — layout handled by Tailwind */
+#root {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  border: none;
+  text-align: unset;
+}
