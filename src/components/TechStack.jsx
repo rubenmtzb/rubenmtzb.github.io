@@ -15,24 +15,24 @@ const translations = {
 }
 
 const coreStack = [
-  { name: 'Java', label: 'Backend core', icon: 'java' },
-  { name: 'Spring Boot', label: 'APIs & microservices', icon: 'spring' },
-  { name: 'React', label: 'Frontend framework', icon: 'react' },
-  { name: 'TypeScript', label: 'Type-safe JS', icon: 'ts' },
-  { name: 'JavaScript', label: 'Web essentials', icon: 'js' },
-  { name: 'Docker', label: 'Containerization', icon: 'docker' },
-  { name: 'MySQL', label: 'Relational DB', icon: 'mysql' },
-  { name: 'Python', label: 'Scripting & AI', icon: 'python' },
+  { name: 'Java', label: 'Backend core', iconUrl: '/icons/java.svg' },
+  { name: 'Spring Boot', label: 'APIs & microservices', iconUrl: '/icons/spring.svg' },
+  { name: 'React', label: 'Frontend framework', iconUrl: '/icons/react.svg' },
+  { name: 'TypeScript', label: 'Type-safe JS', iconUrl: '/icons/typescript.svg' },
+  { name: 'JavaScript', label: 'Web essentials', iconUrl: '/icons/javascript.svg' },
+  { name: 'Docker', label: 'Containerization', iconUrl: '/icons/docker.svg' },
+  { name: 'MySQL', label: 'Relational DB', iconUrl: '/icons/mysql.svg' },
+  { name: 'Python', label: 'Scripting & AI', iconUrl: '/icons/python.svg' },
 ]
 
 const toolbox = [
-  { name: 'Node.js', label: 'Runtime', icon: 'nodejs' },
-  { name: 'Tailwind CSS', label: 'Styling', icon: 'tailwind' },
-  { name: 'Kubernetes', label: 'Orchestration', icon: 'kubernetes' },
-  { name: 'PostgreSQL', label: 'Advanced DB', icon: 'postgres' },
-  { name: 'MongoDB', label: 'NoSQL', icon: 'mongodb' },
-  { name: 'Git', label: 'Version control', icon: 'git' },
-  { name: 'Linux', label: 'Server environment', icon: 'linux' },
+  { name: 'Node.js', label: 'Runtime', iconUrl: '/icons/nodejs.svg' },
+  { name: 'Tailwind CSS', label: 'Styling', iconUrl: '/icons/tailwind.svg' },
+  { name: 'Kubernetes', label: 'Orchestration', iconUrl: '/icons/kubernetes.svg' },
+  { name: 'PostgreSQL', label: 'Advanced DB', iconUrl: '/icons/postgresql.svg' },
+  { name: 'MongoDB', label: 'NoSQL', iconUrl: '/icons/mongodb.svg' },
+  { name: 'Git', label: 'Version control', iconUrl: '/icons/git.svg' },
+  { name: 'Linux', label: 'Server environment', iconUrl: '/icons/linux.svg' },
   { name: 'Liferay', label: 'Portal platform', iconUrl: '/icons/liferay.svg' },
 ]
 
@@ -82,7 +82,7 @@ function TechCard({ tech }) {
         <div className="relative flex h-full flex-col items-center justify-center text-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-green-500/15 bg-green-500/5 shadow-[0_0_0_1px_rgba(0,255,136,0.04)] transition-all duration-300 group-hover:border-green-400/40 group-hover:shadow-[0_0_24px_rgba(0,255,136,0.18)]">
             <img
-              src={tech.iconUrl || `https://skillicons.dev/icons?i=${tech.icon}&theme=dark`}
+              src={tech.iconUrl}
               alt={tech.name}
               className="h-11 w-11"
               loading="lazy"
