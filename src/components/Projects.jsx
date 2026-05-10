@@ -1,39 +1,87 @@
 import { motion } from 'framer-motion'
-import { ArrowUpRight, Lock, Microscope, Globe } from 'lucide-react'
+import { ArrowUpRight, Globe, Lock, Microscope } from 'lucide-react'
+import { useLanguage } from '../i18n/LanguageContext'
 
-const projects = [
+const translations = {
+  en: {
+    title: 'PROJECTS',
+    visitProject: 'Visit project',
+    comingSoon: 'Coming Soon',
+    projects: [
+      {
+        title: 'Decoupled Financial Architecture',
+        eyebrow: 'Private — coming soon',
+        description:
+          'Modular platform designed for independent evolution of the financial engine and the client layer. Focused on clean domain boundaries, observability, and long-term maintainability.',
+        status: 'In private development',
+        badge: 'Private',
+      },
+      {
+        title: 'The Mutational Landscape of SARS-CoV-2',
+        eyebrow: 'Research',
+        description:
+          'Interactive portal for exploring mutations across the SARS-CoV-2 genome. Interdisciplinary project between software engineering and bioinformatics in collaboration with Universitat Rovira i Virgili.',
+        status: 'Live research portal',
+        badge: 'Live',
+      },
+      {
+        title: 'Personal Portfolio',
+        eyebrow: 'Web',
+        description:
+          'This very portfolio. Designed and built with React, Tailwind CSS and a cyberpunk/terminal aesthetic. Deployed on GitHub Pages.',
+        status: 'Live on rubenitx.me',
+        badge: 'Live',
+      },
+    ],
+  },
+  es: {
+    title: 'PROYECTOS',
+    visitProject: 'Visitar proyecto',
+    comingSoon: 'Próximamente',
+    projects: [
+      {
+        title: 'Arquitectura Financiera Desacoplada',
+        eyebrow: 'Privado — próximamente',
+        description:
+          'Plataforma modular diseñada para la evolución independiente del motor financiero y la capa de cliente. Enfocada en límites de dominio limpios, observabilidad y mantenibilidad a largo plazo.',
+        status: 'En desarrollo privado',
+        badge: 'Private',
+      },
+      {
+        title: 'The Mutational Landscape of SARS-CoV-2',
+        eyebrow: 'Research',
+        description:
+          'Portal interactivo para explorar mutaciones del genoma SARS-CoV-2. Proyecto interdisciplinar entre ingeniería de software y bioinformática en colaboración con la Universitat Rovira i Virgili.',
+        status: 'Portal de investigación activo',
+        badge: 'Live',
+      },
+      {
+        title: 'Portfolio Personal',
+        eyebrow: 'Web',
+        description:
+          'Este mismo portfolio. Diseñado y construido con React, Tailwind CSS y una estética cyberpunk/terminal. Desplegado en GitHub Pages.',
+        status: 'Activo en rubenitx.me',
+        badge: 'Live',
+      },
+    ],
+  },
+}
+
+const projectMeta = [
   {
-    title: 'Arquitectura Financiera Desacoplada',
     icon: Lock,
-    eyebrow: 'Privado — próximamente',
-    description:
-      'Plataforma modular diseñada para la evolución independiente del motor financiero y la capa de cliente. Enfocada en límites de dominio limpios, observabilidad y mantenibilidad a largo plazo.',
     stack: ['Java', 'Spring Boot', 'React', 'Docker', 'PostgreSQL'],
-    status: 'En desarrollo privado',
-    badge: 'Private',
     featured: true,
   },
   {
-    title: 'The Mutational Landscape of SARS-CoV-2',
     icon: Microscope,
-    eyebrow: 'Research',
-    description:
-      'Portal interactivo para explorar mutaciones del genoma SARS-CoV-2. Proyecto interdisciplinar entre ingeniería de software y bioinformática en colaboración con la Universitat Rovira i Virgili.',
     stack: ['TypeScript', 'PHP', 'Python', 'D3.js', 'Data Viz'],
-    status: 'Live research portal',
-    badge: 'Live',
     link: 'http://sarscov2-mutation-portal.urv.cat',
     featured: true,
   },
   {
-    title: 'Portfolio Personal',
     icon: Globe,
-    eyebrow: 'Web',
-    description:
-      'Este mismo portfolio. Diseñado y construido con React, Tailwind CSS y una estética cyberpunk/terminal. Desplegado en GitHub Pages.',
     stack: ['React', 'Tailwind CSS', 'Vite', 'Framer Motion'],
-    status: 'Live on rubenitx.me',
-    badge: 'Live',
     link: 'https://rubenitx.me',
     featured: false,
   },
@@ -68,7 +116,7 @@ const badgeClasses = {
   'Coming Soon': 'border-purple-400/30 bg-purple-500/10 text-purple-200',
 }
 
-function ProjectCard({ project }) {
+function ProjectCard({ project, visitProject, comingSoon }) {
   const Icon = project.icon
   const isFeatured = project.featured
 
@@ -119,12 +167,12 @@ function ProjectCard({ project }) {
               rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-500/10 px-4 py-2 text-sm font-semibold text-cyan-200 transition hover:-translate-y-0.5 hover:border-cyan-300/50 hover:bg-cyan-500/15"
             >
-              Visit project
+              {visitProject}
               <ArrowUpRight className="h-4 w-4" />
             </a>
           ) : (
             <span className="rounded-full border border-purple-400/30 bg-purple-500/10 px-4 py-2 text-sm font-semibold text-purple-200">
-              Coming Soon
+              {comingSoon}
             </span>
           )}
         </div>
@@ -155,6 +203,9 @@ function ProjectCard({ project }) {
 }
 
 export default function Projects() {
+  const { language } = useLanguage()
+  const t = translations[language]
+  const projects = t.projects.map((project, index) => ({ ...project, ...projectMeta[index] }))
   const featuredProjects = projects.filter((project) => project.featured)
   const standardProjects = projects.filter((project) => !project.featured)
 
@@ -171,7 +222,7 @@ export default function Projects() {
         >
           <h2 className="text-3xl font-extrabold tracking-widest uppercase text-white text-glow-green mb-12 text-center">
             <span className="text-green-400">&gt; </span>
-            PROJECTS
+            {t.title}
           </h2>
         </motion.div>
 
@@ -183,7 +234,7 @@ export default function Projects() {
           viewport={{ once: true, amount: 0.16 }}
         >
           {featuredProjects.map((project) => (
-            <ProjectCard key={project.title} project={project} />
+            <ProjectCard key={project.title} project={project} visitProject={t.visitProject} comingSoon={t.comingSoon} />
           ))}
         </motion.div>
 
@@ -195,7 +246,7 @@ export default function Projects() {
           viewport={{ once: true, amount: 0.16 }}
         >
           {standardProjects.map((project) => (
-            <ProjectCard key={project.title} project={project} />
+            <ProjectCard key={project.title} project={project} visitProject={t.visitProject} comingSoon={t.comingSoon} />
           ))}
         </motion.div>
       </div>

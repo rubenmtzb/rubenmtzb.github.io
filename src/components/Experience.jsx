@@ -1,47 +1,100 @@
 import { motion } from 'framer-motion'
 import { BriefcaseBusiness, CalendarRange, MapPin } from 'lucide-react'
+import { useLanguage } from '../i18n/LanguageContext'
 
-const experiences = [
-  {
-    role: 'Software Engineer',
-    company: 'Egarsat',
-    period: 'Septiembre 2022 - Actualidad · ~3 años y 9 meses',
-    location: 'Sant Cugat del Vallès, Barcelona',
-    mode: 'Presencial',
-    description:
-      'Desarrollo de nuevas funcionalidades full-stack utilizando Java y Spring Boot en el backend, con React y TypeScript en el frontend. Especializado en la creación de APIs REST para la comunicación entre servicios y en la implementación de procesos Batch. Desarrollo de portlets y customizaciones sobre la plataforma Liferay.',
-    tags: ['Java', 'Spring Boot', 'React', 'TypeScript', 'Liferay', 'Docker', 'REST APIs', 'Batch'],
-    current: true,
+const translations = {
+  en: {
+    sectionLabel: 'EXPERIENCE',
+    currentBadge: 'current',
+    experiences: [
+      {
+        role: 'Software Engineer',
+        company: 'Egarsat',
+        period: 'September 2022 - Present · ~3 years and 9 months',
+        location: 'Sant Cugat del Vallès, Barcelona',
+        mode: 'On-site',
+        description:
+          'Development of full-stack features using Java and Spring Boot on the backend, with React and TypeScript on the frontend. Specialized in building REST APIs for service communication and implementing Batch processes. Portlet development and customizations on the Liferay platform.',
+        tags: ['Java', 'Spring Boot', 'React', 'TypeScript', 'Liferay', 'Docker', 'REST APIs', 'Batch'],
+        current: true,
+      },
+      {
+        role: 'Software Developer (Internship)',
+        company: 'Universitat Rovira i Virgili',
+        period: 'October 2021 - May 2022 · 8 months',
+        location: 'Tarragona',
+        mode: 'Remote',
+        description:
+          'End-to-end responsibility for the development of the research portal "The Mutational Landscape of SARS-CoV-2", from design conception to production deployment. Interdisciplinary work between software engineering and bioinformatics.',
+        tags: ['TypeScript', 'PHP', 'Python', 'Data Visualization', 'Bioinformatics'],
+      },
+      {
+        role: 'Team Supervisor',
+        company: 'Taco Bell',
+        period: 'May 2021 - September 2022 · 1 year and 5 months',
+        location: 'Barcelona',
+        description:
+          'Leadership of a dynamic team, optimizing task assignment and workflows to maximize operational efficiency during high-demand peaks. Development of management and communication skills in fast-paced environments.',
+        tags: ['Leadership', 'Team Management', 'Operations'],
+      },
+      {
+        role: 'Systems Technician (Internship)',
+        company: 'BEEP',
+        period: 'October 2019 - June 2020 · 9 months',
+        description: 'Technical support and maintenance of IT systems and infrastructure.',
+        tags: ['IT Support', 'Systems', 'Networking'],
+      },
+    ],
   },
-  {
-    role: 'Software Developer (Internship)',
-    company: 'Universitat Rovira i Virgili',
-    period: 'Octubre 2021 - Mayo 2022 · 8 meses',
-    location: 'Tarragona',
-    mode: 'Remoto',
-    description:
-      'Responsabilidad end-to-end del desarrollo del portal de investigación “The Mutational Landscape of SARS-CoV-2”, desde la concepción del diseño hasta el despliegue en producción. Trabajo interdisciplinar entre ingeniería de software y bioinformática.',
-    tags: ['TypeScript', 'PHP', 'Python', 'Data Visualization', 'Bioinformatics'],
+  es: {
+    sectionLabel: 'EXPERIENCIA',
+    currentBadge: 'actual',
+    experiences: [
+      {
+        role: 'Software Engineer',
+        company: 'Egarsat',
+        period: 'Septiembre 2022 - Actualidad · ~3 años y 9 meses',
+        location: 'Sant Cugat del Vallès, Barcelona',
+        mode: 'Presencial',
+        description:
+          'Desarrollo de nuevas funcionalidades full-stack utilizando Java y Spring Boot en el backend, con React y TypeScript en el frontend. Especializado en la creación de APIs REST para la comunicación entre servicios y en la implementación de procesos Batch. Desarrollo de portlets y customizaciones sobre la plataforma Liferay.',
+        tags: ['Java', 'Spring Boot', 'React', 'TypeScript', 'Liferay', 'Docker', 'REST APIs', 'Batch'],
+        current: true,
+      },
+      {
+        role: 'Software Developer (Internship)',
+        company: 'Universitat Rovira i Virgili',
+        period: 'Octubre 2021 - Mayo 2022 · 8 meses',
+        location: 'Tarragona',
+        mode: 'Remoto',
+        description:
+          'Responsabilidad end-to-end del desarrollo del portal de investigación "The Mutational Landscape of SARS-CoV-2", desde la concepción del diseño hasta el despliegue en producción. Trabajo interdisciplinar entre ingeniería de software y bioinformática.',
+        tags: ['TypeScript', 'PHP', 'Python', 'Data Visualization', 'Bioinformatics'],
+      },
+      {
+        role: 'Supervisor de Equipo',
+        company: 'Taco Bell',
+        period: 'Mayo 2021 - Septiembre 2022 · 1 año y 5 meses',
+        location: 'Barcelona',
+        description:
+          'Liderazgo de un equipo dinámico, optimizando la asignación de tareas y los flujos de trabajo para maximizar la eficiencia operativa durante picos de alta demanda. Desarrollo de habilidades de gestión y comunicación en entornos de alto ritmo.',
+        tags: ['Leadership', 'Team Management', 'Operations'],
+      },
+      {
+        role: 'Técnico de Sistemas (Prácticas)',
+        company: 'BEEP',
+        period: 'Octubre 2019 - Junio 2020 · 9 meses',
+        description: 'Soporte técnico y mantenimiento de sistemas e infraestructura informática.',
+        tags: ['IT Support', 'Systems', 'Networking'],
+      },
+    ],
   },
-  {
-    role: 'Supervisor de Equipo',
-    company: 'Taco Bell',
-    period: 'Mayo 2021 - Septiembre 2022 · 1 año y 5 meses',
-    location: 'Barcelona',
-    description:
-      'Liderazgo de un equipo dinámico, optimizando la asignación de tareas y los flujos de trabajo para maximizar la eficiencia operativa durante picos de alta demanda. Desarrollo de habilidades de gestión y comunicación en entornos de alto ritmo.',
-    tags: ['Leadership', 'Team Management', 'Operations'],
-  },
-  {
-    role: 'Técnico de Sistemas (Prácticas)',
-    company: 'BEEP',
-    period: 'Octubre 2019 - Junio 2020 · 9 meses',
-    description: 'Soporte técnico y mantenimiento de sistemas e infraestructura informática.',
-    tags: ['IT Support', 'Systems', 'Networking'],
-  },
-]
+}
 
 export default function Experience() {
+  const { language } = useLanguage()
+  const t = translations[language]
+
   return (
     <section id="experience" className="section-container mx-auto max-w-6xl bg-[#030712] px-6 py-20">
       <motion.div
@@ -53,7 +106,7 @@ export default function Experience() {
       >
         <div className="space-y-4">
           <p className="text-sm font-semibold uppercase tracking-[0.35em] text-green-400 text-glow-green">
-            &gt; EXPERIENCIA
+            &gt; {t.sectionLabel}
           </p>
           <div className="h-px w-full max-w-2xl bg-gradient-to-r from-green-400/70 via-cyan-400/20 to-transparent" />
         </div>
@@ -62,7 +115,7 @@ export default function Experience() {
           <div className="absolute bottom-0 left-5 top-0 w-px bg-gradient-to-b from-transparent via-green-400/70 to-transparent md:left-1/2 md:-translate-x-1/2" />
 
           <div className="space-y-8 md:space-y-10">
-            {experiences.map((item, index) => {
+            {t.experiences.map((item, index) => {
               const isLeft = index % 2 === 0
 
               return (
@@ -86,7 +139,7 @@ export default function Experience() {
                               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
                               <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-green-400" />
                             </span>
-                            actual
+                            {t.currentBadge}
                           </span>
                         )}
                       </div>

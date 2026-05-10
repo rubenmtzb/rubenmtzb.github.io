@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
+import { useLanguage } from '../i18n/LanguageContext'
+import LanguageToggle from './LanguageToggle'
 
 const NAV_ITEMS = [
-  { id: 'home', label: 'Home' },
-  { id: 'about', label: 'About' },
-  { id: 'stack', label: 'Stack' },
-  { id: 'experience', label: 'Experience' },
-  { id: 'projects', label: 'Projects' },
-  { id: 'contact', label: 'Contact' },
+  { id: 'home', en: 'Home', es: 'Inicio' },
+  { id: 'about', en: 'About', es: 'Sobre mí' },
+  { id: 'stack', en: 'Stack', es: 'Stack' },
+  { id: 'experience', en: 'Experience', es: 'Experiencia' },
+  { id: 'education', en: 'Education', es: 'Formación' },
+  { id: 'projects', en: 'Projects', es: 'Proyectos' },
+  { id: 'certifications', en: 'Certs', es: 'Certs' },
+  { id: 'contact', en: 'Contact', es: 'Contacto' },
 ]
 
 function scrollToSection(sectionId) {
@@ -20,6 +24,7 @@ function scrollToSection(sectionId) {
 }
 
 export default function Navbar() {
+  const { language } = useLanguage()
   const [isScrolled, setIsScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -28,7 +33,7 @@ export default function Navbar() {
     const handleScroll = () => setIsScrolled(window.scrollY > 24)
 
     handleScroll()
-    window.addEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', handleScroll, { passive: true })
 
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
@@ -116,10 +121,13 @@ export default function Navbar() {
                     transition={{ type: 'spring', stiffness: 380, damping: 28 }}
                   />
                 )}
-                <span className={isActive ? 'relative z-10 text-green-200' : 'relative z-10'}>{item.label}</span>
+                <span className={isActive ? 'relative z-10 text-green-200' : 'relative z-10'}>{item[language]}</span>
               </button>
             )
           })}
+          <div className="ml-2 border-l border-green-500/20 pl-3">
+            <LanguageToggle />
+          </div>
         </div>
 
         <button
@@ -157,11 +165,14 @@ export default function Navbar() {
                         : 'text-green-400/70 hover:bg-green-500/5 hover:text-green-300',
                     ].join(' ')}
                   >
-                    <span>{item.label}</span>
+                    <span>{item[language]}</span>
                     <span className="text-xs text-green-500/60">/{item.id}</span>
                   </button>
                 )
               })}
+            </div>
+            <div className="border-t border-green-500/20 p-3">
+              <LanguageToggle />
             </div>
           </motion.div>
         )}

@@ -1,44 +1,89 @@
 import { motion } from 'framer-motion'
 import { BookOpen, CalendarRange, GraduationCap } from 'lucide-react'
+import { useLanguage } from '../i18n/LanguageContext'
 
-const educationItems = [
-  {
-    institution: 'Universitat Oberta de Catalunya (UOC)',
-    title: 'Grado en Ingeniería Informática — Computer Software Engineering',
-    period: 'Febrero 2026 - Actualidad',
-    status: 'En curso',
-    description:
-      'Formalizando los fundamentos de la ingeniería de software. Reforzando la base teórica en arquitectura de sistemas, algoritmos, patrones de diseño y metodologías de desarrollo.',
-    icon: GraduationCap,
+const translations = {
+  en: {
+    sectionLabel: 'EDUCATION',
+    inProgress: 'In progress',
+    gradeLabel: 'Grade',
+    items: [
+      {
+        institution: 'Universitat Oberta de Catalunya (UOC)',
+        title: "Bachelor's in Computer Software Engineering",
+        period: 'February 2026 - Present',
+        status: 'In progress',
+        description:
+          'Formalizing the foundations of software engineering. Strengthening the theoretical base in system architecture, algorithms, design patterns, and development methodologies.',
+      },
+      {
+        institution: 'INESEM Business School',
+        title: 'Advanced Course in DevOps',
+        period: 'June 2025 - December 2025',
+        note: 'Outstanding',
+        description:
+          'Strategic specialization to unify development and operations, focused on accelerating the delivery cycle of high-quality software. CI/CD, infrastructure as code, and monitoring.',
+        tags: ['DevOps', 'CI/CD', 'Docker', 'Kubernetes', 'Jenkins', 'Terraform'],
+      },
+      {
+        institution: 'Instituto la Guineueta',
+        title: 'Web Application Development (DAW) — Bioinformatics Specialization',
+        period: '2020 - 2022',
+        description:
+          'Intensive higher education in software development. Application of a wide range of technologies to build complex solutions in real-world environments.',
+        tags: ['TypeScript', 'SQL', 'Java', 'PHP', 'JavaScript', 'React'],
+      },
+      {
+        institution: 'Instituto la Guineueta',
+        title: 'Microcomputer Systems and Networks (SMX)',
+        period: '2018 - 2020',
+        description: 'Fundamentals of systems infrastructure, networking, and technical support.',
+        tags: ['Networking', 'Linux', 'Windows Server', 'Hardware'],
+      },
+    ],
   },
-  {
-    institution: 'INESEM Business School',
-    title: 'Curso Superior en DevOps',
-    period: 'Junio 2025 - Diciembre 2025',
-    note: 'Sobresaliente',
-    description:
-      'Especialización estratégica para unificar desarrollo y operaciones, enfocada en acelerar el ciclo de entrega de software de alta calidad. CI/CD, infraestructura como código y monitorización.',
-    tags: ['DevOps', 'CI/CD', 'Docker', 'Kubernetes', 'Jenkins', 'Terraform'],
-    icon: BookOpen,
+  es: {
+    sectionLabel: 'FORMACIÓN',
+    inProgress: 'En curso',
+    gradeLabel: 'Nota',
+    items: [
+      {
+        institution: 'Universitat Oberta de Catalunya (UOC)',
+        title: 'Grado en Ingeniería Informática — Computer Software Engineering',
+        period: 'Febrero 2026 - Actualidad',
+        status: 'En curso',
+        description:
+          'Formalizando los fundamentos de la ingeniería de software. Reforzando la base teórica en arquitectura de sistemas, algoritmos, patrones de diseño y metodologías de desarrollo.',
+      },
+      {
+        institution: 'INESEM Business School',
+        title: 'Curso Superior en DevOps',
+        period: 'Junio 2025 - Diciembre 2025',
+        note: 'Sobresaliente',
+        description:
+          'Especialización estratégica para unificar desarrollo y operaciones, enfocada en acelerar el ciclo de entrega de software de alta calidad. CI/CD, infraestructura como código y monitorización.',
+        tags: ['DevOps', 'CI/CD', 'Docker', 'Kubernetes', 'Jenkins', 'Terraform'],
+      },
+      {
+        institution: 'Instituto la Guineueta',
+        title: 'Desarrollo de Aplicaciones Web (DAW) — Especialización en Bioinformática',
+        period: '2020 - 2022',
+        description:
+          'Formación superior intensiva en desarrollo de software. Aplicación de un amplio abanico de tecnologías para construir soluciones complejas en entornos reales.',
+        tags: ['TypeScript', 'SQL', 'Java', 'PHP', 'JavaScript', 'React'],
+      },
+      {
+        institution: 'Instituto la Guineueta',
+        title: 'Sistemas Microinformáticos en Red (SMX)',
+        period: '2018 - 2020',
+        description: 'Fundamentos de infraestructura de sistemas, redes y soporte técnico.',
+        tags: ['Networking', 'Linux', 'Windows Server', 'Hardware'],
+      },
+    ],
   },
-  {
-    institution: 'Instituto la Guineueta',
-    title: 'Desarrollo de Aplicaciones Web (DAW) — Especialización en Bioinformática',
-    period: '2020 - 2022',
-    description:
-      'Formación superior intensiva en desarrollo de software. Aplicación de un amplio abanico de tecnologías para construir soluciones complejas en entornos reales.',
-    tags: ['TypeScript', 'SQL', 'Java', 'PHP', 'JavaScript', 'React'],
-    icon: GraduationCap,
-  },
-  {
-    institution: 'Instituto la Guineueta',
-    title: 'Sistemas Microinformáticos en Red (SMX)',
-    period: '2018 - 2020',
-    description: 'Fundamentos de infraestructura de sistemas, redes y soporte técnico.',
-    tags: ['Networking', 'Linux', 'Windows Server', 'Hardware'],
-    icon: BookOpen,
-  },
-]
+}
+
+const icons = [GraduationCap, BookOpen, GraduationCap, BookOpen]
 
 const containerVariants = {
   hidden: {},
@@ -60,6 +105,10 @@ const itemVariants = {
 }
 
 export default function Education() {
+  const { language } = useLanguage()
+  const t = translations[language]
+  const items = t.items.map((item, index) => ({ ...item, icon: icons[index] }))
+
   return (
     <section id="education" className="section-container mx-auto max-w-6xl bg-[#030712] px-6 py-20">
       <motion.div
@@ -71,7 +120,7 @@ export default function Education() {
       >
         <div className="space-y-4">
           <p className="text-sm font-semibold uppercase tracking-[0.35em] text-green-400 text-glow-green">
-            &gt; FORMACIÓN
+            &gt; {t.sectionLabel}
           </p>
           <div className="h-px w-full max-w-2xl bg-gradient-to-r from-green-400/70 via-purple-400/20 to-transparent" />
         </div>
@@ -83,7 +132,7 @@ export default function Education() {
           viewport={{ once: true, amount: 0.2 }}
           className="grid gap-6 md:grid-cols-2"
         >
-          {educationItems.map((item) => {
+          {items.map((item) => {
             const Icon = item.icon
 
             return (
@@ -119,12 +168,12 @@ export default function Education() {
                         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
                         <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-green-400" />
                       </span>
-                      {item.status}
+                      {t.inProgress}
                     </span>
                   )}
                   {item.note && (
                     <span className="inline-flex items-center rounded-full border border-purple-400/30 bg-purple-400/10 px-3 py-1.5 text-purple-300">
-                      Nota: {item.note}
+                      {t.gradeLabel}: {item.note}
                     </span>
                   )}
                 </div>

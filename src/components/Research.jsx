@@ -1,14 +1,58 @@
 import { motion } from 'framer-motion'
 import { ArrowUpRight, Building2, FlaskConical, Microscope } from 'lucide-react'
+import { useLanguage } from '../i18n/LanguageContext'
 
-const highlights = [
-  'Portal interactivo para explorar mutaciones a lo largo del genoma del SARS-CoV-2',
-  'Desarrollado en colaboración con la Universitat Rovira i Virgili',
-  'Contribución en la intersección de ingeniería de software y bioinformática',
-  'Publicado como herramienta de referencia para investigadores',
-]
+const translations = {
+  en: {
+    title: 'RESEARCH',
+    badge: 'Featured research portal',
+    mainTitle: 'The Mutational Landscape of SARS-CoV-2',
+    description:
+      'An interactive scientific tool for navigating the SARS-CoV-2 genome through a clear, visual interface designed for exploratory analysis.',
+    highlights: [
+      'Interactive portal for exploring mutations across the SARS-CoV-2 genome',
+      'Developed in collaboration with Universitat Rovira i Virgili',
+      'Contribution at the intersection of software engineering and bioinformatics',
+      'Published as a reference tool for researchers',
+    ],
+    ctaButton: 'Explore the Portal',
+    partnerLabel: 'University partner',
+    partnerName: 'Universitat Rovira i Virgili',
+    partnerDesc:
+      'Interdisciplinary collaboration aimed at transforming genomic data into a useful research consultation experience.',
+    focusLabel: 'Focus',
+    focusText: 'Visual genomics and exploratory analysis',
+    intersectionLabel: 'Intersection',
+    intersectionText: 'Software engineering + bioinformatics',
+  },
+  es: {
+    title: 'INVESTIGACIÓN',
+    badge: 'Portal de investigación destacado',
+    mainTitle: 'The Mutational Landscape of SARS-CoV-2',
+    description:
+      'Una herramienta científica interactiva para navegar el genoma del SARS-CoV-2 desde una interfaz clara, visual y pensada para análisis exploratorio.',
+    highlights: [
+      'Portal interactivo para explorar mutaciones a lo largo del genoma del SARS-CoV-2',
+      'Desarrollado en colaboración con la Universitat Rovira i Virgili',
+      'Contribución en la intersección de ingeniería de software y bioinformática',
+      'Publicado como herramienta de referencia para investigadores',
+    ],
+    ctaButton: 'Explorar el Portal',
+    partnerLabel: 'Universidad colaboradora',
+    partnerName: 'Universitat Rovira i Virgili',
+    partnerDesc:
+      'Colaboración interdisciplinar orientada a convertir datos genómicos en una experiencia de consulta útil para investigación.',
+    focusLabel: 'Enfoque',
+    focusText: 'Genómica visual y análisis exploratorio',
+    intersectionLabel: 'Intersección',
+    intersectionText: 'Software engineering + bioinformática',
+  },
+}
 
 export default function Research() {
+  const { language } = useLanguage()
+  const t = translations[language]
+
   return (
     <section id="research" className="relative py-20 px-6 overflow-hidden">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,136,0.08),transparent_28%),radial-gradient(circle_at_top_right,rgba(0,255,255,0.06),transparent_24%)]" />
@@ -22,7 +66,7 @@ export default function Research() {
         >
           <h2 className="text-3xl font-extrabold tracking-widest uppercase text-white text-glow-green mb-12 text-center">
             <span className="text-green-400">&gt; </span>
-            RESEARCH
+            {t.title}
           </h2>
         </motion.div>
 
@@ -42,19 +86,15 @@ export default function Research() {
             <div>
               <div className="mb-5 inline-flex items-center gap-3 rounded-full border border-green-500/20 bg-black/40 px-4 py-2 text-green-300/85">
                 <FlaskConical className="h-4 w-4" />
-                <span className="text-[0.72rem] uppercase tracking-[0.34em]">Featured research portal</span>
+                <span className="text-[0.72rem] uppercase tracking-[0.34em]">{t.badge}</span>
               </div>
 
-              <h3 className="max-w-2xl text-2xl font-bold text-white md:text-3xl">
-                The Mutational Landscape of SARS-CoV-2
-              </h3>
+              <h3 className="max-w-2xl text-2xl font-bold text-white md:text-3xl">{t.mainTitle}</h3>
 
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300/90 md:text-base">
-                Una herramienta científica interactiva para navegar el genoma del SARS-CoV-2 desde una interfaz clara, visual y pensada para análisis exploratorio.
-              </p>
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300/90 md:text-base">{t.description}</p>
 
               <div className="mt-6 space-y-3">
-                {highlights.map((item) => (
+                {t.highlights.map((item) => (
                   <div key={item} className="flex items-start gap-3">
                     <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-green-400 shadow-[0_0_12px_rgba(0,255,136,0.9)]" />
                     <p className="text-sm leading-7 text-slate-300/90">{item}</p>
@@ -68,7 +108,7 @@ export default function Research() {
                 rel="noreferrer"
                 className="mt-8 inline-flex items-center gap-2 rounded-full border border-green-400/35 bg-green-500/10 px-5 py-3 text-sm font-semibold text-green-200 transition hover:-translate-y-0.5 hover:border-green-300/55 hover:bg-green-500/15"
               >
-                Explorar el Portal
+                {t.ctaButton}
                 <ArrowUpRight className="h-4 w-4" />
               </a>
             </div>
@@ -77,24 +117,22 @@ export default function Research() {
               <div className="rounded-2xl border border-cyan-400/20 bg-black/35 p-5 backdrop-blur-sm">
                 <div className="flex items-center gap-3 text-cyan-200">
                   <Building2 className="h-5 w-5" />
-                  <span className="text-[0.72rem] uppercase tracking-[0.3em]">University partner</span>
+                  <span className="text-[0.72rem] uppercase tracking-[0.3em]">{t.partnerLabel}</span>
                 </div>
-                <p className="mt-3 text-lg font-semibold text-white">Universitat Rovira i Virgili</p>
-                <p className="mt-2 text-sm leading-6 text-slate-300/80">
-                  Colaboración interdisciplinar orientada a convertir datos genómicos en una experiencia de consulta útil para investigación.
-                </p>
+                <p className="mt-3 text-lg font-semibold text-white">{t.partnerName}</p>
+                <p className="mt-2 text-sm leading-6 text-slate-300/80">{t.partnerDesc}</p>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="rounded-2xl border border-green-500/20 bg-black/35 p-5 backdrop-blur-sm">
                   <Microscope className="h-5 w-5 text-green-300" />
-                  <p className="mt-3 text-[0.72rem] uppercase tracking-[0.28em] text-green-300/70">Focus</p>
-                  <p className="mt-1 text-sm text-white">Genómica visual y análisis exploratorio</p>
+                  <p className="mt-3 text-[0.72rem] uppercase tracking-[0.28em] text-green-300/70">{t.focusLabel}</p>
+                  <p className="mt-1 text-sm text-white">{t.focusText}</p>
                 </div>
                 <div className="rounded-2xl border border-purple-400/20 bg-black/35 p-5 backdrop-blur-sm">
                   <FlaskConical className="h-5 w-5 text-purple-200" />
-                  <p className="mt-3 text-[0.72rem] uppercase tracking-[0.28em] text-purple-200/70">Intersection</p>
-                  <p className="mt-1 text-sm text-white">Software engineering + bioinformática</p>
+                  <p className="mt-3 text-[0.72rem] uppercase tracking-[0.28em] text-purple-200/70">{t.intersectionLabel}</p>
+                  <p className="mt-1 text-sm text-white">{t.intersectionText}</p>
                 </div>
               </div>
             </div>

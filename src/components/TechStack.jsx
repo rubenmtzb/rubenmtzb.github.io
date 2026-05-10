@@ -1,4 +1,18 @@
 import { motion } from 'framer-motion'
+import { useLanguage } from '../i18n/LanguageContext'
+
+const translations = {
+  en: {
+    title: 'TECH_STACK',
+    coreLabel: 'CORE — daily driver',
+    toolboxLabel: 'ALSO IN THE TOOLBOX',
+  },
+  es: {
+    title: 'TECH_STACK',
+    coreLabel: 'CORE — uso diario',
+    toolboxLabel: 'TAMBIÉN EN LA CAJA DE HERRAMIENTAS',
+  },
+}
 
 const coreStack = [
   { name: 'Java', label: 'Backend core', icon: 'java' },
@@ -73,6 +87,7 @@ function TechCard({ tech }) {
                 alt={tech.name}
                 className="h-11 w-11"
                 loading="lazy"
+                decoding="async"
               />
             </div>
           ) : (
@@ -116,6 +131,9 @@ function StackGroup({ title, items }) {
 }
 
 export default function TechStack() {
+  const { language } = useLanguage()
+  const t = translations[language]
+
   return (
     <section id="stack" className="relative py-20 px-6 overflow-hidden">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,255,136,0.08),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(0,255,255,0.06),transparent_28%)]" />
@@ -129,13 +147,13 @@ export default function TechStack() {
         >
           <h2 className="text-3xl font-extrabold tracking-widest uppercase text-white text-glow-green mb-12 text-center">
             <span className="text-green-400">&gt; </span>
-            TECH_STACK
+            {t.title}
           </h2>
         </motion.div>
 
         <div className="space-y-14">
-          <StackGroup title="CORE — daily driver" items={coreStack} />
-          <StackGroup title="ALSO IN THE TOOLBOX" items={toolbox} />
+          <StackGroup title={t.coreLabel} items={coreStack} />
+          <StackGroup title={t.toolboxLabel} items={toolbox} />
         </div>
       </div>
     </section>

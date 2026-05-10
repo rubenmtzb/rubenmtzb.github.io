@@ -1,27 +1,72 @@
 import { motion } from 'framer-motion'
 import { ExternalLink, Mail, Send } from 'lucide-react'
+import { useLanguage } from '../i18n/LanguageContext'
 import { GithubIcon, LinkedinIcon } from './BrandIcons'
 
-const contactMethods = [
+const translations = {
+  en: {
+    sectionLabel: 'CONTACT',
+    headline: 'Have an interesting project?',
+    subheadline:
+      "I'm open to conversations about ambitious backend, full-stack, or research-oriented projects.",
+    connecting: '> establishing_connection...',
+    sendEmail: 'Send Email',
+    methods: [
+      {
+        label: 'Email',
+        description: 'Write me directly',
+        display: 'rmartbernabe@gmail.com',
+      },
+      {
+        label: 'LinkedIn',
+        description: "Let's connect professionally",
+        display: 'linkedin.com/in/rubenmartinezbernabe/',
+      },
+      {
+        label: 'GitHub',
+        description: 'Check my code',
+        display: 'github.com/rubenmtzb',
+      },
+    ],
+  },
+  es: {
+    sectionLabel: 'CONTACTO',
+    headline: '¿Tienes un proyecto interesante?',
+    subheadline:
+      'Estoy abierto a conversaciones sobre proyectos ambiciosos de backend, full-stack o investigación.',
+    connecting: '> establishing_connection...',
+    sendEmail: 'Enviar Email',
+    methods: [
+      {
+        label: 'Email',
+        description: 'Escríbeme directamente',
+        display: 'rmartbernabe@gmail.com',
+      },
+      {
+        label: 'LinkedIn',
+        description: 'Conectemos profesionalmente',
+        display: 'linkedin.com/in/rubenmartinezbernabe/',
+      },
+      {
+        label: 'GitHub',
+        description: 'Revisa mi código',
+        display: 'github.com/rubenmtzb',
+      },
+    ],
+  },
+}
+
+const contactMeta = [
   {
-    label: 'Email',
-    description: 'Escríbeme directamente',
     href: 'mailto:rmartbernabe@gmail.com',
-    display: 'rmartbernabe@gmail.com',
     Icon: Mail,
   },
   {
-    label: 'LinkedIn',
-    description: 'Conectemos profesionalmente',
     href: 'https://www.linkedin.com/in/rubenmartinezbernabe/',
-    display: 'linkedin.com/in/rubenmartinezbernabe/',
     Icon: LinkedinIcon,
   },
   {
-    label: 'GitHub',
-    description: 'Revisa mi código',
     href: 'https://github.com/rubenmtzb',
-    display: 'github.com/rubenmtzb',
     Icon: GithubIcon,
   },
 ]
@@ -50,6 +95,10 @@ const itemVariants = {
 }
 
 export default function Contact() {
+  const { language } = useLanguage()
+  const t = translations[language]
+  const contactMethods = t.methods.map((method, index) => ({ ...method, ...contactMeta[index] }))
+
   return (
     <section id="contact" className="relative overflow-hidden bg-[#030712] px-6 py-24 font-mono text-white">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#00ff8818,transparent_50%)]" />
@@ -69,7 +118,7 @@ export default function Contact() {
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.05 }}
         >
-          &gt; CONTACTO
+          &gt; {t.sectionLabel}
         </motion.p>
 
         <motion.h2
@@ -79,7 +128,7 @@ export default function Contact() {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
         >
-          ¿Tienes un proyecto interesante?
+          {t.headline}
         </motion.h2>
 
         <motion.p
@@ -89,7 +138,7 @@ export default function Contact() {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.18 }}
         >
-          Estoy abierto a conversaciones sobre proyectos ambiciosos de backend, full-stack o investigación.
+          {t.subheadline}
         </motion.p>
 
         <motion.div
@@ -99,7 +148,7 @@ export default function Contact() {
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.24 }}
         >
-          <span>&gt; establishing_connection...</span>
+          <span>{t.connecting}</span>
           <motion.span
             aria-hidden="true"
             className="text-green-400"
@@ -160,7 +209,7 @@ export default function Contact() {
             className="inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-green-400 via-emerald-400 to-lime-300 px-8 py-4 text-base font-semibold text-slate-950 shadow-[0_0_30px_rgba(0,255,136,0.28)] transition-all hover:shadow-[0_0_45px_rgba(0,255,136,0.4)]"
           >
             <Send className="h-5 w-5" />
-            <span>Enviar Email</span>
+            <span>{t.sendEmail}</span>
           </motion.a>
 
           <div className="flex flex-wrap items-center justify-center gap-5 text-sm text-green-300">
