@@ -68,7 +68,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 768) {
+      if (window.innerWidth >= 1024) {
         setIsMenuOpen(false)
       }
     }
@@ -103,25 +103,39 @@ export default function Navbar() {
           RMB
         </button>
 
-        <div className="hidden items-center gap-2 md:flex">
-          {NAV_ITEMS.map((item) => {
+        <div className="hidden items-center gap-1 lg:flex">
+          {NAV_ITEMS.map((item, index) => {
             const isActive = activeSection === item.id
 
             return (
               <button
-                key={item.id}
+                key={`desktop-nav-item-${index}`}
                 type="button"
                 onClick={() => handleNavigate(item.id)}
-                className="relative whitespace-nowrap rounded-full px-3 py-2 text-sm uppercase tracking-[0.25em] text-green-400/70 transition hover:text-green-300"
+                className={[
+                  'relative isolate whitespace-nowrap rounded-full px-2.5 py-2 text-xs uppercase tracking-[0.2em] transition duration-300',
+                  isActive ? 'text-white' : 'text-green-500/45 hover:text-green-200/90',
+                ].join(' ')}
               >
                 {isActive && (
                   <motion.span
                     layoutId="active-section-pill"
-                    className="absolute inset-0 rounded-full border border-green-400/40 bg-green-500/10"
+                    className="pointer-events-none absolute inset-0 rounded-full border border-green-300/70 bg-[linear-gradient(135deg,rgba(0,255,136,0.24),rgba(0,255,136,0.08))] shadow-[0_0_0_1px_rgba(134,239,172,0.12),0_0_18px_rgba(0,255,136,0.28),0_0_36px_rgba(0,255,136,0.14)]"
                     transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-                  />
+                  >
+                    <span className="absolute inset-[1px] rounded-full bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),transparent_55%)] opacity-80" />
+                    <span className="absolute inset-x-3 bottom-[3px] h-px rounded-full bg-green-100/95 shadow-[0_0_10px_rgba(167,243,208,0.95),0_0_16px_rgba(0,255,136,0.55)]" />
+                  </motion.span>
                 )}
-                <span className={isActive ? 'relative z-10 text-green-200' : 'relative z-10'}>{item[language]}</span>
+                <span
+                  className={
+                    isActive
+                      ? 'relative z-10 font-semibold text-white drop-shadow-[0_0_10px_rgba(167,243,208,0.45)]'
+                      : 'relative z-10'
+                  }
+                >
+                  {item[language]}
+                </span>
               </button>
             )
           })}
@@ -133,7 +147,7 @@ export default function Navbar() {
         <button
           type="button"
           onClick={() => setIsMenuOpen((currentValue) => !currentValue)}
-          className="inline-flex items-center justify-center rounded-xl border border-green-500/20 bg-black/40 p-2 text-green-300 transition hover:border-green-400/40 hover:text-green-200 md:hidden"
+          className="inline-flex items-center justify-center rounded-xl border border-green-500/20 bg-black/40 p-2 text-green-300 transition hover:border-green-400/40 hover:text-green-200 lg:hidden"
           aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
         >
           {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -147,15 +161,15 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="mx-auto mt-3 w-full max-w-6xl overflow-hidden rounded-2xl border border-green-500/20 bg-black/80 backdrop-blur-md md:hidden"
+            className="mx-auto mt-3 max-h-[calc(100vh-6rem)] w-full max-w-6xl overflow-y-auto rounded-2xl border border-green-500/20 bg-black/80 backdrop-blur-md lg:hidden"
           >
             <div className="space-y-1 p-3">
-              {NAV_ITEMS.map((item) => {
+              {NAV_ITEMS.map((item, index) => {
                 const isActive = activeSection === item.id
 
                 return (
                   <button
-                    key={item.id}
+                    key={`mobile-nav-item-${index}`}
                     type="button"
                     onClick={() => handleNavigate(item.id)}
                     className={[

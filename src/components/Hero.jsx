@@ -109,7 +109,7 @@ const HeroBackdrop = memo(function HeroBackdrop() {
 
       {PARTICLES.map((particle, index) => (
         <div
-          key={index}
+          key={`hero-particle-${index}`}
           className="particle absolute rounded-full bg-green-400/70 shadow-[0_0_16px_rgba(0,255,136,0.7)]"
           style={{
             top: particle.top,
@@ -152,13 +152,13 @@ const HeroAvatar = memo(function HeroAvatar() {
 
 const HeroSocialLinks = memo(function HeroSocialLinks() {
   return (
-    <motion.div variants={itemVariants} className="mt-12 flex items-center gap-4 sm:mt-14">
-      {SOCIAL_LINKS.map((link) => {
+    <motion.div variants={itemVariants} className="mt-12 flex flex-wrap items-center justify-center gap-4 sm:mt-14">
+      {SOCIAL_LINKS.map((link, index) => {
         const Icon = link.icon
 
         return (
           <a
-            key={link.label}
+            key={`hero-social-${index}`}
             href={link.href}
             target={link.href.startsWith('mailto:') ? undefined : '_blank'}
             rel={link.href.startsWith('mailto:') ? undefined : 'noreferrer'}
@@ -221,7 +221,7 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 pb-20 pt-28 sm:px-8"
+      className="relative flex min-h-screen items-center justify-center overflow-hidden px-5 pb-20 pt-28 sm:px-8"
     >
       <HeroBackdrop />
 
@@ -229,27 +229,27 @@ export default function Hero() {
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center text-center"
+        className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center px-1 text-center"
       >
         <HeroAvatar />
 
         <motion.div
           variants={itemVariants}
-          className="mb-4 inline-flex items-center rounded-full border border-green-500/20 bg-black/45 px-4 py-2 text-[11px] uppercase tracking-[0.35em] text-green-400/70 backdrop-blur-sm"
+          className="mb-4 inline-flex max-w-full items-center rounded-full border border-green-500/20 bg-black/45 px-3 py-1.5 text-[10px] uppercase tracking-[0.24em] text-green-400/70 backdrop-blur-sm break-all sm:px-4 sm:py-2 sm:text-[11px] sm:tracking-[0.35em]"
         >
           terminal://rubenitx.me/boot
         </motion.div>
 
         <motion.h1
           variants={itemVariants}
-          className="glitch-layer text-4xl font-black tracking-[0.08em] text-green-50 text-glow-green sm:text-6xl lg:text-7xl"
+          className="glitch-layer break-words px-2 text-3xl font-black leading-tight tracking-[0.08em] text-green-50 text-glow-green sm:text-6xl lg:text-7xl"
           data-text="Rubén Martínez Bernabe"
         >
           Rubén Martínez Bernabe
         </motion.h1>
 
-        <motion.div variants={itemVariants} className="mt-5 min-h-[3.5rem] sm:min-h-[4rem]">
-          <p className="text-sm font-medium uppercase tracking-[0.38em] text-green-300/90 sm:text-lg">
+        <motion.div variants={itemVariants} className="mt-5 min-h-[3rem] max-w-full px-2 sm:min-h-[4rem]">
+          <p className="break-words text-xs font-medium uppercase tracking-[0.22em] text-green-300/90 sm:text-lg sm:tracking-[0.38em]">
             {displayText}
             <span
               className="ml-1 inline-block border-r-2 border-green-400 pr-[1px] align-middle"
@@ -261,23 +261,23 @@ export default function Hero() {
 
         <motion.p
           variants={itemVariants}
-          className="mt-4 max-w-3xl text-base leading-8 text-slate-300/85 sm:text-lg"
+          className="mt-4 max-w-3xl px-2 text-base leading-8 text-slate-300/85 sm:text-lg"
         >
           {t.tagline}
         </motion.p>
 
-        <motion.div variants={itemVariants} className="mt-8 flex flex-col gap-4 sm:flex-row">
+        <motion.div variants={itemVariants} className="mt-8 flex w-full max-w-md flex-col gap-4 sm:max-w-none sm:flex-row sm:justify-center">
           <button
             type="button"
             onClick={() => scrollToSection('projects')}
-            className="box-glow-green-strong rounded-full border border-green-300/30 bg-gradient-to-r from-green-400 via-emerald-300 to-cyan-300 px-7 py-3 text-sm font-semibold uppercase tracking-[0.28em] text-slate-950 transition duration-300 hover:scale-[1.03] hover:shadow-[0_0_32px_rgba(0,255,136,0.35)]"
+            className="box-glow-green-strong inline-flex w-full items-center justify-center rounded-full border border-green-300/30 bg-gradient-to-r from-green-400 via-emerald-300 to-cyan-300 px-7 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-slate-950 transition duration-300 hover:scale-[1.03] hover:shadow-[0_0_32px_rgba(0,255,136,0.35)] sm:w-auto sm:tracking-[0.28em]"
           >
             {t.viewWork}
           </button>
           <button
             type="button"
             onClick={() => scrollToSection('contact')}
-            className="rounded-full border border-green-400/35 bg-black/30 px-7 py-3 text-sm font-semibold uppercase tracking-[0.28em] text-green-200 transition duration-300 hover:scale-[1.03] hover:bg-green-500/10 hover:shadow-[0_0_26px_rgba(0,255,136,0.2)]"
+            className="inline-flex w-full items-center justify-center rounded-full border border-green-400/35 bg-black/30 px-7 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-green-200 transition duration-300 hover:scale-[1.03] hover:bg-green-500/10 hover:shadow-[0_0_26px_rgba(0,255,136,0.2)] sm:w-auto sm:tracking-[0.28em]"
           >
             {t.getInTouch}
           </button>

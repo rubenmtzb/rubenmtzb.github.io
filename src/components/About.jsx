@@ -74,7 +74,7 @@ export default function About() {
   const t = translations[language]
 
   return (
-    <section id="about" className="section-container mx-auto max-w-6xl bg-[#030712] px-6 py-20">
+    <section id="about" className="section-container mx-auto max-w-6xl bg-[#030712] px-4 py-16 sm:px-6 sm:py-20">
       <motion.div {...cardMotion} className="space-y-12">
         <div className="space-y-4">
           <p className="text-sm font-semibold uppercase tracking-[0.35em] text-green-400 text-glow-green">
@@ -87,26 +87,28 @@ export default function About() {
           <motion.div
             {...cardMotion}
             transition={{ duration: 0.7, ease: 'easeOut', delay: 0.05 }}
-            className="flex h-full flex-col justify-between rounded-xl border border-green-500/20 bg-black/40 p-6 backdrop-blur-sm"
+            className="flex h-full flex-col justify-between rounded-xl border border-green-500/20 bg-black/40 p-5 backdrop-blur-sm sm:p-6"
           >
             <div>
-              <div className="mb-5 flex items-center gap-2 border-b border-green-500/20 pb-4">
-                <span className="h-3 w-3 rounded-full bg-red-500/80" />
-                <span className="h-3 w-3 rounded-full bg-yellow-500/80" />
-                <span className="h-3 w-3 rounded-full bg-green-500/90" />
-                <div className="ml-3 flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-green-400/70">
+              <div className="mb-5 flex flex-wrap items-center gap-2 border-b border-green-500/20 pb-4">
+                <div className="flex items-center gap-2">
+                  <span className="h-3 w-3 rounded-full bg-red-500/80" />
+                  <span className="h-3 w-3 rounded-full bg-yellow-500/80" />
+                  <span className="h-3 w-3 rounded-full bg-green-500/90" />
+                </div>
+                <div className="flex min-w-0 items-center gap-2 text-[10px] uppercase tracking-[0.22em] text-green-400/70 sm:ml-3 sm:text-xs sm:tracking-[0.3em]">
                   <TerminalSquare size={14} />
-                  {t.terminalFile}
+                  <span className="break-all">{t.terminalFile}</span>
                 </div>
               </div>
 
-              <div className="rounded-xl border border-green-500/15 bg-[#02050b]/80 p-5 font-mono text-sm leading-7 sm:text-base">
-                <div className="mb-4 flex items-center justify-between text-xs uppercase tracking-[0.3em] text-green-400/50">
+              <div className="rounded-xl border border-green-500/15 bg-[#02050b]/80 p-4 font-mono text-xs leading-6 sm:p-5 sm:text-base sm:leading-7">
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-2 text-[0.65rem] uppercase tracking-[0.22em] text-green-400/50 sm:text-xs sm:tracking-[0.3em]">
                   <span>{t.profileLabel}</span>
                   <span className="text-cyan-400/70">{t.profileStatus}</span>
                 </div>
 
-                <div className="space-y-1 text-gray-200">
+                <div className="space-y-1 break-words text-gray-200">
                   <div>
                     <span className="text-purple-400">const</span>{' '}
                     <span className="text-cyan-400">ruben</span>{' '}
@@ -148,14 +150,14 @@ export default function About() {
             <motion.div
               {...cardMotion}
               transition={{ duration: 0.7, ease: 'easeOut', delay: 0.12 }}
-              className="rounded-xl border border-green-500/20 bg-black/40 p-6 backdrop-blur-sm"
+              className="rounded-xl border border-green-500/20 bg-black/40 p-5 backdrop-blur-sm sm:p-6"
             >
               <div className="mb-4 flex items-center gap-3 text-green-400">
                 <Sparkles size={18} />
                 <span className="text-sm uppercase tracking-[0.3em] text-green-400/70">{t.techProfileLabel}</span>
               </div>
 
-              <p className="text-base leading-8 text-gray-300 sm:text-lg">{t.bio}</p>
+              <p className="text-sm leading-7 text-gray-300 sm:text-lg sm:leading-8">{t.bio}</p>
             </motion.div>
 
             <motion.div
@@ -169,11 +171,11 @@ export default function About() {
                 <motion.div
                   key={`highlight-${index}`}
                   variants={staggerItem}
-                  className="rounded-xl border border-green-500/20 bg-black/40 p-6 backdrop-blur-sm"
+                  className="rounded-xl border border-green-500/20 bg-black/40 p-5 backdrop-blur-sm sm:p-6"
                 >
                   <div className="flex items-start gap-3">
                     <span className="mt-1 text-lg text-green-400">›</span>
-                    <p className="text-sm leading-7 text-gray-300 sm:text-base">
+                    <p className="text-sm leading-6 text-gray-300 sm:text-base sm:leading-7">
                       <span className="font-medium text-green-400">{t.statusLabel}:</span>{' '}
                       {highlight}
                     </p>

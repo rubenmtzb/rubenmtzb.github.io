@@ -47,7 +47,7 @@ export default function ResumeSection() {
   const pdfHref = language === 'es' ? '/cv/CV_RubenMartinez_ES.pdf' : '/cv/CV_RubenMartinez_EN.pdf'
 
   return (
-    <section id="resume" className="relative overflow-hidden bg-[#030712] px-6 py-20 font-mono text-white">
+    <section id="resume" className="relative overflow-hidden bg-[#030712] px-4 py-16 font-mono text-white sm:px-6 sm:py-20">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,255,136,0.14),transparent_38%)]" />
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-green-400/60 to-transparent" />
 
@@ -57,7 +57,7 @@ export default function ResumeSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-          className="relative overflow-hidden rounded-[28px] border border-green-500/20 bg-black/40 p-8 backdrop-blur-sm sm:p-10"
+          className="relative overflow-hidden rounded-[28px] border border-green-500/20 bg-black/40 p-6 backdrop-blur-sm sm:p-8 lg:p-10"
         >
           <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(0,255,136,0.1),transparent_45%,rgba(34,211,238,0.08))]" />
           <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-green-400/50 to-transparent" />
@@ -68,14 +68,14 @@ export default function ResumeSection() {
                 &gt; {t.label}
               </p>
 
-              <h2 className="text-3xl font-bold text-white sm:text-4xl">{t.title}</h2>
-              <p className="mt-4 text-base leading-8 text-slate-300/90 sm:text-lg">{t.description}</p>
+              <h2 className="text-2xl font-bold text-white sm:text-4xl">{t.title}</h2>
+              <p className="mt-4 text-sm leading-7 text-slate-300/90 sm:text-lg sm:leading-8">{t.description}</p>
 
               <div className="mt-6 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
-                <span className="rounded-full border border-green-400/20 bg-green-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-green-200">
+                <span className="rounded-full border border-green-400/20 bg-green-500/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-green-200 sm:text-xs sm:tracking-[0.28em]">
                   {t.badgePrimary}
                 </span>
-                <span className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-100">
+                <span className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-100 sm:text-xs sm:tracking-[0.28em]">
                   {t.badgeSecondary}
                 </span>
               </div>
@@ -86,7 +86,7 @@ export default function ResumeSection() {
                   download
                   whileHover={{ y: -2, scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
-                  className="inline-flex items-center justify-center gap-3 rounded-full border border-green-300/45 bg-green-500/15 px-7 py-3.5 text-sm font-semibold text-green-100 transition hover:border-green-200/60 hover:bg-green-500/20 hover:shadow-[0_0_30px_rgba(0,255,136,0.28)]"
+                  className="inline-flex w-full items-center justify-center gap-3 rounded-full border border-green-300/45 bg-green-500/15 px-7 py-3.5 text-sm font-semibold text-green-100 transition hover:border-green-200/60 hover:bg-green-500/20 hover:shadow-[0_0_30px_rgba(0,255,136,0.28)] sm:w-auto"
                 >
                   <FileDown className="h-5 w-5" />
                   {t.downloadButton}
@@ -98,15 +98,15 @@ export default function ResumeSection() {
                   rel="noreferrer"
                   whileHover={{ y: -2, scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
-                  className="inline-flex items-center justify-center gap-3 rounded-full border border-green-400/30 bg-transparent px-5 py-3 text-sm font-semibold text-green-200/90 transition hover:border-green-300/45 hover:bg-green-500/8 hover:text-green-100"
+                  className="inline-flex w-full items-center justify-center gap-3 rounded-full border border-green-400/30 bg-transparent px-5 py-3 text-sm font-semibold text-green-200/90 transition hover:border-green-300/45 hover:bg-green-500/10 hover:text-green-100 sm:w-auto"
                 >
-                  <Eye className="h-4.5 w-4.5" />
+                  <Eye className="h-4 w-4" />
                   {t.previewButton}
                   <ExternalLink className="h-4 w-4 opacity-60" />
                 </motion.a>
               </div>
 
-              <p className="mt-4 text-xs tracking-[0.22em] text-green-500/60">{t.downloadHint}</p>
+              <p className="mt-4 break-words text-[11px] tracking-[0.16em] text-green-500/60 sm:text-xs sm:tracking-[0.22em]">{t.downloadHint}</p>
             </div>
 
             <motion.div
@@ -114,23 +114,25 @@ export default function ResumeSection() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, amount: 0.1 }}
               transition={{ duration: 0.7, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-              className="relative mx-auto w-full max-w-md rounded-3xl border border-green-500/20 bg-[#02050b]/85 p-5 text-left shadow-[0_0_35px_rgba(0,255,136,0.08)]"
+              className="relative mx-auto w-full max-w-md rounded-3xl border border-green-500/20 bg-[#02050b]/85 p-4 text-left shadow-[0_0_35px_rgba(0,255,136,0.08)] sm:p-5"
             >
-              <div className="mb-5 flex items-center gap-2 border-b border-green-500/15 pb-4">
-                <span className="h-3 w-3 rounded-full bg-rose-400/90" />
-                <span className="h-3 w-3 rounded-full bg-amber-300/90" />
-                <span className="h-3 w-3 rounded-full bg-green-400/90" />
-                <div className="ml-3 inline-flex items-center gap-2 text-xs uppercase tracking-[0.28em] text-green-400/70">
-                  <SquareTerminal className="h-4 w-4" />
-                  {t.terminalTitle}
+              <div className="mb-5 flex flex-wrap items-center gap-2 border-b border-green-500/15 pb-4">
+                <div className="flex items-center gap-2">
+                  <span className="h-3 w-3 rounded-full bg-rose-400/90" />
+                  <span className="h-3 w-3 rounded-full bg-amber-300/90" />
+                  <span className="h-3 w-3 rounded-full bg-green-400/90" />
+                </div>
+                <div className="inline-flex max-w-full items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-green-400/70 sm:ml-3 sm:text-xs sm:tracking-[0.28em]">
+                  <SquareTerminal className="h-4 w-4 shrink-0" />
+                  <span className="break-all">{t.terminalTitle}</span>
                 </div>
               </div>
 
               <div className="space-y-3 text-sm leading-7 text-slate-300">
                 {t.terminalLines.map((line, index) => (
-                  <div key={`resume-line-${index}`} className="flex items-start gap-3">
-                    <span className="text-green-500/50">0{index + 1}</span>
-                    <span>{line}</span>
+                  <div key={`resume-line-${index}`} className="flex min-w-0 items-start gap-3">
+                    <span className="shrink-0 text-green-500/50">0{index + 1}</span>
+                    <span className="break-all">{line}</span>
                   </div>
                 ))}
               </div>
@@ -139,7 +141,7 @@ export default function ResumeSection() {
                 aria-hidden="true"
                 animate={{ opacity: [0.45, 1, 0.45] }}
                 transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-                className="mt-5 inline-flex items-center gap-2 rounded-full border border-green-500/15 bg-green-500/5 px-3 py-1 text-xs uppercase tracking-[0.26em] text-green-300/80"
+                className="mt-5 inline-flex items-center gap-2 rounded-full border border-green-500/15 bg-green-500/5 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-green-300/80 sm:text-xs sm:tracking-[0.26em]"
               >
                 <span className="h-2 w-2 rounded-full bg-green-400" />
                 {t.exportStatus}

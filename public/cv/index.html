@@ -916,9 +916,9 @@
         >
           <span data-i18n="toolbar.language">ES</span>
         </button>
-        <button type="button" class="primary-button" onclick="window.print()">
-          ⭳ <span data-i18n="toolbar.print">Save as PDF</span>
-        </button>
+        <a id="downloadPdfBtn" href="/cv/CV_RubenMartinez_EN.pdf" download class="primary-button" style="text-decoration:none;">
+          ⭳ <span data-i18n="toolbar.print">Download PDF</span>
+        </a>
       </div>
     </nav>
 
@@ -1119,7 +1119,7 @@
             back: 'Back to Portfolio',
             language: 'ES',
             languageAria: 'Switch CV language to Spanish',
-            print: 'Save as PDF',
+            print: 'Download PDF',
           },
           hero: {
             eyebrow: '> premium.cv / export',
@@ -1325,7 +1325,7 @@
             back: 'Volver al portfolio',
             language: 'EN',
             languageAria: 'Cambiar el CV al idioma inglés',
-            print: 'Guardar como PDF',
+            print: 'Descargar PDF',
           },
           hero: {
             eyebrow: '> premium.cv / export',
@@ -1697,12 +1697,19 @@
         renderInterests()
       }
 
+      function updateDownloadLink() {
+        const btn = document.getElementById('downloadPdfBtn')
+        if (btn) btn.href = lang === 'es' ? '/cv/CV_RubenMartinez_ES.pdf' : '/cv/CV_RubenMartinez_EN.pdf'
+      }
+
       function toggleLang() {
         lang = lang === 'en' ? 'es' : 'en'
         updateTexts()
+        updateDownloadLink()
       }
 
       updateTexts()
+      updateDownloadLink()
     </script>
   </body>
 </html>
