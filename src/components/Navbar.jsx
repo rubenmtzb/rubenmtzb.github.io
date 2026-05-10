@@ -45,19 +45,15 @@ export default function Navbar() {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const visibleEntries = entries.filter((entry) => entry.isIntersecting)
-
-        if (visibleEntries.length > 0) {
-          const currentEntry = visibleEntries.sort(
-            (entryA, entryB) => entryB.intersectionRatio - entryA.intersectionRatio,
-          )[0]
-
-          setActiveSection(currentEntry.target.id)
-        }
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id)
+          }
+        })
       },
       {
-        rootMargin: '-35% 0px -45% 0px',
-        threshold: [0.2, 0.35, 0.55, 0.75],
+        rootMargin: '-15% 0px -80% 0px',
+        threshold: 0,
       },
     )
 
