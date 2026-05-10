@@ -32,13 +32,21 @@ export default function App() {
       <main className="relative z-10">
         <Hero />
         <Suspense fallback={null}><About /></Suspense>
+        <div className="h-px bg-gradient-to-r from-transparent via-green-500/15 to-transparent" />
         <Suspense fallback={null}><TechStack /></Suspense>
+        <div className="h-px bg-gradient-to-r from-transparent via-green-500/15 to-transparent" />
         <Suspense fallback={null}><Experience /></Suspense>
+        <div className="h-px bg-gradient-to-r from-transparent via-green-500/15 to-transparent" />
         <Suspense fallback={null}><Projects /></Suspense>
+        <div className="h-px bg-gradient-to-r from-transparent via-green-500/15 to-transparent" />
         <Suspense fallback={null}><Research /></Suspense>
+        <div className="h-px bg-gradient-to-r from-transparent via-green-500/15 to-transparent" />
         <Suspense fallback={null}><Education /></Suspense>
+        <div className="h-px bg-gradient-to-r from-transparent via-green-500/15 to-transparent" />
         <Suspense fallback={null}><Certifications /></Suspense>
+        <div className="h-px bg-gradient-to-r from-transparent via-green-500/15 to-transparent" />
         <Suspense fallback={null}><ResumeSection /></Suspense>
+        <div className="h-px bg-gradient-to-r from-transparent via-green-500/15 to-transparent" />
         <Suspense fallback={null}><Contact /></Suspense>
       </main>
       <Suspense fallback={null}>

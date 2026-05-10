@@ -116,7 +116,8 @@ export default function Experience() {
   const t = translations[language]
 
   return (
-    <section id="experience" className="section-container mx-auto max-w-6xl bg-[#030712] px-6 py-20">
+    <section id="experience" className="relative overflow-hidden px-6 py-20">
+      <div className="mx-auto max-w-6xl">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -224,6 +225,7 @@ export default function Experience() {
           </div>
         </div>
       </motion.div>
+      </div>
     </section>
   )
 }

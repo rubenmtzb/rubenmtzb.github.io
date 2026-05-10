@@ -100,7 +100,7 @@ export default function Contact() {
   const contactMethods = t.methods.map((method, index) => ({ ...method, ...contactMeta[index] }))
 
   return (
-    <section id="contact" className="relative overflow-hidden bg-[#030712] px-6 py-24 font-mono text-white">
+    <section id="contact" className="relative overflow-hidden px-6 py-24 font-mono text-white">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#00ff8818,transparent_50%)]" />
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-green-400/60 to-transparent" />
 

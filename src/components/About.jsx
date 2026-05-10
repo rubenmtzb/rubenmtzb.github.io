@@ -74,7 +74,8 @@ export default function About() {
   const t = translations[language]
 
   return (
-    <section id="about" className="section-container mx-auto max-w-6xl bg-[#030712] px-4 py-16 sm:px-6 sm:py-20">
+    <section id="about" className="relative overflow-hidden px-4 py-16 sm:px-6 sm:py-20">
+      <div className="mx-auto max-w-6xl">
       <motion.div {...cardMotion} className="space-y-12">
         <div className="space-y-4">
           <p className="text-sm font-semibold uppercase tracking-[0.35em] text-green-400 text-glow-green">
@@ -186,6 +187,7 @@ export default function About() {
           </div>
         </div>
       </motion.div>
+      </div>
     </section>
   )
 }

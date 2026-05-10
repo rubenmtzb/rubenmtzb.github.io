@@ -47,7 +47,7 @@ export default function ResumeSection() {
   const pdfHref = language === 'es' ? '/cv/CV_RubenMartinez_ES.pdf' : '/cv/CV_RubenMartinez_EN.pdf'
 
   return (
-    <section id="resume" className="relative overflow-hidden bg-[#030712] px-4 py-16 font-mono text-white sm:px-6 sm:py-20">
+    <section id="resume" className="relative overflow-hidden px-4 py-16 font-mono text-white sm:px-6 sm:py-20">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,255,136,0.14),transparent_38%)]" />
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-green-400/60 to-transparent" />
 

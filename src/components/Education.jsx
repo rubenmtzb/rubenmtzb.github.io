@@ -110,7 +110,8 @@ export default function Education() {
   const items = t.items.map((item, index) => ({ ...item, icon: icons[index] }))
 
   return (
-    <section id="education" className="section-container mx-auto max-w-6xl bg-[#030712] px-6 py-20">
+    <section id="education" className="relative overflow-hidden px-6 py-20">
+      <div className="mx-auto max-w-6xl">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -197,6 +198,7 @@ export default function Education() {
           })}
         </motion.div>
       </motion.div>
+      </div>
     </section>
   )
 }
