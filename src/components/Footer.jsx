@@ -49,15 +49,15 @@ export default function Footer() {
 
         <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-6">
           <div className="flex flex-wrap items-center gap-3">
-            {QUICK_LINKS.map((link, index) => {
+            {QUICK_LINKS.map((link) => {
               const Icon = link.icon
 
               return (
                 <a
-                  key={`footer-link-${index}`}
+                  key={link.href}
                   href={link.href}
                   target={link.href.startsWith('mailto:') ? undefined : '_blank'}
-                  rel={link.href.startsWith('mailto:') ? undefined : 'noreferrer'}
+                  rel={link.href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
                   className="inline-flex items-center gap-2 rounded-full border border-green-500/20 bg-black/35 px-4 py-2 text-xs uppercase tracking-[0.18em] text-green-300/80 transition hover:border-green-300/35 hover:bg-green-500/10 hover:text-green-100 sm:tracking-[0.24em]"
                 >
                   <Icon className="h-4 w-4" />

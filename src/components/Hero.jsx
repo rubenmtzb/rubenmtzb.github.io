@@ -75,6 +75,9 @@ const SOCIAL_LINKS = [
   },
 ]
 
+const scrollCueAnimation = { y: [0, 8, 0] }
+const scrollCueTransition = { duration: 1.8, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }
+
 function scrollToSection(sectionId) {
   const section = document.getElementById(sectionId)
 
@@ -107,9 +110,9 @@ const HeroBackdrop = memo(function HeroBackdrop() {
       />
       <div className="scanline-anim pointer-events-none absolute left-0 top-0 z-20 h-[2px] w-full bg-gradient-to-r from-transparent via-green-400/70 to-transparent" />
 
-      {PARTICLES.map((particle, index) => (
+      {PARTICLES.map((particle) => (
         <div
-          key={`hero-particle-${index}`}
+          key={`${particle.top}-${particle.left}`}
           className="particle absolute rounded-full bg-green-400/70 shadow-[0_0_16px_rgba(0,255,136,0.7)]"
           style={{
             top: particle.top,
@@ -153,15 +156,15 @@ const HeroAvatar = memo(function HeroAvatar() {
 const HeroSocialLinks = memo(function HeroSocialLinks() {
   return (
     <motion.div variants={itemVariants} className="mt-12 flex flex-wrap items-center justify-center gap-4 sm:mt-14">
-      {SOCIAL_LINKS.map((link, index) => {
+      {SOCIAL_LINKS.map((link) => {
         const Icon = link.icon
 
         return (
           <a
-            key={`hero-social-${index}`}
+            key={link.href}
             href={link.href}
             target={link.href.startsWith('mailto:') ? undefined : '_blank'}
-            rel={link.href.startsWith('mailto:') ? undefined : 'noreferrer'}
+            rel={link.href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
             aria-label={link.label}
             className="flex h-12 w-12 items-center justify-center rounded-full border border-green-500/20 bg-black/40 text-green-300 transition hover:-translate-y-1 hover:border-green-300/40 hover:bg-green-500/10 hover:text-green-100 hover:shadow-[0_0_22px_rgba(0,255,136,0.2)]"
           >
@@ -289,8 +292,8 @@ export default function Hero() {
       <motion.button
         type="button"
         onClick={() => scrollToSection('about')}
-        animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 1.8, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
+        animate={scrollCueAnimation}
+        transition={scrollCueTransition}
         className="absolute bottom-5 left-1/2 z-10 inline-flex -translate-x-1/2 items-center justify-center rounded-full border border-green-500/20 bg-black/35 p-3 text-green-300 backdrop-blur-sm transition hover:border-green-300/40 hover:text-green-100"
         aria-label={t.scrollToAbout}
       >

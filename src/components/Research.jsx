@@ -116,7 +116,7 @@ export default function Research() {
                 <a
                   href="http://sarscov2-mutation-portal.urv.cat"
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-green-400/35 bg-green-500/10 px-5 py-3 text-sm font-semibold text-green-200 transition hover:-translate-y-0.5 hover:border-green-300/55 hover:bg-green-500/15"
                 >
                   {t.ctaButton}
@@ -125,7 +125,7 @@ export default function Research() {
                 <a
                   href="https://www.mdpi.com/1422-0067/24/10/9072"
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-cyan-400/35 bg-cyan-500/10 px-5 py-3 text-sm font-semibold text-cyan-100 transition hover:-translate-y-0.5 hover:border-cyan-300/55 hover:bg-cyan-500/15"
                 >
                   {t.articleButton}

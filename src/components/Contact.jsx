@@ -177,7 +177,7 @@ export default function Contact() {
                 whileHover={{ y: -6, scale: 1.02 }}
                 whileTap={{ scale: 0.99 }}
                 target={isExternal ? '_blank' : undefined}
-                rel={isExternal ? 'noreferrer' : undefined}
+                rel={isExternal ? 'noopener noreferrer' : undefined}
                 className="group rounded-xl border border-green-500/20 bg-black/40 p-6 backdrop-blur-sm transition-all hover:border-green-500/40 hover:shadow-[0_0_30px_rgba(0,255,136,0.14)]"
               >
                 <div className="mb-5 flex items-center justify-between">
@@ -216,7 +216,7 @@ export default function Contact() {
             <a
               href="https://www.linkedin.com/in/rubenmartinezbernabe/"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 transition-colors hover:text-green-200"
             >
               <LinkedinIcon className="h-4 w-4" />
@@ -225,7 +225,7 @@ export default function Contact() {
             <a
               href="https://github.com/rubenmtzb"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 transition-colors hover:text-green-200"
             >
               <GithubIcon className="h-4 w-4" />

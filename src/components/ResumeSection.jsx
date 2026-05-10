@@ -95,7 +95,7 @@ export default function ResumeSection() {
                 <motion.a
                   href="/cv/"
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   whileHover={{ y: -2, scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
                   className="inline-flex w-full items-center justify-center gap-3 rounded-full border border-green-400/30 bg-transparent px-5 py-3 text-sm font-semibold text-green-200/90 transition hover:border-green-300/45 hover:bg-green-500/10 hover:text-green-100 sm:w-auto"

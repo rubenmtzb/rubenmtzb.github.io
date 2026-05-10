@@ -204,7 +204,7 @@ export default function Certifications() {
                       <a
                         href={certification.verifyUrl}
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
                         className="group inline-flex items-center gap-1.5 text-green-300 transition-colors hover:text-green-200"
                       >
                         <span>{t.verifyLabel}</span>
@@ -215,7 +215,7 @@ export default function Certifications() {
                       <a
                         href={certification.projectUrl}
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
                         className="group inline-flex items-center gap-1.5 text-green-300/85 transition-colors hover:text-green-200"
                       >
                         <span>{t.projectLabel}</span>

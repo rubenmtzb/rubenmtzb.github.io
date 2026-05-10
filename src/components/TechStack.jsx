@@ -85,6 +85,8 @@ function TechCard({ tech }) {
               src={tech.iconUrl}
               alt={tech.name}
               className="h-11 w-11"
+              width="44"
+              height="44"
               loading="lazy"
               decoding="async"
             />
