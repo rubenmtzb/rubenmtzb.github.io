@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import { useLanguage } from '../i18n/LanguageContext'
@@ -42,6 +42,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const isNavigatingRef = useRef(false)
 
   useEffect(() => {
     const sectionIds = NAV_ITEMS.map((item) => item.id)
@@ -59,6 +60,9 @@ export default function Navbar() {
         lastScrolled = nextScrolled
         setIsScrolled(nextScrolled)
       }
+
+      // Skip scroll-spy while a nav click is animating
+      if (isNavigatingRef.current) return
 
       const triggerLine = window.innerHeight * 0.25
       let nextActiveId = sectionIds[0]
@@ -121,9 +125,12 @@ export default function Navbar() {
   }, [])
 
   const handleNavigate = (sectionId) => {
+    isNavigatingRef.current = true
     setActiveSection(sectionId)
     setIsMenuOpen(false)
     scrollToSection(sectionId)
+    // Re-enable scroll-spy after smooth scroll finishes
+    setTimeout(() => { isNavigatingRef.current = false }, 1000)
   }
 
   return (
