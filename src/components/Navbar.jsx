@@ -75,7 +75,8 @@ export default function Navbar() {
         }
       }
 
-      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 100) {
+      // Only snap to last section if user has actually scrolled
+      if (window.scrollY > 100 && window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 100) {
         nextActiveId = lastSectionId
       }
 
