@@ -33,7 +33,7 @@ const toolbox = [
   { name: 'MongoDB', label: 'NoSQL', icon: 'mongodb' },
   { name: 'Git', label: 'Version control', icon: 'git' },
   { name: 'Linux', label: 'Server environment', icon: 'linux' },
-  { name: 'Liferay', label: 'Portal platform', iconUrl: 'https://cdn.simpleicons.org/liferay/white' },
+  { name: 'Liferay', label: 'Portal platform', iconUrl: '/icons/liferay.svg' },
 ]
 
 const gridVariants = {
