@@ -9,8 +9,8 @@ const NAV_ITEMS = [
   { id: 'about', en: 'About', es: 'Sobre mí' },
   { id: 'stack', en: 'Stack', es: 'Stack' },
   { id: 'experience', en: 'Experience', es: 'Experiencia' },
-  { id: 'education', en: 'Education', es: 'Formación' },
   { id: 'projects', en: 'Projects', es: 'Proyectos' },
+  { id: 'education', en: 'Education', es: 'Formación' },
   { id: 'certifications', en: 'Certs', es: 'Certs' },
   { id: 'contact', en: 'Contact', es: 'Contacto' },
 ]

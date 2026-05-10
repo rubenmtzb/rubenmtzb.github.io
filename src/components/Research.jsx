@@ -61,7 +61,7 @@ export default function Research() {
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.5 }}
         >
           <h2 className="text-3xl font-extrabold tracking-widest uppercase text-white text-glow-green mb-12 text-center">
@@ -73,7 +73,7 @@ export default function Research() {
         <motion.article
           initial={{ opacity: 0, y: 26 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.22 }}
+          viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           whileHover={{ y: -6 }}
           className="relative overflow-hidden rounded-2xl border border-green-500/25 bg-gradient-to-br from-green-500/10 via-black/55 to-cyan-500/10 p-6 shadow-[0_0_40px_rgba(0,255,136,0.08)] backdrop-blur-sm md:p-8"
