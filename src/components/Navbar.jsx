@@ -42,21 +42,17 @@ export default function Navbar() {
     const sectionIds = NAV_ITEMS.map((item) => item.id)
 
     const handleScrollSpy = () => {
-      const scrollY = window.scrollY
-      const viewportHeight = window.innerHeight
-      const triggerLine = scrollY + viewportHeight * 0.25
-
+      const triggerLine = window.innerHeight * 0.25
       let current = sectionIds[0]
 
       for (const id of sectionIds) {
         const el = document.getElementById(id)
-        if (el && el.offsetTop <= triggerLine) {
+        if (el && el.getBoundingClientRect().top <= triggerLine) {
           current = id
         }
       }
 
-      // If near bottom of page, activate last section
-      if (window.innerHeight + scrollY >= document.body.scrollHeight - 100) {
+      if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 100) {
         current = sectionIds[sectionIds.length - 1]
       }
 
