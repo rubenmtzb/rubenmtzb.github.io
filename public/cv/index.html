@@ -1,0 +1,1284 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rubén Martínez Bernabe | CV</title>
+    <meta
+      name="description"
+      content="Printable CV for Rubén Martínez Bernabe — Full-Stack Developer based in Barcelona, Spain."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #030712;
+        --panel: rgba(10, 17, 31, 0.88);
+        --panel-strong: rgba(3, 7, 18, 0.96);
+        --line: rgba(0, 255, 136, 0.2);
+        --line-strong: rgba(0, 255, 136, 0.5);
+        --text: #e5eef8;
+        --muted: #94a3b8;
+        --accent: #00ff88;
+        --accent-soft: rgba(0, 255, 136, 0.12);
+        --cyan: #67e8f9;
+        --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+        --radius: 28px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at top, rgba(0, 255, 136, 0.12), transparent 30%),
+          linear-gradient(180deg, #06101d 0%, var(--bg) 60%);
+        color: var(--text);
+        font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          'Liberation Mono', 'Courier New', monospace;
+      }
+
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background-image:
+          linear-gradient(rgba(0, 255, 136, 0.08) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 255, 136, 0.08) 1px, transparent 1px);
+        background-size: 42px 42px;
+        opacity: 0.18;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .toolbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 1rem 1.5rem;
+        backdrop-filter: blur(18px);
+        background: rgba(3, 7, 18, 0.82);
+        border-bottom: 1px solid rgba(0, 255, 136, 0.12);
+      }
+
+      .toolbar-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 0.75rem;
+      }
+
+      .ghost-link,
+      .ghost-button,
+      .primary-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.55rem;
+        border-radius: 999px;
+        padding: 0.85rem 1.2rem;
+        font: inherit;
+        font-size: 0.88rem;
+        text-decoration: none;
+        transition:
+          transform 0.2s ease,
+          border-color 0.2s ease,
+          background 0.2s ease,
+          box-shadow 0.2s ease;
+        cursor: pointer;
+      }
+
+      .ghost-link,
+      .ghost-button {
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        background: rgba(15, 23, 42, 0.65);
+        color: var(--text);
+      }
+
+      .primary-button {
+        border: 1px solid rgba(0, 255, 136, 0.36);
+        background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(103, 232, 249, 0.14));
+        color: #d6ffe8;
+        box-shadow: 0 0 28px rgba(0, 255, 136, 0.18);
+      }
+
+      .ghost-link:hover,
+      .ghost-button:hover,
+      .primary-button:hover {
+        transform: translateY(-1px);
+      }
+
+      .page {
+        position: relative;
+        width: min(100%, 1180px);
+        margin: 0 auto;
+        padding: 2rem 1.5rem 3rem;
+      }
+
+      .page::after {
+        content: '';
+        position: absolute;
+        inset: 1rem 1.5rem auto;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.65), transparent);
+      }
+
+      .hero {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: 1.35fr 0.95fr;
+        margin-top: 1.25rem;
+      }
+
+      .hero-panel,
+      .card {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: linear-gradient(180deg, rgba(9, 15, 30, 0.96), rgba(4, 8, 18, 0.95));
+        box-shadow: var(--shadow);
+      }
+
+      .hero-panel::before,
+      .card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), transparent 40%, rgba(103, 232, 249, 0.08));
+      }
+
+      .hero-copy {
+        padding: 2.1rem;
+      }
+
+      .eyebrow {
+        margin: 0 0 1rem;
+        color: var(--accent);
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        text-shadow: 0 0 18px rgba(0, 255, 136, 0.24);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2.1rem, 4vw, 3.5rem);
+        line-height: 1.05;
+      }
+
+      .role {
+        margin: 0.8rem 0 0;
+        font-size: 1.05rem;
+        color: #c2fbdc;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .summary {
+        margin: 1.4rem 0 0;
+        color: #d7e3f0;
+        line-height: 1.8;
+        font-size: 0.95rem;
+      }
+
+      .highlight-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 1.6rem;
+      }
+
+      .highlight-chip {
+        border: 1px solid rgba(0, 255, 136, 0.2);
+        border-radius: 999px;
+        padding: 0.55rem 0.8rem;
+        color: #dcfce7;
+        background: rgba(0, 255, 136, 0.06);
+        font-size: 0.8rem;
+      }
+
+      .availability {
+        margin-top: 1.5rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.7rem 0.95rem;
+        border-radius: 999px;
+        background: rgba(0, 255, 136, 0.08);
+        color: #d7ffe7;
+        font-size: 0.82rem;
+      }
+
+      .status-dot {
+        width: 0.65rem;
+        height: 0.65rem;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 18px rgba(0, 255, 136, 0.75);
+        animation: pulse 1.6s infinite ease-in-out;
+      }
+
+      .contact-panel {
+        padding: 1.5rem;
+      }
+
+      .terminal-bar {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(0, 255, 136, 0.14);
+        color: rgba(203, 213, 225, 0.7);
+        font-size: 0.76rem;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+      }
+
+      .terminal-lights {
+        display: inline-flex;
+        gap: 0.35rem;
+      }
+
+      .terminal-lights span {
+        width: 0.72rem;
+        height: 0.72rem;
+        border-radius: 50%;
+      }
+
+      .terminal-lights span:nth-child(1) {
+        background: #fb7185;
+      }
+
+      .terminal-lights span:nth-child(2) {
+        background: #facc15;
+      }
+
+      .terminal-lights span:nth-child(3) {
+        background: #4ade80;
+      }
+
+      .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+        margin-top: 1.4rem;
+      }
+
+      .contact-item {
+        padding: 1rem;
+        border: 1px solid rgba(148, 163, 184, 0.14);
+        border-radius: 20px;
+        background: rgba(2, 6, 23, 0.48);
+      }
+
+      .contact-item .label {
+        display: block;
+        margin-bottom: 0.45rem;
+        color: var(--muted);
+        font-size: 0.78rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .contact-item a,
+      .contact-item span:last-child {
+        color: #f8fafc;
+        text-decoration: none;
+        line-height: 1.5;
+        word-break: break-word;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+        align-items: start;
+      }
+
+      .stack {
+        display: grid;
+        gap: 1.5rem;
+      }
+
+      .card {
+        padding: 1.55rem;
+      }
+
+      .section-title {
+        margin: 0 0 1.1rem;
+        font-size: 0.92rem;
+        color: var(--accent);
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+      }
+
+      .timeline {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .timeline-item {
+        position: relative;
+        padding-left: 1.35rem;
+        border-left: 1px solid rgba(0, 255, 136, 0.16);
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -0.36rem;
+        top: 0.38rem;
+        width: 0.7rem;
+        height: 0.7rem;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+      }
+
+      .item-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+        align-items: baseline;
+      }
+
+      .item-title {
+        margin: 0;
+        font-size: 1rem;
+        color: white;
+      }
+
+      .item-company {
+        margin: 0.2rem 0 0;
+        color: #b8f9d1;
+        font-size: 0.88rem;
+      }
+
+      .item-meta {
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .item-location {
+        margin: 0.55rem 0 0;
+        color: #cbd5e1;
+        font-size: 0.82rem;
+      }
+
+      .item-list {
+        margin: 0.9rem 0 0;
+        padding-left: 1.1rem;
+        color: #dce7f4;
+        line-height: 1.75;
+        font-size: 0.88rem;
+      }
+
+      .item-list li + li {
+        margin-top: 0.35rem;
+      }
+
+      .tech-line {
+        margin-top: 0.85rem;
+        color: #bdf8d3;
+        font-size: 0.8rem;
+        line-height: 1.6;
+      }
+
+      .tech-label {
+        color: var(--accent);
+      }
+
+      .skill-groups,
+      .detail-list,
+      .certificate-list,
+      .language-list,
+      .interest-list {
+        display: grid;
+        gap: 0.95rem;
+      }
+
+      .skill-group,
+      .detail-item,
+      .research-item,
+      .language-item,
+      .interest-item,
+      .certificate-item {
+        border: 1px solid rgba(148, 163, 184, 0.14);
+        border-radius: 20px;
+        padding: 1rem;
+        background: rgba(2, 6, 23, 0.36);
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .skill-group strong,
+      .detail-item strong,
+      .research-item strong,
+      .language-item strong,
+      .interest-item strong,
+      .certificate-item strong {
+        display: block;
+        margin-bottom: 0.45rem;
+        color: white;
+        font-size: 0.88rem;
+      }
+
+      .skill-group span,
+      .detail-item span,
+      .research-item span,
+      .language-item span,
+      .interest-item span,
+      .certificate-item span {
+        color: #dce7f4;
+        font-size: 0.84rem;
+        line-height: 1.65;
+      }
+
+      .detail-meta {
+        display: block;
+        margin-top: 0.35rem;
+        color: #94a3b8 !important;
+      }
+
+      .detail-description {
+        display: block;
+        margin-top: 0.45rem;
+      }
+
+      .research-item a {
+        color: #dffef0;
+        text-decoration: none;
+      }
+
+      .research-item a:hover {
+        text-decoration: underline;
+      }
+
+      .footer-note {
+        margin-top: 1.5rem;
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .print-only {
+        display: none;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 0.45;
+          transform: scale(0.92);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      @media (max-width: 980px) {
+        .hero,
+        .layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 680px) {
+        .toolbar {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .toolbar-actions {
+          justify-content: stretch;
+        }
+
+        .toolbar-actions > * {
+          flex: 1 1 180px;
+        }
+
+        .hero-copy,
+        .contact-panel,
+        .card {
+          padding: 1.25rem;
+        }
+
+        .contact-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media print {
+        @page {
+          margin: 1.5cm;
+          size: A4;
+        }
+
+        body {
+          background: white;
+          color: #1a1a1a;
+          font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        body::before,
+        .hero-panel::before,
+        .card::before,
+        .page::after {
+          display: none;
+        }
+
+        .no-print {
+          display: none !important;
+        }
+
+        .print-only {
+          display: block !important;
+        }
+
+        a {
+          color: #1a1a1a;
+          text-decoration: none;
+        }
+
+        * {
+          box-shadow: none !important;
+          text-shadow: none !important;
+          filter: none !important;
+        }
+
+        .page {
+          width: 100%;
+          max-width: none;
+          padding: 0;
+        }
+
+        .hero {
+          gap: 0.9rem;
+          margin-top: 0;
+        }
+
+        .hero-panel,
+        .card,
+        .contact-item,
+        .skill-group,
+        .detail-item,
+        .research-item,
+        .language-item,
+        .interest-item,
+        .certificate-item {
+          background: white;
+          border-color: #d8d8d8;
+          border-radius: 0;
+        }
+
+        .hero-copy,
+        .contact-panel,
+        .card {
+          padding: 0.9rem 0;
+        }
+
+        .contact-panel {
+          padding-top: 0.5rem;
+        }
+
+        .hero-panel,
+        .card {
+          border-left: none;
+          border-right: none;
+        }
+
+        .terminal-bar,
+        .availability {
+          color: #4a4a4a;
+          border-color: #e5e5e5;
+          background: transparent;
+        }
+
+        .eyebrow,
+        .section-title,
+        .tech-label,
+        .item-company {
+          color: #111;
+        }
+
+        .role,
+        .summary,
+        .item-meta,
+        .item-location,
+        .footer-note,
+        .contact-item .label,
+        .skill-group span,
+        .detail-item span,
+        .research-item span,
+        .language-item span,
+        .interest-item span,
+        .certificate-item span,
+        .item-list,
+        .tech-line,
+        .detail-meta,
+        .detail-description {
+          color: #333 !important;
+        }
+
+        .highlight-chip {
+          border-color: #d5d5d5;
+          background: transparent;
+          color: #1a1a1a;
+        }
+
+        .timeline-item {
+          border-left-color: #b8b8b8;
+        }
+
+        .timeline-item::before,
+        .status-dot {
+          background: #111;
+          box-shadow: none;
+        }
+
+        .item-title,
+        h1,
+        .contact-item a,
+        .contact-item span:last-child,
+        .research-item a,
+        .skill-group strong,
+        .detail-item strong,
+        .research-item strong,
+        .language-item strong,
+        .interest-item strong,
+        .certificate-item strong {
+          color: #111;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toolbar no-print">
+      <a class="ghost-link" href="https://rubenitx.me">← <span data-i18n="toolbar.back">Back to Portfolio</span></a>
+      <div class="toolbar-actions">
+        <button type="button" class="ghost-button" onclick="toggleLang()">
+          <span data-i18n="toolbar.language">ES</span>
+        </button>
+        <button type="button" class="primary-button" onclick="window.print()">
+          ⭳ <span data-i18n="toolbar.print">Save as PDF</span>
+        </button>
+      </div>
+    </div>
+
+    <main class="page">
+      <header class="hero">
+        <section class="hero-panel">
+          <div class="hero-copy">
+            <p class="eyebrow" data-i18n="header.eyebrow">&gt; CURRICULUM.VITAE</p>
+            <h1 data-i18n="header.name">Rubén Martínez Bernabe</h1>
+            <p class="role" data-i18n="header.title">Full-Stack Developer</p>
+            <p class="summary" data-i18n="header.summary">
+              Full-Stack Developer with 3+ years of enterprise experience in the Java ecosystem.
+            </p>
+            <div class="highlight-row" id="highlightRow"></div>
+            <div class="availability">
+              <span class="status-dot" aria-hidden="true"></span>
+              <span data-i18n="header.availability">Open to remote, hybrid, or on-site opportunities</span>
+            </div>
+          </div>
+        </section>
+
+        <aside class="hero-panel">
+          <div class="contact-panel">
+            <div class="terminal-bar">
+              <span class="terminal-lights" aria-hidden="true"><span></span><span></span><span></span></span>
+              <span>resume/profile.json</span>
+            </div>
+            <div class="contact-grid">
+              <div class="contact-item">
+                <span class="label" data-i18n="contact.email">Email</span>
+                <a href="mailto:rmartbernabe@gmail.com">rmartbernabe@gmail.com</a>
+              </div>
+              <div class="contact-item">
+                <span class="label" data-i18n="contact.location">Location</span>
+                <span data-i18n="contact.locationValue">Barcelona, Spain</span>
+              </div>
+              <div class="contact-item">
+                <span class="label" data-i18n="contact.linkedin">LinkedIn</span>
+                <a href="https://linkedin.com/in/rubenmartinezbernabe" target="_blank" rel="noreferrer">
+                  linkedin.com/in/rubenmartinezbernabe
+                </a>
+              </div>
+              <div class="contact-item">
+                <span class="label" data-i18n="contact.github">GitHub</span>
+                <a href="https://github.com/rubenmtzb" target="_blank" rel="noreferrer">github.com/rubenmtzb</a>
+              </div>
+              <div class="contact-item" style="grid-column: 1 / -1;">
+                <span class="label" data-i18n="contact.portfolio">Portfolio</span>
+                <a href="https://rubenitx.me" target="_blank" rel="noreferrer">rubenitx.me</a>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </header>
+
+      <div class="layout">
+        <div class="stack">
+          <section class="card">
+            <h2 class="section-title" data-i18n="sections.experience">Experience</h2>
+            <div class="timeline" id="experienceList"></div>
+          </section>
+
+          <section class="card">
+            <h2 class="section-title" data-i18n="sections.research">Research</h2>
+            <div id="researchList"></div>
+          </section>
+        </div>
+
+        <div class="stack">
+          <section class="card">
+            <h2 class="section-title" data-i18n="sections.skills">Technical Skills</h2>
+            <div class="skill-groups" id="skillsList"></div>
+          </section>
+
+          <section class="card">
+            <h2 class="section-title" data-i18n="sections.education">Education</h2>
+            <div class="detail-list" id="educationList"></div>
+          </section>
+
+          <section class="card">
+            <h2 class="section-title" data-i18n="sections.certifications">Certifications</h2>
+            <div class="certificate-list" id="certificationsList"></div>
+          </section>
+
+          <section class="card">
+            <h2 class="section-title" data-i18n="sections.languages">Languages</h2>
+            <div class="language-list" id="languagesList"></div>
+          </section>
+
+          <section class="card">
+            <h2 class="section-title" data-i18n="sections.interests">Interests</h2>
+            <div class="interest-list" id="interestsList"></div>
+          </section>
+        </div>
+      </div>
+
+      <p class="footer-note" data-i18n="footer.note">References available upon request.</p>
+      <p class="footer-note print-only" data-i18n="footer.print">Printable CV — optimized for A4 PDF export.</p>
+    </main>
+
+    <script>
+      const texts = {
+        en: {
+          metaTitle: 'Rubén Martínez Bernabe | CV',
+          toolbar: {
+            back: 'Back to Portfolio',
+            language: 'ES',
+            print: 'Save as PDF',
+          },
+          header: {
+            eyebrow: '> CURRICULUM.VITAE',
+            name: 'Rubén Martínez Bernabe',
+            title: 'Full-Stack Developer',
+            summary:
+              'Full-Stack Developer with 3+ years of enterprise experience in the Java ecosystem. Specialized in building scalable backend services with Spring Boot and interactive frontends with React. Proven track record in REST API design, batch processing, and Liferay portal development. Co-author of a published bioinformatics research portal. Currently deepening expertise in DevOps practices, AI/LLMs, and blockchain technology.',
+            availability: 'Open to remote, hybrid, or on-site opportunities',
+            highlights: [
+              '3+ years in enterprise software',
+              'Spring Boot + React specialist',
+              'REST APIs, batch & portals',
+              'Barcelona, Spain',
+            ],
+          },
+          contact: {
+            email: 'Email',
+            location: 'Location',
+            locationValue: 'Barcelona, Spain',
+            linkedin: 'LinkedIn',
+            github: 'GitHub',
+            portfolio: 'Portfolio',
+          },
+          sections: {
+            experience: 'Experience',
+            research: 'Research',
+            skills: 'Technical Skills',
+            education: 'Education',
+            certifications: 'Certifications',
+            languages: 'Languages',
+            interests: 'Interests',
+          },
+          labels: {
+            technologies: 'Technologies',
+          },
+          experience: [
+            {
+              role: 'Software Engineer',
+              company: 'Egarsat',
+              period: 'Sep 2022 - Present',
+              location: 'Sant Cugat del Vallès, Barcelona | On-site',
+              bullets: [
+                'Full-stack development with Java + Spring Boot on the backend and React + TypeScript on the frontend.',
+                'Design and implementation of REST APIs for inter-service communication.',
+                'Batch process development for automated data processing.',
+                'Liferay portal customization and portlet development.',
+                'Containerized deployments with Docker.',
+              ],
+              technologies: 'Java, Spring Boot, React, TypeScript, Liferay, Docker, MySQL, REST APIs',
+            },
+            {
+              role: 'Software Developer (Internship)',
+              company: 'Universitat Rovira i Virgili',
+              period: 'Oct 2021 - May 2022',
+              location: 'Tarragona | Remote',
+              bullets: [
+                'End-to-end development of "The Mutational Landscape of SARS-CoV-2" research portal.',
+                'Interdisciplinary collaboration between software engineering and bioinformatics.',
+                'Full lifecycle ownership: design, development, testing, and production deployment.',
+              ],
+              technologies: 'TypeScript, PHP, Python, D3.js, Data Visualization',
+            },
+            {
+              role: 'Team Supervisor',
+              company: 'Taco Bell',
+              period: 'May 2021 - Sep 2022',
+              location: 'Barcelona | On-site',
+              bullets: [
+                'Led dynamic team operations, optimizing workflows during high-demand periods.',
+                'Handled task assignment and resource management for maximum efficiency.',
+              ],
+              technologies: 'Leadership, Team Management, Operations',
+            },
+            {
+              role: 'Systems Technician (Internship)',
+              company: 'BEEP',
+              period: 'Oct 2019 - Jun 2020',
+              location: '',
+              bullets: [
+                'Provided technical support and supported IT infrastructure maintenance.',
+              ],
+              technologies: 'IT Support, Systems, Networking',
+            },
+          ],
+          research: [
+            {
+              title: 'Co-author — The Mutational Landscape of SARS-CoV-2',
+              description:
+                'Interactive portal for SARS-CoV-2 genome mutation analysis developed in collaboration with Universitat Rovira i Virgili.',
+              link: 'http://sarscov2-mutation-portal.urv.cat',
+            },
+          ],
+          skills: [
+            {
+              title: 'Backend',
+              items: 'Java, Spring Boot, REST APIs, Batch Processing, Python, PHP',
+            },
+            {
+              title: 'Frontend',
+              items: 'React, TypeScript, JavaScript, Tailwind CSS, Liferay',
+            },
+            {
+              title: 'DevOps',
+              items: 'Docker, Kubernetes, CI/CD, Git, Linux',
+            },
+            {
+              title: 'Databases',
+              items: 'MySQL, PostgreSQL, MongoDB',
+            },
+            {
+              title: 'Other',
+              items: 'System Design, Clean Architecture, Agile/Scrum',
+            },
+          ],
+          education: [
+            {
+              title: "Bachelor's in Computer Software Engineering",
+              subtitle: 'UOC',
+              meta: 'Feb 2026 - Present',
+              description: 'In progress',
+            },
+            {
+              title: 'Advanced Course in DevOps',
+              subtitle: 'INESEM Business School',
+              meta: 'Jun 2025 - Dec 2025',
+              description: 'Outstanding',
+            },
+            {
+              title: 'Web Application Development (DAW), Bioinformatics',
+              subtitle: 'Instituto la Guineueta',
+              meta: '2020 - 2022',
+              description: '',
+            },
+            {
+              title: 'Microcomputer Systems and Networks (SMX)',
+              subtitle: 'Instituto la Guineueta',
+              meta: '2018 - 2020',
+              description: '',
+            },
+          ],
+          certifications: [
+            'Claude Code in Action — Anthropic (Jan 2026)',
+            'Advanced DevOps Course — INESEM Business School (Dec 2025) — Outstanding',
+            'Python Master — Udemy (May 2021)',
+            'JavaScript Master — Udemy (May 2021)',
+            'Java Junior Developer — Fundación Esplai (Jul 2021)',
+          ],
+          languages: [
+            { title: 'Spanish', description: 'Native' },
+            { title: 'Catalan', description: 'Native' },
+            { title: 'English', description: 'Professional working proficiency' },
+          ],
+          interests: [
+            { title: 'AI & Large Language Models', description: 'Building stronger intuition for modern AI tooling and workflows.' },
+            { title: 'Blockchain & Smart Contracts', description: 'Exploring decentralized systems, protocols, and practical applications.' },
+            { title: 'System Design & Clean Architecture', description: 'Designing resilient software that scales with product and team growth.' },
+          ],
+          footer: {
+            note: 'References available upon request.',
+            print: 'Printable CV — optimized for A4 PDF export.',
+          },
+        },
+        es: {
+          metaTitle: 'Rubén Martínez Bernabe | CV',
+          toolbar: {
+            back: 'Volver al portfolio',
+            language: 'EN',
+            print: 'Guardar como PDF',
+          },
+          header: {
+            eyebrow: '> CURRICULUM.VITAE',
+            name: 'Rubén Martínez Bernabe',
+            title: 'Desarrollador Full-Stack',
+            summary:
+              'Desarrollador Full-Stack con más de 3 años de experiencia empresarial en el ecosistema Java. Especializado en construir servicios backend escalables con Spring Boot y frontends interactivos con React. Historial demostrado en diseño de APIs REST, procesamiento batch y desarrollo sobre portales Liferay. Coautor de un portal de investigación bioinformática publicado. Actualmente profundizando en prácticas DevOps, IA/LLMs y tecnología blockchain.',
+            availability: 'Disponible para oportunidades remotas, híbridas o presenciales',
+            highlights: [
+              '3+ años en software empresarial',
+              'Especialista en Spring Boot + React',
+              'APIs REST, batch y portales',
+              'Barcelona, España',
+            ],
+          },
+          contact: {
+            email: 'Email',
+            location: 'Ubicación',
+            locationValue: 'Barcelona, España',
+            linkedin: 'LinkedIn',
+            github: 'GitHub',
+            portfolio: 'Portfolio',
+          },
+          sections: {
+            experience: 'Experiencia',
+            research: 'Investigación',
+            skills: 'Habilidades técnicas',
+            education: 'Formación',
+            certifications: 'Certificaciones',
+            languages: 'Idiomas',
+            interests: 'Intereses',
+          },
+          labels: {
+            technologies: 'Tecnologías',
+          },
+          experience: [
+            {
+              role: 'Ingeniero de Software',
+              company: 'Egarsat',
+              period: 'sept. 2022 - actualidad',
+              location: 'Sant Cugat del Vallès, Barcelona | Presencial',
+              bullets: [
+                'Desarrollo full-stack con Java + Spring Boot en backend y React + TypeScript en frontend.',
+                'Diseño e implementación de APIs REST para comunicación entre servicios.',
+                'Desarrollo de procesos batch para automatización del tratamiento de datos.',
+                'Customización de portales Liferay y desarrollo de portlets.',
+                'Despliegues containerizados con Docker.',
+              ],
+              technologies: 'Java, Spring Boot, React, TypeScript, Liferay, Docker, MySQL, APIs REST',
+            },
+            {
+              role: 'Desarrollador de Software (Prácticas)',
+              company: 'Universitat Rovira i Virgili',
+              period: 'oct. 2021 - may. 2022',
+              location: 'Tarragona | Remoto',
+              bullets: [
+                'Desarrollo end-to-end del portal de investigación "The Mutational Landscape of SARS-CoV-2".',
+                'Colaboración interdisciplinar entre ingeniería del software y bioinformática.',
+                'Participación en todo el ciclo de vida: diseño, desarrollo, testing y despliegue en producción.',
+              ],
+              technologies: 'TypeScript, PHP, Python, D3.js, Visualización de datos',
+            },
+            {
+              role: 'Supervisor de Equipo',
+              company: 'Taco Bell',
+              period: 'may. 2021 - sept. 2022',
+              location: 'Barcelona | Presencial',
+              bullets: [
+                'Lideré la operativa de equipos dinámicos, optimizando flujos de trabajo en periodos de alta demanda.',
+                'Asignación de tareas y gestión de recursos para maximizar la eficiencia.',
+              ],
+              technologies: 'Liderazgo, Gestión de equipos, Operaciones',
+            },
+            {
+              role: 'Técnico de Sistemas (Prácticas)',
+              company: 'BEEP',
+              period: 'oct. 2019 - jun. 2020',
+              location: '',
+              bullets: [
+                'Soporte técnico y apoyo en el mantenimiento de infraestructuras IT.',
+              ],
+              technologies: 'Soporte IT, Sistemas, Redes',
+            },
+          ],
+          research: [
+            {
+              title: 'Coautor — The Mutational Landscape of SARS-CoV-2',
+              description:
+                'Portal interactivo para el análisis de mutaciones del genoma SARS-CoV-2, desarrollado en colaboración con la Universitat Rovira i Virgili.',
+              link: 'http://sarscov2-mutation-portal.urv.cat',
+            },
+          ],
+          skills: [
+            {
+              title: 'Backend',
+              items: 'Java, Spring Boot, APIs REST, Procesamiento Batch, Python, PHP',
+            },
+            {
+              title: 'Frontend',
+              items: 'React, TypeScript, JavaScript, Tailwind CSS, Liferay',
+            },
+            {
+              title: 'DevOps',
+              items: 'Docker, Kubernetes, CI/CD, Git, Linux',
+            },
+            {
+              title: 'Bases de datos',
+              items: 'MySQL, PostgreSQL, MongoDB',
+            },
+            {
+              title: 'Otros',
+              items: 'System Design, Clean Architecture, Agile/Scrum',
+            },
+          ],
+          education: [
+            {
+              title: 'Grado en Ingeniería del Software',
+              subtitle: 'UOC',
+              meta: 'feb. 2026 - actualidad',
+              description: 'En curso',
+            },
+            {
+              title: 'Curso Avanzado en DevOps',
+              subtitle: 'INESEM Business School',
+              meta: 'jun. 2025 - dic. 2025',
+              description: 'Sobresaliente',
+            },
+            {
+              title: 'Desarrollo de Aplicaciones Web (DAW), Bioinformática',
+              subtitle: 'Instituto la Guineueta',
+              meta: '2020 - 2022',
+              description: '',
+            },
+            {
+              title: 'Sistemas Microinformáticos y Redes (SMX)',
+              subtitle: 'Instituto la Guineueta',
+              meta: '2018 - 2020',
+              description: '',
+            },
+          ],
+          certifications: [
+            'Claude Code in Action — Anthropic (ene. 2026)',
+            'Curso Avanzado de DevOps — INESEM Business School (dic. 2025) — Sobresaliente',
+            'Python Master — Udemy (may. 2021)',
+            'JavaScript Master — Udemy (may. 2021)',
+            'Java Junior Developer — Fundación Esplai (jul. 2021)',
+          ],
+          languages: [
+            { title: 'Español', description: 'Nativo' },
+            { title: 'Catalán', description: 'Nativo' },
+            { title: 'Inglés', description: 'Competencia profesional' },
+          ],
+          interests: [
+            { title: 'IA y Large Language Models', description: 'Profundizando en herramientas y flujos de trabajo de IA aplicada.' },
+            { title: 'Blockchain y Smart Contracts', description: 'Explorando sistemas descentralizados, protocolos y aplicaciones reales.' },
+            { title: 'System Design y Clean Architecture', description: 'Diseñando software robusto que escala con producto y equipo.' },
+          ],
+          footer: {
+            note: 'Referencias disponibles bajo petición.',
+            print: 'CV imprimible — optimizado para exportación A4 en PDF.',
+          },
+        },
+      }
+
+      let lang = 'en'
+
+      function getNestedValue(source, path) {
+        return path.split('.').reduce((acc, key) => (acc ? acc[key] : undefined), source)
+      }
+
+      function renderHighlights() {
+        const container = document.getElementById('highlightRow')
+        container.innerHTML = texts[lang].header.highlights
+          .map((item) => `<span class="highlight-chip">${item}</span>`)
+          .join('')
+      }
+
+      function renderExperience() {
+        const container = document.getElementById('experienceList')
+        container.innerHTML = texts[lang].experience
+          .map(
+            (item) => `
+              <article class="timeline-item">
+                <div class="item-head">
+                  <div>
+                    <h3 class="item-title">${item.role}</h3>
+                    <p class="item-company">${item.company}</p>
+                  </div>
+                  <span class="item-meta">${item.period}</span>
+                </div>
+                ${item.location ? `<p class="item-location">${item.location}</p>` : ''}
+                <ul class="item-list">${item.bullets.map((bullet) => `<li>${bullet}</li>`).join('')}</ul>
+                <p class="tech-line"><span class="tech-label">${texts[lang].labels.technologies}:</span> ${item.technologies}</p>
+              </article>
+            `,
+          )
+          .join('')
+      }
+
+      function renderSkills() {
+        const container = document.getElementById('skillsList')
+        container.innerHTML = texts[lang].skills
+          .map(
+            (item) => `
+              <article class="skill-group">
+                <strong>${item.title}</strong>
+                <span>${item.items}</span>
+              </article>
+            `,
+          )
+          .join('')
+      }
+
+      function renderEducation() {
+        const container = document.getElementById('educationList')
+        container.innerHTML = texts[lang].education
+          .map(
+            (item) => `
+              <article class="detail-item">
+                <strong>${item.title}</strong>
+                <span>${item.subtitle}</span>
+                <span class="detail-meta">${item.meta}</span>
+                ${item.description ? `<span class="detail-description">${item.description}</span>` : ''}
+              </article>
+            `,
+          )
+          .join('')
+      }
+
+      function renderCertifications() {
+        const container = document.getElementById('certificationsList')
+        container.innerHTML = texts[lang].certifications
+          .map(
+            (item) => `
+              <article class="certificate-item">
+                <strong>${item}</strong>
+              </article>
+            `,
+          )
+          .join('')
+      }
+
+      function renderResearch() {
+        const container = document.getElementById('researchList')
+        container.innerHTML = texts[lang].research
+          .map(
+            (item) => `
+              <article class="research-item">
+                <strong>${item.title}</strong>
+                <span>${item.description}</span>
+                <span style="display:block;margin-top:0.55rem;">
+                  <a href="${item.link}" target="_blank" rel="noreferrer">${item.link}</a>
+                </span>
+              </article>
+            `,
+          )
+          .join('')
+      }
+
+      function renderLanguages() {
+        const container = document.getElementById('languagesList')
+        container.innerHTML = texts[lang].languages
+          .map(
+            (item) => `
+              <article class="language-item">
+                <strong>${item.title}</strong>
+                <span>${item.description}</span>
+              </article>
+            `,
+          )
+          .join('')
+      }
+
+      function renderInterests() {
+        const container = document.getElementById('interestsList')
+        container.innerHTML = texts[lang].interests
+          .map(
+            (item) => `
+              <article class="interest-item">
+                <strong>${item.title}</strong>
+                <span>${item.description}</span>
+              </article>
+            `,
+          )
+          .join('')
+      }
+
+      function updateTexts() {
+        const dictionary = texts[lang]
+        document.documentElement.lang = lang
+        document.title = dictionary.metaTitle
+
+        document.querySelectorAll('[data-i18n]').forEach((element) => {
+          const value = getNestedValue(dictionary, element.dataset.i18n)
+          if (typeof value === 'string') {
+            element.textContent = value
+          }
+        })
+
+        renderHighlights()
+        renderExperience()
+        renderSkills()
+        renderEducation()
+        renderCertifications()
+        renderResearch()
+        renderLanguages()
+        renderInterests()
+      }
+
+      function toggleLang() {
+        lang = lang === 'en' ? 'es' : 'en'
+        updateTexts()
+      }
+
+      updateTexts()
+    </script>
+  </body>
+</html>

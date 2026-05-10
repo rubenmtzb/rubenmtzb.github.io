@@ -75,11 +75,11 @@ body {
   50% { border-color: rgba(0, 255, 136, 0.6); }
 }
 
-.scanline-anim { animation: scanline 3.5s linear infinite; }
+.scanline-anim { animation: scanline 3.5s linear infinite; will-change: top; }
 .blink-anim { animation: blink 1s step-end infinite; }
-.particle { animation: floatParticle var(--dur, 3s) ease-in-out var(--delay, 0s) infinite; }
+.particle { animation: floatParticle var(--dur, 3s) ease-in-out var(--delay, 0s) infinite; will-change: transform, opacity; }
 .glow-pulse { animation: pulse-glow 2s ease-in-out infinite; }
-.grid-move { animation: gridMove 3s linear infinite; }
+.grid-move { animation: gridMove 3s linear infinite; will-change: background-position; }
 .border-glow { animation: borderGlow 2s ease-in-out infinite; }
 
 /* ============ GLOWS ============ */

@@ -1,40 +1,91 @@
 import { motion } from 'framer-motion'
 import { Award, BadgeCheck, Shield } from 'lucide-react'
+import { useLanguage } from '../i18n/LanguageContext'
 
-const certifications = [
-  {
-    title: 'Claude Code in Action',
-    issuer: 'Anthropic',
-    date: 'Enero 2026',
-    id: '7h7wd7qewuw8',
-    tags: ['AI', 'LLMs', 'Prompt Engineering'],
+const translations = {
+  en: {
+    title: 'CERTIFICATIONS',
+    issuedBy: 'Issued by',
+    dateLabel: 'Date',
+    idLabel: 'ID',
+    gradeLabel: 'Grade',
+    certs: [
+      {
+        title: 'Claude Code in Action',
+        issuer: 'Anthropic',
+        date: 'January 2026',
+        id: '7h7wd7qewuw8',
+        tags: ['AI', 'LLMs', 'Prompt Engineering'],
+      },
+      {
+        title: 'Advanced DevOps Course',
+        issuer: 'INESEM Business School',
+        date: 'December 2025',
+        note: 'Outstanding',
+        tags: ['DevOps', 'CI/CD', 'Docker', 'Kubernetes'],
+      },
+      {
+        title: 'Python Master',
+        issuer: 'Udemy',
+        date: 'May 2021',
+        tags: ['Python', 'Git'],
+      },
+      {
+        title: 'JavaScript Master',
+        issuer: 'Udemy',
+        date: 'May 2021',
+        tags: ['JavaScript', 'ES6+', 'Git'],
+      },
+      {
+        title: 'Java Junior Developer',
+        issuer: 'Fundación Esplai',
+        date: 'July 2021',
+        tags: ['Java', 'Git'],
+      },
+    ],
   },
-  {
-    title: 'Curso Superior en DevOps',
-    issuer: 'INESEM Business School',
-    date: 'Diciembre 2025',
-    note: 'Sobresaliente',
-    tags: ['DevOps', 'CI/CD', 'Docker', 'Kubernetes'],
+  es: {
+    title: 'CERTIFICACIONES',
+    issuedBy: 'Expedido por',
+    dateLabel: 'Fecha',
+    idLabel: 'ID',
+    gradeLabel: 'Nota',
+    certs: [
+      {
+        title: 'Claude Code in Action',
+        issuer: 'Anthropic',
+        date: 'Enero 2026',
+        id: '7h7wd7qewuw8',
+        tags: ['AI', 'LLMs', 'Prompt Engineering'],
+      },
+      {
+        title: 'Curso Superior en DevOps',
+        issuer: 'INESEM Business School',
+        date: 'Diciembre 2025',
+        note: 'Sobresaliente',
+        tags: ['DevOps', 'CI/CD', 'Docker', 'Kubernetes'],
+      },
+      {
+        title: 'Master en Python',
+        issuer: 'Udemy',
+        date: 'Mayo 2021',
+        tags: ['Python', 'Git'],
+      },
+      {
+        title: 'Master en JavaScript',
+        issuer: 'Udemy',
+        date: 'Mayo 2021',
+        tags: ['JavaScript', 'ES6+', 'Git'],
+      },
+      {
+        title: 'Java Junior Developer',
+        issuer: 'Fundación Esplai',
+        date: 'Julio 2021',
+        tags: ['Java', 'Git'],
+      },
+    ],
   },
-  {
-    title: 'Master en Python',
-    issuer: 'Udemy',
-    date: 'Mayo 2021',
-    tags: ['Python', 'Git'],
-  },
-  {
-    title: 'Master en JavaScript',
-    issuer: 'Udemy',
-    date: 'Mayo 2021',
-    tags: ['JavaScript', 'ES6+', 'Git'],
-  },
-  {
-    title: 'Java Junior Developer',
-    issuer: 'Fundación Esplai',
-    date: 'Julio 2021',
-    tags: ['Java', 'Git'],
-  },
-]
+}
 
 const icons = [Award, BadgeCheck, Shield]
 
@@ -62,6 +113,9 @@ const itemVariants = {
 }
 
 export default function Certifications() {
+  const { language } = useLanguage()
+  const t = translations[language]
+
   return (
     <section id="certifications" className="relative py-20 px-6 overflow-hidden">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(0,255,136,0.08),transparent_32%),radial-gradient(circle_at_top_right,rgba(191,95,255,0.06),transparent_26%)]" />
@@ -75,7 +129,7 @@ export default function Certifications() {
         >
           <h2 className="text-3xl font-extrabold tracking-widest uppercase text-white text-glow-green mb-12 text-center">
             <span className="text-green-400">&gt; </span>
-            CERTIFICATIONS
+            {t.title}
           </h2>
         </motion.div>
 
@@ -86,7 +140,7 @@ export default function Certifications() {
           whileInView="show"
           viewport={{ once: true, amount: 0.18 }}
         >
-          {certifications.map((certification, index) => {
+          {t.certs.map((certification, index) => {
             const Icon = icons[index % icons.length]
 
             return (
@@ -102,7 +156,7 @@ export default function Certifications() {
                 <div className="relative flex h-full flex-col">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <p className="text-[0.72rem] uppercase tracking-[0.32em] text-green-300/75">Expedido por</p>
+                      <p className="text-[0.72rem] uppercase tracking-[0.32em] text-green-300/75">{t.issuedBy}</p>
                       <p className="mt-1 text-sm font-medium text-green-200">{certification.issuer}</p>
                     </div>
 
@@ -115,16 +169,16 @@ export default function Certifications() {
 
                   <div className="mt-4 space-y-2 text-sm text-slate-300/85">
                     <p>
-                      <span className="text-green-300/70">Fecha:</span> {certification.date}
+                      <span className="text-green-300/70">{t.dateLabel}:</span> {certification.date}
                     </p>
                     {certification.id ? (
                       <p>
-                        <span className="text-green-300/70">ID:</span> {certification.id}
+                        <span className="text-green-300/70">{t.idLabel}:</span> {certification.id}
                       </p>
                     ) : null}
                     {certification.note ? (
                       <p>
-                        <span className="text-green-300/70">Nota:</span> {certification.note}
+                        <span className="text-green-300/70">{t.gradeLabel}:</span> {certification.note}
                       </p>
                     ) : null}
                   </div>

@@ -1,14 +1,25 @@
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ChevronDown, Mail } from 'lucide-react'
+import { useLanguage } from '../i18n/LanguageContext'
 import { GithubIcon, LinkedinIcon } from './BrandIcons'
 
-const TITLES = [
-  'Full-Stack Engineer',
-  'Spring Boot + React',
-  'DevOps Enthusiast',
-  'Building in quiet mode',
-]
+const translations = {
+  en: {
+    titles: ['Full-Stack Engineer', 'Spring Boot + React', 'DevOps Enthusiast', 'Building in quiet mode'],
+    tagline: 'Transforming complex problems into efficient, scalable software',
+    viewWork: 'View My Work',
+    getInTouch: 'Get in Touch',
+    scrollToAbout: 'Scroll to about section',
+  },
+  es: {
+    titles: ['Full-Stack Engineer', 'Spring Boot + React', 'Entusiasta de DevOps', 'Construyendo en modo silencioso'],
+    tagline: 'Transformando problemas complejos en software eficiente y escalable',
+    viewWork: 'Ver Mi Trabajo',
+    getInTouch: 'Contactar',
+    scrollToAbout: 'Ir a la sección sobre mí',
+  },
+}
 
 const PARTICLES = [
   { top: '14%', left: '12%', size: 5, dur: '3.2s', delay: '0s' },
@@ -72,46 +83,9 @@ function scrollToSection(sectionId) {
   }
 }
 
-export default function Hero() {
-  const [phraseIndex, setPhraseIndex] = useState(0)
-  const [displayText, setDisplayText] = useState('')
-  const [isDeleting, setIsDeleting] = useState(false)
-
-  useEffect(() => {
-    const currentPhrase = TITLES[phraseIndex]
-    const isComplete = displayText === currentPhrase
-    const isReset = displayText.length === 0
-
-    const delay = isComplete && !isDeleting ? 1350 : isReset && isDeleting ? 280 : isDeleting ? 45 : 90
-
-    const interval = window.setInterval(() => {
-      if (!isDeleting) {
-        if (isComplete) {
-          setIsDeleting(true)
-          return
-        }
-
-        setDisplayText(currentPhrase.slice(0, displayText.length + 1))
-        return
-      }
-
-      if (isReset) {
-        setIsDeleting(false)
-        setPhraseIndex((currentValue) => (currentValue + 1) % TITLES.length)
-        return
-      }
-
-      setDisplayText(currentPhrase.slice(0, displayText.length - 1))
-    }, delay)
-
-    return () => window.clearInterval(interval)
-  }, [displayText, isDeleting, phraseIndex])
-
+const HeroBackdrop = memo(function HeroBackdrop() {
   return (
-    <section
-      id="home"
-      className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 pb-20 pt-28 sm:px-8"
-    >
+    <>
       <div
         className="grid-move absolute inset-0 opacity-25"
         style={{
@@ -154,6 +128,102 @@ export default function Hero() {
       <div className="pointer-events-none absolute bottom-8 right-6 z-10 text-xs uppercase tracking-[0.35em] text-green-500/30 sm:right-10">
         [ UPTIME: ∞ ]
       </div>
+    </>
+  )
+})
+
+const HeroAvatar = memo(function HeroAvatar() {
+  return (
+    <motion.div variants={itemVariants} className="mb-5">
+      <div className="mx-auto flex h-36 w-36 items-center justify-center rounded-full border border-green-400/40 bg-black/45 p-2 shadow-[0_0_55px_rgba(0,255,136,0.18)] glow-pulse sm:h-40 sm:w-40">
+        <img
+          src="/avatar.png"
+          alt="Rubén Martínez Bernabe avatar"
+          className="h-full w-full rounded-full border border-green-400/30 object-cover"
+          width="160"
+          height="160"
+          decoding="async"
+          fetchPriority="high"
+        />
+      </div>
+    </motion.div>
+  )
+})
+
+const HeroSocialLinks = memo(function HeroSocialLinks() {
+  return (
+    <motion.div variants={itemVariants} className="mt-12 flex items-center gap-4 sm:mt-14">
+      {SOCIAL_LINKS.map((link) => {
+        const Icon = link.icon
+
+        return (
+          <a
+            key={link.label}
+            href={link.href}
+            target={link.href.startsWith('mailto:') ? undefined : '_blank'}
+            rel={link.href.startsWith('mailto:') ? undefined : 'noreferrer'}
+            aria-label={link.label}
+            className="flex h-12 w-12 items-center justify-center rounded-full border border-green-500/20 bg-black/40 text-green-300 transition hover:-translate-y-1 hover:border-green-300/40 hover:bg-green-500/10 hover:text-green-100 hover:shadow-[0_0_22px_rgba(0,255,136,0.2)]"
+          >
+            <Icon className="h-5 w-5" />
+          </a>
+        )
+      })}
+    </motion.div>
+  )
+})
+
+export default function Hero() {
+  const { language } = useLanguage()
+  const t = translations[language]
+  const [phraseIndex, setPhraseIndex] = useState(0)
+  const [displayText, setDisplayText] = useState('')
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  useEffect(() => {
+    // Reset the typewriter whenever the active language changes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPhraseIndex(0)
+    setDisplayText('')
+    setIsDeleting(false)
+  }, [language])
+
+  useEffect(() => {
+    const currentPhrase = t.titles[phraseIndex] ?? ''
+    const isComplete = displayText === currentPhrase
+    const isReset = displayText.length === 0
+
+    const delay = isComplete && !isDeleting ? 1350 : isReset && isDeleting ? 280 : isDeleting ? 45 : 90
+
+    const timeoutId = window.setTimeout(() => {
+      if (!isDeleting) {
+        if (isComplete) {
+          setIsDeleting(true)
+          return
+        }
+
+        setDisplayText(currentPhrase.slice(0, displayText.length + 1))
+        return
+      }
+
+      if (isReset) {
+        setIsDeleting(false)
+        setPhraseIndex((currentValue) => (currentValue + 1) % t.titles.length)
+        return
+      }
+
+      setDisplayText(currentPhrase.slice(0, displayText.length - 1))
+    }, delay)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [displayText, isDeleting, phraseIndex, t.titles])
+
+  return (
+    <section
+      id="home"
+      className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 pb-20 pt-28 sm:px-8"
+    >
+      <HeroBackdrop />
 
       <motion.div
         variants={containerVariants}
@@ -161,15 +231,7 @@ export default function Hero() {
         animate="show"
         className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center text-center"
       >
-        <motion.div variants={itemVariants} className="mb-5">
-          <div className="mx-auto flex h-36 w-36 items-center justify-center rounded-full border border-green-400/40 bg-black/45 p-2 shadow-[0_0_55px_rgba(0,255,136,0.18)] glow-pulse sm:h-40 sm:w-40">
-            <img
-              src="/avatar.png"
-              alt="Rubén Martínez Bernabe avatar"
-              className="h-full w-full rounded-full border border-green-400/30 object-cover"
-            />
-          </div>
-        </motion.div>
+        <HeroAvatar />
 
         <motion.div
           variants={itemVariants}
@@ -201,7 +263,7 @@ export default function Hero() {
           variants={itemVariants}
           className="mt-4 max-w-3xl text-base leading-8 text-slate-300/85 sm:text-lg"
         >
-          Transforming complex problems into efficient, scalable software
+          {t.tagline}
         </motion.p>
 
         <motion.div variants={itemVariants} className="mt-8 flex flex-col gap-4 sm:flex-row">
@@ -210,35 +272,18 @@ export default function Hero() {
             onClick={() => scrollToSection('projects')}
             className="box-glow-green-strong rounded-full border border-green-300/30 bg-gradient-to-r from-green-400 via-emerald-300 to-cyan-300 px-7 py-3 text-sm font-semibold uppercase tracking-[0.28em] text-slate-950 transition duration-300 hover:scale-[1.03] hover:shadow-[0_0_32px_rgba(0,255,136,0.35)]"
           >
-            View My Work
+            {t.viewWork}
           </button>
           <button
             type="button"
             onClick={() => scrollToSection('contact')}
             className="rounded-full border border-green-400/35 bg-black/30 px-7 py-3 text-sm font-semibold uppercase tracking-[0.28em] text-green-200 transition duration-300 hover:scale-[1.03] hover:bg-green-500/10 hover:shadow-[0_0_26px_rgba(0,255,136,0.2)]"
           >
-            Get in Touch
+            {t.getInTouch}
           </button>
         </motion.div>
 
-        <motion.div variants={itemVariants} className="mt-12 flex items-center gap-4 sm:mt-14">
-          {SOCIAL_LINKS.map((link) => {
-            const Icon = link.icon
-
-            return (
-              <a
-                key={link.label}
-                href={link.href}
-                target={link.href.startsWith('mailto:') ? undefined : '_blank'}
-                rel={link.href.startsWith('mailto:') ? undefined : 'noreferrer'}
-                aria-label={link.label}
-                className="flex h-12 w-12 items-center justify-center rounded-full border border-green-500/20 bg-black/40 text-green-300 transition hover:-translate-y-1 hover:border-green-300/40 hover:bg-green-500/10 hover:text-green-100 hover:shadow-[0_0_22px_rgba(0,255,136,0.2)]"
-              >
-                <Icon className="h-5 w-5" />
-              </a>
-            )
-          })}
-        </motion.div>
+        <HeroSocialLinks />
       </motion.div>
 
       <motion.button
@@ -247,7 +292,7 @@ export default function Hero() {
         animate={{ y: [0, 8, 0] }}
         transition={{ duration: 1.8, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
         className="absolute bottom-5 left-1/2 z-10 inline-flex -translate-x-1/2 items-center justify-center rounded-full border border-green-500/20 bg-black/35 p-3 text-green-300 backdrop-blur-sm transition hover:border-green-300/40 hover:text-green-100"
-        aria-label="Scroll to about section"
+        aria-label={t.scrollToAbout}
       >
         <ChevronDown className="h-5 w-5" />
       </motion.button>
