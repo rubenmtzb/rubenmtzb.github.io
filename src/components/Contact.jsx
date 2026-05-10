@@ -111,15 +111,17 @@ export default function Contact() {
         viewport={{ once: true, amount: 0.1 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       >
-        <motion.p
-          className="mb-4 text-sm uppercase tracking-[0.35em] text-green-400"
-          initial={{ opacity: 0, y: 16 }}
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.1 }}
-          transition={{ duration: 0.5, delay: 0.05 }}
+          transition={{ duration: 0.5 }}
         >
-          &gt; {t.sectionLabel}
-        </motion.p>
+          <h2 className="mb-4 text-center text-2xl font-extrabold tracking-widest uppercase text-white text-glow-green sm:text-3xl">
+            <span className="text-green-400">&gt; </span>
+            {t.sectionLabel}
+          </h2>
+        </motion.div>
 
         <motion.h2
           className="max-w-3xl text-3xl font-bold text-white sm:text-4xl md:text-5xl"
