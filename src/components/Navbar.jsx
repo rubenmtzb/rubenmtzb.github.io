@@ -112,7 +112,7 @@ export default function Navbar() {
                 key={item.id}
                 type="button"
                 onClick={() => handleNavigate(item.id)}
-                className="relative rounded-full px-3 py-2 text-sm uppercase tracking-[0.25em] text-green-400/70 transition hover:text-green-300"
+                className="relative whitespace-nowrap rounded-full px-3 py-2 text-sm uppercase tracking-[0.25em] text-green-400/70 transition hover:text-green-300"
               >
                 {isActive && (
                   <motion.span
