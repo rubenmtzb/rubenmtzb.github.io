@@ -39,27 +39,34 @@ export default function Navbar() {
   }, [])
 
   useEffect(() => {
-    const sections = NAV_ITEMS
-      .map((item) => document.getElementById(item.id))
-      .filter(Boolean)
+    const sectionIds = NAV_ITEMS.map((item) => item.id)
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id)
-          }
-        })
-      },
-      {
-        rootMargin: '-15% 0px -80% 0px',
-        threshold: 0,
-      },
-    )
+    const handleScrollSpy = () => {
+      const scrollY = window.scrollY
+      const viewportHeight = window.innerHeight
+      const triggerLine = scrollY + viewportHeight * 0.25
 
-    sections.forEach((section) => observer.observe(section))
+      let current = sectionIds[0]
 
-    return () => observer.disconnect()
+      for (const id of sectionIds) {
+        const el = document.getElementById(id)
+        if (el && el.offsetTop <= triggerLine) {
+          current = id
+        }
+      }
+
+      // If near bottom of page, activate last section
+      if (window.innerHeight + scrollY >= document.body.scrollHeight - 100) {
+        current = sectionIds[sectionIds.length - 1]
+      }
+
+      setActiveSection(current)
+    }
+
+    handleScrollSpy()
+    window.addEventListener('scroll', handleScrollSpy, { passive: true })
+
+    return () => window.removeEventListener('scroll', handleScrollSpy)
   }, [])
 
   useEffect(() => {
