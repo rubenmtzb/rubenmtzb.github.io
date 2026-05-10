@@ -33,7 +33,7 @@ const toolbox = [
   { name: 'MongoDB', label: 'NoSQL', icon: 'mongodb' },
   { name: 'Git', label: 'Version control', icon: 'git' },
   { name: 'Linux', label: 'Server environment', icon: 'linux' },
-  { name: 'Liferay', label: 'Portal platform' },
+  { name: 'Liferay', label: 'Portal platform', iconUrl: '/icons/liferay.svg' },
 ]
 
 const gridVariants = {
@@ -80,21 +80,15 @@ function TechCard({ tech }) {
         <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-green-400/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
         <div className="relative flex h-full flex-col items-center justify-center text-center">
-          {tech.icon ? (
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-green-500/15 bg-green-500/5 shadow-[0_0_0_1px_rgba(0,255,136,0.04)] transition-all duration-300 group-hover:border-green-400/40 group-hover:shadow-[0_0_24px_rgba(0,255,136,0.18)]">
-              <img
-                src={`https://skillicons.dev/icons?i=${tech.icon}&theme=dark`}
-                alt={tech.name}
-                className="h-11 w-11"
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-          ) : (
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-purple-400/25 bg-gradient-to-br from-purple-500/15 to-cyan-500/10 text-lg font-black uppercase tracking-[0.35em] text-purple-200 shadow-[0_0_22px_rgba(191,95,255,0.2)]">
-              LI
-            </div>
-          )}
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-green-500/15 bg-green-500/5 shadow-[0_0_0_1px_rgba(0,255,136,0.04)] transition-all duration-300 group-hover:border-green-400/40 group-hover:shadow-[0_0_24px_rgba(0,255,136,0.18)]">
+            <img
+              src={tech.iconUrl || `https://skillicons.dev/icons?i=${tech.icon}&theme=dark`}
+              alt={tech.name}
+              className="h-11 w-11"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
 
           <h3 className="mt-4 text-sm font-semibold uppercase tracking-[0.28em] text-white">
             {tech.name}
@@ -120,7 +114,7 @@ function StackGroup({ title, items }) {
         variants={gridVariants}
         initial="hidden"
         whileInView="show"
-        viewport={{ once: true, amount: 0.2 }}
+        viewport={{ once: true, amount: 0.1 }}
       >
         {items.map((tech) => (
           <TechCard key={tech.name} tech={tech} />
@@ -142,7 +136,7 @@ export default function TechStack() {
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.5 }}
         >
           <h2 className="text-3xl font-extrabold tracking-widest uppercase text-white text-glow-green mb-12 text-center">

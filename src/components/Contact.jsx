@@ -108,14 +108,14 @@ export default function Contact() {
         className="relative mx-auto flex max-w-6xl flex-col items-center text-center"
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
+        viewport={{ once: true, amount: 0.1 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       >
         <motion.p
           className="mb-4 text-sm uppercase tracking-[0.35em] text-green-400"
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.5, delay: 0.05 }}
         >
           &gt; {t.sectionLabel}
@@ -125,7 +125,7 @@ export default function Contact() {
           className="max-w-3xl text-3xl font-bold text-white sm:text-4xl md:text-5xl"
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.6, delay: 0.1 }}
         >
           {t.headline}
@@ -135,7 +135,7 @@ export default function Contact() {
           className="mt-5 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg"
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.6, delay: 0.18 }}
         >
           {t.subheadline}
@@ -145,7 +145,7 @@ export default function Contact() {
           className="mt-8 inline-flex items-center gap-2 rounded-full border border-green-500/20 bg-black/40 px-4 py-2 text-sm text-green-300 backdrop-blur-sm"
           initial={{ opacity: 0, scale: 0.98 }}
           whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.5, delay: 0.24 }}
         >
           <span>{t.connecting}</span>
@@ -164,7 +164,7 @@ export default function Contact() {
           variants={containerVariants}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.1 }}
         >
           {contactMethods.map(({ label, description, href, display, Icon }) => {
             const isExternal = href.startsWith('http')
@@ -199,7 +199,7 @@ export default function Contact() {
           className="mt-12 flex flex-col items-center gap-5"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.6, delay: 0.18 }}
         >
           <motion.a

@@ -52,7 +52,7 @@ export default function ResumeSection() {
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
           className="relative overflow-hidden rounded-[28px] border border-green-500/20 bg-black/40 p-8 backdrop-blur-sm sm:p-10"
         >
@@ -96,7 +96,7 @@ export default function ResumeSection() {
             <motion.div
               initial={{ opacity: 0, x: 18 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
+              viewport={{ once: true, amount: 0.1 }}
               transition={{ duration: 0.7, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
               className="relative mx-auto w-full max-w-md rounded-3xl border border-green-500/20 bg-[#02050b]/85 p-5 text-left shadow-[0_0_35px_rgba(0,255,136,0.08)]"
             >

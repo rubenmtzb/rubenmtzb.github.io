@@ -19,6 +19,15 @@ const translations = {
         current: true,
       },
       {
+        role: 'Team Supervisor',
+        company: 'Taco Bell',
+        period: 'May 2021 - September 2022 · 1 year and 5 months',
+        location: 'Barcelona',
+        description:
+          'Leadership of a dynamic team, optimizing task assignment and workflows to maximize operational efficiency during high-demand peaks. Development of management and communication skills in fast-paced environments.',
+        tags: ['Leadership', 'Team Management', 'Operations'],
+      },
+      {
         role: 'Software Developer (Internship)',
         company: 'Universitat Rovira i Virgili',
         period: 'October 2021 - May 2022 · 8 months',
@@ -27,15 +36,6 @@ const translations = {
         description:
           'End-to-end responsibility for the development of the research portal "The Mutational Landscape of SARS-CoV-2", from design conception to production deployment. Interdisciplinary work between software engineering and bioinformatics.',
         tags: ['TypeScript', 'PHP', 'Python', 'Data Visualization', 'Bioinformatics'],
-      },
-      {
-        role: 'Team Supervisor',
-        company: 'Taco Bell',
-        period: 'May 2021 - September 2022 · 1 year and 5 months',
-        location: 'Barcelona',
-        description:
-          'Leadership of a dynamic team, optimizing task assignment and workflows to maximize operational efficiency during high-demand peaks. Development of management and communication skills in fast-paced environments.',
-        tags: ['Leadership', 'Team Management', 'Operations'],
       },
       {
         role: 'Systems Technician (Internship)',
@@ -62,6 +62,15 @@ const translations = {
         current: true,
       },
       {
+        role: 'Supervisor de Equipo',
+        company: 'Taco Bell',
+        period: 'Mayo 2021 - Septiembre 2022 · 1 año y 5 meses',
+        location: 'Barcelona',
+        description:
+          'Liderazgo de un equipo dinámico, optimizando la asignación de tareas y los flujos de trabajo para maximizar la eficiencia operativa durante picos de alta demanda. Desarrollo de habilidades de gestión y comunicación en entornos de alto ritmo.',
+        tags: ['Leadership', 'Team Management', 'Operations'],
+      },
+      {
         role: 'Software Developer (Internship)',
         company: 'Universitat Rovira i Virgili',
         period: 'Octubre 2021 - Mayo 2022 · 8 meses',
@@ -70,15 +79,6 @@ const translations = {
         description:
           'Responsabilidad end-to-end del desarrollo del portal de investigación "The Mutational Landscape of SARS-CoV-2", desde la concepción del diseño hasta el despliegue en producción. Trabajo interdisciplinar entre ingeniería de software y bioinformática.',
         tags: ['TypeScript', 'PHP', 'Python', 'Data Visualization', 'Bioinformatics'],
-      },
-      {
-        role: 'Supervisor de Equipo',
-        company: 'Taco Bell',
-        period: 'Mayo 2021 - Septiembre 2022 · 1 año y 5 meses',
-        location: 'Barcelona',
-        description:
-          'Liderazgo de un equipo dinámico, optimizando la asignación de tareas y los flujos de trabajo para maximizar la eficiencia operativa durante picos de alta demanda. Desarrollo de habilidades de gestión y comunicación en entornos de alto ritmo.',
-        tags: ['Leadership', 'Team Management', 'Operations'],
       },
       {
         role: 'Técnico de Sistemas (Prácticas)',
@@ -100,7 +100,7 @@ export default function Experience() {
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
+        viewport={{ once: true, amount: 0.1 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
         className="space-y-12"
       >
@@ -124,7 +124,7 @@ export default function Experience() {
                     <motion.article
                       initial={{ opacity: 0, y: 30, x: isLeft ? -40 : 40 }}
                       whileInView={{ opacity: 1, y: 0, x: 0 }}
-                      viewport={{ once: true, amount: 0.25 }}
+                      viewport={{ once: true, amount: 0.1 }}
                       transition={{ duration: 0.65, ease: 'easeOut', delay: index * 0.08 }}
                       className="relative rounded-xl border border-green-500/20 bg-black/40 p-6 backdrop-blur-sm"
                     >

@@ -217,7 +217,7 @@ export default function Projects() {
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.5 }}
         >
           <h2 className="text-3xl font-extrabold tracking-widest uppercase text-white text-glow-green mb-12 text-center">
@@ -231,7 +231,7 @@ export default function Projects() {
           variants={sectionVariants}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, amount: 0.16 }}
+          viewport={{ once: true, amount: 0.1 }}
         >
           {featuredProjects.map((project) => (
             <ProjectCard key={project.title} project={project} visitProject={t.visitProject} comingSoon={t.comingSoon} />
@@ -243,7 +243,7 @@ export default function Projects() {
           variants={sectionVariants}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, amount: 0.16 }}
+          viewport={{ once: true, amount: 0.1 }}
         >
           {standardProjects.map((project) => (
             <ProjectCard key={project.title} project={project} visitProject={t.visitProject} comingSoon={t.comingSoon} />

@@ -1,11 +1,12 @@
 import { motion } from 'framer-motion'
-import { ArrowUpRight, Building2, FlaskConical, Microscope } from 'lucide-react'
+import { ArrowUpRight, BookOpen, Building2, FlaskConical, Microscope } from 'lucide-react'
 import { useLanguage } from '../i18n/LanguageContext'
 
 const translations = {
   en: {
     title: 'RESEARCH',
     badge: 'Featured research portal',
+    articleBadge: 'Published in MDPI — Int. J. Mol. Sci.',
     mainTitle: 'The Mutational Landscape of SARS-CoV-2',
     description:
       'An interactive scientific tool for navigating the SARS-CoV-2 genome through a clear, visual interface designed for exploratory analysis.',
@@ -16,6 +17,7 @@ const translations = {
       'Published as a reference tool for researchers',
     ],
     ctaButton: 'Explore the Portal',
+    articleButton: 'Read the Publication',
     partnerLabel: 'University partner',
     partnerName: 'Universitat Rovira i Virgili',
     partnerDesc:
@@ -28,6 +30,7 @@ const translations = {
   es: {
     title: 'INVESTIGACIÓN',
     badge: 'Portal de investigación destacado',
+    articleBadge: 'Publicado en MDPI — Int. J. Mol. Sci.',
     mainTitle: 'The Mutational Landscape of SARS-CoV-2',
     description:
       'Una herramienta científica interactiva para navegar el genoma del SARS-CoV-2 desde una interfaz clara, visual y pensada para análisis exploratorio.',
@@ -38,6 +41,7 @@ const translations = {
       'Publicado como herramienta de referencia para investigadores',
     ],
     ctaButton: 'Explorar el Portal',
+    articleButton: 'Leer la Publicación',
     partnerLabel: 'Universidad colaboradora',
     partnerName: 'Universitat Rovira i Virgili',
     partnerDesc:
@@ -61,7 +65,7 @@ export default function Research() {
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.5 }}
         >
           <h2 className="text-3xl font-extrabold tracking-widest uppercase text-white text-glow-green mb-12 text-center">
@@ -73,7 +77,7 @@ export default function Research() {
         <motion.article
           initial={{ opacity: 0, y: 26 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.22 }}
+          viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           whileHover={{ y: -6 }}
           className="relative overflow-hidden rounded-2xl border border-green-500/25 bg-gradient-to-br from-green-500/10 via-black/55 to-cyan-500/10 p-6 shadow-[0_0_40px_rgba(0,255,136,0.08)] backdrop-blur-sm md:p-8"
@@ -84,9 +88,15 @@ export default function Research() {
 
           <div className="relative grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
             <div>
-              <div className="mb-5 inline-flex items-center gap-3 rounded-full border border-green-500/20 bg-black/40 px-4 py-2 text-green-300/85">
-                <FlaskConical className="h-4 w-4" />
-                <span className="text-[0.72rem] uppercase tracking-[0.34em]">{t.badge}</span>
+              <div className="mb-5 flex flex-wrap items-center gap-3">
+                <div className="inline-flex items-center gap-3 rounded-full border border-green-500/20 bg-black/40 px-4 py-2 text-green-300/85">
+                  <FlaskConical className="h-4 w-4" />
+                  <span className="text-[0.72rem] uppercase tracking-[0.34em]">{t.badge}</span>
+                </div>
+                <div className="inline-flex items-center gap-3 rounded-full border border-cyan-400/25 bg-cyan-500/10 px-4 py-2 text-cyan-200/90 shadow-[0_0_20px_rgba(34,211,238,0.12)]">
+                  <BookOpen className="h-4 w-4" />
+                  <span className="text-[0.72rem] uppercase tracking-[0.28em]">{t.articleBadge}</span>
+                </div>
               </div>
 
               <h3 className="max-w-2xl text-2xl font-bold text-white md:text-3xl">{t.mainTitle}</h3>
@@ -102,15 +112,26 @@ export default function Research() {
                 ))}
               </div>
 
-              <a
-                href="http://sarscov2-mutation-portal.urv.cat"
-                target="_blank"
-                rel="noreferrer"
-                className="mt-8 inline-flex items-center gap-2 rounded-full border border-green-400/35 bg-green-500/10 px-5 py-3 text-sm font-semibold text-green-200 transition hover:-translate-y-0.5 hover:border-green-300/55 hover:bg-green-500/15"
-              >
-                {t.ctaButton}
-                <ArrowUpRight className="h-4 w-4" />
-              </a>
+              <div className="mt-8 flex flex-wrap items-center gap-4">
+                <a
+                  href="http://sarscov2-mutation-portal.urv.cat"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full border border-green-400/35 bg-green-500/10 px-5 py-3 text-sm font-semibold text-green-200 transition hover:-translate-y-0.5 hover:border-green-300/55 hover:bg-green-500/15"
+                >
+                  {t.ctaButton}
+                  <ArrowUpRight className="h-4 w-4" />
+                </a>
+                <a
+                  href="https://www.mdpi.com/1422-0067/24/10/9072"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full border border-cyan-400/35 bg-cyan-500/10 px-5 py-3 text-sm font-semibold text-cyan-100 transition hover:-translate-y-0.5 hover:border-cyan-300/55 hover:bg-cyan-500/15"
+                >
+                  {t.articleButton}
+                  <BookOpen className="h-4 w-4" />
+                </a>
+              </div>
             </div>
 
             <div className="space-y-4">

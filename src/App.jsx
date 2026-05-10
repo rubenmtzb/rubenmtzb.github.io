@@ -6,14 +6,12 @@ import Navbar from './components/Navbar'
 const About = lazy(() => import('./components/About'))
 const TechStack = lazy(() => import('./components/TechStack'))
 const Experience = lazy(() => import('./components/Experience'))
-const Education = lazy(() => import('./components/Education'))
 const Projects = lazy(() => import('./components/Projects'))
 const Research = lazy(() => import('./components/Research'))
+const Education = lazy(() => import('./components/Education'))
 const Certifications = lazy(() => import('./components/Certifications'))
 const ResumeSection = lazy(() => import('./components/ResumeSection'))
 const Contact = lazy(() => import('./components/Contact'))
-const Blog = lazy(() => import('./components/Blog'))
-const Testimonials = lazy(() => import('./components/Testimonials'))
 const Footer = lazy(() => import('./components/Footer'))
 
 export default function App() {
@@ -33,28 +31,15 @@ export default function App() {
       <Navbar />
       <main className="relative z-10">
         <Hero />
-        <Suspense fallback={null}>
-          <About />
-          <TechStack />
-          <Experience />
-          <Education />
-          <Projects />
-          <Research />
-          <Certifications />
-          <ResumeSection />
-          <Contact />
-
-          {/* Secondary sections — coming soon */}
-          <div className="relative py-8">
-            <div className="mx-auto flex max-w-md items-center gap-4 px-6">
-              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-green-500/30 to-transparent" />
-              <span className="text-xs uppercase tracking-[0.35em] text-green-500/40">coming soon</span>
-              <div className="h-px flex-1 bg-gradient-to-l from-transparent via-green-500/30 to-transparent" />
-            </div>
-          </div>
-          <Blog />
-          <Testimonials />
-        </Suspense>
+        <Suspense fallback={null}><About /></Suspense>
+        <Suspense fallback={null}><TechStack /></Suspense>
+        <Suspense fallback={null}><Experience /></Suspense>
+        <Suspense fallback={null}><Projects /></Suspense>
+        <Suspense fallback={null}><Research /></Suspense>
+        <Suspense fallback={null}><Education /></Suspense>
+        <Suspense fallback={null}><Certifications /></Suspense>
+        <Suspense fallback={null}><ResumeSection /></Suspense>
+        <Suspense fallback={null}><Contact /></Suspense>
       </main>
       <Suspense fallback={null}>
         <Footer />
