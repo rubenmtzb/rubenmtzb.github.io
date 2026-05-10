@@ -132,7 +132,7 @@ export default function Education() {
           viewport={{ once: true, amount: 0.1 }}
           className="grid gap-6 md:grid-cols-2"
         >
-          {items.map((item) => {
+          {items.map((item, index) => {
             const Icon = item.icon
 
             return (
