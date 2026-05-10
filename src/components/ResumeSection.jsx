@@ -93,7 +93,7 @@ export default function ResumeSection() {
                 </motion.a>
 
                 <motion.a
-                  href="/cv/"
+                  href={`/cv/?lang=${language}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   whileHover={{ y: -2, scale: 1.01 }}

@@ -1521,7 +1521,7 @@
         },
       }
 
-      let lang = 'en'
+      let lang = new URLSearchParams(window.location.search).get('lang') === 'es' ? 'es' : 'en'
 
       function getNestedValue(source, path) {
         return path.split('.').reduce((acc, key) => (acc ? acc[key] : undefined), source)
