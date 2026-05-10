@@ -125,12 +125,17 @@ export default function Experience() {
         transition={{ duration: 0.6, ease: 'easeOut' }}
         className="space-y-12"
       >
-        <div className="space-y-4">
-          <p className="text-sm font-semibold uppercase tracking-[0.35em] text-green-400 text-glow-green">
-            &gt; {t.sectionLabel}
-          </p>
-          <div className="h-px w-full max-w-2xl bg-gradient-to-r from-green-400/70 via-cyan-400/20 to-transparent" />
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h2 className="mb-12 text-center text-2xl font-extrabold tracking-widest uppercase text-white text-glow-green sm:text-3xl">
+            <span className="text-green-400">&gt; </span>
+            {t.sectionLabel}
+          </h2>
+        </motion.div>
 
         <div className="relative">
           <div className="absolute bottom-0 left-5 top-0 w-px bg-gradient-to-b from-transparent via-green-400/70 to-transparent md:left-1/2 md:-translate-x-1/2" />
