@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import { useLanguage } from '../i18n/LanguageContext'
@@ -15,6 +15,19 @@ const NAV_ITEMS = [
   { id: 'contact', en: 'Contact', es: 'Contacto' },
 ]
 
+const translations = {
+  en: {
+    homeButtonLabel: 'Go to home section',
+    openMenuLabel: 'Open menu',
+    closeMenuLabel: 'Close menu',
+  },
+  es: {
+    homeButtonLabel: 'Ir a la sección de inicio',
+    openMenuLabel: 'Abrir menú',
+    closeMenuLabel: 'Cerrar menú',
+  },
+}
+
 function scrollToSection(sectionId) {
   const section = document.getElementById(sectionId)
 
@@ -25,50 +38,83 @@ function scrollToSection(sectionId) {
 
 export default function Navbar() {
   const { language } = useLanguage()
+  const t = translations[language]
   const [isScrolled, setIsScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const isNavigatingRef = useRef(false)
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 24)
+    const sectionIds = NAV_ITEMS.map((item) => item.id)
+    const lastSectionId = sectionIds[sectionIds.length - 1]
+    const sectionElements = new Map()
+    let frameId = null
+    let lastScrolled = null
+    let lastActiveId = ''
 
-    handleScroll()
-    window.addEventListener('scroll', handleScroll, { passive: true })
+    const syncNavbarState = () => {
+      frameId = null
 
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+      const nextScrolled = window.scrollY > 24
+      if (nextScrolled !== lastScrolled) {
+        lastScrolled = nextScrolled
+        setIsScrolled(nextScrolled)
+      }
 
-  useEffect(() => {
-    const sections = NAV_ITEMS
-      .map((item) => document.getElementById(item.id))
-      .filter(Boolean)
+      // Skip scroll-spy while a nav click is animating
+      if (isNavigatingRef.current) return
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visibleEntries = entries.filter((entry) => entry.isIntersecting)
+      const triggerLine = window.innerHeight * 0.25
+      let nextActiveId = sectionIds[0]
 
-        if (visibleEntries.length > 0) {
-          const currentEntry = visibleEntries.sort(
-            (entryA, entryB) => entryB.intersectionRatio - entryA.intersectionRatio,
-          )[0]
+      for (const id of sectionIds) {
+        const section = sectionElements.get(id) ?? document.getElementById(id)
 
-          setActiveSection(currentEntry.target.id)
+        if (section) {
+          sectionElements.set(id, section)
         }
-      },
-      {
-        rootMargin: '-35% 0px -45% 0px',
-        threshold: [0.2, 0.35, 0.55, 0.75],
-      },
-    )
 
-    sections.forEach((section) => observer.observe(section))
+        if (section && section.getBoundingClientRect().top <= triggerLine) {
+          nextActiveId = id
+        }
+      }
 
-    return () => observer.disconnect()
+      // Only snap to last section if user has actually scrolled
+      if (window.scrollY > 100 && window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 100) {
+        nextActiveId = lastSectionId
+      }
+
+      if (nextActiveId !== lastActiveId) {
+        lastActiveId = nextActiveId
+        setActiveSection(nextActiveId)
+      }
+    }
+
+    const scheduleNavbarSync = () => {
+      if (frameId !== null) {
+        return
+      }
+
+      frameId = window.requestAnimationFrame(syncNavbarState)
+    }
+
+    scheduleNavbarSync()
+    window.addEventListener('scroll', scheduleNavbarSync, { passive: true })
+    window.addEventListener('resize', scheduleNavbarSync)
+
+    return () => {
+      window.removeEventListener('scroll', scheduleNavbarSync)
+      window.removeEventListener('resize', scheduleNavbarSync)
+
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId)
+      }
+    }
   }, [])
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 768) {
+      if (window.innerWidth >= 1024) {
         setIsMenuOpen(false)
       }
     }
@@ -79,9 +125,12 @@ export default function Navbar() {
   }, [])
 
   const handleNavigate = (sectionId) => {
+    isNavigatingRef.current = true
     setActiveSection(sectionId)
     setIsMenuOpen(false)
     scrollToSection(sectionId)
+    // Re-enable scroll-spy after smooth scroll finishes
+    setTimeout(() => { isNavigatingRef.current = false }, 1000)
   }
 
   return (
@@ -98,12 +147,12 @@ export default function Navbar() {
           type="button"
           onClick={() => handleNavigate('home')}
           className="text-left font-mono text-lg font-bold uppercase tracking-[0.4em] text-green-300 text-glow-green transition hover:text-green-200"
-          aria-label="Go to home section"
+          aria-label={t.homeButtonLabel}
         >
           RMB
         </button>
 
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-1 lg:flex">
           {NAV_ITEMS.map((item) => {
             const isActive = activeSection === item.id
 
@@ -112,16 +161,30 @@ export default function Navbar() {
                 key={item.id}
                 type="button"
                 onClick={() => handleNavigate(item.id)}
-                className="relative rounded-full px-3 py-2 text-sm uppercase tracking-[0.25em] text-green-400/70 transition hover:text-green-300"
+                className={[
+                  'relative isolate whitespace-nowrap rounded-full px-2.5 py-2 text-xs uppercase tracking-[0.2em] transition duration-300',
+                  isActive ? 'text-white' : 'text-green-500/45 hover:text-green-200/90',
+                ].join(' ')}
               >
                 {isActive && (
                   <motion.span
                     layoutId="active-section-pill"
-                    className="absolute inset-0 rounded-full border border-green-400/40 bg-green-500/10"
+                    className="pointer-events-none absolute inset-0 rounded-full border border-green-300/70 bg-[linear-gradient(135deg,rgba(0,255,136,0.24),rgba(0,255,136,0.08))] shadow-[0_0_0_1px_rgba(134,239,172,0.12),0_0_18px_rgba(0,255,136,0.28),0_0_36px_rgba(0,255,136,0.14)]"
                     transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-                  />
+                  >
+                    <span className="absolute inset-[1px] rounded-full bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),transparent_55%)] opacity-80" />
+                    <span className="absolute inset-x-3 bottom-[3px] h-px rounded-full bg-green-100/95 shadow-[0_0_10px_rgba(167,243,208,0.95),0_0_16px_rgba(0,255,136,0.55)]" />
+                  </motion.span>
                 )}
-                <span className={isActive ? 'relative z-10 text-green-200' : 'relative z-10'}>{item[language]}</span>
+                <span
+                  className={
+                    isActive
+                      ? 'relative z-10 font-semibold text-white drop-shadow-[0_0_10px_rgba(167,243,208,0.45)]'
+                      : 'relative z-10'
+                  }
+                >
+                  {item[language]}
+                </span>
               </button>
             )
           })}
@@ -133,8 +196,8 @@ export default function Navbar() {
         <button
           type="button"
           onClick={() => setIsMenuOpen((currentValue) => !currentValue)}
-          className="inline-flex items-center justify-center rounded-xl border border-green-500/20 bg-black/40 p-2 text-green-300 transition hover:border-green-400/40 hover:text-green-200 md:hidden"
-          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+          className="inline-flex items-center justify-center rounded-xl border border-green-500/20 bg-black/40 p-2 text-green-300 transition hover:border-green-400/40 hover:text-green-200 lg:hidden"
+          aria-label={isMenuOpen ? t.closeMenuLabel : t.openMenuLabel}
         >
           {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
@@ -147,7 +210,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="mx-auto mt-3 w-full max-w-6xl overflow-hidden rounded-2xl border border-green-500/20 bg-black/80 backdrop-blur-md md:hidden"
+            className="mx-auto mt-3 max-h-[calc(100vh-6rem)] w-full max-w-6xl overflow-y-auto rounded-2xl border border-green-500/20 bg-black/80 backdrop-blur-md lg:hidden"
           >
             <div className="space-y-1 p-3">
               {NAV_ITEMS.map((item) => {

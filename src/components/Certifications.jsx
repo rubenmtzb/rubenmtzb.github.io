@@ -161,7 +161,7 @@ export default function Certifications() {
 
             return (
               <motion.article
-                key={`${certification.title}-${certification.issuer}`}
+                key={`cert-${index}`}
                 variants={itemVariants}
                 whileHover={{ y: -6, scale: 1.01 }}
                 className="relative overflow-hidden bg-black/40 backdrop-blur-sm border border-green-500/20 rounded-xl p-5"
@@ -204,7 +204,7 @@ export default function Certifications() {
                       <a
                         href={certification.verifyUrl}
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
                         className="group inline-flex items-center gap-1.5 text-green-300 transition-colors hover:text-green-200"
                       >
                         <span>{t.verifyLabel}</span>
@@ -215,7 +215,7 @@ export default function Certifications() {
                       <a
                         href={certification.projectUrl}
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
                         className="group inline-flex items-center gap-1.5 text-green-300/85 transition-colors hover:text-green-200"
                       >
                         <span>{t.projectLabel}</span>

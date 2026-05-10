@@ -100,7 +100,7 @@ export default function Contact() {
   const contactMethods = t.methods.map((method, index) => ({ ...method, ...contactMeta[index] }))
 
   return (
-    <section id="contact" className="relative overflow-hidden bg-[#030712] px-6 py-24 font-mono text-white">
+    <section id="contact" className="relative overflow-hidden px-6 py-24 font-mono text-white">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#00ff8818,transparent_50%)]" />
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-green-400/60 to-transparent" />
 
@@ -166,18 +166,18 @@ export default function Contact() {
           whileInView="show"
           viewport={{ once: true, amount: 0.1 }}
         >
-          {contactMethods.map(({ label, description, href, display, Icon }) => {
+          {contactMethods.map(({ label, description, href, display, Icon }, index) => {
             const isExternal = href.startsWith('http')
 
             return (
               <motion.a
-                key={label}
+                key={`contact-${index}`}
                 href={href}
                 variants={itemVariants}
                 whileHover={{ y: -6, scale: 1.02 }}
                 whileTap={{ scale: 0.99 }}
                 target={isExternal ? '_blank' : undefined}
-                rel={isExternal ? 'noreferrer' : undefined}
+                rel={isExternal ? 'noopener noreferrer' : undefined}
                 className="group rounded-xl border border-green-500/20 bg-black/40 p-6 backdrop-blur-sm transition-all hover:border-green-500/40 hover:shadow-[0_0_30px_rgba(0,255,136,0.14)]"
               >
                 <div className="mb-5 flex items-center justify-between">
@@ -216,7 +216,7 @@ export default function Contact() {
             <a
               href="https://www.linkedin.com/in/rubenmartinezbernabe/"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 transition-colors hover:text-green-200"
             >
               <LinkedinIcon className="h-4 w-4" />
@@ -225,7 +225,7 @@ export default function Contact() {
             <a
               href="https://github.com/rubenmtzb"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 transition-colors hover:text-green-200"
             >
               <GithubIcon className="h-4 w-4" />

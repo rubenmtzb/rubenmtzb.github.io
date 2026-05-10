@@ -26,8 +26,8 @@ body {
 
 /* ============ ANIMATIONS ============ */
 @keyframes scanline {
-  0% { top: -5%; }
-  100% { top: 105%; }
+  0% { transform: translate3d(0, -12px, 0); }
+  100% { transform: translate3d(0, calc(100vh + 12px), 0); }
 }
 
 @keyframes blink {
@@ -36,9 +36,9 @@ body {
 }
 
 @keyframes floatParticle {
-  0% { transform: translateY(0) scale(1); opacity: 0.5; }
-  50% { transform: translateY(-24px) scale(1.15); opacity: 1; }
-  100% { transform: translateY(0) scale(1); opacity: 0.5; }
+  0% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.5; }
+  50% { transform: translate3d(0, -24px, 0) scale(1.15); opacity: 1; }
+  100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.5; }
 }
 
 @keyframes pulse-glow {
@@ -75,7 +75,7 @@ body {
   50% { border-color: rgba(0, 255, 136, 0.6); }
 }
 
-.scanline-anim { animation: scanline 3.5s linear infinite; will-change: top; }
+.scanline-anim { animation: scanline 3.5s linear infinite; will-change: transform; }
 .blink-anim { animation: blink 1s step-end infinite; }
 .particle { animation: floatParticle var(--dur, 3s) ease-in-out var(--delay, 0s) infinite; will-change: transform, opacity; }
 .glow-pulse { animation: pulse-glow 2s ease-in-out infinite; }

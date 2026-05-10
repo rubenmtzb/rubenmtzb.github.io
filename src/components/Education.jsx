@@ -110,7 +110,8 @@ export default function Education() {
   const items = t.items.map((item, index) => ({ ...item, icon: icons[index] }))
 
   return (
-    <section id="education" className="section-container mx-auto max-w-6xl bg-[#030712] px-6 py-20">
+    <section id="education" className="relative overflow-hidden px-6 py-20">
+      <div className="mx-auto max-w-6xl">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -132,12 +133,12 @@ export default function Education() {
           viewport={{ once: true, amount: 0.1 }}
           className="grid gap-6 md:grid-cols-2"
         >
-          {items.map((item) => {
+          {items.map((item, index) => {
             const Icon = item.icon
 
             return (
               <motion.article
-                key={`${item.institution}-${item.title}`}
+                key={`edu-${index}`}
                 variants={itemVariants}
                 className="relative overflow-hidden rounded-xl border border-green-500/20 bg-black/40 p-6 backdrop-blur-sm"
               >
@@ -197,6 +198,7 @@ export default function Education() {
           })}
         </motion.div>
       </motion.div>
+      </div>
     </section>
   )
 }

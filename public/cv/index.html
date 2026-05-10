@@ -18,6 +18,8 @@
     <meta name="language" content="English" />
     <meta name="theme-color" content="#030712" />
     <link rel="canonical" href="https://rubenitx.me/cv/" />
+    <link rel="icon" type="image/png" href="/avatar.png" />
+    <link rel="apple-touch-icon" href="/avatar.png" />
 
     <meta property="og:type" content="profile" />
     <meta property="og:url" content="https://rubenitx.me/cv/" />
@@ -916,9 +918,9 @@
         >
           <span data-i18n="toolbar.language">ES</span>
         </button>
-        <button type="button" class="primary-button" onclick="window.print()">
-          ⭳ <span data-i18n="toolbar.print">Save as PDF</span>
-        </button>
+        <a id="downloadPdfBtn" href="/cv/CV_RubenMartinez_EN.pdf" download class="primary-button" style="text-decoration:none;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px;"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"></path><path d="M14 2v5a1 1 0 0 0 1 1h5"></path><path d="M12 18v-6"></path><path d="m9 15 3 3 3-3"></path></svg><span data-i18n="toolbar.print">Download PDF</span>
+        </a>
       </div>
     </nav>
 
@@ -1119,7 +1121,7 @@
             back: 'Back to Portfolio',
             language: 'ES',
             languageAria: 'Switch CV language to Spanish',
-            print: 'Save as PDF',
+            print: 'Download PDF',
           },
           hero: {
             eyebrow: '> premium.cv / export',
@@ -1325,7 +1327,7 @@
             back: 'Volver al portfolio',
             language: 'EN',
             languageAria: 'Cambiar el CV al idioma inglés',
-            print: 'Guardar como PDF',
+            print: 'Descargar PDF',
           },
           hero: {
             eyebrow: '> premium.cv / export',
@@ -1521,7 +1523,7 @@
         },
       }
 
-      let lang = 'en'
+      let lang = new URLSearchParams(window.location.search).get('lang') === 'es' ? 'es' : 'en'
 
       function getNestedValue(source, path) {
         return path.split('.').reduce((acc, key) => (acc ? acc[key] : undefined), source)
@@ -1697,12 +1699,19 @@
         renderInterests()
       }
 
+      function updateDownloadLink() {
+        const btn = document.getElementById('downloadPdfBtn')
+        if (btn) btn.href = lang === 'es' ? '/cv/CV_RubenMartinez_ES.pdf' : '/cv/CV_RubenMartinez_EN.pdf'
+      }
+
       function toggleLang() {
         lang = lang === 'en' ? 'es' : 'en'
         updateTexts()
+        updateDownloadLink()
       }
 
       updateTexts()
+      updateDownloadLink()
     </script>
   </body>
 </html>

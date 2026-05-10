@@ -2,6 +2,22 @@ import { motion } from 'framer-motion'
 import { BriefcaseBusiness, CalendarRange, MapPin } from 'lucide-react'
 import { useLanguage } from '../i18n/LanguageContext'
 
+function calcDuration(startYear, startMonth, lang) {
+  const now = new Date()
+  let months = (now.getFullYear() - startYear) * 12 + (now.getMonth() + 1 - startMonth)
+  if (months < 0) months = 0
+  const y = Math.floor(months / 12)
+  const m = months % 12
+  if (lang === 'es') {
+    const yStr = y > 0 ? `${y} ${y === 1 ? 'año' : 'años'}` : ''
+    const mStr = m > 0 ? `${m} ${m === 1 ? 'mes' : 'meses'}` : ''
+    return [yStr, mStr].filter(Boolean).join(' y ')
+  }
+  const yStr = y > 0 ? `${y} ${y === 1 ? 'year' : 'years'}` : ''
+  const mStr = m > 0 ? `${m} ${m === 1 ? 'month' : 'months'}` : ''
+  return [yStr, mStr].filter(Boolean).join(' and ')
+}
+
 const translations = {
   en: {
     sectionLabel: 'EXPERIENCE',
@@ -10,7 +26,9 @@ const translations = {
       {
         role: 'Software Engineer',
         company: 'Egarsat',
-        period: 'September 2022 - Present · ~3 years and 9 months',
+        periodPrefix: 'September 2022 - Present',
+        startYear: 2022,
+        startMonth: 9,
         location: 'Sant Cugat del Vallès, Barcelona',
         mode: 'On-site',
         description:
@@ -53,7 +71,9 @@ const translations = {
       {
         role: 'Software Engineer',
         company: 'Egarsat',
-        period: 'Septiembre 2022 - Actualidad · ~3 años y 9 meses',
+        periodPrefix: 'Septiembre 2022 - Actualidad',
+        startYear: 2022,
+        startMonth: 9,
         location: 'Sant Cugat del Vallès, Barcelona',
         mode: 'Presencial',
         description:
@@ -96,7 +116,8 @@ export default function Experience() {
   const t = translations[language]
 
   return (
-    <section id="experience" className="section-container mx-auto max-w-6xl bg-[#030712] px-6 py-20">
+    <section id="experience" className="relative overflow-hidden px-6 py-20">
+      <div className="mx-auto max-w-6xl">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -119,7 +140,7 @@ export default function Experience() {
               const isLeft = index % 2 === 0
 
               return (
-                <div key={`${item.company}-${item.role}`} className="relative md:grid md:grid-cols-2 md:gap-12">
+                <div key={`exp-${index}`} className="relative md:grid md:grid-cols-2 md:gap-12">
                   <div className={`${isLeft ? 'md:col-start-1' : 'md:col-start-2'} ml-12 md:ml-0`}>
                     <motion.article
                       initial={{ opacity: 0, y: 30, x: isLeft ? -40 : 40 }}
@@ -155,7 +176,9 @@ export default function Experience() {
                         <div className="flex flex-wrap gap-3 text-xs text-gray-300">
                           <span className="inline-flex items-center gap-2 rounded-full border border-green-500/20 bg-black/40 px-3 py-1.5">
                             <CalendarRange size={14} className="text-green-400" />
-                            {item.period}
+                            {item.startYear
+                              ? `${item.periodPrefix} · ~${calcDuration(item.startYear, item.startMonth, language)}`
+                              : item.period}
                           </span>
                           {item.location && (
                             <span className="inline-flex items-center gap-2 rounded-full border border-green-500/20 bg-black/40 px-3 py-1.5">
@@ -202,6 +225,7 @@ export default function Experience() {
           </div>
         </div>
       </motion.div>
+      </div>
     </section>
   )
 }

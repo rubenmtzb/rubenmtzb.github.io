@@ -40,10 +40,10 @@ export default function Footer() {
       />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,255,136,0.08),transparent_45%)]" />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col gap-8 px-6 py-10 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
+      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-10 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
         <div className="space-y-4">
-          <p className="terminal-prompt text-sm uppercase tracking-[0.3em] text-green-300/85">{t.builtWith}</p>
-          <p className="text-sm text-slate-300/80">{t.tagline}</p>
+          <p className="terminal-prompt break-words text-xs uppercase tracking-[0.18em] text-green-300/85 sm:text-sm sm:tracking-[0.3em]">{t.builtWith}</p>
+          <p className="text-sm leading-6 text-slate-300/80">{t.tagline}</p>
           <p className="text-xs uppercase tracking-[0.24em] text-green-500/55">{t.copyright}</p>
         </div>
 
@@ -54,11 +54,11 @@ export default function Footer() {
 
               return (
                 <a
-                  key={link.label}
+                  key={link.href}
                   href={link.href}
                   target={link.href.startsWith('mailto:') ? undefined : '_blank'}
-                  rel={link.href.startsWith('mailto:') ? undefined : 'noreferrer'}
-                  className="inline-flex items-center gap-2 rounded-full border border-green-500/20 bg-black/35 px-4 py-2 text-xs uppercase tracking-[0.24em] text-green-300/80 transition hover:border-green-300/35 hover:bg-green-500/10 hover:text-green-100"
+                  rel={link.href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
+                  className="inline-flex items-center gap-2 rounded-full border border-green-500/20 bg-black/35 px-4 py-2 text-xs uppercase tracking-[0.18em] text-green-300/80 transition hover:border-green-300/35 hover:bg-green-500/10 hover:text-green-100 sm:tracking-[0.24em]"
                 >
                   <Icon className="h-4 w-4" />
                   {link.label}
@@ -70,7 +70,7 @@ export default function Footer() {
           <button
             type="button"
             onClick={scrollToTop}
-            className="inline-flex items-center gap-2 rounded-full border border-green-500/20 bg-black/35 px-4 py-2 text-xs uppercase tracking-[0.24em] text-green-300/80 transition hover:-translate-y-0.5 hover:border-green-300/35 hover:bg-green-500/10 hover:text-green-100"
+            className="inline-flex items-center gap-2 rounded-full border border-green-500/20 bg-black/35 px-4 py-2 text-xs uppercase tracking-[0.18em] text-green-300/80 transition hover:-translate-y-0.5 hover:border-green-300/35 hover:bg-green-500/10 hover:text-green-100 sm:tracking-[0.24em]"
           >
             <ArrowUp className="h-4 w-4" />
             {t.backToTop}
