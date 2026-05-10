@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { ExternalLink, FileDown, SquareTerminal } from 'lucide-react'
+import { ExternalLink, Eye, FileDown, SquareTerminal } from 'lucide-react'
 import { useLanguage } from '../i18n/LanguageContext'
 
 const translations = {
@@ -8,15 +8,16 @@ const translations = {
     title: 'Download my CV',
     description:
       'Get a comprehensive overview of my experience, skills, research, and education in a print-ready format.',
-    button: 'View & Download CV',
-    hint: 'Opens in a new tab — save as PDF with Ctrl+P',
+    downloadButton: 'Download PDF',
+    previewButton: 'Preview Online',
+    downloadHint: 'Direct download — A4 print-ready',
     badgePrimary: 'A4 / PDF ready',
-    badgeSecondary: 'EN + ES toggle',
+    badgeSecondary: 'Direct PDF download',
     terminalTitle: 'resume/export.sh',
     terminalLines: [
       '> format: interactive + print optimized',
       '> profile: backend, frontend, research',
-      '> output: /cv/index.html',
+      '> output: /cv/CV_RubenMartinez_EN.pdf',
     ],
     exportStatus: 'export ready',
   },
@@ -25,15 +26,16 @@ const translations = {
     title: 'Descarga mi CV',
     description:
       'Obtén una visión completa de mi experiencia, habilidades, investigación y formación en un formato listo para imprimir.',
-    button: 'Ver y Descargar CV',
-    hint: 'Se abre en nueva pestaña — guardar como PDF con Ctrl+P',
+    downloadButton: 'Descargar PDF',
+    previewButton: 'Vista Previa Online',
+    downloadHint: 'Descarga directa — Listo para A4',
     badgePrimary: 'Listo para A4 / PDF',
-    badgeSecondary: 'Selector EN + ES',
+    badgeSecondary: 'Descarga directa PDF',
     terminalTitle: 'resume/export.sh',
     terminalLines: [
       '> formato: interactivo + optimizado para impresión',
       '> perfil: backend, frontend, investigación',
-      '> salida: /cv/index.html',
+      '> salida: /cv/CV_RubenMartinez_ES.pdf',
     ],
     exportStatus: 'listo para exportar',
   },
@@ -42,6 +44,7 @@ const translations = {
 export default function ResumeSection() {
   const { language } = useLanguage()
   const t = translations[language] ?? translations.en
+  const pdfHref = language === 'es' ? '/cv/CV_RubenMartinez_ES.pdf' : '/cv/CV_RubenMartinez_EN.pdf'
 
   return (
     <section id="resume" className="relative overflow-hidden bg-[#030712] px-6 py-20 font-mono text-white">
@@ -77,20 +80,33 @@ export default function ResumeSection() {
                 </span>
               </div>
 
-              <motion.a
-                href="/cv/"
-                target="_blank"
-                rel="noreferrer"
-                whileHover={{ y: -2, scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
-                className="mt-8 inline-flex items-center gap-3 rounded-full border border-green-400/35 bg-green-500/10 px-6 py-3 text-sm font-semibold text-green-200 transition hover:border-green-300/55 hover:bg-green-500/15 hover:shadow-[0_0_25px_rgba(0,255,136,0.2)]"
-              >
-                <FileDown className="h-5 w-5" />
-                {t.button}
-                <ExternalLink className="h-4 w-4 opacity-60" />
-              </motion.a>
+              <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
+                <motion.a
+                  href={pdfHref}
+                  download
+                  whileHover={{ y: -2, scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  className="inline-flex items-center justify-center gap-3 rounded-full border border-green-300/45 bg-green-500/15 px-7 py-3.5 text-sm font-semibold text-green-100 transition hover:border-green-200/60 hover:bg-green-500/20 hover:shadow-[0_0_30px_rgba(0,255,136,0.28)]"
+                >
+                  <FileDown className="h-5 w-5" />
+                  {t.downloadButton}
+                </motion.a>
 
-              <p className="mt-4 text-xs tracking-[0.22em] text-green-500/60">{t.hint}</p>
+                <motion.a
+                  href="/cv/"
+                  target="_blank"
+                  rel="noreferrer"
+                  whileHover={{ y: -2, scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  className="inline-flex items-center justify-center gap-3 rounded-full border border-green-400/30 bg-transparent px-5 py-3 text-sm font-semibold text-green-200/90 transition hover:border-green-300/45 hover:bg-green-500/8 hover:text-green-100"
+                >
+                  <Eye className="h-4.5 w-4.5" />
+                  {t.previewButton}
+                  <ExternalLink className="h-4 w-4 opacity-60" />
+                </motion.a>
+              </div>
+
+              <p className="mt-4 text-xs tracking-[0.22em] text-green-500/60">{t.downloadHint}</p>
             </div>
 
             <motion.div
