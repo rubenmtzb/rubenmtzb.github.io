@@ -119,7 +119,7 @@ export default function Experience() {
               const isLeft = index % 2 === 0
 
               return (
-                <div key={`${item.company}-${item.role}`} className="relative md:grid md:grid-cols-2 md:gap-12">
+                <div key={`exp-${index}`} className="relative md:grid md:grid-cols-2 md:gap-12">
                   <div className={`${isLeft ? 'md:col-start-1' : 'md:col-start-2'} ml-12 md:ml-0`}>
                     <motion.article
                       initial={{ opacity: 0, y: 30, x: isLeft ? -40 : 40 }}

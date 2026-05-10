@@ -166,12 +166,12 @@ export default function Contact() {
           whileInView="show"
           viewport={{ once: true, amount: 0.1 }}
         >
-          {contactMethods.map(({ label, description, href, display, Icon }) => {
+          {contactMethods.map(({ label, description, href, display, Icon }, index) => {
             const isExternal = href.startsWith('http')
 
             return (
               <motion.a
-                key={label}
+                key={`contact-${index}`}
                 href={href}
                 variants={itemVariants}
                 whileHover={{ y: -6, scale: 1.02 }}

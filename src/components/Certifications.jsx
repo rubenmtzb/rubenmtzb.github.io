@@ -161,7 +161,7 @@ export default function Certifications() {
 
             return (
               <motion.article
-                key={`${certification.title}-${certification.issuer}`}
+                key={`cert-${index}`}
                 variants={itemVariants}
                 whileHover={{ y: -6, scale: 1.01 }}
                 className="relative overflow-hidden bg-black/40 backdrop-blur-sm border border-green-500/20 rounded-xl p-5"

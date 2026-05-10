@@ -104,8 +104,8 @@ export default function Research() {
               <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300/90 md:text-base">{t.description}</p>
 
               <div className="mt-6 space-y-3">
-                {t.highlights.map((item) => (
-                  <div key={item} className="flex items-start gap-3">
+                {t.highlights.map((item, index) => (
+                  <div key={`research-${index}`} className="flex items-start gap-3">
                     <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-green-400 shadow-[0_0_12px_rgba(0,255,136,0.9)]" />
                     <p className="text-sm leading-7 text-slate-300/90">{item}</p>
                   </div>

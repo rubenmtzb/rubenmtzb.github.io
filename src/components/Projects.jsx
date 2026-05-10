@@ -233,8 +233,8 @@ export default function Projects() {
           whileInView="show"
           viewport={{ once: true, amount: 0.1 }}
         >
-          {featuredProjects.map((project) => (
-            <ProjectCard key={project.title} project={project} visitProject={t.visitProject} comingSoon={t.comingSoon} />
+          {featuredProjects.map((project, index) => (
+            <ProjectCard key={`feat-${index}`} project={project} visitProject={t.visitProject} comingSoon={t.comingSoon} />
           ))}
         </motion.div>
 
@@ -245,8 +245,8 @@ export default function Projects() {
           whileInView="show"
           viewport={{ once: true, amount: 0.1 }}
         >
-          {standardProjects.map((project) => (
-            <ProjectCard key={project.title} project={project} visitProject={t.visitProject} comingSoon={t.comingSoon} />
+          {standardProjects.map((project, index) => (
+            <ProjectCard key={`std-${index}`} project={project} visitProject={t.visitProject} comingSoon={t.comingSoon} />
           ))}
         </motion.div>
       </div>

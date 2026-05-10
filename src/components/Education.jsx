@@ -137,7 +137,7 @@ export default function Education() {
 
             return (
               <motion.article
-                key={`${item.institution}-${item.title}`}
+                key={`edu-${index}`}
                 variants={itemVariants}
                 className="relative overflow-hidden rounded-xl border border-green-500/20 bg-black/40 p-6 backdrop-blur-sm"
               >

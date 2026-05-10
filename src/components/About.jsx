@@ -165,9 +165,9 @@ export default function About() {
               viewport={{ once: true, amount: 0.1 }}
               className="grid gap-4"
             >
-              {t.highlights.map((highlight) => (
+              {t.highlights.map((highlight, index) => (
                 <motion.div
-                  key={highlight}
+                  key={`highlight-${index}`}
                   variants={staggerItem}
                   className="rounded-xl border border-green-500/20 bg-black/40 p-6 backdrop-blur-sm"
                 >

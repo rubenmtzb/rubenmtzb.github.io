@@ -112,7 +112,7 @@ export default function ResumeSection() {
 
               <div className="space-y-3 text-sm leading-7 text-slate-300">
                 {t.terminalLines.map((line, index) => (
-                  <div key={line} className="flex items-start gap-3">
+                  <div key={`resume-line-${index}`} className="flex items-start gap-3">
                     <span className="text-green-500/50">0{index + 1}</span>
                     <span>{line}</span>
                   </div>
