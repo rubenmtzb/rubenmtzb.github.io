@@ -1,6 +1,5 @@
 // @ts-check
 import { defineConfig } from 'astro/config'
-import sitemap from '@astrojs/sitemap'
 import tailwindcss from '@tailwindcss/vite'
 
 /**
@@ -25,14 +24,4 @@ export default defineConfig({
   },
   // Tailwind es CSS puro: cero runtime de framework en el cliente.
   vite: { plugins: [tailwindcss()] },
-  integrations: [
-    sitemap({
-      // El sitemap contiene exactamente el conjunto indexable, ni una URL de más.
-      filter: (page) => !page.includes('/preview/'),
-      i18n: {
-        defaultLocale: 'en',
-        locales: { en: 'en', es: 'es' },
-      },
-    }),
-  ],
 })

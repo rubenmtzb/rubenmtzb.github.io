@@ -8,7 +8,7 @@
  * verificable en lugar de una intención.
  */
 import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs'
-import { join, dirname } from 'node:path'
+import { join } from 'node:path'
 import { parseHTML } from 'linkedom'
 
 const DIST = 'dist'
@@ -169,17 +169,27 @@ for (const page of EXPECTED) {
 
 /* ---------- 6. Sitemap ---------- */
 console.log('\n6 · Sitemap')
-const smIndex = read('sitemap-index.xml')
-const smFile = smIndex.match(/sitemap-\d+\.xml/)?.[0]
-assert(Boolean(smFile), 'sitemap-index.xml referencia un sitemap')
-if (smFile) {
-  const sm = read(smFile)
-  const locs = [...sm.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]).sort()
-  const expectedLocs = EXPECTED.map((e) => abs(e.path)).sort()
-  assert(
-    JSON.stringify(locs) === JSON.stringify(expectedLocs),
-    `contiene exactamente el conjunto indexable (${locs.length} URLs)`,
-  )
+// El sitemap vive en la URL histórica y es el único que existe: dos
+// sitemaps podrían contradecirse, y robots.txt no puede apuntar a un 404.
+assert(existsSync(join(DIST, 'sitemap.xml')), '/sitemap.xml existe físicamente')
+
+const otherSitemaps = readdirSync(DIST).filter((f) => /sitemap.*\.xml$/.test(f) && f !== 'sitemap.xml')
+assert(otherSitemaps.length === 0, `no hay sitemaps contradictorios${otherSitemaps.length ? ` — sobra: ${otherSitemaps.join(', ')}` : ''}`)
+
+const declared = read('robots.txt').match(/Sitemap:\s*(\S+)/)?.[1]
+assert(declared === abs('/sitemap.xml'), `robots.txt declara ${declared}`)
+const declaredPath = declared ? new URL(declared).pathname.replace(/^\//, '') : ''
+assert(existsSync(join(DIST, declaredPath)), 'el sitemap declarado por robots.txt existe (no 404)')
+
+const sm = read('sitemap.xml')
+const locs = [...sm.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]).sort()
+const expectedLocs = EXPECTED.map((e) => abs(e.path)).sort()
+assert(
+  JSON.stringify(locs) === JSON.stringify(expectedLocs),
+  `contiene exactamente el conjunto indexable (${locs.length} URLs)`,
+)
+for (const c of Object.values(CLUSTERS)) {
+  assert(sm.includes(`hreflang="x-default" href="${abs(c.xDefault)}"`), `alternativas x-default para ${c.xDefault}`)
 }
 
 /* ---------- Compatibilidad: URLs y assets que no pueden desaparecer ---------- */

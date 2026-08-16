@@ -117,6 +117,65 @@ export function formatDuration(start: string, end: string | null, lang: Lang) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Antigüedad derivada — reutilizable, no una excepción del CV         */
+/* ------------------------------------------------------------------ */
+
+type Period = { start: string; end: string | null }
+
+/**
+ * Meses cubiertos por un conjunto de periodos, fusionando solapamientos.
+ * Genérico: sirve para la antigüedad en un puesto, para la trayectoria
+ * completa o para cualquier subconjunto que se le pase.
+ */
+export function coveredMonths(periods: Period[]): number {
+  if (periods.length === 0) return 0
+  const idx = (d: Date) => d.getFullYear() * 12 + d.getMonth()
+  const now = idx(new Date())
+
+  const ranges = periods
+    .map((p) => ({ from: idx(toDate(p.start)), to: p.end ? idx(toDate(p.end)) : now }))
+    .filter((r) => r.to >= r.from)
+    .sort((a, b) => a.from - b.from)
+
+  let total = 0
+  let cursor = -Infinity
+  for (const r of ranges) {
+    const from = Math.max(r.from, cursor)
+    if (r.to > from) total += r.to - from
+    cursor = Math.max(cursor, r.to)
+  }
+  return total
+}
+
+/** Antigüedad en el puesto actual: el que no tiene fecha de fin. */
+export function tenureMonths(entries: Period[]): number {
+  const current = entries.filter((e) => e.end === null)
+  return coveredMonths(current)
+}
+
+/** Trayectoria completa: unión de todos los periodos, sin contar solapes. */
+export function careerMonths(entries: Period[]): number {
+  return coveredMonths(entries)
+}
+
+/**
+ * Frase de antigüedad en años, redondeando a la baja y marcando el "+".
+ * Se recalcula en cada build: nunca hay una cifra escrita a mano.
+ */
+export function formatYears(months: number, lang: Lang): string {
+  const years = Math.floor(months / 12)
+  if (years < 1) {
+    const m = Math.max(months, 1)
+    return `${m} ${t(lang, m === 1 ? 'time.month' : 'time.months')}`
+  }
+  const noun = t(lang, years === 1 ? 'time.year' : 'time.years')
+  return lang === 'es' ? `más de ${years} ${noun}` : `${years}+ ${noun}`
+}
+
+/** Sustituye el token {years} en cualquier texto del modelo de contenido. */
+export const withYears = (text: string, phrase: string) => text.replaceAll('{years}', phrase)
+
+/* ------------------------------------------------------------------ */
 /* JSON-LD — generado, nunca escrito a mano                            */
 /* ------------------------------------------------------------------ */
 
