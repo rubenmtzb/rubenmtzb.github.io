@@ -40,6 +40,12 @@ const pdfHref = lang === 'es' ? '/cv/CV_RubenMartinez_ES.pdf' : '/cv/CV_RubenMar
  */
 const yearsPhrase = formatYears(tenureMonths(experience), lang)
 
+/** Identificador legible del perfil; el href conserva la URL completa. */
+const handle = (url: string) =>
+  url.replace(/^https?:\/\/(www\.)?[^/]+\//, '').replace(/\/$/, '')
+
+const socials = profile.socials.map((s) => ({ ...s, handle: handle(s.href) }))
+
 const groups = STACK_GROUPS.map((g) => ({
   label: t(lang, `about.group.${g}` as UiKey),
   items: (stack.get(g) ?? []).filter((s) => s.tier !== 'secundaria'),
@@ -89,29 +95,43 @@ const groups = STACK_GROUPS.map((g) => ({
         {profile.cvOnly.availability}
       </p>
 
-      <ul class="mt-6 grid gap-2 text-sm text-slate-300 sm:grid-cols-2">
-        <li>
-          <span class="text-dim">{t(lang, 'cv.contact')}: </span>
-          <a href={`mailto:${profile.email}`} class="text-green-300 hover:text-green-100">{profile.email}</a>
-        </li>
-        <li>
-          <span class="text-dim">{t(lang, 'cv.location')}: </span>{profile.locality}, {profile.region}
-        </li>
+      {/*
+        Rejilla de contacto: cada celda es una columna propia con la
+        etiqueta encima del valor. La URL completa de LinkedIn desbordaba
+        su celda y colisionaba con la de al lado, así que se muestra el
+        identificador —convención habitual en un CV— y el href conserva
+        la URL entera.
+      */}
+      <dl class="mt-6 grid gap-x-8 gap-y-4 text-sm text-slate-300 sm:grid-cols-2">
+        <div class="min-w-0">
+          <dt class="text-xs uppercase tracking-[0.2em] text-dim">{t(lang, 'cv.contact')}</dt>
+          <dd class="mt-1 truncate">
+            <a href={`mailto:${profile.email}`} class="text-green-300 hover:text-green-100">{profile.email}</a>
+          </dd>
+        </div>
+        <div class="min-w-0">
+          <dt class="text-xs uppercase tracking-[0.2em] text-dim">{t(lang, 'cv.location')}</dt>
+          <dd class="mt-1 truncate">{profile.locality}, {profile.region}</dd>
+        </div>
         {
-          profile.socials.map((s) => (
-            <li>
-              <span class="text-dim">{s.label}: </span>
-              <a href={s.href} class="break-all text-green-300 hover:text-green-100">
-                {s.href.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}
-              </a>
-            </li>
+          socials.map((s) => (
+            <div class="min-w-0">
+              <dt class="text-xs uppercase tracking-[0.2em] text-dim">{s.label}</dt>
+              <dd class="mt-1 truncate">
+                <a href={s.href} class="text-green-300 hover:text-green-100" title={s.href}>
+                  {s.handle}
+                </a>
+              </dd>
+            </div>
           ))
         }
-        <li>
-          <span class="text-dim">{t(lang, 'cv.portfolio')}: </span>
-          <a href="https://rubenitx.me" class="text-green-300 hover:text-green-100">rubenitx.me</a>
-        </li>
-      </ul>
+        <div class="min-w-0">
+          <dt class="text-xs uppercase tracking-[0.2em] text-dim">{t(lang, 'cv.portfolio')}</dt>
+          <dd class="mt-1 truncate">
+            <a href="https://rubenitx.me" class="text-green-300 hover:text-green-100">rubenitx.me</a>
+          </dd>
+        </div>
+      </dl>
     </header>
 
     <!-- Resumen profesional: exclusivo del CV -->
