@@ -1,0 +1,34 @@
+[
+  { "id": "java", "key": "java", "name": "Java", "group": "backend", "tier": "actual", "icon": "/icons/java.svg", "order": 1, "label": { "en": "Backend core", "es": "Núcleo backend" } },
+  { "id": "spring-boot", "key": "spring-boot", "name": "Spring Boot", "group": "backend", "tier": "actual", "icon": "/icons/spring.svg", "order": 2, "label": { "en": "APIs & microservices", "es": "APIs y microservicios" } },
+  { "id": "php", "key": "php", "name": "PHP", "group": "backend", "tier": "historica", "order": 3, "label": { "en": "Research portal work", "es": "Portal de investigación" } },
+  { "id": "python", "key": "python", "name": "Python", "group": "backend", "tier": "historica", "icon": "/icons/python.svg", "order": 4, "label": { "en": "Scripting & data", "es": "Scripting y datos" } },
+
+  { "id": "react", "key": "react", "name": "React", "group": "frontend", "tier": "actual", "icon": "/icons/react.svg", "order": 1, "label": { "en": "Frontend framework", "es": "Framework frontend" } },
+  { "id": "typescript", "key": "typescript", "name": "TypeScript", "group": "frontend", "tier": "actual", "icon": "/icons/typescript.svg", "order": 2, "label": { "en": "Type-safe JS", "es": "JS con tipos" } },
+  { "id": "javascript", "key": "javascript", "name": "JavaScript", "group": "frontend", "tier": "actual", "icon": "/icons/javascript.svg", "order": 3, "label": { "en": "Web essentials", "es": "Base de la web" } },
+  { "id": "liferay", "key": "liferay", "name": "Liferay", "group": "frontend", "tier": "actual", "icon": "/icons/liferay.svg", "order": 4, "label": { "en": "Portal platform", "es": "Plataforma de portales" } },
+  { "id": "tailwind", "key": "tailwind", "name": "Tailwind CSS", "group": "frontend", "tier": "actual", "icon": "/icons/tailwind.svg", "order": 5, "label": { "en": "Styling", "es": "Estilos" } },
+  { "id": "d3", "key": "d3", "name": "D3.js", "group": "frontend", "tier": "historica", "order": 6, "label": { "en": "Data visualization", "es": "Visualización de datos" } },
+
+  { "id": "docker", "key": "docker", "name": "Docker", "group": "devops", "tier": "actual", "icon": "/icons/docker.svg", "order": 1, "label": { "en": "Containerization", "es": "Contenedores" } },
+  { "id": "git", "key": "git", "name": "Git", "group": "devops", "tier": "actual", "icon": "/icons/git.svg", "order": 2, "label": { "en": "Version control", "es": "Control de versiones" } },
+  { "id": "linux", "key": "linux", "name": "Linux", "group": "devops", "tier": "actual", "icon": "/icons/linux.svg", "order": 3, "label": { "en": "Server environment", "es": "Entorno de servidor" } },
+  { "id": "kubernetes", "key": "kubernetes", "name": "Kubernetes", "group": "devops", "tier": "formacion", "icon": "/icons/kubernetes.svg", "order": 4, "label": { "en": "Orchestration", "es": "Orquestación" } },
+  { "id": "jenkins", "key": "jenkins", "name": "Jenkins", "group": "devops", "tier": "formacion", "order": 5, "label": { "en": "Build automation", "es": "Automatización de builds" } },
+  { "id": "terraform", "key": "terraform", "name": "Terraform", "group": "devops", "tier": "formacion", "order": 6, "label": { "en": "Infrastructure as code", "es": "Infraestructura como código" } },
+  { "id": "windows-server", "key": "windows-server", "name": "Windows Server", "group": "devops", "tier": "historica", "order": 7, "label": { "en": "Systems background", "es": "Base de sistemas" } },
+
+  { "id": "mysql", "key": "mysql", "name": "MySQL", "group": "data", "tier": "actual", "icon": "/icons/mysql.svg", "order": 1, "label": { "en": "Relational DB", "es": "BD relacional" } },
+  { "id": "postgresql", "key": "postgresql", "name": "PostgreSQL", "group": "data", "tier": "actual", "icon": "/icons/postgresql.svg", "order": 2, "label": { "en": "Advanced DB", "es": "BD avanzada" } },
+  { "id": "sql", "key": "sql", "name": "SQL", "group": "data", "tier": "secundaria", "order": 3, "label": { "en": "Query language", "es": "Lenguaje de consulta" } },
+
+  { "id": "rest-apis", "key": "rest-apis", "name": "REST APIs", "group": "practices", "tier": "actual", "order": 1, "label": { "en": "Service communication", "es": "Comunicación entre servicios" } },
+  { "id": "batch", "key": "batch", "name": "Batch Processing", "group": "practices", "tier": "actual", "order": 2, "label": { "en": "Automated data workflows", "es": "Procesos de datos automatizados" } },
+  { "id": "system-design", "key": "system-design", "name": "System Design", "group": "practices", "tier": "actual", "order": 3, "label": { "en": "Architecture decisions", "es": "Decisiones de arquitectura" } },
+  { "id": "clean-architecture", "key": "clean-architecture", "name": "Clean Architecture", "group": "practices", "tier": "actual", "order": 4, "label": { "en": "Maintainable boundaries", "es": "Límites mantenibles" } },
+  { "id": "ci-cd", "key": "ci-cd", "name": "CI/CD", "group": "practices", "tier": "formacion", "order": 5, "label": { "en": "Delivery pipelines", "es": "Pipelines de entrega" } },
+  { "id": "devops", "key": "devops", "name": "DevOps", "group": "practices", "tier": "formacion", "order": 6, "label": { "en": "Dev and ops together", "es": "Desarrollo y operaciones" } },
+  { "id": "agile", "key": "agile", "name": "Agile / Scrum", "group": "practices", "tier": "secundaria", "order": 7, "label": { "en": "Team methodology", "es": "Metodología de equipo" } },
+  { "id": "dataviz", "key": "dataviz", "name": "Data Visualization", "group": "practices", "tier": "historica", "order": 8, "label": { "en": "Exploratory analysis", "es": "Análisis exploratorio" } }
+]

@@ -1,0 +1,160 @@
+[
+  {
+    "id": "en:egarsat",
+    "key": "egarsat",
+    "lang": "en",
+    "order": 1,
+    "role": "Software Engineer",
+    "company": "Egarsat",
+    "location": "Sant Cugat del Vallès, Barcelona",
+    "mode": "On-site",
+    "start": "2022-09",
+    "end": null,
+    "summary": "Full-stack development with Java and Spring Boot on the backend and React with TypeScript on the frontend. REST APIs for service communication, batch processing, and Liferay portal customization.",
+    "bullets": [
+      "Full-stack development with Java + Spring Boot on the backend and React + TypeScript on the frontend.",
+      "Design and implementation of REST APIs for inter-service communication.",
+      "Batch process development for automated data processing.",
+      "Liferay portal customization and portlet development.",
+      "Containerized deployments with Docker."
+    ],
+    "tech": ["Java", "Spring Boot", "React", "TypeScript", "Liferay", "Docker", "MySQL"],
+    "practices": ["REST APIs", "Batch Processing"],
+    "domains": []
+  },
+  {
+    "id": "es:egarsat",
+    "key": "egarsat",
+    "lang": "es",
+    "order": 1,
+    "role": "Ingeniero de Software",
+    "company": "Egarsat",
+    "location": "Sant Cugat del Vallès, Barcelona",
+    "mode": "Presencial",
+    "start": "2022-09",
+    "end": null,
+    "summary": "Desarrollo full-stack con Java y Spring Boot en el backend y React con TypeScript en el frontend. APIs REST para la comunicación entre servicios, procesos batch y customización de portales Liferay.",
+    "bullets": [
+      "Desarrollo full-stack con Java + Spring Boot en backend y React + TypeScript en frontend.",
+      "Diseño e implementación de APIs REST para comunicación entre servicios.",
+      "Desarrollo de procesos batch para automatización del tratamiento de datos.",
+      "Customización de portales Liferay y desarrollo de portlets.",
+      "Despliegues containerizados con Docker."
+    ],
+    "tech": ["Java", "Spring Boot", "React", "TypeScript", "Liferay", "Docker", "MySQL"],
+    "practices": ["APIs REST", "Procesamiento Batch"],
+    "domains": []
+  },
+  {
+    "id": "en:tacobell",
+    "key": "tacobell",
+    "lang": "en",
+    "order": 2,
+    "role": "Team Supervisor",
+    "company": "Taco Bell",
+    "location": "Barcelona",
+    "mode": "On-site",
+    "start": "2021-05",
+    "end": "2022-09",
+    "summary": "Leadership of a dynamic team, optimizing task assignment and workflows to maximize operational efficiency during high-demand peaks.",
+    "bullets": [
+      "Led dynamic team operations, optimizing workflows during high-demand periods.",
+      "Handled task assignment and resource management for maximum efficiency."
+    ],
+    "tech": [],
+    "practices": ["Leadership", "Team Management", "Operations"],
+    "domains": []
+  },
+  {
+    "id": "es:tacobell",
+    "key": "tacobell",
+    "lang": "es",
+    "order": 2,
+    "role": "Supervisor de Equipo",
+    "company": "Taco Bell",
+    "location": "Barcelona",
+    "mode": "Presencial",
+    "start": "2021-05",
+    "end": "2022-09",
+    "summary": "Liderazgo de un equipo dinámico, optimizando la asignación de tareas y los flujos de trabajo para maximizar la eficiencia operativa durante picos de alta demanda.",
+    "bullets": [
+      "Liderazgo de operaciones de equipo, optimizando flujos de trabajo en periodos de alta demanda.",
+      "Gestión de asignación de tareas y recursos para maximizar la eficiencia."
+    ],
+    "tech": [],
+    "practices": ["Liderazgo", "Gestión de equipos", "Operaciones"],
+    "domains": []
+  },
+  {
+    "id": "en:urv",
+    "key": "urv",
+    "lang": "en",
+    "order": 3,
+    "role": "Software Developer (Internship)",
+    "company": "Universitat Rovira i Virgili",
+    "location": "Tarragona",
+    "mode": "Remote",
+    "start": "2021-10",
+    "end": "2022-05",
+    "summary": "End-to-end development of the research portal \"The Mutational Landscape of SARS-CoV-2\", from design conception to production deployment. Interdisciplinary work between software engineering and bioinformatics.",
+    "bullets": [
+      "End-to-end development of \"The Mutational Landscape of SARS-CoV-2\" research portal.",
+      "Interdisciplinary collaboration between software engineering and bioinformatics.",
+      "Full lifecycle ownership: design, development, testing, and production deployment."
+    ],
+    "tech": ["TypeScript", "PHP", "Python", "D3.js"],
+    "practices": ["Data Visualization"],
+    "domains": ["Bioinformatics"]
+  },
+  {
+    "id": "es:urv",
+    "key": "urv",
+    "lang": "es",
+    "order": 3,
+    "role": "Desarrollador de Software (Prácticas)",
+    "company": "Universitat Rovira i Virgili",
+    "location": "Tarragona",
+    "mode": "Remoto",
+    "start": "2021-10",
+    "end": "2022-05",
+    "summary": "Responsabilidad end-to-end del desarrollo del portal de investigación \"The Mutational Landscape of SARS-CoV-2\", desde la concepción del diseño hasta el despliegue en producción. Trabajo interdisciplinar entre ingeniería de software y bioinformática.",
+    "bullets": [
+      "Desarrollo end-to-end del portal de investigación \"The Mutational Landscape of SARS-CoV-2\".",
+      "Colaboración interdisciplinar entre ingeniería de software y bioinformática.",
+      "Ownership del ciclo completo: diseño, desarrollo, pruebas y despliegue en producción."
+    ],
+    "tech": ["TypeScript", "PHP", "Python", "D3.js"],
+    "practices": ["Visualización de datos"],
+    "domains": ["Bioinformática"]
+  },
+  {
+    "id": "en:beep",
+    "key": "beep",
+    "lang": "en",
+    "order": 4,
+    "role": "Systems Technician (Internship)",
+    "company": "BEEP",
+    "start": "2019-10",
+    "end": "2020-06",
+    "summary": "Technical support and maintenance of IT systems and infrastructure.",
+    "bullets": ["Provided technical support and supported IT infrastructure maintenance."],
+    "tech": [],
+    "practices": ["IT Support", "Systems", "Networking"],
+    "domains": []
+  },
+  {
+    "id": "es:beep",
+    "key": "beep",
+    "lang": "es",
+    "order": 4,
+    "role": "Técnico de Sistemas (Prácticas)",
+    "company": "BEEP",
+    "start": "2019-10",
+    "end": "2020-06",
+    "summary": "Soporte técnico y mantenimiento de sistemas e infraestructura informática.",
+    "bullets": ["Soporte técnico y apoyo en el mantenimiento de infraestructura informática."],
+    "tech": [],
+    "practices": ["Soporte IT", "Sistemas", "Redes"],
+    "domains": []
+  }
+]
