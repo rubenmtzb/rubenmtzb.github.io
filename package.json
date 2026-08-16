@@ -20,6 +20,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "linkedom": "^0.18.12",
+    "playwright": "^1.62.1",
     "typescript": "^5.9.3"
   }
 }

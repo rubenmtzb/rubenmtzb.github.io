@@ -139,6 +139,12 @@ html.js .la-fallback { display: none; }
    Con JS: el mismo markup pasa a carrusel horizontal con scroll-snap.  */
 .pa-track { display: flex; flex-direction: column; gap: 2.5rem; }
 
+/* Proporción uniforme: el archivo mezcla vertical y horizontal y sin
+   acotarla el carrusel se desborda. En vertical se deja más alto. */
+.pa-frame { aspect-ratio: 4 / 5; }
+html.js .pa-frame { aspect-ratio: 4 / 3; }
+@media (min-width: 640px) { html.js .pa-frame { aspect-ratio: 3 / 2; } }
+
 html.js .pa-track {
   flex-direction: row;
   gap: 1.5rem;

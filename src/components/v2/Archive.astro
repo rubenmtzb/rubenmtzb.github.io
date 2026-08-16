@@ -34,7 +34,7 @@ const total = photos.length
           aria-roledescription="slide"
           aria-label={`${t(lang, 'v2.archive.counter')} ${i + 1} / ${total}`}
         >
-          <div class="relative overflow-hidden rounded-xl border border-[var(--v2-line)] bg-[var(--v2-surface)]">
+          <div class="pa-frame relative overflow-hidden rounded-xl border border-[var(--v2-line)] bg-[var(--v2-surface)]">
             <Picture
               src={photo.image}
               formats={['avif', 'webp']}
@@ -43,7 +43,7 @@ const total = photos.length
               alt={photo.alt[lang]}
               loading="lazy"
               decoding="async"
-              class="h-auto w-full object-cover"
+              class="h-full w-full object-cover"
             />
             <button
               type="button"
