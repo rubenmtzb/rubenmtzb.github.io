@@ -207,7 +207,7 @@ const personal = defineCollection({
     z.object({
       key: z.string().min(1),
       order: z.number().int(),
-      category: z.enum(['life', 'travel', 'style', 'sport', 'moment']),
+      category: z.enum(['identity', 'life', 'travel', 'style', 'sport', 'moment']),
       image: image(),
       alt: z.object({ en: z.string().min(10), es: z.string().min(10) }),
       caption: z.object({ en: z.string(), es: z.string() }).optional(),

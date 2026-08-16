@@ -9,123 +9,143 @@ const { lang } = Astro.props
 const experience = await getExperience(lang)
 const projects = await getProjects(lang)
 
-const now = experience.filter((e) => e.end === null)
-const before = experience.filter((e) => e.end !== null)
+const featured = projects[0]
+const rest = projects.slice(1)
+const current = experience.find((e) => e.end === null)
+const past = experience.filter((e) => e.end !== null)
 
-/** Fichas profundas compartidas: no pertenecen a V1 ni a V2. */
 const CASE_PATHS: Record<string, string> = { 'sars-cov-2': '/work/sars-cov-2/' }
 const casePath = (key: string) =>
   CASE_PATHS[key] ? (lang === 'es' ? `/es${CASE_PATHS[key]}` : CASE_PATHS[key]) : null
+
+/**
+ * Cinta de datos del proyecto destacado. Alude al genoma que el portal
+ * explora en lugar de simular una captura de pantalla que no existe:
+ * la altura de cada marca es determinista, derivada del índice.
+ */
+const ribbon = Array.from({ length: 96 }, (_, i) => {
+  const v = Math.abs(Math.sin(i * 0.7) * Math.cos(i * 0.31) * Math.sin(i * 0.13))
+  return { h: 14 + v * 86, o: 0.2 + v * 0.75 }
+})
 ---
 
-<section id="work" class="mx-auto w-full max-w-6xl scroll-mt-24 px-5 py-20 sm:px-8 sm:py-28">
-  {(V2_ANCHOR_ALIASES["work"] ?? []).map((a) => (
-    <span id={a} class="anchor-alias" aria-hidden="true" />
-  ))}
+<section id="work" class="band">
+  {(V2_ANCHOR_ALIASES['work'] ?? []).map((a) => <span id={a} class="anchor-alias" aria-hidden="true" />)}
 
-  <header class="reveal max-w-2xl">
-    <p class="v2-eyebrow">02 — {t(lang, 'v2.work.title')}</p>
-    <h2 class="v2-h2 mt-3">{t(lang, 'v2.work.lede')}</h2>
-  </header>
+  <div class="shell">
+    <header class="rule-head reveal">
+      <span class="t-index">01</span>
+      <h2 class="t-h2">{t(lang, 'v2.work.title')}</h2>
+    </header>
 
-  <div class="mt-12 grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-14">
-    <!-- Trayectoria condensada: una línea por puesto, sin tarjetas -->
-    <div>
-      <h3 class="v2-eyebrow reveal">{t(lang, 'v2.work.now')}</h3>
-      <ul class="mt-4 space-y-6">
-        {
-          now.map((item) => (
-            <li class="reveal">
-              <p class="text-lg font-semibold">{item.role}</p>
-              <p class="mt-0.5 text-sm text-[var(--v2-accent-soft)]">{item.company}</p>
-              <p class="mt-1 text-xs text-[var(--v2-fg-dim)]">
-                {formatPeriod(item.start, item.end, lang)} · {formatDuration(item.start, item.end, lang)}
-                {item.location && ` · ${item.location}`}
-              </p>
-              <p class="mt-3 text-sm leading-relaxed text-[var(--v2-fg-muted)]">{item.summary}</p>
-              <ul class="mt-3 flex flex-wrap gap-1.5">
-                {[...item.tech, ...item.practices].map((tag) => (
-                  <li class="v2-chip">{tag}</li>
-                ))}
-              </ul>
-            </li>
-          ))
-        }
-      </ul>
+    <!-- Puesto actual: una sola pieza, sin tarjeta -->
+    {current && (
+      <div class="reveal mt-16 grid gap-x-12 gap-y-6 md:grid-cols-12">
+        <p class="t-meta md:col-span-3">{t(lang, 'v2.work.now')}</p>
+        <div class="md:col-span-9">
+          <h3 class="t-display">{current.role}</h3>
+          <p class="mt-3 text-[color:var(--blue-bright)]">{current.company}</p>
+          <p class="t-meta mt-2 normal-case tracking-[0.1em]">
+            {formatPeriod(current.start, current.end, lang)} · {formatDuration(current.start, current.end, lang)}
+            {current.location && ` · ${current.location}`}
+          </p>
+          <p class="t-body mt-6">{current.summary}</p>
+          <ul class="mt-6 flex flex-wrap gap-x-4 gap-y-2">
+            {[...current.tech, ...current.practices].map((tag) => (
+              <li class="t-meta normal-case tracking-[0.12em] text-[color:var(--fg-2)]">{tag}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    )}
 
-      <h3 class="v2-eyebrow reveal mt-12">{t(lang, 'v2.work.before')}</h3>
-      <ul class="mt-4 space-y-4">
-        {
-          before.map((item, i) => (
-            <li class="reveal flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-t border-[var(--v2-line-soft)] pt-4" style={`--i:${i}`}>
-              <div>
-                <span class="text-sm font-medium">{item.role}</span>
-                <span class="ml-2 text-sm text-[var(--v2-fg-dim)]">{item.company}</span>
-              </div>
-              <span class="text-xs tabular-nums text-[var(--v2-fg-dim)]">
-                {formatPeriod(item.start, item.end, lang)}
-              </span>
-            </li>
-          ))
-        }
+    <!-- Trayectoria anterior: lista, no tarjetas -->
+    <div class="reveal mt-20 grid gap-x-12 gap-y-6 md:grid-cols-12">
+      <p class="t-meta md:col-span-3">{t(lang, 'v2.work.before')}</p>
+      <ul class="md:col-span-9">
+        {past.map((item) => (
+          <li class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-t border-[color:var(--line-soft)] py-5">
+            <span class="t-h3">{item.role}</span>
+            <span class="flex-1 text-[color:var(--fg-2)]">{item.company}</span>
+            <span class="t-meta normal-case tracking-[0.1em] tabular-nums">{formatPeriod(item.start, item.end, lang)}</span>
+          </li>
+        ))}
       </ul>
     </div>
+  </div>
 
-    <!-- Proyectos -->
-    <div>
-      <h3 class="v2-eyebrow reveal">{t(lang, 'v2.work.projects')}</h3>
-      <ul class="mt-4 space-y-4">
-        {
-          projects.map((p, i) => {
-            const href = casePath(p.key)
-            return (
-              <li class="reveal" style={`--i:${i}`}>
-                <article class="v2-card v2-card-hover p-5 sm:p-6">
-                  <div class="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <p class="text-[0.66rem] uppercase tracking-[0.24em] text-[var(--v2-fg-dim)]">{p.eyebrow}</p>
-                      <h4 class="mt-1.5 text-lg font-semibold">{p.title}</h4>
-                    </div>
-                    <span class:list={['v2-chip shrink-0', p.badge === 'live' && 'v2-chip-accent']}>
-                      {t(lang, p.badge === 'live' ? 'work.badge.live' : 'work.badge.private')}
-                    </span>
-                  </div>
+  <!-- ---------- Proyecto destacado: pieza a sangre ---------- -->
+  {featured && (
+    <article class="reveal mt-28 border-y border-[color:var(--line-soft)] bg-[color:var(--ink-800)]">
+      <div class="shell py-16 sm:py-20">
+        <div class="grid gap-x-12 gap-y-10 lg:grid-cols-12">
+          <div class="lg:col-span-5">
+            <p class="t-index">01 — {featured.eyebrow}</p>
+            <h3 class="t-display mt-5">{featured.title}</h3>
+          </div>
+          <div class="lg:col-span-7">
+            <p class="t-body">{featured.description}</p>
+            <ul class="mt-7 flex flex-wrap gap-x-4 gap-y-2">
+              {[...featured.tech, ...featured.domains].map((tech) => (
+                <li class="t-meta normal-case tracking-[0.12em] text-[color:var(--fg-2)]">{tech}</li>
+              ))}
+            </ul>
+            <div class="mt-9 flex flex-wrap items-center gap-x-8 gap-y-3">
+              {casePath(featured.key) && (
+                <a href={casePath(featured.key)} class="link-underline inline-flex items-center gap-2 font-medium">
+                  {t(lang, 'v2.work.case')}
+                  <Icon name="arrowUpRight" class="h-4 w-4" />
+                </a>
+              )}
+              {featured.link && (
+                <a href={featured.link} target="_blank" rel="noopener noreferrer" class="link-underline inline-flex items-center gap-2 text-[color:var(--fg-2)]">
+                  {t(lang, 'v2.work.visit')}
+                  <Icon name="external" class="h-3.5 w-3.5" />
+                </a>
+              )}
+              {featured.publication && (
+                <a href={featured.publication.href} target="_blank" rel="noopener noreferrer" class="link-underline inline-flex items-center gap-2 text-[color:var(--fg-2)]">
+                  <Icon name="book" class="h-3.5 w-3.5" />
+                  {featured.publication.label}
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
 
-                  <p class="mt-3 text-sm leading-relaxed text-[var(--v2-fg-muted)]">{p.description}</p>
+      <div class="ribbon h-24 w-full sm:h-32" aria-hidden="true">
+        {ribbon.map((b) => <span style={`height:${b.h}%;opacity:${b.o.toFixed(2)}`} />)}
+      </div>
+    </article>
+  )}
 
-                  <ul class="mt-4 flex flex-wrap gap-1.5">
-                    {[...p.tech, ...p.domains].map((tech) => (
-                      <li class="v2-chip">{tech}</li>
-                    ))}
-                  </ul>
-
-                  {(href || p.link) && (
-                    <p class="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm">
-                      {href && (
-                        <a href={href} class="inline-flex items-center gap-1.5 font-medium text-[var(--v2-accent-soft)] hover:text-[var(--v2-accent)]">
-                          {t(lang, 'v2.work.case')}
-                          <Icon name="arrowUpRight" class="h-3.5 w-3.5" />
-                        </a>
-                      )}
-                      {p.link && (
-                        <a
-                          href={p.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          class="inline-flex items-center gap-1.5 text-[var(--v2-fg-muted)] hover:text-[var(--v2-fg)]"
-                        >
-                          {t(lang, 'v2.work.visit')}
-                          <Icon name="external" class="h-3.5 w-3.5" />
-                        </a>
-                      )}
-                    </p>
-                  )}
-                </article>
-              </li>
-            )
-          })
-        }
-      </ul>
+  <!-- ---------- Resto de proyectos: filas, no fichas ---------- -->
+  <div class="shell mt-24">
+    <p class="t-meta reveal">{t(lang, 'v2.work.projects')}</p>
+    <div class="mt-6">
+      {rest.map((p, i) => {
+        const href = casePath(p.key) ?? p.link
+        const external = !casePath(p.key) && Boolean(p.link)
+        const Tag = href ? 'a' : 'div'
+        return (
+          <Tag
+            class="project-row reveal group"
+            style={`--i:${i}`}
+            {...(href ? { href, ...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {}) } : {})}
+          >
+            <div class="grid items-baseline gap-x-8 gap-y-3 md:grid-cols-12">
+              <span class="t-index md:col-span-1">{String(i + 2).padStart(2, '0')}</span>
+              <h3 class="project-title t-h3 md:col-span-4">{p.title}</h3>
+              <p class="text-[color:var(--fg-2)] md:col-span-5">{p.description}</p>
+              <span class="t-meta md:col-span-2 md:text-right">
+                {t(lang, p.badge === 'live' ? 'work.badge.live' : 'work.badge.private')}
+              </span>
+            </div>
+          </Tag>
+        )
+      })}
+      <div class="border-t border-[color:var(--line-soft)]"></div>
     </div>
   </div>
 </section>

@@ -1,5 +1,17 @@
 [
   {
+    "id": "portrait",
+    "key": "portrait",
+    "order": 0,
+    "category": "identity",
+    "featured": false,
+    "image": "./../assets/personal/00-retrato-identidad.jpg",
+    "alt": {
+      "en": "Studio portrait of Rubén Martínez Bernabe, arms crossed, looking at the camera against a neutral background.",
+      "es": "Retrato de estudio de Rubén Martínez Bernabe, de brazos cruzados, mirando a cámara sobre fondo neutro."
+    }
+  },
+  {
     "id": "palencia",
     "key": "palencia",
     "order": 1,
@@ -11,7 +23,10 @@
       "en": "Sitting on a stone wall at dusk, looking out over a Castilian village with its church on the hill and wind turbines along the horizon.",
       "es": "Sentado en un muro de piedra al atardecer, mirando un pueblo castellano con su iglesia en lo alto y molinos de viento en el horizonte."
     },
-    "caption": { "en": "Somewhere between places.", "es": "En algún punto entre dos sitios." }
+    "caption": {
+      "en": "Somewhere between places.",
+      "es": "En algún punto entre dos sitios."
+    }
   },
   {
     "id": "london",
@@ -64,7 +79,10 @@
       "en": "First-person view of my hand gripping a via ferrata cable, carabiner clipped in, with the valley far below.",
       "es": "Vista en primera persona de mi mano agarrando el cable de una vía ferrata, con el mosquetón anclado y el valle a plomo debajo."
     },
-    "caption": { "en": "Three points of contact.", "es": "Tres puntos de apoyo." }
+    "caption": {
+      "en": "Three points of contact.",
+      "es": "Tres puntos de apoyo."
+    }
   },
   {
     "id": "eclipse",
@@ -79,6 +97,9 @@
       "en": "Wearing eclipse glasses with the eclipse printed on the lenses, smiling, during the total solar eclipse.",
       "es": "Con gafas de eclipse que llevan el eclipse impreso en los cristales, sonriendo, durante el eclipse solar total."
     },
-    "caption": { "en": "Total solar eclipse.", "es": "Eclipse solar total." }
+    "caption": {
+      "en": "Total solar eclipse.",
+      "es": "Eclipse solar total."
+    }
   }
 ]

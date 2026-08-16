@@ -7,32 +7,52 @@ interface Props { lang: Lang; cvPath: string }
 const { lang, cvPath } = Astro.props
 const profile = await getProfile(lang)
 const ICONS = { LinkedIn: 'linkedin', GitHub: 'github' } as const
+const headline = lang === 'es'
+  ? ['Construyamos', 'algo', 'interesante.']
+  : ["Let's build", 'something', 'interesting.']
 ---
+<section id="contact" class="band border-t border-[color:var(--line-soft)]">
+  {(V2_ANCHOR_ALIASES['contact'] ?? []).map((a) => <span id={a} class="anchor-alias" aria-hidden="true" />)}
 
-<section id="contact" class="mx-auto w-full max-w-6xl scroll-mt-24 px-5 py-20 sm:px-8 sm:py-28">
-  {(V2_ANCHOR_ALIASES["contact"] ?? []).map((a) => (
-    <span id={a} class="anchor-alias" aria-hidden="true" />
-  ))}
+  <div class="shell">
+    <header class="rule-head reveal">
+      <span class="t-index">03</span>
+      <h2 class="t-h2">{t(lang, 'v2.contact.title')}</h2>
+    </header>
 
-  <div class="v2-card p-8 sm:p-12">
-    <p class="v2-eyebrow reveal">04 — {t(lang, 'v2.contact.title')}</p>
-    <h2 class="v2-h2 reveal mt-3 max-w-2xl">{profile.contactHeadline}</h2>
-    <p class="v2-lede reveal mt-4">{t(lang, 'v2.contact.lede')}</p>
+    <p class="t-display reveal mt-16" style="--i:1">
+      {headline.map((line) => <span class="block">{line}</span>)}
+    </p>
 
-    <div class="reveal mt-8 flex flex-wrap items-center gap-3">
-      <a href={`mailto:${profile.email}`} class="inline-flex items-center gap-2 rounded-lg bg-[#00ff88] px-5 py-3 text-sm font-semibold text-[#06120c] transition hover:bg-[#5cffb4]">
-        <Icon name="send" class="h-4 w-4" />{t(lang, 'v2.contact.write')}
-      </a>
-      <a href={cvPath} class="inline-flex items-center gap-2 rounded-lg border border-[var(--v2-line)] px-5 py-3 text-sm font-semibold transition hover:border-[#37424e] hover:bg-[var(--v2-raised)]">
-        <Icon name="eye" class="h-4 w-4" />{t(lang, 'v2.hero.cv')}
-      </a>
+    <!-- El email es la pieza, no un enlace más de una lista -->
+    <div class="reveal mt-14" style="--i:2">
+      <p class="t-meta">Email</p>
+      <a href={`mailto:${profile.email}`} class="mail mt-3">{profile.email}</a>
+      <button type="button" id="copy-mail" hidden
+        class="t-meta ml-5 align-middle normal-case tracking-[0.12em] text-[color:var(--fg-3)] transition hover:text-[color:var(--blue-bright)]"
+        data-mail={profile.email}
+        data-label={lang === 'es' ? 'copiar' : 'copy'}
+        data-done={lang === 'es' ? 'copiado ✓' : 'copied ✓'}>{lang === 'es' ? 'copiar' : 'copy'}</button>
     </div>
 
-    <ul class="reveal mt-8 flex flex-wrap gap-x-8 gap-y-3 border-t border-[var(--v2-line-soft)] pt-6">
-      <li><a href={`mailto:${profile.email}`} class="inline-flex items-center gap-2 text-sm text-[var(--v2-fg-muted)] transition hover:text-[var(--v2-accent-soft)]"><Icon name="mail" class="h-4 w-4" />{profile.email}</a></li>
+    <div class="reveal mt-16 grid gap-x-12 gap-y-10 sm:grid-cols-3" style="--i:3">
+      <div>
+        <p class="t-meta">{lang === 'es' ? 'Ubicación' : 'Location'}</p>
+        <p class="mt-3 text-[color:var(--fg-2)]">{profile.locality} · {lang === 'es' ? 'España' : 'Spain'}</p>
+      </div>
       {profile.socials.map((s) => (
-        <li><a href={s.href} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm text-[var(--v2-fg-muted)] transition hover:text-[var(--v2-accent-soft)]"><Icon name={ICONS[s.label as keyof typeof ICONS] ?? 'globe'} class="h-4 w-4" />{s.label}</a></li>
+        <div>
+          <p class="t-meta">{s.label}</p>
+          <a href={s.href} target="_blank" rel="noopener noreferrer" class="link-underline mt-3 inline-flex items-center gap-2">
+            <Icon name={ICONS[s.label as keyof typeof ICONS] ?? 'globe'} class="h-4 w-4" />
+            {s.href.includes('linkedin') ? 'in/rubenmartinezbernabe' : 'rubenmtzb'}
+          </a>
+        </div>
       ))}
-    </ul>
+    </div>
+
+    <p class="reveal mt-14" style="--i:4">
+      <a href={cvPath} class="btn btn-ghost">{t(lang, 'v2.hero.cv')}<Icon name="arrowUpRight" class="h-4 w-4" /></a>
+    </p>
   </div>
 </section>

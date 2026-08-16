@@ -1,207 +1,402 @@
 @import 'tailwindcss';
+@import '@fontsource-variable/archivo/wdth.css';
 @import '@fontsource-variable/jetbrains-mono/wght.css';
 
 /* ============================================================
-   V2 — lenguaje visual propio.
+   SISTEMA VISUAL — dirección de arte
 
-   No reutiliza la estética de la V1: donde V1 satura (grid animada,
-   scanlines, partículas, glitch, tres acentos), V2 contiene. Un solo
-   acento, un solo momento espectacular —Living Architecture— y todo lo
-   demás en silencio para que ese momento destaque.
+   Principios tomados de la referencia y aplicados a esta identidad: la
+   personalidad viene de la escala, el espacio y la contención, no de los
+   efectos. Un único acento, usado con cuentagotas. Reglas editoriales en
+   lugar de bordes por todas partes. Un solo gesto en cada hover.
 
-   El terreno viene de la paleta oscura de GitHub, que es una conexión
-   real con la identidad de ingeniero, no una decoración.
+   Dos voces tipográficas con roles que no se solapan:
+     Archivo   — display y prosa. Aporta presencia y ritmo editorial.
+     JetBrains — únicamente metadatos, índices y etiquetas. Es el rastro
+                 de ingeniería, no el lenguaje de la interfaz.
+
+   El azul sustituye al verde como identidad. El terreno es azul muy
+   profundo, no negro: mantiene temperatura fría en toda la página.
    ============================================================ */
 
 @theme {
-  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-display: 'Archivo Variable', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace;
 }
 
 :root {
-  --v2-canvas: #0d1117;
-  --v2-surface: #131920;
-  --v2-raised: #1a2029;
-  --v2-line: #262d36;
-  --v2-line-soft: #1d232b;
+  /* Terreno */
+  --ink-900: #05080f;
+  --ink-800: #0a0f1c;
+  --ink-700: #111828;
+  --line: #1b2438;
+  --line-soft: #131b2b;
 
-  --v2-fg: #e6edf3;
-  --v2-fg-muted: #a3b0bd;   /* 9.1:1 sobre el fondo */
-  --v2-fg-dim: #7d8b99;     /* 5.4:1 — mínimo para texto secundario */
+  /* Texto — verificado sobre --ink-900 */
+  --fg: #edf1f8;      /* 17.6:1 */
+  --fg-2: #a2b0c9;    /*  8.7:1 */
+  --fg-3: #6e7d99;    /*  4.8:1 — mínimo para metadatos */
 
-  --v2-accent: #00ff88;
-  --v2-accent-soft: #63d69b;
-  --v2-accent-dim: rgb(0 255 136 / 0.14);
+  /* Identidad */
+  --blue: #2b6bff;
+  --blue-bright: #5b9bff;
+  --cyan: #6fe3ff;
+
+  --measure: 68ch;
 }
 
-html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 7rem;
+  background: var(--ink-900);
+}
 
 body {
-  background: var(--v2-canvas);
-  color: var(--v2-fg);
-  font-family: var(--font-mono);
+  background: var(--ink-900);
+  color: var(--fg);
+  font-family: var(--font-display);
+  font-synthesis-weight: none;
   -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
 }
 
-::selection { background: rgb(0 255 136 / 0.22); color: #b9ffd8; }
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: var(--v2-canvas); }
-::-webkit-scrollbar-thumb { background: var(--v2-line); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #333c47; }
+::selection { background: rgb(43 107 255 / 0.32); color: #fff; }
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--ink-900); }
+::-webkit-scrollbar-thumb { background: var(--line); }
+::-webkit-scrollbar-thumb:hover { background: #2a3550; }
 
 :where(a, button, [tabindex], summary):focus-visible {
-  outline: 2px solid var(--v2-accent-soft);
-  outline-offset: 3px;
-  border-radius: 6px;
+  outline: 2px solid var(--blue-bright);
+  outline-offset: 4px;
+  border-radius: 2px;
 }
 
 .skip-link {
-  position: absolute; left: 50%; top: 0.5rem; translate: -50% -200%; z-index: 100;
-  background: var(--v2-surface); border: 1px solid var(--v2-accent);
-  color: var(--v2-fg); padding: 0.6rem 1.2rem; border-radius: 8px;
-  font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase;
-  transition: translate 0.2s ease;
+  position: absolute; left: 1.5rem; top: 1rem; translate: 0 -250%; z-index: 200;
+  background: var(--blue); color: #fff; padding: 0.7rem 1.3rem;
+  font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+  transition: translate 0.24s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.skip-link:focus-visible { translate: -50% 0; }
+.skip-link:focus-visible { translate: 0 0; }
 
-/* ---------- Tipografía ----------
-   La jerarquía la marca el tamaño y el peso, no el color. */
-.v2-display {
-  font-size: clamp(2.4rem, 7vw, 4.6rem);
-  line-height: 1.02;
+/* ---------------- TIPOGRAFÍA ----------------
+   La jerarquía se construye con escala y ancho, no con color. Archivo
+   tiene eje de anchura: los titulares grandes van ligeramente
+   condensados, que es lo que les da carácter editorial sin recurrir a
+   una fuente exótica.                                                  */
+
+.t-name {
+  font-size: clamp(2.6rem, 7.4vw, 8rem);
+  line-height: 0.86;
   font-weight: 800;
-  letter-spacing: -0.045em;
-  text-wrap: balance;
-}
-.v2-lede {
-  font-size: clamp(1rem, 2.1vw, 1.28rem);
-  line-height: 1.65;
-  color: var(--v2-fg-muted);
-  max-width: 46ch;
-}
-.v2-eyebrow {
-  font-size: 0.68rem;
-  letter-spacing: 0.28em;
+  font-stretch: 88%;
+  letter-spacing: -0.035em;
   text-transform: uppercase;
-  color: var(--v2-accent-soft);
 }
-.v2-h2 {
-  font-size: clamp(1.5rem, 3.4vw, 2.15rem);
+
+.t-display {
+  font-size: clamp(2.2rem, 6.5vw, 5rem);
+  line-height: 0.94;
   font-weight: 700;
-  letter-spacing: -0.028em;
+  font-stretch: 92%;
+  letter-spacing: -0.03em;
   text-wrap: balance;
 }
 
-/* Prompt monoespaciado: el guiño terminal es un detalle, no la interfaz. */
-.v2-prompt::before { content: '$ '; color: var(--v2-accent); }
-
-.v2-rule { height: 1px; background: var(--v2-line-soft); }
-
-.v2-card {
-  background: var(--v2-surface);
-  border: 1px solid var(--v2-line);
-  border-radius: 12px;
+.t-h2 {
+  font-size: clamp(1.6rem, 3.4vw, 2.6rem);
+  line-height: 1.06;
+  font-weight: 650;
+  letter-spacing: -0.022em;
+  text-wrap: balance;
 }
-.v2-card-hover { transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease; }
-.v2-card-hover:hover { border-color: #37424e; background: var(--v2-raised); transform: translateY(-2px); }
 
-.v2-chip {
-  display: inline-flex; align-items: center; gap: 0.4rem;
-  border: 1px solid var(--v2-line); border-radius: 999px;
-  padding: 0.2rem 0.6rem; font-size: 0.72rem; color: var(--v2-fg-muted);
+.t-h3 {
+  font-size: clamp(1.15rem, 2vw, 1.5rem);
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.012em;
 }
-.v2-chip-accent { border-color: rgb(0 255 136 / 0.28); background: var(--v2-accent-dim); color: var(--v2-accent-soft); }
 
-/* ---------- Revelado ----------
-   Mismo principio que en V1: visible por defecto, la animación solo se
-   activa con JS confirmado y sin reduced-motion. */
+.t-body {
+  font-size: clamp(1rem, 1.35vw, 1.15rem);
+  line-height: 1.62;
+  color: var(--fg-2);
+  max-width: var(--measure);
+}
+
+.t-lead {
+  font-size: clamp(1.1rem, 1.9vw, 1.45rem);
+  line-height: 1.5;
+  color: var(--fg-2);
+  max-width: 34ch;
+}
+
+/* Metadatos: la única voz monoespaciada de la página. */
+.t-meta {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  font-weight: 500;
+}
+.t-index {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  color: var(--blue-bright);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Regla editorial: título y una línea que ocupa el resto del ancho. */
+.rule-head { display: flex; align-items: center; gap: 1.5rem; }
+.rule-head::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+
+/* ---------------- COMPOSICIÓN ---------------- */
+.shell { width: 100%; max-width: 78rem; margin-inline: auto; padding-inline: 1.5rem; }
+@media (min-width: 768px) { .shell { padding-inline: 3rem; } }
+@media (min-width: 1280px) { .shell { padding-inline: 4.5rem; } }
+
+.band { padding-block: clamp(5rem, 12vw, 10rem); }
+.hairline { height: 1px; background: var(--line-soft); }
+
+/* ---------------- REVELADO ----------------
+   Visible por defecto; la animación solo existe con JS confirmado y sin
+   reduced-motion, así que el HTML de build nunca sale oculto.          */
 .reveal { opacity: 1; transform: none; }
-html.js .reveal { opacity: 0; transform: translateY(1rem); }
+html.js .reveal { opacity: 0; transform: translateY(1.75rem); }
 html.js .reveal.is-in {
   opacity: 1; transform: none;
-  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-  transition-delay: calc(var(--i, 0) * 70ms);
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(var(--i, 0) * 90ms);
 }
 
-/* ---------- Living Architecture ---------- */
-.la-stage { position: relative; width: 100%; aspect-ratio: 1 / 1; max-height: 62vh; }
-.la-canvas { display: block; width: 100%; height: 100%; }
-/* Sin JS el canvas queda vacío: se muestra este sustituto estático para
-   que el hueco no aparezca como un vacío roto. */
-.la-fallback {
-  position: absolute; inset: 0; display: grid; place-items: center;
-  border: 1px dashed var(--v2-line); border-radius: 16px;
-  color: var(--v2-fg-dim); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
+/* ---------------- CABECERA ----------------
+   Capa propia por encima de todo. Ningún ancestro lleva transform,
+   filter ni contain: son la causa habitual de que una cabecera fija
+   quede atrapada bajo el contenido.                                    */
+.site-header {
+  position: fixed; inset-inline: 0; top: 0; z-index: 100;
+  border-bottom: 1px solid transparent;
+  transition: background-color 0.4s ease, border-color 0.4s ease;
 }
-html.js .la-fallback { display: none; }
-
-/* ---------- Archivo personal ----------
-   Sin JS: secuencia editorial vertical, cada foto con su pie.
-   Con JS: el mismo markup pasa a carrusel horizontal con scroll-snap.  */
-.pa-track { display: flex; flex-direction: column; gap: 2.5rem; }
-
-/* Proporción uniforme: el archivo mezcla vertical y horizontal y sin
-   acotarla el carrusel se desborda. En vertical se deja más alto. */
-.pa-frame { aspect-ratio: 4 / 5; }
-html.js .pa-frame { aspect-ratio: 4 / 3; }
-@media (min-width: 640px) { html.js .pa-frame { aspect-ratio: 3 / 2; } }
-
-html.js .pa-track {
-  flex-direction: row;
-  gap: 1.5rem;
-  overflow-x: auto;
-  padding-bottom: 1rem;
-  scrollbar-width: none;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
+.site-header.is-scrolled {
+  background: color-mix(in srgb, var(--ink-900) 84%, transparent);
+  backdrop-filter: blur(14px) saturate(140%);
+  border-bottom-color: var(--line);
 }
-html.js .pa-track::-webkit-scrollbar { display: none; }
-html.js .pa-slide { flex: 0 0 86%; scroll-snap-align: center; }
-@media (min-width: 640px) { html.js .pa-slide { flex-basis: 62%; } }
-@media (min-width: 1024px) { html.js .pa-slide { flex-basis: 52%; } }
 
-html.js .pa-open { display: block; }
-html.js #pa-controls { display: flex; }
-.pa-lb-item[data-active='true'] { display: block; }
-
-.pa-thumb {
-  border: 1px solid var(--v2-line); border-radius: 8px; overflow: hidden;
-  opacity: 0.5; transition: opacity 0.25s ease, border-color 0.25s ease;
+.nav-link {
+  position: relative;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--fg-2);
+  transition: color 0.25s ease;
 }
-.pa-thumb[aria-current='true'] { opacity: 1; border-color: var(--v2-accent); }
-.pa-thumb:hover { opacity: 0.85; }
+.nav-link::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -0.4rem;
+  height: 1px; background: var(--blue-bright);
+  scale: 0 1; transform-origin: left;
+  transition: scale 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.nav-link:hover { color: var(--fg); }
+.nav-link:hover::after, .nav-link[aria-current]::after { scale: 1 1; }
+.nav-link[aria-current] { color: var(--fg); }
 
-dialog.pa-lightbox {
+/* ---------------- RETRATO ----------------
+   Pieza visual principal del hero: la fotografía en duotono azul con un
+   foco que sigue al cursor y revela la versión iluminada. Es CSS
+   compuesto en GPU con dos custom properties; sin JavaScript queda el
+   duotono estático, que ya es una imagen acabada.                      */
+.portrait {
+  position: relative; overflow: hidden; background: var(--ink-800);
+  --mx: 50%; --my: 38%;
+}
+.portrait img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.portrait-base { filter: grayscale(1) brightness(0.68) contrast(1.1); }
+.portrait-lit {
+  position: absolute; inset: 0;
+  filter: grayscale(1) brightness(1.12) contrast(1.02);
+  mask-image: radial-gradient(circle 32% at var(--mx) var(--my), #000 0%, transparent 70%);
+  -webkit-mask-image: radial-gradient(circle 32% at var(--mx) var(--my), #000 0%, transparent 70%);
+  opacity: 0; transition: opacity 0.55s ease;
+}
+html.js .portrait:hover .portrait-lit,
+html.js .portrait:focus-within .portrait-lit { opacity: 1; }
+
+/* Duotono: sombras en azul profundo, luces en azul claro. */
+.portrait-tint {
+  position: absolute; inset: 0; pointer-events: none; mix-blend-mode: color;
+  background: linear-gradient(200deg, rgb(43 107 255 / 0.42), rgb(5 8 15 / 0.6) 66%);
+}
+.portrait-veil {
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(to top, var(--ink-900) 1%, transparent 38%);
+}
+/* Retícula de medición: detalle de ingeniería, no decoración terminal. */
+.portrait-grid {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0.22;
+  background-image:
+    linear-gradient(rgb(111 227 255 / 0.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(111 227 255 / 0.18) 1px, transparent 1px);
+  background-size: 100% 25%, 25% 100%;
+}
+
+/* ---------------- ENLACES Y ACCIONES ---------------- */
+.link-underline {
+  position: relative; color: var(--fg);
+  background-image: linear-gradient(var(--blue-bright), var(--blue-bright));
+  background-size: 0% 1px; background-position: 0 100%; background-repeat: no-repeat;
+  transition: background-size 0.4s cubic-bezier(0.22, 1, 0.36, 1), color 0.3s ease;
+  padding-bottom: 0.12em;
+}
+.link-underline:hover { background-size: 100% 1px; color: var(--blue-bright); }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  padding: 0.95rem 1.6rem; font-size: 0.92rem; font-weight: 600;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+.btn-primary { background: var(--blue); color: #fff; }
+.btn-primary:hover { background: var(--blue-bright); }
+.btn-ghost { border: 1px solid var(--line); color: var(--fg); }
+.btn-ghost:hover { border-color: var(--blue-bright); color: var(--blue-bright); }
+
+/* ---------------- PROYECTOS ---------------- */
+.project-row {
+  display: block; padding-block: clamp(2rem, 4vw, 3rem);
+  border-top: 1px solid var(--line-soft);
+  transition: background-color 0.4s ease;
+}
+.project-row:hover { background: color-mix(in srgb, var(--ink-800) 55%, transparent); }
+.project-title { transition: color 0.3s ease, translate 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
+.project-row:hover .project-title { color: var(--blue-bright); translate: 0.6rem 0; }
+
+/* Cinta de datos del proyecto destacado: alude al genoma que explora en
+   lugar de simular una captura de pantalla que no existe. */
+.ribbon { display: flex; align-items: flex-end; gap: 2px; height: 100%; }
+.ribbon span { flex: 1 1 0; background: var(--blue); }
+
+/* ---------------- LIGHTBOX ---------------- */
+dialog.viewer {
   width: 100vw; max-width: 100vw; height: 100dvh; max-height: 100dvh;
-  padding: 0; border: 0; background: rgb(5 8 11 / 0.96);
-  color: var(--v2-fg);
+  padding: 0; border: 0; color: var(--fg);
+  background: color-mix(in srgb, var(--ink-900) 97%, transparent);
 }
-dialog.pa-lightbox::backdrop { background: rgb(5 8 11 / 0.9); }
+dialog.viewer::backdrop { background: rgb(5 8 15 / 0.92); }
+.viewer-item { display: none; }
+.viewer-item[data-active='true'] { display: block; }
+
+/* ---------------- CONTACTO ---------------- */
+.mail {
+  display: inline-block;
+  font-size: clamp(1.3rem, 4.2vw, 3rem);
+  font-weight: 600; font-stretch: 92%; letter-spacing: -0.028em;
+  color: var(--fg); word-break: break-word;
+  background-image: linear-gradient(var(--blue-bright), var(--blue-bright));
+  background-size: 100% 1px; background-position: 0 100%; background-repeat: no-repeat;
+  transition: color 0.3s ease, background-size 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.mail:hover { color: var(--blue-bright); background-size: 0% 1px; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   html.js .reveal, html.js .reveal.is-in { opacity: 1; transform: none; transition: none; }
-  .v2-card-hover { transition: none; }
-  .pa-track { scroll-behavior: auto; }
+  .nav-link::after, .link-underline, .mail, .project-row,
+  .project-title, .story-figure img, .portrait-lit { transition: none; }
+  html.js .story { scroll-behavior: auto; }
 }
 
-/* Alias de anclas heredadas: destino invisible, sin efecto semántico. */
-.anchor-alias { display: block; height: 0; scroll-margin-top: 6rem; }
-
-/* ---------- Game Mode ---------- */
-.gm-root { position: fixed; bottom: 1rem; right: 1rem; z-index: 60; display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; }
-.gm-btn {
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  border: 1px solid var(--v2-line); background: var(--v2-surface);
-  border-radius: 999px; padding: 0.45rem 0.9rem;
-  font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--v2-fg-dim);
+/* ---------------- BARAJA FOTOGRÁFICA ----------------
+   Referencia: fotografías superpuestas con rotación y profundidad, con
+   una tarjeta de metadatos como una carta más del mazo. Sin JavaScript
+   sigue siendo una rejilla legible: la rotación es CSS, no depende de
+   nada, y los pies de foto siempre están.                              */
+.deck-wrap {
+  container-type: inline-size;
+  overflow-x: clip;
+  padding-block: 2rem;   /* holgura para que la rotación no se recorte */
 }
-.gm-btn[aria-pressed='true'] { border-color: var(--v2-accent); color: var(--v2-accent-soft); }
-.gm-dot { width: 6px; height: 6px; border-radius: 999px; background: currentColor; }
-.gm-help { max-width: 17rem; text-align: right; font-size: 0.68rem; line-height: 1.5; color: var(--v2-fg-dim); }
-.gm-canvas { position: fixed; inset: 0; z-index: 55; pointer-events: none; }
-.gm-hud {
-  position: fixed; bottom: 1rem; left: 1rem; z-index: 60; margin: 0;
-  font-size: 0.72rem; letter-spacing: 0.14em; color: var(--v2-accent-soft);
-  font-variant-numeric: tabular-nums;
+.deck {
+  display: grid; gap: 1.5rem;
+  grid-template-columns: repeat(2, 1fr);
+  padding-inline: 1.5rem;
+  max-width: 78rem; margin-inline: auto;
+}
+@media (min-width: 768px) { .deck { padding-inline: 3rem; } }
+
+.deck-item { position: relative; }
+.deck-shot {
+  display: block; width: 100%; overflow: hidden; cursor: zoom-in;
+  background: var(--ink-800);
+  aspect-ratio: 4 / 5;
+  box-shadow: 0 24px 60px -24px rgb(0 0 0 / 0.85);
+}
+.deck-shot img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.deck-cap { display: flex; align-items: baseline; gap: 0.75rem; margin-top: 0.85rem; }
+
+.deck-note { display: none; }
+.deck-note-inner {
+  height: 100%; display: flex; flex-direction: column; justify-content: center;
+  background: var(--ink-700); border: 1px solid var(--line);
+  padding: 2rem; box-shadow: 0 24px 60px -24px rgb(0 0 0 / 0.85);
+}
+
+/* A partir de tablet la rejilla se convierte en mazo solapado. */
+@media (min-width: 860px) {
+  .deck {
+    display: flex; justify-content: center; align-items: center;
+    gap: 0; padding-block: 3rem; perspective: 1400px;
+    max-width: 100%; overflow: visible;
+  }
+  .deck-item {
+    flex: 0 0 auto; width: min(15vw, 13rem);
+    margin-inline: -2rem;
+    rotate: var(--r); translate: var(--x) var(--y);
+    z-index: var(--z);
+    transition: rotate 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                translate 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                scale 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .deck-item:hover, .deck-item:focus-within {
+    rotate: 0deg; translate: var(--x) calc(var(--y) - 18px); scale: 1.045;
+    z-index: 40;
+  }
+  .deck-note { display: block; aspect-ratio: 4 / 5; }
+  .deck-cap {
+    position: absolute; inset-inline: 0; bottom: -2.4rem;
+    justify-content: center; opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .deck-item:hover .deck-cap, .deck-item:focus-within .deck-cap { opacity: 1; }
+}
+
+/* ---------------- TECLADO ----------------
+   Objeto físico: se acciona con el teclado real de quien mira. */
+.kb {
+  display: flex; flex-direction: column; gap: 0.4rem;
+  padding: 0.9rem; background: var(--ink-700);
+  border: 1px solid var(--line);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04), 0 30px 70px -40px rgb(0 0 0 / 0.9);
+}
+.kb-row { display: flex; gap: 0.4rem; }
+.kb-key {
+  flex: 1 1 0; min-width: 0;
+  display: grid; place-items: center;
+  aspect-ratio: 1 / 1; max-height: 2.6rem;
+  background: var(--ink-800);
+  border: 1px solid var(--line);
+  border-bottom-width: 3px;
+  font-family: var(--font-mono); font-size: 0.62rem; color: var(--fg-3);
+  transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease, translate 0.12s ease;
+}
+.kb-key.is-down {
+  background: var(--blue); color: #fff; border-color: var(--blue-bright);
+  border-bottom-width: 1px; translate: 0 2px;
+  transition: background-color 0.04s, color 0.04s, translate 0.04s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .deck-item, .kb-key { transition: none; }
 }

@@ -8,35 +8,37 @@ const { lang, pageKey } = Astro.props
 const cluster = await getCluster(pageKey)
 const other = cluster.alternates.find((a) => a.lang !== lang)!
 ---
+<!--
+  Capa propia por encima de todo. Ningún ancestro lleva transform,
+  filter ni contain, que es lo que antes atrapaba la cabecera bajo el
+  contenido. El fondo solo aparece al hacer scroll.
+-->
+<header id="site-header" class="site-header">
+  <nav aria-label="Principal" class="shell flex items-center justify-between py-5">
+    <a href="#identity" class="text-sm font-bold tracking-[0.34em]">RM</a>
 
-<header id="v2-header" class="fixed inset-x-0 top-0 z-50 border-b border-transparent transition-colors duration-300">
-  <nav aria-label="Principal" class="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
-    <a href="#identity" class="text-sm font-bold tracking-[0.3em] text-[var(--v2-fg)]">RMB</a>
-
-    <div class="hidden items-center gap-7 md:flex">
+    <div class="hidden items-center gap-9 md:flex">
       {V2_NAV.map((item) => (
-        <a href={`#${item.id}`} data-v2nav={item.id} class="text-sm text-[var(--v2-fg-dim)] transition hover:text-[var(--v2-fg)]">
-          {t(lang, item.key as UiKey)}
-        </a>
+        <a href={`#${item.id}`} data-nav={item.id} class="nav-link">{t(lang, item.key as UiKey)}</a>
       ))}
-      <a href={other.path} hreflang={other.lang} rel="alternate" class="inline-flex items-center gap-1.5 text-sm text-[var(--v2-fg-dim)] transition hover:text-[var(--v2-fg)]" aria-label={t(lang, 'nav.langSwitch')}>
-        <Icon name="globe" class="h-3.5 w-3.5" />{t(lang, 'nav.langNext')}
+      <a href={other.path} hreflang={other.lang} rel="alternate" class="nav-link" aria-label={t(lang, 'nav.langSwitch')}>
+        {t(lang, 'nav.langNext')}
       </a>
     </div>
 
-    <button type="button" id="v2-menu-toggle" aria-expanded="false" aria-controls="v2-menu"
-      class="rounded-lg border border-[var(--v2-line)] p-2 md:hidden"
+    <button type="button" id="menu-toggle" aria-expanded="false" aria-controls="menu"
+      class="btn btn-ghost !p-2.5 md:hidden"
       aria-label={t(lang, 'nav.openMenu')} data-close-label={t(lang, 'nav.closeMenu')}>
       <Icon name="menu" class="h-5 w-5" />
     </button>
   </nav>
 
-  <div id="v2-menu" class="border-t border-[var(--v2-line)] bg-[var(--v2-surface)] md:hidden">
-    <ul class="mx-auto flex w-full max-w-6xl flex-col px-5 py-2 sm:px-8">
+  <div id="menu" class="border-t border-[color:var(--line)] bg-[color:var(--ink-900)] md:hidden">
+    <ul class="shell flex flex-col py-3">
       {V2_NAV.map((item) => (
-        <li><a href={`#${item.id}`} class="block py-3 text-sm text-[var(--v2-fg-muted)]">{t(lang, item.key as UiKey)}</a></li>
+        <li><a href={`#${item.id}`} class="block py-3.5 text-lg">{t(lang, item.key as UiKey)}</a></li>
       ))}
-      <li><a href={other.path} hreflang={other.lang} rel="alternate" class="block py-3 text-sm text-[var(--v2-fg-muted)]">{t(lang, 'nav.langNext')}</a></li>
+      <li><a href={other.path} hreflang={other.lang} rel="alternate" class="block py-3.5 text-lg text-[color:var(--fg-2)]">{t(lang, 'nav.langNext')}</a></li>
     </ul>
   </div>
 </header>

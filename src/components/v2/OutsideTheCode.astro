@@ -1,0 +1,175 @@
+---
+import { Picture } from 'astro:assets'
+import { getCollection } from 'astro:content'
+import Icon from '../Icon.astro'
+import { t, type Lang } from '../../i18n/ui'
+
+interface Props { lang: Lang }
+const { lang } = Astro.props
+
+/** El retrato es identidad, no archivo: no entra en la narrativa. */
+const photos = (await getCollection('personal'))
+  .map((e) => e.data)
+  .filter((p) => p.category !== 'identity')
+  .sort((a, b) => a.order - b.order)
+const total = photos.length
+const pad = (n: number) => String(n).padStart(2, '0')
+
+/** Fan de la baraja. Valores fijos: la composición no debe cambiar entre builds. */
+const DECK = [
+  { r: -9, x: -4, y: 26 },
+  { r: 4, x: 2, y: 0 },
+  { r: -3, x: -1, y: 44 },
+  { r: 8, x: 5, y: 12 },
+  { r: -6, x: -3, y: 34 },
+  { r: 2, x: 1, y: 6 },
+]
+
+/** Distribución de un teclado 60 %, que es justo el formato custom. */
+const ROWS: Array<Array<[string, string, number?]>> = [
+  [['`','Backquote'],['1','Digit1'],['2','Digit2'],['3','Digit3'],['4','Digit4'],['5','Digit5'],['6','Digit6'],['7','Digit7'],['8','Digit8'],['9','Digit9'],['0','Digit0'],['-','Minus'],['=','Equal'],['⌫','Backspace',2]],
+  [['⇥','Tab',1.5],['Q','KeyQ'],['W','KeyW'],['E','KeyE'],['R','KeyR'],['T','KeyT'],['Y','KeyY'],['U','KeyU'],['I','KeyI'],['O','KeyO'],['P','KeyP'],['[','BracketLeft'],[']','BracketRight'],['\\','Backslash',1.5]],
+  [['⇪','CapsLock',1.75],['A','KeyA'],['S','KeyS'],['D','KeyD'],['F','KeyF'],['G','KeyG'],['H','KeyH'],['J','KeyJ'],['K','KeyK'],['L','KeyL'],[';','Semicolon'],["'",'Quote'],['⏎','Enter',2.25]],
+  [['⇧','ShiftLeft',2.25],['Z','KeyZ'],['X','KeyX'],['C','KeyC'],['V','KeyV'],['B','KeyB'],['N','KeyN'],['M','KeyM'],[',','Comma'],['.','Period'],['/','Slash'],['⇧','ShiftRight',2.75]],
+  [['ctrl','ControlLeft',1.25],['opt','AltLeft',1.25],['cmd','MetaLeft',1.5],['','Space',6.5],['cmd','MetaRight',1.5],['opt','AltRight',1.25],['ctrl','ControlRight',1.25]],
+]
+---
+
+<section id="archive" class="band">
+  <div class="shell">
+    <header class="rule-head reveal">
+      <span class="t-index">02</span>
+      <h2 class="t-h2">{t(lang, 'otc.title')}</h2>
+    </header>
+    <p class="t-lead reveal mt-8 max-w-[44ch]" style="--i:1">{t(lang, 'otc.lede')}</p>
+  </div>
+
+  <!-- ══════════ TRAVEL — narrativa fotográfica ══════════ -->
+  <div class="shell mt-24">
+    <div class="reveal flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2">
+      <h3 class="t-h3">{t(lang, 'otc.travel')}</h3>
+      <p class="t-meta max-w-[38ch] normal-case tracking-[0.1em]">{t(lang, 'otc.travelNote')}</p>
+    </div>
+  </div>
+
+  <!--
+    Baraja fotográfica: las piezas se solapan, rotan y ganan profundidad,
+    con una tarjeta de metadatos intercalada como una más del mazo. Al
+    pasar por encima, la pieza se endereza y sube al frente.
+    Sin JavaScript sigue siendo una rejilla legible con sus pies.
+  -->
+  <div class="deck-wrap mt-14">
+    <div id="deck" class="deck reveal">
+      {photos.map((photo, i) => (
+        <figure class="deck-item m-0" data-index={i} style={`--r:${DECK[i]?.r ?? 0}deg;--x:${DECK[i]?.x ?? 0}%;--y:${DECK[i]?.y ?? 0}px;--z:${i + 1}`}>
+          <button type="button" class="deck-shot" data-open={i} aria-label={`${t(lang, 'v2.archive.open')} — ${photo.alt[lang]}`}>
+            <Picture
+              src={photo.image}
+              formats={['avif', 'webp']}
+              widths={[380, 720, 1100]}
+              sizes="(max-width: 768px) 44vw, 22rem"
+              alt={photo.alt[lang]}
+              loading="lazy"
+              decoding="async"
+            />
+          </button>
+          <figcaption class="deck-cap">
+            <span class="t-index">{pad(i + 1)}</span>
+            <span class="t-meta normal-case tracking-[0.1em]">{photo.location}</span>
+          </figcaption>
+        </figure>
+      ))}
+
+      <!-- Una tarjeta más del mazo: metadatos escritos, no una foto. -->
+      <figure class="deck-item deck-note m-0" style="--r:7deg;--x:6%;--y:14px;--z:9" aria-hidden="true">
+        <div class="deck-note-inner">
+          <p class="t-index">{photos[0]?.date ?? '2026'}</p>
+          <p class="mt-3 text-[color:var(--fg)]">{photos[0]?.location}</p>
+          <p class="mt-6 max-w-[18ch] text-sm text-[color:var(--fg-2)]">{photos[0]?.caption?.[lang]}</p>
+        </div>
+      </figure>
+    </div>
+  </div>
+
+  <!-- ══════════ MARKETS — sistemas, no un dashboard ══════════ -->
+  <div class="shell mt-32">
+    <div class="grid gap-x-12 gap-y-10 lg:grid-cols-12">
+      <div class="reveal lg:col-span-4">
+        <h3 class="t-h3">{t(lang, 'otc.markets')}</h3>
+        <p class="t-body mt-5 text-[1rem]">{t(lang, 'otc.marketsNote')}</p>
+      </div>
+      <!--
+        Curva conceptual, no un mercado. No se dibuja ni un precio, ni un
+        ticker, ni una cifra: sería información financiera falsa. Lo que
+        se representa es la forma de un sistema con realimentación.
+      -->
+      <figure class="reveal m-0 lg:col-span-8" style="--i:1">
+        <div class="relative border border-[color:var(--line-soft)] bg-[color:var(--ink-800)]">
+          <canvas id="curve" class="block h-[260px] w-full sm:h-[320px]" aria-hidden="true"></canvas>
+          <figcaption class="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5">
+            <span class="t-meta">{lang === 'es' ? 'sistema con realimentación' : 'feedback loop'}</span>
+            <span class="t-meta">{lang === 'es' ? 'representación conceptual' : 'conceptual figure'}</span>
+          </figcaption>
+        </div>
+      </figure>
+    </div>
+  </div>
+
+  <!-- ══════════ KEYBOARDS — objeto físico, tu teclado lo acciona ══════════ -->
+  <div class="shell mt-32">
+    <div class="grid gap-x-12 gap-y-10 lg:grid-cols-12">
+      <div class="reveal lg:col-span-4">
+        <h3 class="t-h3">{t(lang, 'otc.keys')}</h3>
+        <p class="t-body mt-5 text-[1rem]">{t(lang, 'otc.keysNote')}</p>
+        <p class="t-index mt-6" id="kb-hint">{t(lang, 'otc.keysHint')}</p>
+      </div>
+
+      <figure class="reveal m-0 lg:col-span-8" style="--i:1">
+        <div id="kb" class="kb" aria-hidden="true">
+          {ROWS.map((row) => (
+            <div class="kb-row">
+              {row.map(([label, code, w]) => (
+                <span class="kb-key" data-code={code} style={`flex-grow:${w ?? 1}`}>{label}</span>
+              ))}
+            </div>
+          ))}
+        </div>
+        <figcaption class="t-meta mt-5">60 % · {lang === 'es' ? 'distribución' : 'layout'}</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- Vista ampliada: interacción de interfaz, nunca una URL indexable -->
+<dialog id="viewer" class="viewer" aria-label={t(lang, 'otc.travel')}>
+  <div class="flex h-full flex-col">
+    <div class="flex items-center justify-between gap-6 px-6 py-5 md:px-12">
+      <p class="t-index tabular-nums"><span id="viewer-count">01</span> / {pad(total)}</p>
+      <button type="button" id="viewer-close" class="btn btn-ghost !p-3" aria-label={t(lang, 'v2.archive.close')}>
+        <Icon name="close" class="h-5 w-5" />
+      </button>
+    </div>
+    <div class="flex min-h-0 flex-1 items-center justify-center px-6 md:px-12">
+      {photos.map((photo, i) => (
+        <figure class="viewer-item m-0" data-viewer={i}>
+          <Picture src={photo.image} formats={['avif', 'webp']} widths={[900, 1600, 2200]}
+            sizes="(max-width: 900px) 94vw, 84vw" alt={photo.alt[lang]} loading="lazy" decoding="async"
+            class="mx-auto max-h-[70dvh] w-auto object-contain" />
+          <figcaption class="mt-6 flex flex-wrap items-baseline justify-center gap-x-6 gap-y-1 text-center">
+            <span class="t-meta">{photo.category}</span>
+            <span class="t-index">{photo.location}</span>
+            {photo.caption?.[lang] && <span class="w-full text-[color:var(--fg-2)]">{photo.caption[lang]}</span>}
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+    <div class="flex items-center justify-center gap-3 px-6 py-6">
+      <button type="button" id="viewer-prev" class="btn btn-ghost !p-3.5" aria-label={t(lang, 'v2.archive.prev')}>
+        <Icon name="arrowLeft" class="h-5 w-5" />
+      </button>
+      <button type="button" id="viewer-next" class="btn btn-ghost !p-3.5 rotate-180" aria-label={t(lang, 'v2.archive.next')}>
+        <Icon name="arrowLeft" class="h-5 w-5" />
+      </button>
+    </div>
+  </div>
+</dialog>

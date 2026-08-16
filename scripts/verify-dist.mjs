@@ -196,7 +196,7 @@ for (const page of EXPECTED) {
   const navLinks = [...noJs.querySelectorAll('a[href]')].filter((a) => a.getAttribute('href')?.startsWith('#'))
   if (page.kind === 'v1' || page.kind === 'v2') {
     assert(navLinks.length >= 3, `navegación operativa sin JS (${navLinks.length} enlaces)`)
-    const menu = noJs.getElementById('mobile-menu') ?? noJs.getElementById('v2-menu')
+    const menu = noJs.getElementById('mobile-menu') ?? noJs.getElementById('menu')
     assert(menu && !menu.hasAttribute('hidden'), 'menú móvil visible sin JS')
   }
   const langLink = [...noJs.querySelectorAll('a[rel=alternate][hreflang]')]
