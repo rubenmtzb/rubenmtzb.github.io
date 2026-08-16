@@ -5,7 +5,7 @@
     "lang": "en",
     "path": "/",
     "title": "Rubén Martínez Bernabe — Software Engineer",
-    "description": "Portfolio of Rubén Martínez Bernabe, Software Engineer in Barcelona. Java, Spring Boot and React, building scalable enterprise software.",
+    "description": "Software engineer in Barcelona building scalable systems with Java, Spring Boot and React, from the API to production.",
     "ogImage": "/avatar.png",
     "ogImageAlt": "Rubén Martínez Bernabe",
     "indexable": true
@@ -16,7 +16,7 @@
     "lang": "es",
     "path": "/es/",
     "title": "Rubén Martínez Bernabe — Ingeniero de Software",
-    "description": "Portfolio de Rubén Martínez Bernabe, Ingeniero de Software en Barcelona. Java, Spring Boot y React, construyendo software empresarial escalable.",
+    "description": "Ingeniero de software en Barcelona construyendo sistemas escalables con Java, Spring Boot y React, de la API a producción.",
     "ogImage": "/avatar.png",
     "ogImageAlt": "Rubén Martínez Bernabe",
     "indexable": true
@@ -44,28 +44,6 @@
     "indexable": true
   },
   {
-    "id": "en:preview",
-    "key": "preview",
-    "lang": "en",
-    "path": "/preview/",
-    "title": "Rubén Martínez Bernabe — Preview",
-    "description": "Work-in-progress preview of the next version of rubenitx.me. Not indexed, not linked from production, not a canonical surface.",
-    "ogImage": "/avatar.png",
-    "ogImageAlt": "Rubén Martínez Bernabe",
-    "indexable": false
-  },
-  {
-    "id": "es:preview",
-    "key": "preview",
-    "lang": "es",
-    "path": "/preview/es/",
-    "title": "Rubén Martínez Bernabe — Preview",
-    "description": "Vista previa en construcción de la próxima versión de rubenitx.me. Sin indexar, sin enlaces desde producción y sin ser superficie canónica.",
-    "ogImage": "/avatar.png",
-    "ogImageAlt": "Rubén Martínez Bernabe",
-    "indexable": false
-  },
-  {
     "id": "en:work-sars",
     "key": "work-sars",
     "lang": "en",
@@ -86,5 +64,27 @@
     "ogImage": "/avatar.png",
     "ogImageAlt": "Rubén Martínez Bernabe",
     "indexable": true
+  },
+  {
+    "id": "en:v1",
+    "key": "v1",
+    "lang": "en",
+    "path": "/v1/",
+    "title": "Rubén Martínez Bernabe — Documentary version",
+    "description": "Extended documentary version of the portfolio: full experience, projects, education, certifications and stack in a single page.",
+    "ogImage": "/avatar.png",
+    "ogImageAlt": "Rubén Martínez Bernabe",
+    "indexable": false
+  },
+  {
+    "id": "es:v1",
+    "key": "v1",
+    "lang": "es",
+    "path": "/v1/es/",
+    "title": "Rubén Martínez Bernabe — Versión documental",
+    "description": "Versión documental ampliada del portfolio: experiencia, proyectos, formación, certificaciones y stack completos en una sola página.",
+    "ogImage": "/avatar.png",
+    "ogImageAlt": "Rubén Martínez Bernabe",
+    "indexable": false
   }
 ]

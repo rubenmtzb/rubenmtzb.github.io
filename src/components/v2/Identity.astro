@@ -1,7 +1,7 @@
 ---
 import Icon from '../Icon.astro'
 import { getProfile } from '../../lib/content'
-import { t, type Lang } from '../../i18n/ui'
+import { V2_ANCHOR_ALIASES, t, type Lang } from '../../i18n/ui'
 
 interface Props { lang: Lang; cvPath: string }
 const { lang, cvPath } = Astro.props
@@ -11,6 +11,10 @@ const ICONS = { LinkedIn: 'linkedin', GitHub: 'github' } as const
 ---
 
 <section id="identity" class="relative mx-auto w-full max-w-6xl px-5 pb-20 pt-28 sm:px-8 sm:pb-28 sm:pt-36">
+  {(V2_ANCHOR_ALIASES["identity"] ?? []).map((a) => (
+    <span id={a} class="anchor-alias" aria-hidden="true" />
+  ))}
+
   <div class="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
     <!-- Columna de texto: todo lo que hay que leer y posicionar es HTML -->
     <div>

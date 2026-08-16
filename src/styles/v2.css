@@ -183,3 +183,6 @@ dialog.pa-lightbox::backdrop { background: rgb(5 8 11 / 0.9); }
   .v2-card-hover { transition: none; }
   .pa-track { scroll-behavior: auto; }
 }
+
+/* Alias de anclas heredadas: destino invisible, sin efecto semántico. */
+.anchor-alias { display: block; height: 0; scroll-margin-top: 6rem; }

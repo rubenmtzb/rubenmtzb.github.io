@@ -23,6 +23,17 @@ export const V2_NAV = [
   { id: 'contact', key: 'v2.nav.contact' },
 ] as const
 
+/**
+ * Tras el intercambio, / pasa a servir la V2. Los enlaces entrantes a las
+ * anclas de las 10 superficies originales tienen que seguir aterrizando
+ * en algún sitio con sentido, así que la V2 también las emite.
+ */
+export const V2_ANCHOR_ALIASES: Record<string, string[]> = {
+  identity: ['home', 'about', 'stack'],
+  work: ['experience', 'projects', 'research'],
+  contact: ['education', 'certifications', 'resume'],
+}
+
 export const ANCHOR_ALIASES: Record<string, string[]> = {
   about: ['stack'],
   work: ['experience', 'projects', 'research'],

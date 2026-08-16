@@ -1,7 +1,7 @@
 ---
 import Icon from '../Icon.astro'
 import { formatDuration, formatPeriod, getExperience, getProjects } from '../../lib/content'
-import { t, type Lang } from '../../i18n/ui'
+import { V2_ANCHOR_ALIASES, t, type Lang } from '../../i18n/ui'
 
 interface Props { lang: Lang }
 const { lang } = Astro.props
@@ -19,6 +19,10 @@ const casePath = (key: string) =>
 ---
 
 <section id="work" class="mx-auto w-full max-w-6xl scroll-mt-24 px-5 py-20 sm:px-8 sm:py-28">
+  {(V2_ANCHOR_ALIASES["work"] ?? []).map((a) => (
+    <span id={a} class="anchor-alias" aria-hidden="true" />
+  ))}
+
   <header class="reveal max-w-2xl">
     <p class="v2-eyebrow">02 — {t(lang, 'v2.work.title')}</p>
     <h2 class="v2-h2 mt-3">{t(lang, 'v2.work.lede')}</h2>

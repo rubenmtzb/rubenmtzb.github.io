@@ -1,7 +1,7 @@
 ---
 import Icon from '../Icon.astro'
 import { getProfile } from '../../lib/content'
-import { t, type Lang } from '../../i18n/ui'
+import { V2_ANCHOR_ALIASES, t, type Lang } from '../../i18n/ui'
 
 interface Props { lang: Lang; cvPath: string }
 const { lang, cvPath } = Astro.props
@@ -10,6 +10,10 @@ const ICONS = { LinkedIn: 'linkedin', GitHub: 'github' } as const
 ---
 
 <section id="contact" class="mx-auto w-full max-w-6xl scroll-mt-24 px-5 py-20 sm:px-8 sm:py-28">
+  {(V2_ANCHOR_ALIASES["contact"] ?? []).map((a) => (
+    <span id={a} class="anchor-alias" aria-hidden="true" />
+  ))}
+
   <div class="v2-card p-8 sm:p-12">
     <p class="v2-eyebrow reveal">04 — {t(lang, 'v2.contact.title')}</p>
     <h2 class="v2-h2 reveal mt-3 max-w-2xl">{profile.contactHeadline}</h2>

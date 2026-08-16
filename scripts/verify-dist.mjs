@@ -14,17 +14,23 @@ import { parseHTML } from 'linkedom'
 const DIST = 'dist'
 const SITE = 'https://rubenitx.me'
 
-/** Contrato de páginas indexables de la Fase 2 (Estrategia A). */
+/**
+ * Contrato de URLs tras el intercambio de la Fase 5.
+ *
+ * V1 queda en /v1/ con noindex: el análisis de cobertura de la Fase 4
+ * no encontró ni una entidad exclusiva suya frente a V2 + CV + fichas.
+ * Por eso no emite hreflang ni entra en el sitemap, pero sigue siendo
+ * accesible para humanos.
+ */
 const EXPECTED = [
-  { path: '/', file: 'index.html', lang: 'en', cluster: 'home', indexable: true },
-  { path: '/es/', file: 'es/index.html', lang: 'es', cluster: 'home', indexable: true },
-  { path: '/cv/', file: 'cv/index.html', lang: 'en', cluster: 'cv', indexable: true },
-  { path: '/es/cv/', file: 'es/cv/index.html', lang: 'es', cluster: 'cv', indexable: true },
-  { path: '/work/sars-cov-2/', file: 'work/sars-cov-2/index.html', lang: 'en', cluster: 'case', indexable: true },
-  { path: '/es/work/sars-cov-2/', file: 'es/work/sars-cov-2/index.html', lang: 'es', cluster: 'case', indexable: true },
-  // Preview de la V2: existe, pero no se indexa ni entra al sitemap.
-  { path: '/preview/', file: 'preview/index.html', lang: 'en', cluster: null, indexable: false },
-  { path: '/preview/es/', file: 'preview/es/index.html', lang: 'es', cluster: null, indexable: false },
+  { path: '/', file: 'index.html', lang: 'en', cluster: 'home', indexable: true, kind: 'v2' },
+  { path: '/es/', file: 'es/index.html', lang: 'es', cluster: 'home', indexable: true, kind: 'v2' },
+  { path: '/cv/', file: 'cv/index.html', lang: 'en', cluster: 'cv', indexable: true, kind: 'cv' },
+  { path: '/es/cv/', file: 'es/cv/index.html', lang: 'es', cluster: 'cv', indexable: true, kind: 'cv' },
+  { path: '/work/sars-cov-2/', file: 'work/sars-cov-2/index.html', lang: 'en', cluster: 'case', indexable: true, kind: 'case' },
+  { path: '/es/work/sars-cov-2/', file: 'es/work/sars-cov-2/index.html', lang: 'es', cluster: 'case', indexable: true, kind: 'case' },
+  { path: '/v1/', file: 'v1/index.html', lang: 'en', cluster: null, indexable: false, kind: 'v1' },
+  { path: '/v1/es/', file: 'v1/es/index.html', lang: 'es', cluster: null, indexable: false, kind: 'v1' },
 ]
 
 const CLUSTERS = {
@@ -35,6 +41,7 @@ const CLUSTERS = {
 
 const LEGACY_ANCHORS = ['stack', 'experience', 'projects', 'research', 'education', 'certifications', 'resume']
 const NAV_IDS = ['home', 'about', 'work', 'background', 'contact']
+const V2_IDS = ['identity', 'work', 'archive', 'contact']
 
 let failures = 0
 let checks = 0
@@ -162,11 +169,12 @@ for (const page of EXPECTED) {
   assert(badImgs.length === 0, `toda <img> con alt, width y height (${badImgs.length} sin ello)`)
 
   // 11. Anclas heredadas y navegación (solo en la home)
-  if (page.cluster === 'home') {
+  if (page.kind === 'v1' || page.kind === 'v2') {
     const missing = LEGACY_ANCHORS.filter((id) => !document.getElementById(id))
     assert(missing.length === 0, `7 anclas heredadas${missing.length ? ` — faltan: ${missing.join(', ')}` : ''}`)
-    const navMissing = NAV_IDS.filter((id) => !document.getElementById(id))
-    assert(navMissing.length === 0, `las 5 áreas existen${navMissing.length ? ` — faltan: ${navMissing.join(', ')}` : ''}`)
+    const areas = page.kind === 'v1' ? NAV_IDS : V2_IDS
+    const navMissing = areas.filter((id) => !document.getElementById(id))
+    assert(navMissing.length === 0, `áreas presentes${navMissing.length ? ` — faltan: ${navMissing.join(', ')}` : ''}`)
   }
 
   // 12. Sin JavaScript: se elimina todo <script> y el contenido debe seguir ahí
@@ -175,13 +183,13 @@ for (const page of EXPECTED) {
   const text = noJs.body.textContent.replace(/\s+/g, ' ').trim()
   // Umbral por tipo: una ficha de proyecto es legítimamente más corta
   // que la portada, pero ninguna puede quedarse en un esqueleto vacío.
-  const minText = page.cluster === 'case' ? 700 : 1500
+  const minText = page.kind === 'case' ? 700 : 1500
   assert(text.length > minText, `contenido presente sin JS (${text.length} caracteres, mínimo ${minText})`)
   assert(text.includes('Rubén Martínez Bernabe'), 'identidad presente sin JS')
   const navLinks = [...noJs.querySelectorAll('a[href]')].filter((a) => a.getAttribute('href')?.startsWith('#'))
-  if (page.cluster === 'home') {
-    assert(navLinks.length >= NAV_IDS.length, `navegación operativa sin JS (${navLinks.length} enlaces)`)
-    const menu = noJs.getElementById('mobile-menu')
+  if (page.kind === 'v1' || page.kind === 'v2') {
+    assert(navLinks.length >= 3, `navegación operativa sin JS (${navLinks.length} enlaces)`)
+    const menu = noJs.getElementById('mobile-menu') ?? noJs.getElementById('v2-menu')
     assert(menu && !menu.hasAttribute('hidden'), 'menú móvil visible sin JS')
   }
   const langLink = [...noJs.querySelectorAll('a[rel=alternate][hreflang]')]
@@ -209,7 +217,7 @@ assert(
   JSON.stringify(locs) === JSON.stringify(expectedLocs),
   `contiene exactamente el conjunto indexable (${locs.length} URLs)`,
 )
-assert(!sm.includes('/preview/'), 'la preview no aparece en el sitemap')
+assert(!sm.includes('/v1/'), 'la V1 no aparece en el sitemap')
 for (const c of Object.values(CLUSTERS)) {
   assert(sm.includes(`hreflang="x-default" href="${abs(c.xDefault)}"`), `alternativas x-default para ${c.xDefault}`)
 }
