@@ -169,7 +169,14 @@ export function formatYears(months: number, lang: Lang): string {
     return `${m} ${t(lang, m === 1 ? 'time.month' : 'time.months')}`
   }
   const noun = t(lang, years === 1 ? 'time.year' : 'time.years')
-  return lang === 'es' ? `más de ${years} ${noun}` : `${years}+ ${noun}`
+
+  /*
+   * En el aniversario exacto, "más de N años" es falso: 48 meses son
+   * exactamente 4 años, no más. El inglés no tiene el problema porque
+   * "4+" significa "4 o más" y sigue siendo cierto.
+   */
+  if (lang !== 'es') return `${years}+ ${noun}`
+  return months % 12 === 0 ? `${years} ${noun}` : `más de ${years} ${noun}`
 }
 
 /** Sustituye el token {years} en cualquier texto del modelo de contenido. */
@@ -222,9 +229,14 @@ export async function buildJsonLd({ lang, pageUrl, pageType, pageName, pageDescr
     knowsAbout: stack.filter((s) => s.tier === 'actual').map((s) => s.name),
     sameAs: profile.socials.map((s) => s.href),
     ...(current ? { worksFor: { '@type': 'Organization', name: current.company } } : {}),
-    alumniOf: education.map((e) => ({
+    /*
+     * Una entidad por centro, no por titulación: Instituto la Guineueta
+     * aparecía dos veces porque de allí salen DAW y SMX. Las dos
+     * titulaciones siguen listadas por separado en Background y en el CV.
+     */
+    alumniOf: [...new Set(education.map((e) => e.institution))].map((name) => ({
       '@type': 'EducationalOrganization',
-      name: e.institution,
+      name,
     })),
   }
 

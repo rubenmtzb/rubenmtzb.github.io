@@ -144,6 +144,13 @@ for (const page of EXPECTED) {
     'ningún Person alternativo',
   )
 
+  // alumniOf: una entidad por centro, no por titulación
+  const alumni = (persons[0]?.alumniOf ?? []).map((a) => a.name)
+  assert(
+    new Set(alumni).size === alumni.length,
+    `alumniOf sin centros repetidos (${alumni.length} entradas)`,
+  )
+
   // 8. Ningún nodo de contenido con opacity:0 inline
   const hidden = [...document.querySelectorAll('[style]')].filter((el) =>
     /opacity\s*:\s*0(?![.\d])/.test(el.getAttribute('style') ?? ''),
