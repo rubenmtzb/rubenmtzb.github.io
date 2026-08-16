@@ -85,7 +85,8 @@
           "description": "Designing resilient software that scales with product and team growth."
         }
       ]
-    }
+    },
+    "headline": "Software engineer building scalable systems — Java, Spring Boot and React, from the API to production."
   },
   {
     "id": "es:ruben",
@@ -173,6 +174,7 @@
           "description": "Diseñando software resiliente que escala con el producto y el equipo."
         }
       ]
-    }
+    },
+    "headline": "Ingeniero de software construyendo sistemas escalables — Java, Spring Boot y React, de la API a producción."
   }
 ]

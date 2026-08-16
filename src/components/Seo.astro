@@ -42,8 +42,19 @@ const ogLocale = lang === 'es' ? 'es_ES' : 'en_US'
 <meta name="robots" content={page.indexable ? 'index, follow' : 'noindex, follow'} />
 
 <link rel="canonical" href={canonical} />
-{alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={a.href} />)}
-<link rel="alternate" hreflang="x-default" href={xDefault} />
+{
+  /*
+   * hreflang solo en páginas indexables. Google lo ignora en páginas con
+   * noindex, y declararlo hacia una URL no indexable es un error de
+   * configuración: la preview y una eventual V1 en noindex no lo emiten.
+   */
+  page.indexable && (
+    <>
+      {alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={a.href} />)}
+      <link rel="alternate" hreflang="x-default" href={xDefault} />
+    </>
+  )
+}
 
 <meta property="og:type" content="profile" />
 <meta property="og:site_name" content="rubenitx.me" />

@@ -1,0 +1,150 @@
+---
+import { Picture } from 'astro:assets'
+import { getCollection } from 'astro:content'
+import Icon from '../Icon.astro'
+import { t, type Lang } from '../../i18n/ui'
+
+interface Props { lang: Lang }
+const { lang } = Astro.props
+
+const photos = (await getCollection('personal')).map((e) => e.data).sort((a, b) => a.order - b.order)
+const total = photos.length
+---
+
+<section id="archive" class="mx-auto w-full max-w-6xl scroll-mt-24 px-5 py-20 sm:px-8 sm:py-28">
+  <header class="reveal max-w-2xl">
+    <p class="v2-eyebrow">03 — {t(lang, 'v2.archive.title')}</p>
+    <h2 class="v2-h2 mt-3">{t(lang, 'v2.archive.lede')}</h2>
+  </header>
+
+  <!--
+    Sin JavaScript esto es una secuencia editorial vertical: cada
+    fotografía con su pie, legible y completa. Con JavaScript el mismo
+    markup se convierte en carrusel horizontal. El contenido no cambia.
+  -->
+  <div
+    id="pa-track"
+    class="pa-track reveal mt-10"
+  >
+    {
+      photos.map((photo, i) => (
+        <figure
+          class="pa-slide m-0"
+          data-index={i}
+          aria-roledescription="slide"
+          aria-label={`${t(lang, 'v2.archive.counter')} ${i + 1} / ${total}`}
+        >
+          <div class="relative overflow-hidden rounded-xl border border-[var(--v2-line)] bg-[var(--v2-surface)]">
+            <Picture
+              src={photo.image}
+              formats={['avif', 'webp']}
+              widths={[400, 800, 1200]}
+              sizes="(max-width: 640px) 86vw, (max-width: 1024px) 62vw, 640px"
+              alt={photo.alt[lang]}
+              loading="lazy"
+              decoding="async"
+              class="h-auto w-full object-cover"
+            />
+            <button
+              type="button"
+              class="pa-open absolute inset-0 hidden cursor-zoom-in"
+              data-open={i}
+              aria-label={`${t(lang, 'v2.archive.open')} — ${photo.alt[lang]}`}
+            />
+          </div>
+
+          <figcaption class="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <span class="text-[0.64rem] uppercase tracking-[0.22em] text-[var(--v2-accent-soft)]">{photo.category}</span>
+            {photo.location && <span class="text-xs text-[var(--v2-fg-dim)]">{photo.location}</span>}
+            {photo.date && <span class="text-xs tabular-nums text-[var(--v2-fg-dim)]">{photo.date}</span>}
+            {photo.caption?.[lang] && (
+              <span class="w-full text-sm italic text-[var(--v2-fg-muted)]">{photo.caption[lang]}</span>
+            )}
+          </figcaption>
+        </figure>
+      ))
+    }
+  </div>
+
+  <!-- Controles: solo aparecen si hay JavaScript -->
+  <div id="pa-controls" class="mt-6 hidden items-center justify-between gap-4">
+    <p class="text-xs tabular-nums text-[var(--v2-fg-dim)]">
+      <span id="pa-counter">01</span> / {String(total).padStart(2, '0')}
+    </p>
+    <ul class="flex flex-wrap items-center gap-2">
+      {
+        photos.map((photo, i) => (
+          <li>
+            <button type="button" class="pa-thumb block h-11 w-11 p-0" data-goto={i} aria-current={i === 0 ? 'true' : 'false'} aria-label={`${t(lang, 'v2.archive.counter')} ${i + 1}`}>
+              <Picture
+                src={photo.image}
+                formats={['avif', 'webp']}
+                widths={[96]}
+                sizes="44px"
+                alt=""
+                loading="lazy"
+                decoding="async"
+                class="h-full w-full object-cover"
+              />
+            </button>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="flex gap-2">
+      <button type="button" id="pa-prev" class="rounded-lg border border-[var(--v2-line)] p-2 transition hover:border-[#37424e]" aria-label={t(lang, 'v2.archive.prev')}>
+        <Icon name="arrowLeft" class="h-4 w-4" />
+      </button>
+      <button type="button" id="pa-next" class="rounded-lg border border-[var(--v2-line)] p-2 transition hover:border-[#37424e] rotate-180" aria-label={t(lang, 'v2.archive.next')}>
+        <Icon name="arrowLeft" class="h-4 w-4" />
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox: interacción de interfaz, nunca una URL indexable -->
+<dialog id="pa-lightbox" class="pa-lightbox" aria-label={t(lang, 'v2.archive.title')}>
+  <div class="relative flex h-full flex-col">
+    <div class="flex items-center justify-between gap-4 px-5 py-4">
+      <p class="text-xs tabular-nums text-[var(--v2-fg-dim)]">
+        <span id="pa-lb-counter">01</span> / {String(total).padStart(2, '0')}
+      </p>
+      <button type="button" id="pa-lb-close" class="rounded-lg border border-[var(--v2-line)] p-2" aria-label={t(lang, 'v2.archive.close')}>
+        <Icon name="close" class="h-5 w-5" />
+      </button>
+    </div>
+
+    <div class="flex min-h-0 flex-1 items-center justify-center px-4">
+      {
+        photos.map((photo, i) => (
+          <figure class="pa-lb-item m-0 hidden max-h-full" data-lb={i}>
+            <Picture
+              src={photo.image}
+              formats={['avif', 'webp']}
+              widths={[900, 1600, 2200]}
+              sizes="(max-width: 900px) 96vw, 88vw"
+              alt={photo.alt[lang]}
+              loading="lazy"
+              decoding="async"
+              class="mx-auto max-h-[74dvh] w-auto object-contain"
+            />
+            <figcaption class="mt-4 text-center text-sm text-[var(--v2-fg-muted)]">
+              <span class="text-[0.64rem] uppercase tracking-[0.22em] text-[var(--v2-accent-soft)]">{photo.category}</span>
+              {photo.location && <span class="ml-3 text-[var(--v2-fg-dim)]">{photo.location}</span>}
+              {photo.caption?.[lang] && <span class="mt-1 block italic">{photo.caption[lang]}</span>}
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+
+    <div class="flex items-center justify-center gap-3 px-5 py-5">
+      <button type="button" id="pa-lb-prev" class="rounded-lg border border-[var(--v2-line)] p-3" aria-label={t(lang, 'v2.archive.prev')}>
+        <Icon name="arrowLeft" class="h-5 w-5" />
+      </button>
+      <button type="button" id="pa-lb-next" class="rotate-180 rounded-lg border border-[var(--v2-line)] p-3" aria-label={t(lang, 'v2.archive.next')}>
+        <Icon name="arrowLeft" class="h-5 w-5" />
+      </button>
+    </div>
+  </div>
+</dialog>

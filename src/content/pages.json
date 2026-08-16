@@ -42,5 +42,49 @@
     "ogImage": "/avatar.png",
     "ogImageAlt": "Rubén Martínez Bernabe",
     "indexable": true
+  },
+  {
+    "id": "en:preview",
+    "key": "preview",
+    "lang": "en",
+    "path": "/preview/",
+    "title": "Rubén Martínez Bernabe — Preview",
+    "description": "Work-in-progress preview of the next version of rubenitx.me. Not indexed, not linked from production, not a canonical surface.",
+    "ogImage": "/avatar.png",
+    "ogImageAlt": "Rubén Martínez Bernabe",
+    "indexable": false
+  },
+  {
+    "id": "es:preview",
+    "key": "preview",
+    "lang": "es",
+    "path": "/preview/es/",
+    "title": "Rubén Martínez Bernabe — Preview",
+    "description": "Vista previa en construcción de la próxima versión de rubenitx.me. Sin indexar, sin enlaces desde producción y sin ser superficie canónica.",
+    "ogImage": "/avatar.png",
+    "ogImageAlt": "Rubén Martínez Bernabe",
+    "indexable": false
+  },
+  {
+    "id": "en:work-sars",
+    "key": "work-sars",
+    "lang": "en",
+    "path": "/work/sars-cov-2/",
+    "title": "The Mutational Landscape of SARS-CoV-2",
+    "description": "Interactive portal for exploring mutations across the SARS-CoV-2 genome, built with Universitat Rovira i Virgili and published in Int. J. Mol. Sci.",
+    "ogImage": "/avatar.png",
+    "ogImageAlt": "Rubén Martínez Bernabe",
+    "indexable": true
+  },
+  {
+    "id": "es:work-sars",
+    "key": "work-sars",
+    "lang": "es",
+    "path": "/es/work/sars-cov-2/",
+    "title": "The Mutational Landscape of SARS-CoV-2",
+    "description": "Portal interactivo para explorar las mutaciones del genoma del SARS-CoV-2, desarrollado con la Universitat Rovira i Virgili y publicado en Int. J. Mol. Sci.",
+    "ogImage": "/avatar.png",
+    "ogImageAlt": "Rubén Martínez Bernabe",
+    "indexable": true
   }
 ]

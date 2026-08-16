@@ -1,0 +1,83 @@
+---
+import Icon from '../Icon.astro'
+import { getProfile } from '../../lib/content'
+import { t, type Lang } from '../../i18n/ui'
+
+interface Props { lang: Lang; cvPath: string }
+const { lang, cvPath } = Astro.props
+const profile = await getProfile(lang)
+
+const ICONS = { LinkedIn: 'linkedin', GitHub: 'github' } as const
+---
+
+<section id="identity" class="relative mx-auto w-full max-w-6xl px-5 pb-20 pt-28 sm:px-8 sm:pb-28 sm:pt-36">
+  <div class="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
+    <!-- Columna de texto: todo lo que hay que leer y posicionar es HTML -->
+    <div>
+      <p class="v2-eyebrow reveal">{profile.jobTitle} · {profile.locality}</p>
+
+      <h1 class="v2-display reveal mt-5" style="--i:1">{profile.name}</h1>
+
+      <p class="v2-lede reveal mt-6" style="--i:2">{profile.headline}</p>
+
+      <div class="reveal mt-9 flex flex-wrap items-center gap-3" style="--i:3">
+        <a
+          href="#work"
+          class="inline-flex items-center gap-2 rounded-lg bg-[#00ff88] px-5 py-3 text-sm font-semibold text-[#06120c] transition hover:bg-[#5cffb4]"
+        >
+          {t(lang, 'v2.hero.cta')}
+          <Icon name="arrowUpRight" class="h-4 w-4" />
+        </a>
+        <a
+          href={cvPath}
+          class="inline-flex items-center gap-2 rounded-lg border border-[#262d36] px-5 py-3 text-sm font-semibold text-[var(--v2-fg)] transition hover:border-[#37424e] hover:bg-[#1a2029]"
+        >
+          <Icon name="eye" class="h-4 w-4" />
+          {t(lang, 'v2.hero.cv')}
+        </a>
+      </div>
+
+      <ul class="reveal mt-9 flex flex-wrap items-center gap-4" style="--i:4">
+        {
+          profile.socials.map((s) => (
+            <li>
+              <a
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 text-sm text-[var(--v2-fg-muted)] transition hover:text-[var(--v2-accent-soft)]"
+              >
+                <Icon name={ICONS[s.label as keyof typeof ICONS] ?? 'globe'} class="h-4 w-4" />
+                {s.label}
+              </a>
+            </li>
+          ))
+        }
+        <li>
+          <a
+            href={`mailto:${profile.email}`}
+            class="inline-flex items-center gap-2 text-sm text-[var(--v2-fg-muted)] transition hover:text-[var(--v2-accent-soft)]"
+          >
+            <Icon name="mail" class="h-4 w-4" />
+            {profile.email}
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!--
+      Living Architecture. Decoración: aria-hidden y sin una sola palabra
+      dibujada dentro. Si no hay JS, queda el sustituto estático.
+    -->
+    <figure class="reveal m-0" style="--i:2">
+      <div class="la-stage">
+        <canvas id="living-architecture" class="la-canvas" aria-hidden="true"></canvas>
+        <div class="la-fallback">{t(lang, 'v2.hero.system')}</div>
+      </div>
+      <figcaption class="mt-4 text-center text-[0.68rem] leading-relaxed text-[var(--v2-fg-dim)] sm:text-left">
+        <span class="v2-prompt">{t(lang, 'v2.hero.system')}</span>
+        <span class="ml-2">{t(lang, 'v2.hero.systemNote')}</span>
+      </figcaption>
+    </figure>
+  </div>
+</section>

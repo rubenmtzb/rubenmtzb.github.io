@@ -1,0 +1,42 @@
+---
+import Icon from '../Icon.astro'
+import { getCluster } from '../../lib/content'
+import { V2_NAV, t, type Lang, type UiKey } from '../../i18n/ui'
+
+interface Props { lang: Lang; pageKey: string }
+const { lang, pageKey } = Astro.props
+const cluster = await getCluster(pageKey)
+const other = cluster.alternates.find((a) => a.lang !== lang)!
+---
+
+<header id="v2-header" class="fixed inset-x-0 top-0 z-50 border-b border-transparent transition-colors duration-300">
+  <nav aria-label="Principal" class="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
+    <a href="#identity" class="text-sm font-bold tracking-[0.3em] text-[var(--v2-fg)]">RMB</a>
+
+    <div class="hidden items-center gap-7 md:flex">
+      {V2_NAV.map((item) => (
+        <a href={`#${item.id}`} data-v2nav={item.id} class="text-sm text-[var(--v2-fg-dim)] transition hover:text-[var(--v2-fg)]">
+          {t(lang, item.key as UiKey)}
+        </a>
+      ))}
+      <a href={other.path} hreflang={other.lang} rel="alternate" class="inline-flex items-center gap-1.5 text-sm text-[var(--v2-fg-dim)] transition hover:text-[var(--v2-fg)]" aria-label={t(lang, 'nav.langSwitch')}>
+        <Icon name="globe" class="h-3.5 w-3.5" />{t(lang, 'nav.langNext')}
+      </a>
+    </div>
+
+    <button type="button" id="v2-menu-toggle" aria-expanded="false" aria-controls="v2-menu"
+      class="rounded-lg border border-[var(--v2-line)] p-2 md:hidden"
+      aria-label={t(lang, 'nav.openMenu')} data-close-label={t(lang, 'nav.closeMenu')}>
+      <Icon name="menu" class="h-5 w-5" />
+    </button>
+  </nav>
+
+  <div id="v2-menu" class="border-t border-[var(--v2-line)] bg-[var(--v2-surface)] md:hidden">
+    <ul class="mx-auto flex w-full max-w-6xl flex-col px-5 py-2 sm:px-8">
+      {V2_NAV.map((item) => (
+        <li><a href={`#${item.id}`} class="block py-3 text-sm text-[var(--v2-fg-muted)]">{t(lang, item.key as UiKey)}</a></li>
+      ))}
+      <li><a href={other.path} hreflang={other.lang} rel="alternate" class="block py-3 text-sm text-[var(--v2-fg-muted)]">{t(lang, 'nav.langNext')}</a></li>
+    </ul>
+  </div>
+</header>

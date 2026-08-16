@@ -1,0 +1,34 @@
+---
+import Icon from '../Icon.astro'
+import { getProfile } from '../../lib/content'
+import { t, type Lang } from '../../i18n/ui'
+
+interface Props { lang: Lang; cvPath: string }
+const { lang, cvPath } = Astro.props
+const profile = await getProfile(lang)
+const ICONS = { LinkedIn: 'linkedin', GitHub: 'github' } as const
+---
+
+<section id="contact" class="mx-auto w-full max-w-6xl scroll-mt-24 px-5 py-20 sm:px-8 sm:py-28">
+  <div class="v2-card p-8 sm:p-12">
+    <p class="v2-eyebrow reveal">04 — {t(lang, 'v2.contact.title')}</p>
+    <h2 class="v2-h2 reveal mt-3 max-w-2xl">{profile.contactHeadline}</h2>
+    <p class="v2-lede reveal mt-4">{t(lang, 'v2.contact.lede')}</p>
+
+    <div class="reveal mt-8 flex flex-wrap items-center gap-3">
+      <a href={`mailto:${profile.email}`} class="inline-flex items-center gap-2 rounded-lg bg-[#00ff88] px-5 py-3 text-sm font-semibold text-[#06120c] transition hover:bg-[#5cffb4]">
+        <Icon name="send" class="h-4 w-4" />{t(lang, 'v2.contact.write')}
+      </a>
+      <a href={cvPath} class="inline-flex items-center gap-2 rounded-lg border border-[var(--v2-line)] px-5 py-3 text-sm font-semibold transition hover:border-[#37424e] hover:bg-[var(--v2-raised)]">
+        <Icon name="eye" class="h-4 w-4" />{t(lang, 'v2.hero.cv')}
+      </a>
+    </div>
+
+    <ul class="reveal mt-8 flex flex-wrap gap-x-8 gap-y-3 border-t border-[var(--v2-line-soft)] pt-6">
+      <li><a href={`mailto:${profile.email}`} class="inline-flex items-center gap-2 text-sm text-[var(--v2-fg-muted)] transition hover:text-[var(--v2-accent-soft)]"><Icon name="mail" class="h-4 w-4" />{profile.email}</a></li>
+      {profile.socials.map((s) => (
+        <li><a href={s.href} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm text-[var(--v2-fg-muted)] transition hover:text-[var(--v2-accent-soft)]"><Icon name={ICONS[s.label as keyof typeof ICONS] ?? 'globe'} class="h-4 w-4" />{s.label}</a></li>
+      ))}
+    </ul>
+  </div>
+</section>

@@ -10,6 +10,9 @@ const { lang } = Astro.props
 const experience = await getExperience(lang)
 const projects = await getProjects(lang)
 
+/** Fichas profundas compartidas entre V1 y V2: contenido canónico único. */
+const CASE_PATHS: Record<string, string> = { 'sars-cov-2': '/work/sars-cov-2/' }
+
 const PROJECT_ICON: Record<string, 'microscope' | 'lock' | 'globe'> = {
   'sars-cov-2': 'microscope',
   'financial-architecture': 'lock',
@@ -147,52 +150,18 @@ const PROJECT_ICON: Record<string, 'microscope' | 'lock' | 'globe'> = {
             ))}
           </ul>
 
-          {/*
-            Profundidad que antes vivía en la sección Research.
-            <details> es HTML nativo: el contenido está en el build y es
-            accesible sin JavaScript, sin duplicar superficie ni crear URL.
-          */}
-          {project.deep && (
-            <details class="group mt-6 rounded-lg border border-green-500/15 bg-black/30">
-              <summary class="cursor-pointer list-none px-4 py-3 text-xs uppercase tracking-[0.24em] text-green-300 transition hover:text-green-100">
-                <span class="inline-flex items-center gap-2">
-                  <Icon name="chevronDown" class="h-3.5 w-3.5 transition group-open:rotate-180" />
-                  {project.deep.focusLabel} · {project.deep.intersectionLabel}
-                </span>
-              </summary>
-              <div class="space-y-4 border-t border-green-500/15 px-4 py-4">
-                <ul class="space-y-2">
-                  {project.deep.highlights.map((h) => (
-                    <li class="flex items-start gap-3 text-sm leading-6 text-slate-300/90">
-                      <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-green-400" aria-hidden="true" />
-                      {h}
-                    </li>
-                  ))}
-                </ul>
-                <div class="grid gap-3 sm:grid-cols-2">
-                  <div class="rounded-lg border border-cyan-400/20 bg-black/35 p-3">
-                    <p class="text-[0.62rem] uppercase tracking-[0.2em] text-dim">{project.deep.partnerLabel}</p>
-                    <p class="mt-1 text-sm font-semibold text-white">{project.deep.partnerName}</p>
-                    <p class="mt-1 text-xs leading-5 text-slate-300/80">{project.deep.partnerDescription}</p>
-                  </div>
-                  <div class="space-y-3">
-                    <div class="rounded-lg border border-green-500/20 bg-black/35 p-3">
-                      <p class="text-[0.62rem] uppercase tracking-[0.2em] text-dim">{project.deep.focusLabel}</p>
-                      <p class="mt-1 text-sm text-white">{project.deep.focusText}</p>
-                    </div>
-                    <div class="rounded-lg border border-purple-400/20 bg-black/35 p-3">
-                      <p class="text-[0.62rem] uppercase tracking-[0.2em] text-dim">{project.deep.intersectionLabel}</p>
-                      <p class="mt-1 text-sm text-white">{project.deep.intersectionText}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </details>
-          )}
-
           <div class="mt-6 flex flex-col items-start gap-4 border-t border-green-500/15 pt-5 sm:flex-row sm:items-center sm:justify-between">
             <p class="text-xs uppercase tracking-[0.18em] text-dim sm:tracking-[0.28em]">{project.status}</p>
             <div class="flex flex-wrap gap-3">
+              {CASE_PATHS[project.key] && (
+                <a
+                  href={lang === 'es' ? `/es${CASE_PATHS[project.key]}` : CASE_PATHS[project.key]}
+                  class="inline-flex items-center gap-2 rounded-full border border-green-400/35 bg-green-500/10 px-4 py-2 text-sm font-semibold text-green-200 transition hover:-translate-y-0.5 hover:border-green-300/55"
+                >
+                  {t(lang, 'v2.work.case')}
+                  <Icon name="arrowUpRight" class="h-4 w-4" />
+                </a>
+              )}
               {project.publication && (
                 <a
                   href={project.publication.href}

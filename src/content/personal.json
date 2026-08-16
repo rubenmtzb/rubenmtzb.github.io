@@ -1,0 +1,84 @@
+[
+  {
+    "id": "palencia",
+    "key": "palencia",
+    "order": 1,
+    "category": "life",
+    "featured": true,
+    "image": "./../assets/personal/01-palencia-atardecer.jpg",
+    "location": "Palencia, España",
+    "alt": {
+      "en": "Sitting on a stone wall at dusk, looking out over a Castilian village with its church on the hill and wind turbines along the horizon.",
+      "es": "Sentado en un muro de piedra al atardecer, mirando un pueblo castellano con su iglesia en lo alto y molinos de viento en el horizonte."
+    },
+    "caption": { "en": "Somewhere between places.", "es": "En algún punto entre dos sitios." }
+  },
+  {
+    "id": "london",
+    "key": "london",
+    "order": 2,
+    "category": "travel",
+    "featured": false,
+    "image": "./../assets/personal/02-londres-tower-bridge.jpg",
+    "location": "Londres, Reino Unido",
+    "alt": {
+      "en": "Standing by the Thames on a grey winter day, with Tower Bridge behind me.",
+      "es": "De pie junto al Támesis en un día gris de invierno, con el Tower Bridge detrás."
+    }
+  },
+  {
+    "id": "rome",
+    "key": "rome",
+    "order": 3,
+    "category": "travel",
+    "featured": false,
+    "image": "./../assets/personal/08-roma.jpg",
+    "location": "Roma, Italia",
+    "alt": {
+      "en": "Leaning against a stone wall inside the Colosseum, looking away from the camera under a heavy sky.",
+      "es": "Apoyado en un muro de piedra dentro del Coliseo, mirando fuera de cámara bajo un cielo cargado."
+    }
+  },
+  {
+    "id": "mallorca",
+    "key": "mallorca",
+    "order": 4,
+    "category": "style",
+    "featured": false,
+    "image": "./../assets/personal/03-mallorca.jpg",
+    "location": "Mallorca, España",
+    "alt": {
+      "en": "Walking down a palm-lined avenue in the late afternoon light, seen from behind.",
+      "es": "Caminando por una avenida de palmeras con la luz de la tarde, visto de espaldas."
+    }
+  },
+  {
+    "id": "via-ferrata",
+    "key": "via-ferrata",
+    "order": 5,
+    "category": "sport",
+    "featured": false,
+    "image": "./../assets/personal/04-via-ferrata.jpg",
+    "location": "Cataluña, España",
+    "alt": {
+      "en": "First-person view of my hand gripping a via ferrata cable, carabiner clipped in, with the valley far below.",
+      "es": "Vista en primera persona de mi mano agarrando el cable de una vía ferrata, con el mosquetón anclado y el valle a plomo debajo."
+    },
+    "caption": { "en": "Three points of contact.", "es": "Tres puntos de apoyo." }
+  },
+  {
+    "id": "eclipse",
+    "key": "eclipse",
+    "order": 6,
+    "category": "moment",
+    "featured": false,
+    "image": "./../assets/personal/07b-eclipse-recorte.jpg",
+    "location": "Palencia, España",
+    "date": "2026-08-12",
+    "alt": {
+      "en": "Wearing eclipse glasses with the eclipse printed on the lenses, smiling, during the total solar eclipse.",
+      "es": "Con gafas de eclipse que llevan el eclipse impreso en los cristales, sonriendo, durante el eclipse solar total."
+    },
+    "caption": { "en": "Total solar eclipse.", "es": "Eclipse solar total." }
+  }
+]

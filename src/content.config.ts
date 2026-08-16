@@ -40,6 +40,8 @@ const profile = defineCollection({
     country: z.string().length(2),
     email: z.string().email(),
     /** Dos niveles desde una única fuente. */
+    /** Frase de posicionamiento de la V2, escrita desde cero. */
+    headline: z.string().min(1),
     bioShort: z.string().min(1),
     bioLong: z.string().min(1),
     socials: z.array(link).min(1),
@@ -191,6 +193,30 @@ const stack = defineCollection({
   }),
 })
 
+/**
+ * Archivo personal de la V2. Activo con etiquetas cortas localizadas:
+ * un fichero por fotografía, no ficheros paralelos por idioma — la imagen
+ * es la misma y solo cambian alt y caption.
+ *
+ * `alt` es obligatorio. `location` se guarda a nivel de ciudad: la
+ * coordenada nunca entra, ni en el texto ni en el fichero.
+ */
+const personal = defineCollection({
+  loader: file('src/content/personal.json'),
+  schema: ({ image }) =>
+    z.object({
+      key: z.string().min(1),
+      order: z.number().int(),
+      category: z.enum(['life', 'travel', 'style', 'sport', 'moment']),
+      image: image(),
+      alt: z.object({ en: z.string().min(10), es: z.string().min(10) }),
+      caption: z.object({ en: z.string(), es: z.string() }).optional(),
+      location: z.string().optional(),
+      date: z.string().optional(),
+      featured: z.boolean().default(false),
+    }),
+})
+
 /** Metadata SEO por página e idioma. Un título y una descripción únicos. */
 const pages = defineCollection({
   loader: file('src/content/pages.json'),
@@ -207,4 +233,4 @@ const pages = defineCollection({
   }),
 })
 
-export const collections = { profile, experience, projects, education, certs, stack, pages }
+export const collections = { profile, experience, projects, education, certs, stack, personal, pages }

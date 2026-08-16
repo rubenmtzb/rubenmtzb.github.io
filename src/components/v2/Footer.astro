@@ -1,0 +1,16 @@
+---
+import { getProfile } from '../../lib/content'
+import { t, type Lang } from '../../i18n/ui'
+
+interface Props { lang: Lang }
+const { lang } = Astro.props
+const profile = await getProfile(lang)
+const year = new Date().getFullYear()
+---
+
+<footer class="border-t border-[var(--v2-line-soft)]">
+  <div class="mx-auto flex w-full max-w-6xl flex-col gap-3 px-5 py-10 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+    <p class="v2-prompt text-xs text-[var(--v2-fg-dim)]">{t(lang, 'footer.built')}</p>
+    <p class="text-xs text-[var(--v2-fg-dim)]">© {year} {profile.name}</p>
+  </div>
+</footer>

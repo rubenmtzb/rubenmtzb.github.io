@@ -1,0 +1,38 @@
+---
+import Seo from '../components/Seo.astro'
+import Nav from '../components/v2/Nav.astro'
+import Identity from '../components/v2/Identity.astro'
+import Work from '../components/v2/Work.astro'
+import Archive from '../components/v2/Archive.astro'
+import Contact from '../components/v2/Contact.astro'
+import Footer from '../components/v2/Footer.astro'
+import { t, type Lang } from '../i18n/ui'
+import '../styles/v2.css'
+
+interface Props { lang: Lang; pageKey: string }
+const { lang, pageKey } = Astro.props
+const cvPath = lang === 'es' ? '/es/cv/' : '/cv/'
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <Seo pageKey={pageKey} lang={lang} pageType="ProfilePage" />
+    <script is:inline>document.documentElement.classList.add('js')</script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{t(lang, 'nav.skip')}</a>
+    <Nav lang={lang} pageKey={pageKey} />
+    <main id="main">
+      <Identity lang={lang} cvPath={cvPath} />
+      <div class="v2-rule mx-auto max-w-6xl"></div>
+      <Work lang={lang} />
+      <div class="v2-rule mx-auto max-w-6xl"></div>
+      <Archive lang={lang} />
+      <div class="v2-rule mx-auto max-w-6xl"></div>
+      <Contact lang={lang} cvPath={cvPath} />
+    </main>
+    <Footer lang={lang} />
+    <script>import '../scripts/v2'</script>
+  </body>
+</html>

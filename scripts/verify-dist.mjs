@@ -16,15 +16,21 @@ const SITE = 'https://rubenitx.me'
 
 /** Contrato de páginas indexables de la Fase 2 (Estrategia A). */
 const EXPECTED = [
-  { path: '/', file: 'index.html', lang: 'en', cluster: 'home' },
-  { path: '/es/', file: 'es/index.html', lang: 'es', cluster: 'home' },
-  { path: '/cv/', file: 'cv/index.html', lang: 'en', cluster: 'cv' },
-  { path: '/es/cv/', file: 'es/cv/index.html', lang: 'es', cluster: 'cv' },
+  { path: '/', file: 'index.html', lang: 'en', cluster: 'home', indexable: true },
+  { path: '/es/', file: 'es/index.html', lang: 'es', cluster: 'home', indexable: true },
+  { path: '/cv/', file: 'cv/index.html', lang: 'en', cluster: 'cv', indexable: true },
+  { path: '/es/cv/', file: 'es/cv/index.html', lang: 'es', cluster: 'cv', indexable: true },
+  { path: '/work/sars-cov-2/', file: 'work/sars-cov-2/index.html', lang: 'en', cluster: 'case', indexable: true },
+  { path: '/es/work/sars-cov-2/', file: 'es/work/sars-cov-2/index.html', lang: 'es', cluster: 'case', indexable: true },
+  // Preview de la V2: existe, pero no se indexa ni entra al sitemap.
+  { path: '/preview/', file: 'preview/index.html', lang: 'en', cluster: null, indexable: false },
+  { path: '/preview/es/', file: 'preview/es/index.html', lang: 'es', cluster: null, indexable: false },
 ]
 
 const CLUSTERS = {
   home: { en: '/', es: '/es/', xDefault: '/' },
   cv: { en: '/cv/', es: '/es/cv/', xDefault: '/cv/' },
+  case: { en: '/work/sars-cov-2/', es: '/es/work/sars-cov-2/', xDefault: '/work/sars-cov-2/' },
 }
 
 const LEGACY_ANCHORS = ['stack', 'experience', 'projects', 'research', 'education', 'certifications', 'resume']
@@ -79,17 +85,29 @@ for (const page of EXPECTED) {
   const canon = document.querySelector('link[rel=canonical]')?.getAttribute('href')
   assert(canon === abs(page.path), `canonical self y absoluto (${canon})`)
 
-  // 5. hreflang: conjunto idéntico dentro del clúster, se incluye a sí mismo, x-default
-  const cluster = CLUSTERS[page.cluster]
+  // robots coherente con la indexabilidad declarada
+  const robots = document.querySelector('meta[name=robots]')?.getAttribute('content') ?? ''
+  assert(
+    page.indexable ? robots.includes('index') && !robots.includes('noindex') : robots.includes('noindex'),
+    `robots="${robots}"`,
+  )
+
+  // 5. hreflang: conjunto idéntico dentro del clúster, se incluye a sí mismo,
+  // x-default. Las páginas no indexables NO deben emitirlo.
   const alts = [...document.querySelectorAll('link[rel=alternate][hreflang]')].map((l) => [
     l.getAttribute('hreflang'),
     l.getAttribute('href'),
   ])
   const map = Object.fromEntries(alts)
-  assert(map.en === abs(cluster.en), `hreflang="en" → ${cluster.en}`)
-  assert(map.es === abs(cluster.es), `hreflang="es" → ${cluster.es}`)
-  assert(map['x-default'] === abs(cluster.xDefault), `x-default → ${cluster.xDefault}`)
-  assert(map[page.lang] === abs(page.path), 'el clúster se incluye a sí mismo')
+  if (page.cluster) {
+    const cluster = CLUSTERS[page.cluster]
+    assert(map.en === abs(cluster.en), `hreflang="en" → ${cluster.en}`)
+    assert(map.es === abs(cluster.es), `hreflang="es" → ${cluster.es}`)
+    assert(map['x-default'] === abs(cluster.xDefault), `x-default → ${cluster.xDefault}`)
+    assert(map[page.lang] === abs(page.path), 'el clúster se incluye a sí mismo')
+  } else {
+    assert(alts.length === 0, `sin hreflang por no ser indexable (${alts.length})`)
+  }
 
   // title y description únicos y presentes
   const title = document.querySelector('title')?.textContent?.trim()
@@ -155,7 +173,10 @@ for (const page of EXPECTED) {
   const { document: noJs } = parseHTML(html)
   noJs.querySelectorAll('script').forEach((s) => s.remove())
   const text = noJs.body.textContent.replace(/\s+/g, ' ').trim()
-  assert(text.length > 1500, `contenido presente sin JS (${text.length} caracteres)`)
+  // Umbral por tipo: una ficha de proyecto es legítimamente más corta
+  // que la portada, pero ninguna puede quedarse en un esqueleto vacío.
+  const minText = page.cluster === 'case' ? 700 : 1500
+  assert(text.length > minText, `contenido presente sin JS (${text.length} caracteres, mínimo ${minText})`)
   assert(text.includes('Rubén Martínez Bernabe'), 'identidad presente sin JS')
   const navLinks = [...noJs.querySelectorAll('a[href]')].filter((a) => a.getAttribute('href')?.startsWith('#'))
   if (page.cluster === 'home') {
@@ -183,11 +204,12 @@ assert(existsSync(join(DIST, declaredPath)), 'el sitemap declarado por robots.tx
 
 const sm = read('sitemap.xml')
 const locs = [...sm.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]).sort()
-const expectedLocs = EXPECTED.map((e) => abs(e.path)).sort()
+const expectedLocs = EXPECTED.filter((e) => e.indexable).map((e) => abs(e.path)).sort()
 assert(
   JSON.stringify(locs) === JSON.stringify(expectedLocs),
   `contiene exactamente el conjunto indexable (${locs.length} URLs)`,
 )
+assert(!sm.includes('/preview/'), 'la preview no aparece en el sitemap')
 for (const c of Object.values(CLUSTERS)) {
   assert(sm.includes(`hreflang="x-default" href="${abs(c.xDefault)}"`), `alternativas x-default para ${c.xDefault}`)
 }
