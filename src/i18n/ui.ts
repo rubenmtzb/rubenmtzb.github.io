@@ -147,6 +147,8 @@ export const ui = {
     'v2.case.back': 'Back to work',
     'v2.case.overview': 'Overview',
     'v2.case.stack': 'Stack',
+    'v2.game.toggle': 'game mode',
+    'v2.game.help': 'Arrows or A/D to move · Space to jump · Esc to exit. Collect the loose data packets.',
 
     'time.year': 'year',
     'time.years': 'years',
@@ -259,6 +261,8 @@ export const ui = {
     'v2.case.back': 'Volver a trayectoria',
     'v2.case.overview': 'Resumen',
     'v2.case.stack': 'Stack',
+    'v2.game.toggle': 'modo juego',
+    'v2.game.help': 'Flechas o A/D para moverte · Espacio para saltar · Esc para salir. Recoge los paquetes de datos sueltos.',
 
     'time.year': 'año',
     'time.years': 'años',

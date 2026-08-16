@@ -59,7 +59,7 @@ const htmlFiles = []
   for (const e of readdirSync(dir)) {
     const p = join(dir, e)
     if (statSync(p).isDirectory()) walk(p)
-    else if (e.endsWith('.html')) htmlFiles.push(p.slice(DIST.length + 1))
+    else if (e.endsWith('.html') && e !== '404.html') htmlFiles.push(p.slice(DIST.length + 1))
   }
 })(DIST)
 const expectedFiles = EXPECTED.map((e) => e.file).sort()
@@ -224,6 +224,9 @@ for (const c of Object.values(CLUSTERS)) {
 
 /* ---------- Compatibilidad: URLs y assets que no pueden desaparecer ---------- */
 console.log('\n· Compatibilidad')
+// GitHub Pages sirve /404.html en cualquier ruta inexistente.
+assert(existsSync(join(DIST, '404.html')), '/404.html presente')
+assert(read('404.html').includes('noindex'), 'el 404 va noindex')
 for (const asset of [
   'cv/CV_RubenMartinez_EN.pdf',
   'cv/CV_RubenMartinez_ES.pdf',

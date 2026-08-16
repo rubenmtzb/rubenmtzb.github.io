@@ -205,6 +205,31 @@ function initArchive() {
   showItem(0)
 }
 
+/* ---------- Game Mode: opcional y bajo demanda ---------- */
+function initGameMode() {
+  const root = document.getElementById('gm-root')
+  const toggle = document.getElementById('gm-toggle')
+  const help = document.getElementById('gm-help')
+  if (!root || !toggle) return
+  // Con reduced-motion ni se ofrece: es puro movimiento.
+  if (reduce) return
+  root.hidden = false
+
+  let session: { stop: () => void } | null = null
+  toggle.addEventListener('click', async () => {
+    if (session) { session.stop(); return }
+    toggle.setAttribute('aria-pressed', 'true')
+    if (help) help.hidden = false
+    // El código del juego solo se descarga al activarlo.
+    const { startGameMode } = await import('./game-mode')
+    session = startGameMode(document.body, () => {
+      session = null
+      toggle.setAttribute('aria-pressed', 'false')
+      if (help) help.hidden = true
+    })
+  })
+}
+
 /* ---------- Living Architecture ---------- */
 function initWow() {
   const canvas = document.getElementById('living-architecture') as HTMLCanvasElement | null
@@ -216,3 +241,4 @@ initNav()
 initMenu()
 initArchive()
 initWow()
+initGameMode()
