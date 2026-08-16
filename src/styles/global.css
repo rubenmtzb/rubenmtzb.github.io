@@ -1,4 +1,7 @@
 @import 'tailwindcss';
+/* Tipografía autohospedada: elimina el tercero de Google Fonts y su
+   petición bloqueante. Solo el subconjunto latino. */
+@import '@fontsource-variable/jetbrains-mono/wght.css';
 
 /* ============================================================
    Identidad visual de la V1 — portada desde src/index.css.
@@ -8,7 +11,7 @@
    ============================================================ */
 
 @theme {
-  --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', 'Cascadia Code', monospace;
+  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', 'Fira Code', 'SF Mono', 'Cascadia Code', monospace;
 }
 
 /* ---------- BASE ---------- */
