@@ -22,3 +22,14 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Astro
+.astro/
+
+# Material personal: originales y derivados nunca entran al repositorio.
+# Los originales viven fuera, en ~/Documents/projects/rubenitx-media/
+*.jpeg
+*.JPG
+*.MOV
+*.mp4
+*.heic
