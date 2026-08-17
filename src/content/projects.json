@@ -14,6 +14,8 @@
     "tech": ["TypeScript", "PHP", "Python", "D3.js"],
     "domains": ["Bioinformatics"],
     "link": "http://sarscov2-mutation-portal.urv.cat",
+    "image": "./../assets/projects/sars-cov-2.png",
+    "imageAlt": "Dashboard-style cover for the SARS-CoV-2 mutation portal, tracking mutations D614G, N501Y, E484K and L452R over a genomic sequence background.",
     "publication": {
       "label": "Published in MDPI — Int. J. Mol. Sci.",
       "href": "https://www.mdpi.com/1422-0067/24/10/9072"
@@ -49,6 +51,8 @@
     "tech": ["TypeScript", "PHP", "Python", "D3.js"],
     "domains": ["Bioinformática"],
     "link": "http://sarscov2-mutation-portal.urv.cat",
+    "image": "./../assets/projects/sars-cov-2.png",
+    "imageAlt": "Portada tipo panel del portal de mutaciones de SARS-CoV-2, con las mutaciones D614G, N501Y, E484K y L452R sobre un fondo de secuencia genómica.",
     "publication": {
       "label": "Publicado en MDPI — Int. J. Mol. Sci.",
       "href": "https://www.mdpi.com/1422-0067/24/10/9072"
@@ -75,7 +79,7 @@
     "lang": "en",
     "order": 2,
     "title": "Decoupled Financial Architecture",
-    "eyebrow": "Private — coming soon",
+    "eyebrow": "Architecture",
     "description": "Modular platform designed for independent evolution of the financial engine and the client layer. Focused on clean domain boundaries, observability, and long-term maintainability.",
     "status": "In private development",
     "badge": "private",
@@ -83,6 +87,9 @@
     "inCv": true,
     "tech": ["Java", "Spring Boot", "React", "Docker", "PostgreSQL"],
     "domains": [],
+    "github": "https://github.com/rubenmtzb",
+    "image": "./../assets/projects/financial-architecture.png",
+    "imageAlt": "Cover for the Decoupled Financial Architecture case study, showing an aggregated balance chart and the tech stack: Java, Spring Boot, React, Docker, PostgreSQL.",
     "deep": null
   },
   {
@@ -91,7 +98,7 @@
     "lang": "es",
     "order": 2,
     "title": "Arquitectura Financiera Desacoplada",
-    "eyebrow": "Privado — próximamente",
+    "eyebrow": "Arquitectura",
     "description": "Plataforma modular diseñada para la evolución independiente del motor financiero y la capa de cliente. Enfocada en límites de dominio limpios, observabilidad y mantenibilidad a largo plazo.",
     "status": "En desarrollo privado",
     "badge": "private",
@@ -99,6 +106,9 @@
     "inCv": true,
     "tech": ["Java", "Spring Boot", "React", "Docker", "PostgreSQL"],
     "domains": [],
+    "github": "https://github.com/rubenmtzb",
+    "image": "./../assets/projects/financial-architecture.png",
+    "imageAlt": "Portada del caso de estudio de Arquitectura Financiera Desacoplada, con un gráfico de saldo agregado y el stack: Java, Spring Boot, React, Docker, PostgreSQL.",
     "deep": null
   },
   {
@@ -107,8 +117,8 @@
     "lang": "en",
     "order": 3,
     "title": "Personal Portfolio",
-    "eyebrow": "Web",
-    "description": "This very portfolio. Built with Astro as static HTML, with a cyberpunk/terminal aesthetic and a single source of truth for all content. Deployed on GitHub Pages.",
+    "eyebrow": "Web App",
+    "description": "This very portfolio. Built with Astro as static HTML, with an interactive Killua particle simulation, 3D motion carousels, and a single source of truth for all content.",
     "status": "Live on rubenitx.me",
     "badge": "live",
     "featured": false,
@@ -116,6 +126,9 @@
     "tech": ["Astro", "Tailwind CSS", "TypeScript"],
     "domains": [],
     "link": "https://rubenitx.me",
+    "github": "https://github.com/rubenmtzb/rubenmtzb.github.io",
+    "image": "./../assets/projects/portfolio.png",
+    "imageAlt": "Cover for the Personal Portfolio project, showing a terminal window running the production build and deploy commands.",
     "deep": null
   },
   {
@@ -124,8 +137,8 @@
     "lang": "es",
     "order": 3,
     "title": "Portfolio Personal",
-    "eyebrow": "Web",
-    "description": "Este mismo portfolio. Construido con Astro como HTML estático, con estética cyberpunk/terminal y una única fuente de verdad para todo el contenido. Desplegado en GitHub Pages.",
+    "eyebrow": "Aplicación Web",
+    "description": "Este mismo portfolio. Construido con Astro como HTML estático, con simulación de partículas ASCII de Killua, carrusel 3D y una única fuente de verdad para todo el contenido.",
     "status": "Activo en rubenitx.me",
     "badge": "live",
     "featured": false,
@@ -133,6 +146,41 @@
     "tech": ["Astro", "Tailwind CSS", "TypeScript"],
     "domains": [],
     "link": "https://rubenitx.me",
+    "github": "https://github.com/rubenmtzb/rubenmtzb.github.io",
+    "image": "./../assets/projects/portfolio.png",
+    "imageAlt": "Portada del proyecto Portfolio Personal, con una ventana de terminal ejecutando los comandos de build y despliegue en producción.",
+    "deep": null
+  },
+  {
+    "id": "en:coming-soon",
+    "key": "coming-soon",
+    "lang": "en",
+    "order": 4,
+    "title": "Coming Soon",
+    "eyebrow": "In Development",
+    "description": "A new project is taking shape. The architecture is being defined before the first public release.",
+    "status": "In planning",
+    "badge": "coming-soon",
+    "featured": false,
+    "inCv": false,
+    "tech": [],
+    "domains": [],
+    "deep": null
+  },
+  {
+    "id": "es:coming-soon",
+    "key": "coming-soon",
+    "lang": "es",
+    "order": 4,
+    "title": "Coming Soon",
+    "eyebrow": "En Desarrollo",
+    "description": "Un nuevo proyecto está tomando forma. La arquitectura se está definiendo antes de su primera versión pública.",
+    "status": "En planificación",
+    "badge": "coming-soon",
+    "featured": false,
+    "inCv": false,
+    "tech": [],
+    "domains": [],
     "deep": null
   }
 ]

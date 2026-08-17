@@ -2,7 +2,7 @@
   { "id": "java", "key": "java", "name": "Java", "group": "backend", "tier": "actual", "icon": "/icons/java.svg", "order": 1, "label": { "en": "Backend core", "es": "Núcleo backend" } },
   { "id": "spring-boot", "key": "spring-boot", "name": "Spring Boot", "group": "backend", "tier": "actual", "icon": "/icons/spring.svg", "order": 2, "label": { "en": "APIs & microservices", "es": "APIs y microservicios" } },
   { "id": "php", "key": "php", "name": "PHP", "group": "backend", "tier": "historica", "order": 3, "label": { "en": "Research portal work", "es": "Portal de investigación" } },
-  { "id": "python", "key": "python", "name": "Python", "group": "backend", "tier": "historica", "icon": "/icons/python.svg", "order": 4, "label": { "en": "Scripting & data", "es": "Scripting y datos" } },
+  { "id": "python", "key": "python", "name": "Python", "group": "backend", "tier": "actual", "icon": "/icons/python.svg", "order": 4, "label": { "en": "Scripting, AI & data", "es": "Scripting, IA y datos" } },
 
   { "id": "react", "key": "react", "name": "React", "group": "frontend", "tier": "actual", "icon": "/icons/react.svg", "order": 1, "label": { "en": "Frontend framework", "es": "Framework frontend" } },
   { "id": "typescript", "key": "typescript", "name": "TypeScript", "group": "frontend", "tier": "actual", "icon": "/icons/typescript.svg", "order": 2, "label": { "en": "Type-safe JS", "es": "JS con tipos" } },
@@ -21,7 +21,8 @@
 
   { "id": "mysql", "key": "mysql", "name": "MySQL", "group": "data", "tier": "actual", "icon": "/icons/mysql.svg", "order": 1, "label": { "en": "Relational DB", "es": "BD relacional" } },
   { "id": "postgresql", "key": "postgresql", "name": "PostgreSQL", "group": "data", "tier": "actual", "icon": "/icons/postgresql.svg", "order": 2, "label": { "en": "Advanced DB", "es": "BD avanzada" } },
-  { "id": "sql", "key": "sql", "name": "SQL", "group": "data", "tier": "secundaria", "order": 3, "label": { "en": "Query language", "es": "Lenguaje de consulta" } },
+  { "id": "mongodb", "key": "mongodb", "name": "MongoDB", "group": "data", "tier": "actual", "order": 3, "label": { "en": "Document store", "es": "Almacén documental" } },
+  { "id": "sql", "key": "sql", "name": "SQL", "group": "data", "tier": "secundaria", "order": 4, "label": { "en": "Query language", "es": "Lenguaje de consulta" } },
 
   { "id": "rest-apis", "key": "rest-apis", "name": "REST APIs", "group": "practices", "tier": "actual", "order": 1, "label": { "en": "Service communication", "es": "Comunicación entre servicios" } },
   { "id": "batch", "key": "batch", "name": "Batch Processing", "group": "practices", "tier": "actual", "order": 2, "label": { "en": "Automated data workflows", "es": "Procesos de datos automatizados" } },

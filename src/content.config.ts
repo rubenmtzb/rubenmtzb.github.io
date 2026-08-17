@@ -99,36 +99,41 @@ const experience = defineCollection({
 
 const projects = defineCollection({
   loader: file('src/content/projects.json'),
-  schema: z.object({
-    key: z.string().min(1),
-    lang,
-    order: z.number().int(),
-    title: z.string().min(1),
-    eyebrow: z.string().min(1),
-    description: z.string().min(1),
-    status: z.string().min(1),
-    badge: z.enum(['live', 'private']),
-    featured: z.boolean().default(false),
-    /** Aparece en /cv/ como proyecto propio, nunca como experiencia. */
-    inCv: z.boolean().default(false),
-    tech: z.array(z.string()).default([]),
-    domains: z.array(z.string()).default([]),
-    link: z.string().url().optional(),
-    publication: link.optional(),
-    /** Profundidad que antes vivía en la sección Research. */
-    deep: z
-      .object({
-        highlights: z.array(z.string().min(1)).min(1),
-        partnerLabel: z.string().min(1),
-        partnerName: z.string().min(1),
-        partnerDescription: z.string().min(1),
-        focusLabel: z.string().min(1),
-        focusText: z.string().min(1),
-        intersectionLabel: z.string().min(1),
-        intersectionText: z.string().min(1),
-      })
-      .nullish(),
-  }),
+  schema: ({ image }) =>
+    z.object({
+      key: z.string().min(1),
+      lang,
+      order: z.number().int(),
+      title: z.string().min(1),
+      eyebrow: z.string().min(1),
+      description: z.string().min(1),
+      status: z.string().min(1),
+      badge: z.enum(['live', 'private', 'coming-soon']),
+      featured: z.boolean().default(false),
+      /** Aparece en /cv/ como proyecto propio, nunca como experiencia. */
+      inCv: z.boolean().default(false),
+      tech: z.array(z.string()).default([]),
+      domains: z.array(z.string()).default([]),
+      link: z.string().url().optional(),
+      github: z.string().url().optional(),
+      /** Portada real del proyecto. Optimizada vía astro:assets, no un string suelto. */
+      image: image().optional(),
+      imageAlt: z.string().optional(),
+      publication: link.optional(),
+      /** Profundidad que antes vivía en la sección Research. */
+      deep: z
+        .object({
+          highlights: z.array(z.string().min(1)).min(1),
+          partnerLabel: z.string().min(1),
+          partnerName: z.string().min(1),
+          partnerDescription: z.string().min(1),
+          focusLabel: z.string().min(1),
+          focusText: z.string().min(1),
+          intersectionLabel: z.string().min(1),
+          intersectionText: z.string().min(1),
+        })
+        .nullish(),
+    }),
 })
 
 const education = defineCollection({

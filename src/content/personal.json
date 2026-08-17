@@ -18,14 +18,14 @@
     "category": "life",
     "featured": true,
     "image": "./../assets/personal/01-palencia-atardecer.jpg",
-    "location": "Palencia, España",
+    "location": "Los Balbases, Burgos",
     "alt": {
-      "en": "Sitting on a stone wall at dusk, looking out over a Castilian village with its church on the hill and wind turbines along the horizon.",
-      "es": "Sentado en un muro de piedra al atardecer, mirando un pueblo castellano con su iglesia en lo alto y molinos de viento en el horizonte."
+      "en": "Sitting on a stone wall at dusk, looking out over Los Balbases (Burgos) with its church on the hill and wind turbines along the horizon.",
+      "es": "Sentado en un muro de piedra al atardecer, mirando Los Balbases (Burgos) con su iglesia en lo alto y molinos de viento en el horizonte."
     },
     "caption": {
-      "en": "Somewhere between places.",
-      "es": "En algún punto entre dos sitios."
+      "en": "somewhere between places",
+      "es": "en algún punto entre dos sitios"
     }
   },
   {
@@ -39,6 +39,10 @@
     "alt": {
       "en": "Standing by the Thames on a grey winter day, with Tower Bridge behind me.",
       "es": "De pie junto al Támesis en un día gris de invierno, con el Tower Bridge detrás."
+    },
+    "caption": {
+      "en": "grey skies, tower bridge",
+      "es": "cielo gris, tower bridge"
     }
   },
   {
@@ -52,6 +56,10 @@
     "alt": {
       "en": "Leaning against a stone wall inside the Colosseum, looking away from the camera under a heavy sky.",
       "es": "Apoyado en un muro de piedra dentro del Coliseo, mirando fuera de cámara bajo un cielo cargado."
+    },
+    "caption": {
+      "en": "history carved in stone",
+      "es": "historia tallada en piedra"
     }
   },
   {
@@ -65,41 +73,44 @@
     "alt": {
       "en": "Walking down a palm-lined avenue in the late afternoon light, seen from behind.",
       "es": "Caminando por una avenida de palmeras con la luz de la tarde, visto de espaldas."
+    },
+    "caption": {
+      "en": "palm trees, sea breeze",
+      "es": "palmeras y brisa marina"
     }
   },
   {
-    "id": "via-ferrata",
-    "key": "via-ferrata",
+    "id": "climbing",
+    "key": "climbing",
     "order": 5,
     "category": "sport",
     "featured": false,
-    "image": "./../assets/personal/04-via-ferrata.jpg",
-    "location": "Cataluña, España",
+    "image": "./../assets/personal/09-escalada.jpg",
+    "location": "Barcelona, España",
     "alt": {
-      "en": "First-person view of my hand gripping a via ferrata cable, carabiner clipped in, with the valley far below.",
-      "es": "Vista en primera persona de mi mano agarrando el cable de una vía ferrata, con el mosquetón anclado y el valle a plomo debajo."
+      "en": "Climbing an indoor bouldering wall mid-route, roped in and reaching up for a hold, seen from behind and below.",
+      "es": "Escalando en un rocódromo cubierto a media vía, asegurado con cuerda y alcanzando una presa, visto de espaldas y desde abajo."
     },
     "caption": {
-      "en": "Three points of contact.",
-      "es": "Tres puntos de apoyo."
+      "en": "chalk on my hands",
+      "es": "magnesio en las manos"
     }
   },
   {
-    "id": "eclipse",
-    "key": "eclipse",
+    "id": "granada",
+    "key": "granada",
     "order": 6,
-    "category": "moment",
+    "category": "travel",
     "featured": false,
-    "image": "./../assets/personal/07b-eclipse-recorte.jpg",
-    "location": "Palencia, España",
-    "date": "2026-08-12",
+    "image": "./../assets/personal/10-granada.jpg",
+    "location": "Granada, España",
     "alt": {
-      "en": "Wearing eclipse glasses with the eclipse printed on the lenses, smiling, during the total solar eclipse.",
-      "es": "Con gafas de eclipse que llevan el eclipse impreso en los cristales, sonriendo, durante el eclipse solar total."
+      "en": "Standing on a fortress rampart above Granada, arms spread wide, overlooking the city and the mountains beyond under a bright blue sky.",
+      "es": "De pie sobre la muralla de una fortaleza en Granada, con los brazos extendidos, mirando la ciudad y las montañas al fondo bajo un cielo azul despejado."
     },
     "caption": {
-      "en": "Total solar eclipse.",
-      "es": "Eclipse solar total."
+      "en": "arms out over the city",
+      "es": "brazos abiertos sobre la ciudad"
     }
   }
 ]
