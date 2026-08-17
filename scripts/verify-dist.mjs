@@ -159,15 +159,30 @@ for (const page of EXPECTED) {
 
   // 9. Enlaces internos resuelven a un fichero existente
   const broken = []
+  // ...y los que apuntan a un ancla de ESTA misma página tienen destino.
+  // Un "#education" heredado de la portada no llevaba a ninguna parte en
+  // las fichas de proyecto, y nadie se daba cuenta.
+  const danglingAnchors = []
   for (const a of document.querySelectorAll('a[href]')) {
     const href = a.getAttribute('href')
+
+    if (href.startsWith('#')) {
+      const id = href.slice(1)
+      if (id && !document.getElementById(id)) danglingAnchors.push(href)
+      continue
+    }
     if (!href.startsWith('/') || href.startsWith('//')) continue
+
     const clean = href.split('#')[0].split('?')[0]
     if (!clean) continue
     const target = clean.endsWith('/') ? join(DIST, clean, 'index.html') : join(DIST, clean)
     if (!existsSync(target)) broken.push(href)
   }
   assert(broken.length === 0, `enlaces internos resuelven${broken.length ? ` — rotos: ${broken.join(', ')}` : ''}`)
+  assert(
+    danglingAnchors.length === 0,
+    `anclas de la propia página con destino${danglingAnchors.length ? ` — huérfanas: ${[...new Set(danglingAnchors)].join(', ')}` : ''}`,
+  )
 
   // 10. Imágenes con alt, width y height
   const badImgs = [...document.querySelectorAll('img')].filter(
@@ -196,7 +211,11 @@ for (const page of EXPECTED) {
   const navLinks = [...noJs.querySelectorAll('a[href]')].filter((a) => a.getAttribute('href')?.startsWith('#'))
   if (page.kind === 'v1' || page.kind === 'v2') {
     assert(navLinks.length >= 3, `navegación operativa sin JS (${navLinks.length} enlaces)`)
-    const menu = noJs.getElementById('mobile-menu') ?? noJs.getElementById('menu')
+  }
+  // El desplegable solo existe en la V1: la V2 muestra las cuatro áreas
+  // siempre en la barra, así que no hay menú que pueda quedarse oculto.
+  if (page.kind === 'v1') {
+    const menu = noJs.getElementById('mobile-menu')
     assert(menu && !menu.hasAttribute('hidden'), 'menú móvil visible sin JS')
   }
   const langLink = [...noJs.querySelectorAll('a[rel=alternate][hreflang]')]

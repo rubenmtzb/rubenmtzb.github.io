@@ -28,10 +28,11 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
-      # El despliegue solo continúa si el HTML generado cumple el contrato:
-      # URLs, lang, canonical, hreflang, sitemap, JSON-LD, H1, enlaces,
-      # imágenes, anclas heredadas y contenido presente sin JavaScript.
-      - name: Verificar dist
+      # El despliegue solo continúa si el build cumple el contrato por los dos
+      # lados: el HTML sin JavaScript (URLs, lang, canonical, hreflang, sitemap,
+      # JSON-LD, H1, enlaces, imágenes, anclas heredadas) y la capa de
+      # interacción ejecutando el bundle real contra ese mismo HTML.
+      - name: Verificar dist e interacción
         run: npm run verify
       - name: Setup Pages
         uses: actions/configure-pages@v4

@@ -7,7 +7,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "verify": "node scripts/verify-dist.mjs",
+    "verify": "node scripts/verify-dist.mjs && node scripts/verify-interaction.mjs",
     "check": "astro check",
     "test": "npm run build && npm run verify"
   },
