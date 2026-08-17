@@ -1,6 +1,6 @@
 ---
 import Icon from '../Icon.astro'
-import { getCluster } from '../../lib/content'
+import { getAlternate } from '../../lib/content'
 import { NAV, t, type Lang } from '../../i18n/ui'
 
 interface Props {
@@ -10,8 +10,7 @@ interface Props {
 const { lang, pageKey } = Astro.props
 
 /** Selector de idioma: enlace real a la URL equivalente, no estado en cliente. */
-const cluster = await getCluster(pageKey)
-const other = cluster.alternates.find((a) => a.lang !== lang)!
+const other = await getAlternate(pageKey, lang)
 ---
 
 <header class="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 no-print">

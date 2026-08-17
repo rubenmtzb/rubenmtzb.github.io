@@ -5,7 +5,7 @@ import {
   formatMonthYear,
   formatPeriod,
   getCerts,
-  getCluster,
+  getAlternate,
   getEducation,
   getExperience,
   getProfile,
@@ -28,8 +28,7 @@ const certs = await getCerts(lang)
 const projects = (await getProjects(lang)).filter((p) => p.inCv)
 const stack = await getStackByGroup()
 
-const cluster = await getCluster('cv')
-const other = cluster.alternates.find((a) => a.lang !== lang)!
+const other = await getAlternate('cv', lang)
 const homePath = lang === 'es' ? '/es/' : '/'
 const pdfHref = lang === 'es' ? '/cv/CV_RubenMartinez_ES.pdf' : '/cv/CV_RubenMartinez_EN.pdf'
 
@@ -159,6 +158,8 @@ const groups = STACK_GROUPS.map((g) => ({
         {
           experience.map((item) => {
             const duration = formatDuration(item.start, item.end, lang)
+            /* Las tres listas se imprimen juntas, así que las tres deciden si hay línea. */
+            const tags = [...item.tech, ...item.practices, ...item.domains]
             return (
               <li>
                 <div class="flex flex-wrap items-baseline justify-between gap-2">
@@ -181,10 +182,10 @@ const groups = STACK_GROUPS.map((g) => ({
                     </li>
                   ))}
                 </ul>
-                {(item.tech.length > 0 || item.practices.length > 0) && (
+                {tags.length > 0 && (
                   <p class="mt-2.5 text-xs text-dim">
                     <span class="font-semibold">{t(lang, 'cv.technologies')}: </span>
-                    {[...item.tech, ...item.practices, ...item.domains].join(', ')}
+                    {tags.join(', ')}
                   </p>
                 )}
               </li>
