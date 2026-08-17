@@ -5,7 +5,7 @@
     "order": 0,
     "category": "identity",
     "featured": false,
-    "image": "./../assets/personal/00-retrato-identidad.jpg",
+    "image": "./../assets/personal-web/00-retrato-identidad.webp",
     "alt": {
       "en": "Studio portrait of Rubén Martínez Bernabe, arms crossed, looking at the camera against a neutral background.",
       "es": "Retrato de estudio de Rubén Martínez Bernabe, de brazos cruzados, mirando a cámara sobre fondo neutro."
@@ -17,7 +17,7 @@
     "order": 1,
     "category": "life",
     "featured": true,
-    "image": "./../assets/personal/01-palencia-atardecer.jpg",
+    "image": "./../assets/personal-web/01-palencia-atardecer.webp",
     "location": "Los Balbases, Burgos",
     "alt": {
       "en": "Sitting on a stone wall at dusk, looking out over Los Balbases (Burgos) with its church on the hill and wind turbines along the horizon.",
@@ -34,7 +34,7 @@
     "order": 2,
     "category": "travel",
     "featured": false,
-    "image": "./../assets/personal/02-londres-tower-bridge.jpg",
+    "image": "./../assets/personal-web/02-londres-tower-bridge.webp",
     "location": "Londres, Reino Unido",
     "alt": {
       "en": "Standing by the Thames on a grey winter day, with Tower Bridge behind me.",
@@ -51,7 +51,7 @@
     "order": 3,
     "category": "travel",
     "featured": false,
-    "image": "./../assets/personal/08-roma.jpg",
+    "image": "./../assets/personal-web/08-roma.webp",
     "location": "Roma, Italia",
     "alt": {
       "en": "Leaning against a stone wall inside the Colosseum, looking away from the camera under a heavy sky.",
@@ -68,7 +68,7 @@
     "order": 4,
     "category": "style",
     "featured": false,
-    "image": "./../assets/personal/03-mallorca.jpg",
+    "image": "./../assets/personal-web/03-mallorca.webp",
     "location": "Mallorca, España",
     "alt": {
       "en": "Walking down a palm-lined avenue in the late afternoon light, seen from behind.",
@@ -85,7 +85,7 @@
     "order": 5,
     "category": "sport",
     "featured": false,
-    "image": "./../assets/personal/09-escalada.jpg",
+    "image": "./../assets/personal-web/09-escalada.webp",
     "location": "Barcelona, España",
     "alt": {
       "en": "Climbing an indoor bouldering wall mid-route, roped in and reaching up for a hold, seen from behind and below.",
@@ -102,7 +102,7 @@
     "order": 6,
     "category": "travel",
     "featured": false,
-    "image": "./../assets/personal/10-granada.jpg",
+    "image": "./../assets/personal-web/10-granada.webp",
     "location": "Granada, España",
     "alt": {
       "en": "Standing on a fortress rampart above Granada, arms spread wide, overlooking the city and the mountains beyond under a bright blue sky.",
