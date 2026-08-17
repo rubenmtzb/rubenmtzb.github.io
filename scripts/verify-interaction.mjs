@@ -175,6 +175,14 @@ function suite(page, dom) {
     'al pulsar la segunda empresa cambia el panel')
   check(jobTabs[1].getAttribute('aria-selected') === 'true' && jobTabs[0].getAttribute('aria-selected') === 'false',
     'aria-selected sigue al estado visual')
+  const linkedExperienceChips = all('#job-panels a.project-tech-chip')
+  const contextualExperienceChips = all('#job-panels span.project-tech-label')
+  check(linkedExperienceChips.length > 0, 'las tecnologías reconocidas conservan logo, color y enlace')
+  check(
+    contextualExperienceChips.length > 0
+      && contextualExperienceChips.every((chip) => chip.querySelector('.project-tech-marker') && !chip.closest('a')),
+    'los conceptos sin enlace mantienen el mismo patrón visual',
+  )
 
   console.log('\n· Workbench de perfil')
   const files = all('[data-profile-tab]')

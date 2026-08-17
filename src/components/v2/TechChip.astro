@@ -41,5 +41,11 @@ const label = isInternal
     <span>{tag}</span>
   </a>
 ) : (
-  <span class="project-tech-label">{tag}</span>
+  <span
+    class={`hero-tech-chip ${extra} project-tech-label`}
+    style="--chip-color: var(--cyan); --chip-glow: rgba(111, 227, 255, 0.2);"
+  >
+    <span class="project-tech-marker" aria-hidden="true"></span>
+    <span>{tag}</span>
+  </span>
 )}

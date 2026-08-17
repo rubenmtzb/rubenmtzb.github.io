@@ -1398,14 +1398,26 @@ html.game-mode-active body > *:not(.gm-canvas):not(.gm-ui) * {
   height: 12px;
 }
 .project-tech-label {
-  border: 1px solid var(--line);
-  border-radius: 9999px;
-  background: rgba(10, 16, 32, 0.88);
-  padding: 0.2rem 0.5rem;
-  color: var(--fg-3);
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.08em;
+  cursor: default;
+  color: var(--fg-2);
+}
+.project-tech-label:hover {
+  transform: none;
+  border-color: var(--line);
+  color: var(--fg-2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.project-tech-label:hover::before {
+  opacity: 0;
+}
+.project-tech-marker {
+  width: 0.42rem;
+  height: 0.42rem;
+  flex: 0 0 auto;
+  transform: rotate(45deg);
+  border: 1px solid var(--cyan);
+  background: rgba(111, 227, 255, 0.12);
+  box-shadow: 0 0 0.45rem rgba(111, 227, 255, 0.28);
 }
 
 /* ---------------- EDUCATION & CERTS INTERACTIVE SLIDERS ---------------- */
