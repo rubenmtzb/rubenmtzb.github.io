@@ -1,0 +1,101 @@
+---
+import Section from './Section.astro'
+import { getProfile, getStackByGroup, STACK_GROUPS } from '../../lib/content'
+import { t, type Lang, type UiKey } from '../../i18n/ui'
+
+interface Props { lang: Lang }
+const { lang } = Astro.props
+
+const profile = await getProfile(lang)
+const stack = await getStackByGroup()
+
+/** Tech Stack se integra aquí, agrupado por función en lugar de core/toolbox. */
+const groups = STACK_GROUPS.map((g) => ({
+  id: g,
+  label: t(lang, `about.group.${g}` as UiKey),
+  items: stack.get(g) ?? [],
+})).filter((g) => g.items.length > 0)
+---
+
+<Section id="about" title={t(lang, 'about.title')}>
+  <div class="grid items-stretch gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+    <!-- Tarjeta terminal: identidad visual, con sus datos desde profile -->
+    <div class="reveal flex h-full flex-col justify-between rounded-xl border border-green-500/20 bg-black/40 p-5 backdrop-blur-sm sm:p-6">
+      <div>
+        <div class="mb-5 flex flex-wrap items-center gap-2 border-b border-green-500/20 pb-4">
+          <span class="h-3 w-3 rounded-full bg-red-500/80" aria-hidden="true"></span>
+          <span class="h-3 w-3 rounded-full bg-yellow-500/80" aria-hidden="true"></span>
+          <span class="h-3 w-3 rounded-full bg-green-500/90" aria-hidden="true"></span>
+          <span class="ml-2 text-[10px] uppercase tracking-[0.22em] text-dim sm:ml-3 sm:text-xs sm:tracking-[0.3em]">portfolio/about.ts</span>
+        </div>
+
+        <div class="rounded-xl border border-green-500/15 bg-[#02050b]/80 p-4 font-mono text-xs leading-6 sm:p-5 sm:text-base sm:leading-7">
+          <div class="space-y-1 break-words text-gray-200">
+            <div><span class="text-purple-300">const</span> <span class="text-cyan-300">ruben</span> = &#123;</div>
+            <div><span class="text-green-400">&nbsp;&nbsp;role</span>: "{profile.terminalCard.role}",</div>
+            <div><span class="text-green-400">&nbsp;&nbsp;company</span>: "{profile.terminalCard.company}",</div>
+            <div><span class="text-green-400">&nbsp;&nbsp;location</span>: "{profile.terminalCard.location}",</div>
+            <div><span class="text-green-400">&nbsp;&nbsp;passion</span>: [{profile.terminalCard.passion.map((p) => `"${p}"`).join(', ')}]</div>
+            <div>&#125;;</div>
+          </div>
+        </div>
+      </div>
+
+      <dl class="mt-6 grid gap-3 text-sm text-gray-300 sm:grid-cols-2">
+        <div class="rounded-lg border border-green-500/15 bg-green-500/5 p-4">
+          <dt class="text-xs uppercase tracking-[0.25em] text-dim">{t(lang, 'about.focus')}</dt>
+          <dd class="mt-2 text-green-300">{profile.focus}</dd>
+        </div>
+        <div class="rounded-lg border border-cyan-400/15 bg-cyan-400/5 p-4">
+          <dt class="text-xs uppercase tracking-[0.25em] text-dim">{t(lang, 'about.mindset')}</dt>
+          <dd class="mt-2 text-gray-300">{profile.mindset}</dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="space-y-6">
+      <div class="reveal rounded-xl border border-green-500/20 bg-black/40 p-5 backdrop-blur-sm sm:p-6" style="--i:1">
+        <h3 class="mb-4 text-sm uppercase tracking-[0.3em] text-dim">{t(lang, 'about.profile')}</h3>
+        <p class="text-sm leading-7 text-gray-300 sm:text-lg sm:leading-8">{profile.bioLong}</p>
+      </div>
+
+      <div class="reveal rounded-xl border border-green-500/20 bg-black/40 p-5 backdrop-blur-sm sm:p-6" style="--i:2">
+        <h3 class="mb-5 text-sm uppercase tracking-[0.3em] text-dim">{t(lang, 'about.stack')}</h3>
+        <div class="space-y-5">
+          {
+            groups.map((group) => (
+              <div>
+                <p class="mb-2.5 text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-green-300/85">{group.label}</p>
+                <ul class="flex flex-wrap gap-2">
+                  {group.items.map((item) => (
+                    <li>
+                      <span
+                        class:list={[
+                          'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs',
+                          item.tier === 'actual'
+                            ? 'border-green-500/30 bg-green-500/10 text-green-300'
+                            : 'border-green-500/15 bg-black/40 text-dim',
+                        ]}
+                        title={item.label[lang]}
+                      >
+                        {item.icon && (
+                          <img src={item.icon} alt="" width="14" height="14" class="h-3.5 w-3.5" loading="lazy" decoding="async" />
+                        )}
+                        {item.name}
+                        {item.tier !== 'actual' && (
+                          <span class="text-[0.6rem] uppercase tracking-[0.14em] opacity-70">
+                            {t(lang, `about.tier.${item.tier}` as UiKey)}
+                          </span>
+                        )}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</Section>

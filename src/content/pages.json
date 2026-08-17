@@ -1,0 +1,90 @@
+[
+  {
+    "id": "en:home",
+    "key": "home",
+    "lang": "en",
+    "path": "/",
+    "title": "Rubén Martínez Bernabe — Software Engineer",
+    "description": "Software engineer in Barcelona building scalable systems with Java, Spring Boot and React, from the API to production.",
+    "ogImage": "/avatar.png",
+    "ogImageAlt": "Rubén Martínez Bernabe",
+    "indexable": true
+  },
+  {
+    "id": "es:home",
+    "key": "home",
+    "lang": "es",
+    "path": "/es/",
+    "title": "Rubén Martínez Bernabe — Ingeniero de Software",
+    "description": "Ingeniero de software en Barcelona construyendo sistemas escalables con Java, Spring Boot y React, de la API a producción.",
+    "ogImage": "/avatar.png",
+    "ogImageAlt": "Rubén Martínez Bernabe",
+    "indexable": true
+  },
+  {
+    "id": "en:cv",
+    "key": "cv",
+    "lang": "en",
+    "path": "/cv/",
+    "title": "Rubén Martínez Bernabe — CV",
+    "description": "Professional CV of Rubén Martínez Bernabe, Software Engineer in Barcelona specialising in Java, Spring Boot, React, REST APIs and Liferay.",
+    "ogImage": "/avatar.png",
+    "ogImageAlt": "Rubén Martínez Bernabe",
+    "indexable": true
+  },
+  {
+    "id": "es:cv",
+    "key": "cv",
+    "lang": "es",
+    "path": "/es/cv/",
+    "title": "Rubén Martínez Bernabe — CV",
+    "description": "CV profesional de Rubén Martínez Bernabe, Ingeniero de Software en Barcelona especializado en Java, Spring Boot, React, APIs REST y Liferay.",
+    "ogImage": "/avatar.png",
+    "ogImageAlt": "Rubén Martínez Bernabe",
+    "indexable": true
+  },
+  {
+    "id": "en:work-sars",
+    "key": "work-sars",
+    "lang": "en",
+    "path": "/work/sars-cov-2/",
+    "title": "The Mutational Landscape of SARS-CoV-2",
+    "description": "Interactive portal for exploring mutations across the SARS-CoV-2 genome, built with Universitat Rovira i Virgili and published in Int. J. Mol. Sci.",
+    "ogImage": "/avatar.png",
+    "ogImageAlt": "Rubén Martínez Bernabe",
+    "indexable": true
+  },
+  {
+    "id": "es:work-sars",
+    "key": "work-sars",
+    "lang": "es",
+    "path": "/es/work/sars-cov-2/",
+    "title": "The Mutational Landscape of SARS-CoV-2",
+    "description": "Portal interactivo para explorar las mutaciones del genoma del SARS-CoV-2, desarrollado con la Universitat Rovira i Virgili y publicado en Int. J. Mol. Sci.",
+    "ogImage": "/avatar.png",
+    "ogImageAlt": "Rubén Martínez Bernabe",
+    "indexable": true
+  },
+  {
+    "id": "en:v1",
+    "key": "v1",
+    "lang": "en",
+    "path": "/v1/",
+    "title": "Rubén Martínez Bernabe — Documentary version",
+    "description": "Extended documentary version of the portfolio: full experience, projects, education, certifications and stack in a single page.",
+    "ogImage": "/avatar.png",
+    "ogImageAlt": "Rubén Martínez Bernabe",
+    "indexable": false
+  },
+  {
+    "id": "es:v1",
+    "key": "v1",
+    "lang": "es",
+    "path": "/v1/es/",
+    "title": "Rubén Martínez Bernabe — Versión documental",
+    "description": "Versión documental ampliada del portfolio: experiencia, proyectos, formación, certificaciones y stack completos en una sola página.",
+    "ogImage": "/avatar.png",
+    "ogImageAlt": "Rubén Martínez Bernabe",
+    "indexable": false
+  }
+]

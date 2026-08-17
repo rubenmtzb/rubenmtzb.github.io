@@ -1,0 +1,94 @@
+[
+  {
+    "id": "en:claude-code",
+    "key": "claude-code",
+    "lang": "en",
+    "order": 1,
+    "title": "Claude Code in Action",
+    "issuer": "Anthropic",
+    "date": "2026-01",
+    "credentialId": "7h7wd7qewuw8",
+    "verifyUrl": "https://verify.skilljar.com/c/7h7wd7qewuw8",
+    "tags": ["AI", "LLMs", "Prompt Engineering"]
+  },
+  {
+    "id": "es:claude-code",
+    "key": "claude-code",
+    "lang": "es",
+    "order": 1,
+    "title": "Claude Code in Action",
+    "issuer": "Anthropic",
+    "date": "2026-01",
+    "credentialId": "7h7wd7qewuw8",
+    "verifyUrl": "https://verify.skilljar.com/c/7h7wd7qewuw8",
+    "tags": ["IA", "LLMs", "Prompt Engineering"]
+  },
+  {
+    "id": "en:python-master",
+    "key": "python-master",
+    "lang": "en",
+    "order": 2,
+    "title": "Python Master",
+    "issuer": "Udemy",
+    "date": "2021-05",
+    "verifyUrl": "https://www.udemy.com/certificate/UC-b5584cc7-094b-428d-a0c3-55a42951a908/",
+    "tags": ["Python", "Git"]
+  },
+  {
+    "id": "es:python-master",
+    "key": "python-master",
+    "lang": "es",
+    "order": 2,
+    "title": "Master en Python",
+    "issuer": "Udemy",
+    "date": "2021-05",
+    "verifyUrl": "https://www.udemy.com/certificate/UC-b5584cc7-094b-428d-a0c3-55a42951a908/",
+    "tags": ["Python", "Git"]
+  },
+  {
+    "id": "en:javascript-master",
+    "key": "javascript-master",
+    "lang": "en",
+    "order": 3,
+    "title": "JavaScript Master",
+    "issuer": "Udemy",
+    "date": "2021-05",
+    "verifyUrl": "https://www.udemy.com/certificate/UC-4e22184f-f814-40fe-8016-d75f4dd57edf/",
+    "tags": ["JavaScript", "ES6+", "Git"]
+  },
+  {
+    "id": "es:javascript-master",
+    "key": "javascript-master",
+    "lang": "es",
+    "order": 3,
+    "title": "Master en JavaScript",
+    "issuer": "Udemy",
+    "date": "2021-05",
+    "verifyUrl": "https://www.udemy.com/certificate/UC-4e22184f-f814-40fe-8016-d75f4dd57edf/",
+    "tags": ["JavaScript", "ES6+", "Git"]
+  },
+  {
+    "id": "en:java-junior",
+    "key": "java-junior",
+    "lang": "en",
+    "order": 4,
+    "title": "Java Junior Developer",
+    "issuer": "Fundación Esplai",
+    "date": "2021-07",
+    "verifyUrl": "https://badgr.com/public/assertions/K-E-j1zsTliUHrkekOoVBg",
+    "projectUrl": "https://www.youtube.com/watch?v=L_G46DBG7Qc",
+    "tags": ["Java", "Git"]
+  },
+  {
+    "id": "es:java-junior",
+    "key": "java-junior",
+    "lang": "es",
+    "order": 4,
+    "title": "Java Junior Developer",
+    "issuer": "Fundación Esplai",
+    "date": "2021-07",
+    "verifyUrl": "https://badgr.com/public/assertions/K-E-j1zsTliUHrkekOoVBg",
+    "projectUrl": "https://www.youtube.com/watch?v=L_G46DBG7Qc",
+    "tags": ["Java", "Git"]
+  }
+]
