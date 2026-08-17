@@ -92,7 +92,7 @@ const BRAND_METAS: Record<string, { logo: string; bg: string; text: string; bord
     </header>
 
     <!-- ══════════ 02.1 // PERFIL & FILOSOFÍA DE INGENIERÍA ══════════ -->
-    <div class="reveal mt-12" style="--i:1">
+    <div class="reveal mt-10 sm:mt-12" style="--i:1">
       <div class="flex items-center justify-between mb-6 border-b border-[color:var(--line-soft)] pb-3">
         <span class="font-mono text-xs text-[color:var(--cyan)] font-bold tracking-wider uppercase">02.1 // PROFILE & MINDSET</span>
         <span class="t-meta text-xs text-[color:var(--fg-3)]">{lang === 'es' ? 'Ingeniería con propósito' : 'Purpose-driven engineering'}</span>
@@ -197,7 +197,7 @@ const BRAND_METAS: Record<string, { logo: string; bg: string; text: string; bord
     </div>
 
     <!-- ══════════ 02.2 // FORMACIÓN ACADÉMICA (DYNAMIC TIMELINE SLIDE) ══════════ -->
-    <div class="reveal mt-20" style="--i:2">
+    <div class="reveal mt-14 sm:mt-20" style="--i:2">
       <!-- Cabecera de Formación -->
       <div class="flex flex-wrap items-center justify-between mb-6 gap-3 border-b border-[color:var(--line-soft)] pb-3">
         <div>
@@ -243,7 +243,7 @@ const BRAND_METAS: Record<string, { logo: string; bg: string; text: string; bord
       </div>
 
       <!-- Escenario del Slider de Educación: un slide por centro -->
-      <div id="edu-slider-stage" class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-6 sm:p-8 shadow-2xl min-h-[300px]">
+      <div id="edu-slider-stage" class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-4 sm:p-8 shadow-2xl min-h-[260px] sm:min-h-[300px]">
         {eduGroups.map((group, idx) => {
           const head = group.items[0]
           const multi = group.items.length > 1
@@ -327,7 +327,7 @@ const BRAND_METAS: Record<string, { logo: string; bg: string; text: string; bord
     </div>
 
     <!-- ══════════ 02.3 // CERTIFICACIONES OFICIALES (DYNAMIC SPOTLIGHT SLIDE) ══════════ -->
-    <div class="reveal mt-20" style="--i:3">
+    <div class="reveal mt-14 sm:mt-20" style="--i:3">
       <!-- Cabecera de Certificaciones -->
       <div class="flex flex-wrap items-center justify-between mb-6 gap-3 border-b border-[color:var(--line-soft)] pb-3">
         <div>
@@ -363,7 +363,7 @@ const BRAND_METAS: Record<string, { logo: string; bg: string; text: string; bord
       </div>
 
       <!-- Escenario del Slider de Certificaciones -->
-      <div id="certs-stage" class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-6 sm:p-8 shadow-2xl min-h-[300px]">
+      <div id="certs-stage" class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-4 sm:p-8 shadow-2xl min-h-[260px] sm:min-h-[300px]">
         {certs.map((cert, idx) => {
           const meta = BRAND_METAS[cert.key] || { logo: '●', bg: 'rgba(91, 155, 255, 0.12)', text: '#5b9bff', border: 'rgba(91, 155, 255, 0.35)', glow: 'rgba(91, 155, 255, 0.2)', summary: '' }
           return (

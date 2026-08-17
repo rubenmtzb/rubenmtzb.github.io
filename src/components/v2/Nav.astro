@@ -15,7 +15,7 @@ const other = await getAlternate(pageKey, lang)
   sincronía ni que ocultar con JavaScript.
 -->
 <header id="site-header" class="site-header">
-  <nav aria-label="Principal" class="shell flex items-center justify-between py-4 sm:py-5">
+  <nav aria-label="Principal" class="shell flex items-center justify-between py-3 sm:py-5">
     <a href="#identity" id="header-brand-link" class="relative flex items-center gap-2.5 font-mono group text-[color:var(--fg)] hover:text-[color:var(--cyan)] transition-colors" aria-label="Inicio">
       <!-- Personaje Pixel Art de Killua asomándose por detrás del avatar -->
       <div class="relative shrink-0 flex items-center justify-center">
@@ -40,11 +40,13 @@ const other = await getAlternate(pageKey, lang)
       <span class="text-sm font-bold tracking-[0.25em] text-[color:var(--fg)] group-hover:text-[color:var(--cyan)] transition-colors">RM</span>
     </a>
 
-    <!-- Navegación directa y limpia siempre visible sin menú hamburguesa -->
-    <div class="flex items-center gap-3.5 sm:gap-6 md:gap-7">
+    <div class="hidden items-center gap-6 md:gap-7 sm:flex">
       {V2_NAV.map((item) => (
-        <a href={`#${item.id}`} data-nav={item.id} class="nav-link text-xs sm:text-sm">{t(lang, item.key as UiKey)}</a>
+        <a href={`#${item.id}`} data-nav={item.id} class="nav-link text-sm">{t(lang, item.key as UiKey)}</a>
       ))}
+    </div>
+
+    <div class="flex items-center gap-2 sm:gap-3">
       <a href={other.path} hreflang={other.lang} rel="alternate" class="nav-link text-xs sm:text-sm" aria-label={t(lang, 'nav.langSwitch')}>
         {t(lang, 'nav.langNext')}
       </a>
@@ -105,6 +107,20 @@ const other = await getAlternate(pageKey, lang)
           </div>
         </div>
       </div>
+
+      <details id="mobile-nav" class="mobile-nav relative sm:hidden">
+        <summary class="mobile-nav-trigger" aria-label={lang === 'es' ? 'Abrir navegación' : 'Open navigation'}>
+          <Icon name="menu" class="h-4 w-4" />
+          <span>{lang === 'es' ? 'Menú' : 'Menu'}</span>
+        </summary>
+        <div class="mobile-nav-panel">
+          {V2_NAV.map((item) => (
+            <a href={`#${item.id}`} data-nav={item.id} class="mobile-nav-link">
+              {t(lang, item.key as UiKey)}
+            </a>
+          ))}
+        </div>
+      </details>
     </div>
   </nav>
 </header>

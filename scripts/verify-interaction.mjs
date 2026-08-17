@@ -135,6 +135,16 @@ function suite(page, dom) {
   check(reveals.length > 0 && reveals.every((r) => r.classList.contains('is-in')),
     `las ${reveals.length} secciones .reveal quedan visibles`)
 
+  console.log('\n· Navegación móvil')
+  const mobileNav = el('mobile-nav')
+  const mobileLinks = mobileNav ? [...mobileNav.querySelectorAll('[data-nav]')] : []
+  check(mobileLinks.length === 4, 'el menú móvil incluye las cuatro áreas principales')
+  if (mobileNav && mobileLinks[0]) {
+    mobileNav.open = true
+    fire(mobileLinks[0], 'click')
+    check(mobileNav.open === false, 'elegir un área cierra el menú móvil')
+  }
+
   console.log('\n· Carruseles')
   const carousels = [
     { name: 'proyectos', slides: '.project-slide', next: 'proj-next', dots: '[data-dot-index]' },
@@ -175,6 +185,11 @@ function suite(page, dom) {
     'al pulsar la segunda empresa cambia el panel')
   check(jobTabs[1].getAttribute('aria-selected') === 'true' && jobTabs[0].getAttribute('aria-selected') === 'false',
     'aria-selected sigue al estado visual')
+  const experienceChips = all('#job-panels .experience-tech-chip')
+  check(
+    experienceChips.length > 0 && experienceChips.every((chip) => chip.tagName === 'SPAN' && !chip.closest('a')),
+    'las tecnologías de experiencia son chips contextuales, no enlaces',
+  )
 
   console.log('\n· Workbench de perfil')
   const files = all('[data-profile-tab]')

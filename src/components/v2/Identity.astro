@@ -28,7 +28,7 @@ const ICONS = { LinkedIn: 'linkedin', GitHub: 'github' } as const
   {(V2_ANCHOR_ALIASES['identity'] ?? []).map((a) => <span id={a} class="anchor-alias" aria-hidden="true" />)}
 
   <div class="shell">
-    <div class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-10 lg:gap-14 pt-24 pb-12 sm:pt-28 sm:pb-16 lg:pt-32 lg:pb-16 min-h-[60vh]">
+    <div class="flex flex-col md:flex-row items-center justify-center gap-6 sm:gap-8 md:gap-10 lg:gap-14 pt-20 pb-10 sm:pt-28 sm:pb-16 lg:pt-32 lg:pb-16 sm:min-h-[60vh]">
 
       <!-- Retrato ASCII del Avatar (Centrado, compacto y 100% responsive) -->
       <figure class="reveal m-0 shrink-0 flex justify-center order-1 md:order-2" style="--i:1">
@@ -54,7 +54,7 @@ const ICONS = { LinkedIn: 'linkedin', GitHub: 'github' } as const
         </div>
 
         <!-- Título con animación typewriter alternante: rubén <-> rubenitx -->
-        <h1 class="reveal mt-3.5 text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-[color:var(--fg)]">
+        <h1 class="reveal mt-3.5 text-2xl sm:text-2xl md:text-3xl font-bold tracking-tight text-[color:var(--fg)]">
           <span id="hero-typewriter">
             {t(lang, 'v2.hero.greeting')}{' '}
             <span class="text-[color:var(--blue-bright)] font-extrabold">{profile.name.split(' ')[0].toLowerCase()}</span>
@@ -63,11 +63,11 @@ const ICONS = { LinkedIn: 'linkedin', GitHub: 'github' } as const
           <span class="intro-cursor text-[color:var(--cyan)] font-light animate-pulse" aria-hidden="true">|</span>
         </h1>
 
-        <p class="reveal mt-2 text-base sm:text-lg font-medium text-[color:var(--fg-2)]" style="--i:1">
+        <p class="reveal mt-2 text-lg sm:text-lg font-medium text-[color:var(--fg-2)]" style="--i:1">
           {profile.jobTitle} — {profile.locality}, {lang === 'es' ? 'España' : 'Spain'}
         </p>
 
-        <p class="reveal mt-3 text-xs sm:text-sm leading-relaxed text-[color:var(--fg-3)] max-w-md" style="--i:2">
+        <p class="reveal mt-3 text-sm leading-relaxed text-[color:var(--fg-3)] max-w-md" style="--i:2">
           {profile.headline}
         </p>
 
