@@ -138,11 +138,11 @@ function suite(page, dom) {
   console.log('\n· Navegación móvil')
   const mobileNav = el('mobile-nav')
   const mobileLinks = mobileNav ? [...mobileNav.querySelectorAll('[data-nav]')] : []
-  check(mobileLinks.length === 4, 'el menú móvil incluye las cuatro áreas principales')
+  check(mobileLinks.length === 4, 'el menú compacto conserva las cuatro áreas')
   if (mobileNav && mobileLinks[0]) {
     mobileNav.open = true
     fire(mobileLinks[0], 'click')
-    check(mobileNav.open === false, 'elegir un área cierra el menú móvil')
+    check(mobileNav.open === false, 'el menú compacto se cierra al navegar')
   }
 
   console.log('\n· Carruseles')
@@ -185,10 +185,13 @@ function suite(page, dom) {
     'al pulsar la segunda empresa cambia el panel')
   check(jobTabs[1].getAttribute('aria-selected') === 'true' && jobTabs[0].getAttribute('aria-selected') === 'false',
     'aria-selected sigue al estado visual')
-  const experienceChips = all('#job-panels .experience-tech-chip')
+  const linkedExperienceChips = all('#job-panels a.project-tech-chip')
+  const contextualExperienceChips = all('#job-panels span.project-tech-label')
+  check(linkedExperienceChips.length > 0, 'las tecnologías reconocidas conservan logo, color y enlace')
   check(
-    experienceChips.length > 0 && experienceChips.every((chip) => chip.tagName === 'SPAN' && !chip.closest('a')),
-    'las tecnologías de experiencia son chips contextuales, no enlaces',
+    contextualExperienceChips.length > 0
+      && contextualExperienceChips.every((chip) => chip.querySelector('.project-tech-marker') && !chip.closest('a')),
+    'los conceptos sin enlace mantienen el mismo patrón visual',
   )
 
   console.log('\n· Workbench de perfil')

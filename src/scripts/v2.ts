@@ -513,20 +513,11 @@ function initMomentCards() {
   const SPIN_FRICTION = 0.93
   const BOUNCE = 0.45
   const REST_SPEED = 0.15          // por debajo, se considera parada
-  const PHONE_SCALE = 0.12         // la carta no puede salir de un viewport de 320 px
-  const TABLET_SCALE = 0.42        // conserva el abanico en tabletas
+  const MOBILE_SCALE = 0.42        // el abanico se cierra en pantallas estrechas
 
   const cards = Array.from(stage.querySelectorAll<HTMLElement>('.moment-card'))
   const resetBtn = document.getElementById('moments-reset-btn')
   let highestZ = 20
-
-  const boundsFor = (card: HTMLElement) => {
-    if (window.innerWidth >= 640) return { x: Number.POSITIVE_INFINITY, y: Number.POSITIVE_INFINITY }
-    return {
-      x: Math.max(0, (stage.clientWidth - card.offsetWidth) / 2 - 12),
-      y: Math.max(0, (stage.clientHeight - card.offsetHeight) / 2 - 12),
-    }
-  }
 
   const cardStates = cards.map((card) => {
     const ox = Number.parseFloat(card.dataset.originX || '0')
@@ -547,19 +538,35 @@ function initMomentCards() {
     }
   })
 
+  const maxOriginX = Math.max(1, ...cardStates.map((state) => Math.abs(state.origX)))
+  const boundsFor = (card: HTMLElement, rotation: number) => {
+    const radians = Math.abs(rotation % 180) * Math.PI / 180
+    const cos = Math.abs(Math.cos(radians))
+    const sin = Math.abs(Math.sin(radians))
+    const paintedWidth = card.offsetWidth * cos + card.offsetHeight * sin
+    const paintedHeight = card.offsetWidth * sin + card.offsetHeight * cos
+    return {
+      x: Math.max(0, (stage.clientWidth - paintedWidth) / 2 - 8),
+      y: Math.max(0, (stage.clientHeight - paintedHeight) / 2 - 8),
+    }
+  }
+
   // Aplicar posición inicial adaptativa según ancho de pantalla
   const applyLayout = () => {
-    const scaleFactor = window.innerWidth < 640 ? PHONE_SCALE : window.innerWidth < 768 ? TABLET_SCALE : 1
+    const isMobile = window.innerWidth <= 768
+    const mobileBounds = cards[0] ? boundsFor(cards[0], 0) : { x: 0, y: 0 }
+    const scaleFactor = isMobile ? Math.min(MOBILE_SCALE, mobileBounds.x / maxOriginX) : 1
 
     cardStates.forEach((st) => {
       if (st.animId) cancelAnimationFrame(st.animId)
-      const bounds = boundsFor(st.el)
-      st.x = Math.max(-bounds.x, Math.min(bounds.x, st.origX * scaleFactor))
-      st.y = Math.max(-bounds.y, Math.min(bounds.y, st.origY * scaleFactor))
+      const bounds = boundsFor(st.el, st.origRot)
+      st.x = isMobile ? Math.max(-bounds.x, Math.min(bounds.x, st.origX * scaleFactor)) : st.origX
+      st.y = isMobile ? Math.max(-bounds.y, Math.min(bounds.y, st.origY * scaleFactor)) : st.origY
       st.rot = st.origRot
       st.vx = 0
       st.vy = 0
       st.rotVel = 0
+      if (!isMobile) st.el.classList.remove('is-flipped')
       st.el.style.transform = `translate3d(${st.x}px, ${st.y}px, 0) rotate(${st.rot}deg)`
     })
   }
@@ -608,15 +615,21 @@ function initMomentCards() {
       }
 
       if (hasMoved) {
-        const bounds = boundsFor(card)
-        st.x = Math.max(-bounds.x, Math.min(bounds.x, startCardX + dx))
-        st.y = Math.max(-bounds.y, Math.min(bounds.y, startCardY + dy))
+        const dynamicRot = window.innerWidth <= 768
+          ? clamp(st.rot + dx * 0.1, 16)
+          : st.rot + clamp(dx * 0.1, 16)
+        const bounds = boundsFor(card, dynamicRot)
+        st.x = window.innerWidth <= 768
+          ? Math.max(-bounds.x, Math.min(bounds.x, startCardX + dx))
+          : startCardX + dx
+        st.y = window.innerWidth <= 768
+          ? Math.max(-bounds.y, Math.min(bounds.y, startCardY + dy))
+          : startCardY + dy
 
         const now = performance.now()
         pointerHistory.push({ x: e.clientX, y: e.clientY, time: now })
         if (pointerHistory.length > 5) pointerHistory.shift()
 
-        const dynamicRot = st.rot + clamp(dx * 0.1, 16)
         card.style.transform = `translate3d(${st.x}px, ${st.y}px, 0) rotate(${dynamicRot}deg)`
       }
     })
@@ -654,6 +667,7 @@ function initMomentCards() {
           st.x += st.vx
           st.y += st.vy
           st.rot += st.rotVel
+          if (window.innerWidth <= 768) st.rot = clamp(st.rot, 16)
 
           // Fricción y desaceleración fluida
           st.vx *= FRICTION
@@ -661,10 +675,10 @@ function initMomentCards() {
           st.rotVel *= SPIN_FRICTION
 
           // Rebote suave en los límites del escenario
-          const bounds = boundsFor(card)
           const stageHalfW = (stage.clientWidth || 900) / 2
-          const boundX = Number.isFinite(bounds.x) ? bounds.x : Math.max(200, stageHalfW - 90)
-          const boundY = Number.isFinite(bounds.y) ? bounds.y : 160
+          const mobileBounds = boundsFor(card, st.rot)
+          const boundX = window.innerWidth <= 768 ? mobileBounds.x : Math.max(200, stageHalfW - 90)
+          const boundY = window.innerWidth <= 768 ? mobileBounds.y : 160
 
           if (st.x > boundX) {
             st.x = boundX
@@ -698,7 +712,7 @@ function initMomentCards() {
 
         st.animId = requestAnimationFrame(animateThrow)
       } else {
-        if (!hasMoved) card.classList.toggle('is-flipped')
+        if (!hasMoved && window.innerWidth <= 768) card.classList.toggle('is-flipped')
         // Asentar posición final
         card.style.transform = `translate3d(${st.x}px, ${st.y}px, 0) rotate(${st.rot}deg)`
       }
@@ -712,7 +726,7 @@ function initMomentCards() {
   resetBtn?.addEventListener('click', () => {
     applyLayout()
     cardStates.forEach((st, i) => {
-      st.el.classList.remove('is-flying', 'is-dragging')
+      st.el.classList.remove('is-flying', 'is-dragging', 'is-flipped')
       st.el.style.zIndex = String(10 + i)
     })
   })
