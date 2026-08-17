@@ -56,7 +56,6 @@ function initReveal() {
 function initHeader() {
   const header = document.getElementById('site-header')
   const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-nav]'))
-  const mobileNav = document.getElementById('mobile-nav') as HTMLDetailsElement | null
   const ids = links.map((l) => l.dataset.nav).filter((id): id is string => Boolean(id))
   let active = ''
   let frame: number | null = null
@@ -79,13 +78,7 @@ function initHeader() {
   }
   const schedule = () => { if (frame === null) frame = requestAnimationFrame(sync) }
   window.addEventListener('scroll', schedule, { passive: true })
-  window.addEventListener('resize', () => {
-    if (window.innerWidth >= 640 && mobileNav) mobileNav.open = false
-    schedule()
-  })
-  mobileNav?.querySelectorAll('a').forEach((link) => {
-    link.addEventListener('click', () => { mobileNav.open = false })
-  })
+  window.addEventListener('resize', schedule)
   schedule()
 }
 
@@ -513,20 +506,11 @@ function initMomentCards() {
   const SPIN_FRICTION = 0.93
   const BOUNCE = 0.45
   const REST_SPEED = 0.15          // por debajo, se considera parada
-  const PHONE_SCALE = 0.12         // la carta no puede salir de un viewport de 320 px
-  const TABLET_SCALE = 0.42        // conserva el abanico en tabletas
+  const MOBILE_SCALE = 0.42        // el abanico se cierra en pantallas estrechas
 
   const cards = Array.from(stage.querySelectorAll<HTMLElement>('.moment-card'))
   const resetBtn = document.getElementById('moments-reset-btn')
   let highestZ = 20
-
-  const boundsFor = (card: HTMLElement) => {
-    if (window.innerWidth >= 640) return { x: Number.POSITIVE_INFINITY, y: Number.POSITIVE_INFINITY }
-    return {
-      x: Math.max(0, (stage.clientWidth - card.offsetWidth) / 2 - 12),
-      y: Math.max(0, (stage.clientHeight - card.offsetHeight) / 2 - 12),
-    }
-  }
 
   const cardStates = cards.map((card) => {
     const ox = Number.parseFloat(card.dataset.originX || '0')
@@ -549,13 +533,13 @@ function initMomentCards() {
 
   // Aplicar posición inicial adaptativa según ancho de pantalla
   const applyLayout = () => {
-    const scaleFactor = window.innerWidth < 640 ? PHONE_SCALE : window.innerWidth < 768 ? TABLET_SCALE : 1
+    const isMobile = window.innerWidth < 768
+    const scaleFactor = isMobile ? MOBILE_SCALE : 1
 
     cardStates.forEach((st) => {
       if (st.animId) cancelAnimationFrame(st.animId)
-      const bounds = boundsFor(st.el)
-      st.x = Math.max(-bounds.x, Math.min(bounds.x, st.origX * scaleFactor))
-      st.y = Math.max(-bounds.y, Math.min(bounds.y, st.origY * scaleFactor))
+      st.x = st.origX * scaleFactor
+      st.y = st.origY * scaleFactor
       st.rot = st.origRot
       st.vx = 0
       st.vy = 0
@@ -608,9 +592,8 @@ function initMomentCards() {
       }
 
       if (hasMoved) {
-        const bounds = boundsFor(card)
-        st.x = Math.max(-bounds.x, Math.min(bounds.x, startCardX + dx))
-        st.y = Math.max(-bounds.y, Math.min(bounds.y, startCardY + dy))
+        st.x = startCardX + dx
+        st.y = startCardY + dy
 
         const now = performance.now()
         pointerHistory.push({ x: e.clientX, y: e.clientY, time: now })
@@ -661,10 +644,9 @@ function initMomentCards() {
           st.rotVel *= SPIN_FRICTION
 
           // Rebote suave en los límites del escenario
-          const bounds = boundsFor(card)
           const stageHalfW = (stage.clientWidth || 900) / 2
-          const boundX = Number.isFinite(bounds.x) ? bounds.x : Math.max(200, stageHalfW - 90)
-          const boundY = Number.isFinite(bounds.y) ? bounds.y : 160
+          const boundX = Math.max(200, stageHalfW - 90)
+          const boundY = 160
 
           if (st.x > boundX) {
             st.x = boundX
@@ -698,7 +680,6 @@ function initMomentCards() {
 
         st.animId = requestAnimationFrame(animateThrow)
       } else {
-        if (!hasMoved) card.classList.toggle('is-flipped')
         // Asentar posición final
         card.style.transform = `translate3d(${st.x}px, ${st.y}px, 0) rotate(${st.rot}deg)`
       }

@@ -5,18 +5,11 @@ import type { Lang } from '../../i18n/ui'
 /**
  * Chip de tecnología: logotipo, color de marca y enlace a la página oficial.
  * Única fuente del patrón, así que la misma tecnología se ve igual en el hero,
- * en los proyectos, en la formación y en las certificaciones.
- * La experiencia usa una variante contextual: mantiene la jerarquía visual,
- * pero no convierte cada herramienta usada en un enlace de navegación.
+ * en los proyectos, en la experiencia, en la formación y en las certificaciones.
  * Si la etiqueta no está en TECH cae a una píldora neutra sin enlace.
  */
-interface Props {
-  tag: string
-  lang: Lang
-  class?: string
-  variant?: 'linked' | 'experience'
-}
-const { tag, lang, class: extra = 'project-tech-chip', variant = 'linked' } = Astro.props
+interface Props { tag: string; lang: Lang; class?: string }
+const { tag, lang, class: extra = 'project-tech-chip' } = Astro.props
 
 const meta = TECH[tag]
 const home = lang === 'es' ? '/es/' : '/'
@@ -35,9 +28,7 @@ const label = isInternal
   : `${tag} — ${lang === 'es' ? 'sitio oficial' : 'official site'}`
 ---
 
-{variant === 'experience' ? (
-  <span class="experience-tech-chip">{tag}</span>
-) : meta && href ? (
+{meta && href ? (
   <a
     href={href}
     target={isInternal ? undefined : '_blank'}

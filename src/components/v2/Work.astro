@@ -25,7 +25,7 @@ const badgeLabel = (badge: 'live' | 'private' | 'coming-soon') =>
     </header>
 
     <!-- ══════════ 1. TABS DE EXPERIENCIA PROFESIONAL (ESTILO GAZI-V2) ══════════ -->
-    <div class="reveal mt-10 sm:mt-14" style="--i:1">
+    <div class="reveal mt-14" style="--i:1">
       <div class="grid lg:grid-cols-12 gap-8 items-start">
         <!-- Columna Izquierda: Lista de Pestañas / Empresas -->
         <div class="lg:col-span-4">
@@ -51,7 +51,7 @@ const badgeLabel = (badge: 'live' | 'private' | 'coming-soon') =>
 
         <!-- Columna Derecha: Panel de Detalle del Puesto Activo -->
         <div class="lg:col-span-8">
-          <div id="job-panels" class="relative min-h-0 sm:min-h-[320px] rounded-2xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-4 sm:p-8 shadow-xl">
+          <div id="job-panels" class="relative min-h-[320px] rounded-2xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-6 sm:p-8 shadow-xl">
             {experience.map((item, i) => (
               <div
                 class={`job-panel ${i === 0 ? 'is-active' : ''}`}
@@ -93,7 +93,7 @@ const badgeLabel = (badge: 'live' | 'private' | 'coming-soon') =>
 
                 <ul class="mt-6 flex flex-wrap gap-1.5 border-t border-[color:var(--line-soft)] pt-4">
                   {[...item.tech, ...item.practices].map((tag) => (
-                    <li><TechChip tag={tag} lang={lang} variant="experience" /></li>
+                    <li><TechChip tag={tag} lang={lang} /></li>
                   ))}
                 </ul>
               </div>
@@ -104,7 +104,7 @@ const badgeLabel = (badge: 'live' | 'private' | 'coming-soon') =>
     </div>
 
     <!-- ══════════ 2. CARRUSEL SPOTLIGHT DE PROYECTOS (ESTILO SOFTWARE SHOWCASE) ══════════ -->
-    <div class="reveal mt-14 sm:mt-24" style="--i:2">
+    <div class="reveal mt-24" style="--i:2">
       <div class="flex flex-wrap items-center justify-between mb-6 gap-4 border-b border-[color:var(--line-soft)] pb-4">
         <div>
           <span class="font-mono text-xs text-[color:var(--cyan)] font-bold tracking-wider uppercase">01.2 // SHOWCASE</span>
@@ -132,7 +132,7 @@ const badgeLabel = (badge: 'live' | 'private' | 'coming-soon') =>
       >
         {projects.map((p, i) => (
           <article
-            class={`project-slide group relative w-full aspect-[4/3] sm:aspect-[2/1] ${i === 0 ? 'is-active' : ''}`}
+            class={`project-slide group relative w-full aspect-[2/1] ${i === 0 ? 'is-active' : ''}`}
             data-slide-index={i}
             role="group"
             aria-roledescription="slide"
@@ -166,7 +166,7 @@ const badgeLabel = (badge: 'live' | 'private' | 'coming-soon') =>
             <div class="project-cover-scrim pointer-events-none absolute inset-0" />
 
             <!-- Texto real (SEO/a11y) superpuesto, compuesto como la portada -->
-            <div class="project-overlay absolute inset-0 z-10 flex flex-col justify-between p-4 sm:p-8 md:p-10">
+            <div class="project-overlay absolute inset-0 z-10 flex flex-col justify-between p-3 sm:p-8 md:p-10">
               <!-- Fila superior: estado + tipo de proyecto -->
               <div class="flex items-center gap-3">
                 <span class={`rounded-md border px-2 py-0.5 font-mono text-[0.6rem] sm:text-[0.65rem] uppercase tracking-[0.18em] ${p.badge === 'live' ? 'border-emerald-500/40 text-emerald-400' : p.badge === 'coming-soon' ? 'border-amber-400/40 text-amber-300' : 'border-[color:var(--blue-bright)]/50 text-[color:var(--blue-bright)]'}`}>
@@ -180,7 +180,7 @@ const badgeLabel = (badge: 'live' | 'private' | 'coming-soon') =>
               <!-- Fila inferior: título grande, stack en línea y acciones -->
               <div class="flex items-end justify-between gap-3 sm:gap-8">
                 <div class="min-w-0 flex-1">
-                  <h4 class="project-cover-title max-w-[26ch] text-xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.05] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.7)]">
+                  <h4 class="project-cover-title max-w-[26ch] text-base sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.05] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.7)]">
                     {p.title.split(' ').map((word) => <span class="mr-[0.22em] inline-block whitespace-nowrap">{word}</span>)}
                   </h4>
                   <ul class="hidden sm:flex mt-3 flex-wrap gap-1.5">
@@ -197,7 +197,7 @@ const badgeLabel = (badge: 'live' | 'private' | 'coming-soon') =>
                       href={p.github}
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="flex h-11 w-11 sm:h-9 sm:w-9 items-center justify-center rounded-lg border border-white/15 bg-black/30 text-[color:var(--fg-2)] backdrop-blur-sm transition hover:border-[color:var(--cyan)] hover:text-[color:var(--cyan)] hover:-translate-y-0.5"
+                      class="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg border border-white/15 bg-black/30 text-[color:var(--fg-2)] backdrop-blur-sm transition hover:border-[color:var(--cyan)] hover:text-[color:var(--cyan)] hover:-translate-y-0.5"
                       aria-label="GitHub Repository"
                       title="GitHub"
                     >
@@ -209,7 +209,7 @@ const badgeLabel = (badge: 'live' | 'private' | 'coming-soon') =>
                       href={p.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="flex h-11 w-11 sm:h-9 sm:w-9 items-center justify-center rounded-lg border border-white/15 bg-black/30 text-[color:var(--fg-2)] backdrop-blur-sm transition hover:border-[color:var(--cyan)] hover:text-[color:var(--cyan)] hover:-translate-y-0.5"
+                      class="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg border border-white/15 bg-black/30 text-[color:var(--fg-2)] backdrop-blur-sm transition hover:border-[color:var(--cyan)] hover:text-[color:var(--cyan)] hover:-translate-y-0.5"
                       aria-label={t(lang, 'v2.work.visit')}
                       title={t(lang, 'v2.work.visit')}
                     >
@@ -219,7 +219,7 @@ const badgeLabel = (badge: 'live' | 'private' | 'coming-soon') =>
                   {casePath(p.key, lang) && (
                     <a
                       href={casePath(p.key, lang)}
-                      class="flex h-11 w-11 sm:h-9 sm:w-9 items-center justify-center rounded-lg border border-[color:var(--cyan)]/50 bg-[color:var(--cyan)]/10 text-[color:var(--cyan)] backdrop-blur-sm transition hover:bg-[color:var(--cyan)]/25 hover:-translate-y-0.5"
+                      class="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg border border-[color:var(--cyan)]/50 bg-[color:var(--cyan)]/10 text-[color:var(--cyan)] backdrop-blur-sm transition hover:bg-[color:var(--cyan)]/25 hover:-translate-y-0.5"
                       aria-label={t(lang, 'v2.work.case')}
                       title={t(lang, 'v2.work.case')}
                     >
@@ -231,7 +231,7 @@ const badgeLabel = (badge: 'live' | 'private' | 'coming-soon') =>
                       href={p.publication.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="flex h-11 w-11 sm:h-9 sm:w-9 items-center justify-center rounded-lg border border-white/15 bg-black/30 text-[color:var(--fg-2)] backdrop-blur-sm transition hover:border-[color:var(--cyan)] hover:text-[color:var(--cyan)] hover:-translate-y-0.5"
+                      class="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg border border-white/15 bg-black/30 text-[color:var(--fg-2)] backdrop-blur-sm transition hover:border-[color:var(--cyan)] hover:text-[color:var(--cyan)] hover:-translate-y-0.5"
                       aria-label="Scientific Paper"
                       title="Paper"
                     >
@@ -278,7 +278,7 @@ const badgeLabel = (badge: 'live' | 'private' | 'coming-soon') =>
     </div>
 
     <!-- ══════════ 3. DECK NAVEGABLE DE PROYECTOS (AVANCE PROGRESIVO) ══════════ -->
-    <div class="reveal mt-12 sm:mt-16" style="--i:3">
+    <div class="reveal mt-16" style="--i:3">
       <div
         id="project-deck"
         class="project-deck"
