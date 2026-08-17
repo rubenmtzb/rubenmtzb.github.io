@@ -12,9 +12,9 @@
 ### `rubenmtzb.github.io` — Rubén Martínez Bernabe's personal portfolio
 
 ![Status](https://img.shields.io/badge/status-live-00C853?style=for-the-badge&logo=githubpages&logoColor=white)
-![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Astro](https://img.shields.io/badge/Astro-5-BC52EE?style=for-the-badge&logo=astro&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![Deploy](https://img.shields.io/badge/Deploy-GitHub_Pages-222222?style=for-the-badge&logo=githubpages&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)
 
@@ -24,23 +24,69 @@
 
 ## 🌌 Overview
 
-> Live portfolio for **Rubén Martínez Bernabe** at **[rubenitx.me](https://rubenitx.me/)** — a bilingual React experience with a dark terminal/cyberpunk aesthetic, animated storytelling, and a full CV system with PDF downloads plus interactive online preview.
-
-The site showcases professional experience, selected projects, research work, education, certifications, and contact channels in both English and Spanish.
+> Bilingual portfolio for **Rubén Martínez Bernabe**, live at **[rubenitx.me](https://rubenitx.me/)**.
+> Built with Astro as **static HTML with zero framework runtime in the browser**: everything
+> that has to be read, indexed or printed exists in the build output. JavaScript only adds
+> optional interaction on top.
 
 ---
 
-## ✨ Highlights
+## 🧱 Architecture
 
-- **Scroll-spy navbar** with animated premium glow state and responsive mobile menu
-- **Dark terminal/cyberpunk UI** built around `#030712`, `#00ff88`, `#00ffff`, and `#bf5fff`
-- **JetBrains Mono** typography across the full experience
-- **English / Spanish i18n** powered by a custom React Context
-- **Lazy-loaded sections** for the main content flow
-- **Dynamic experience duration calculation** for current roles
-- **Gradient section dividers**, glass panels, glow effects, and motion-heavy transitions
-- **CV system** with direct PDF downloads in EN/ES plus an interactive HTML preview synced by language
-- **Responsive layout** optimized for desktop, tablet, and mobile
+**Content is a single source of truth.** Every surface — the site, the CV, the JSON-LD, the
+`<title>` tags — reads from typed collections in `src/content/`, validated by Zod schemas in
+`src/content.config.ts`. No fact lives duplicated inside a component, and nothing that can be
+derived is written by hand: role durations and seniority are recomputed from `YYYY-MM` dates
+on every build.
+
+**Three execution layers, in this order:**
+
+| Layer | Responsibility |
+|-------|----------------|
+| **Build (Astro)** | Renders the complete HTML: content, metadata, JSON-LD, sitemap |
+| **CSS** | Layout, theming and every animation that does not need state |
+| **Client JS** | Progressive enhancement only — remove it and nothing but motion is lost |
+
+That order is enforced, not just intended. Two scripts verify it from opposite ends, and
+both gate the deploy:
+
+- `verify-dist.mjs` strips every `<script>` from the generated HTML and asserts that the
+  content, the navigation and the language switcher are still there.
+- `verify-interaction.mjs` does the reverse — it runs the real bundle against that same
+  HTML in a minimal DOM and asserts the carousels, tabs and typing test behave.
+
+---
+
+## 🗺️ URL grammar
+
+`/[experience]/[language]/[path]/` — V2 is the site; V1 is the earlier documentary version,
+kept reachable for humans but out of the index.
+
+| URL | Content | Indexable |
+|-----|---------|-----------|
+| `/` · `/es/` | V2 portfolio | ✅ |
+| `/cv/` · `/es/cv/` | Print-ready CV + PDF download | ✅ |
+| `/work/sars-cov-2/` · `/es/work/sars-cov-2/` | Project case study | ✅ |
+| `/v1/` · `/v1/es/` | Previous version | `noindex` |
+
+Each language cluster emits an identical, self-referencing `hreflang` set with `x-default`,
+generated from the data so the pages cannot drift apart. There is exactly one `Person`
+entity across the whole site, with a stable `@id`.
+
+---
+
+## ✨ On the page
+
+- **ASCII portrait** — a canvas particle simulation sampled from the avatar, reactive to the pointer
+- **Tabbed experience** with durations recalculated at build time
+- **Project showcase, education and certification carousels**, all driven by one shared primitive
+- **Draggable 3D photo deck** with throw physics
+- **Interactive HHKB keyboard** with a typing speed trial and synthesised switch sound
+- **Killua Game Mode** — an optional platformer that uses the real DOM as its level geometry
+- **English / Spanish** as real, separate URLs — never a client-side toggle
+
+Every one of these degrades cleanly: `prefers-reduced-motion` is honoured throughout, and
+without JavaScript each carousel falls back to a plain stacked list.
 
 ---
 
@@ -48,74 +94,41 @@ The site showcases professional experience, selected projects, research work, ed
 
 | Layer | Technology | Notes |
 |-------|-----------|-------|
-| **UI Framework** | [React](https://react.dev/) 19 | Component-driven SPA |
-| **Build Tool** | [Vite](https://vite.dev/) 8 | Fast local dev + production builds |
-| **Styling** | [Tailwind CSS](https://tailwindcss.com/) v4 | Utility-first styling with custom glow effects |
-| **Animation** | [Framer Motion](https://www.framer.com/motion/) | Section reveals, hover states, animated UI details |
-| **Icons** | [Lucide React](https://lucide.dev/) | Navigation and section iconography |
-| **Typography** | [JetBrains Mono](https://www.jetbrains.com/lp/mono/) | Terminal-inspired visual identity |
-| **i18n** | Custom React Context | English / Spanish language toggle |
-| **Deployment** | GitHub Pages + custom domain | `rubenitx.me` via GitHub Actions |
-
----
-
-## 🧭 Site Sections
-
-| Section | Purpose |
-|--------|---------|
-| **Hero** | Intro, rotating typewriter titles, CTAs, and social links |
-| **About** | Technical profile, short bio, and current highlights |
-| **Tech Stack** | Core tools and broader toolbox |
-| **Experience** | Timeline of professional roles with live duration tracking |
-| **Projects** | Private product work, research portal, and portfolio showcase |
-| **Research** | Featured SARS-CoV-2 mutation portal and publication links |
-| **Education** | Degree, DevOps studies, and academic background |
-| **Certifications** | Verified credentials and supporting links |
-| **Resume / CV** | PDF download + interactive online preview |
-| **Contact** | Email, LinkedIn, GitHub, and direct CTA |
-
----
-
-## 🌍 Internationalization & CV
-
-| Feature | Details |
-|--------|---------|
-| **Language switcher** | Toggles all main portfolio content between English and Spanish |
-| **Context-based i18n** | Shared state through `src/i18n/LanguageContext.jsx` |
-| **PDF downloads** | `/cv/CV_RubenMartinez_EN.pdf` and `/cv/CV_RubenMartinez_ES.pdf` |
-| **Interactive preview** | `/cv/?lang=en` or `/cv/?lang=es` updates preview language and PDF target |
-| **Preview page** | Standalone HTML CV with synced metadata, content rendering, and print-ready layout |
+| **Framework** | [Astro](https://astro.build/) 5 | Static output, no client-side framework |
+| **Styling** | [Tailwind CSS](https://tailwindcss.com/) v4 | Via `@tailwindcss/vite`, pure CSS at runtime |
+| **Language** | [TypeScript](https://www.typescriptlang.org/) 5 | `astro/tsconfigs/strict` |
+| **Content** | Astro Content Collections + Zod | Typed, validated single source of truth |
+| **Typography** | Archivo + JetBrains Mono | Self-hosted via Fontsource, no third-party request |
+| **Icons** | Inline SVG (`src/components/Icon.astro`) | No icon library ships to the browser |
+| **Verification** | `linkedom` | Assertions over the real build output |
+| **Deployment** | GitHub Pages + GitHub Actions | `rubenitx.me` |
 
 ---
 
 ## 🚀 Getting Started
 
 ```bash
-# Clone the repository
 git clone git@github.com:rubenmtzb/rubenmtzb.github.io.git
 cd rubenmtzb.github.io
-
-# Install dependencies
 npm install
 
-# Start dev server
-npm run dev
-
-# Build for production
-npm run build
+npm run dev       # dev server
+npm run build     # production build into dist/
+npm run check     # astro check — types across .astro and .ts
+npm run verify    # assertions over the generated HTML in dist/
+npm test          # build + verify, exactly what CI runs
 ```
 
 ---
 
 ## 🚢 Deployment
 
-This portfolio is deployed with **GitHub Pages** and served on **`rubenitx.me`**.
-
 | Part | Details |
 |------|---------|
 | **Workflow** | `.github/workflows/deploy.yml` |
 | **Trigger** | Pushes to `main` |
-| **Build output** | `dist/` |
+| **Gate** | `npm run verify` — the deploy stops if the build breaks the contract |
+| **Output** | `dist/` |
 | **Custom domain** | `public/CNAME` |
 
 ---
@@ -125,27 +138,38 @@ This portfolio is deployed with **GitHub Pages** and served on **`rubenitx.me`**
 ```text
 rubenmtzb.github.io/
 ├── public/
-│   ├── cv/               # Interactive HTML CV + EN/ES PDF files
-│   ├── icons/            # Stack and brand assets
-│   ├── CNAME             # Custom domain configuration
-│   └── avatar.png        # Primary profile image
+│   ├── cv/                   # EN/ES PDF downloads
+│   ├── icons/                # Brand and technology logos
+│   ├── CNAME                 # Custom domain
+│   └── avatar.png            # Source image for the ASCII portrait
+├── scripts/
+│   ├── verify-dist.mjs        # Assertions over the generated HTML (no JS)
+│   ├── verify-interaction.mjs # Runs the real bundle against that HTML
+│   └── generate-sprites.mjs   # One-off sprite generation for Game Mode
 ├── src/
-│   ├── components/       # Portfolio sections, navbar, footer, toggles
-│   ├── i18n/             # Language context
-│   ├── App.jsx           # Main application composition with lazy-loaded sections
-│   ├── App.css           # App-level overrides
-│   ├── index.css         # Global theme, glow effects, and animations
-│   └── main.jsx          # React entry point
-├── index.html            # SEO, metadata, font loading, manifest wiring
-├── eslint.config.js      # ESLint flat config
-└── vite.config.js        # Vite + Tailwind plugin config
+│   ├── assets/               # Images processed by astro:assets
+│   ├── components/
+│   │   ├── v1/               # Previous version, served at /v1/
+│   │   ├── v2/               # Current portfolio
+│   │   └── cv/               # CV document
+│   ├── content/              # JSON collections — the single source of truth
+│   ├── i18n/ui.ts            # UI strings and anchor aliases
+│   ├── layouts/              # Base, V1, V2 and case-study shells
+│   ├── lib/
+│   │   ├── content.ts        # Collection access, date maths, JSON-LD
+│   │   └── tech.ts           # Technology registry: colour, logo, official link
+│   ├── pages/                # URL grammar + sitemap.xml + manifest.json
+│   ├── scripts/              # Client-side progressive enhancement
+│   └── styles/               # global.css (V1) and v2.css (V2)
+├── astro.config.mjs
+└── content.config.ts         # Zod schemas for every collection
 ```
 
 ---
 
 <div align="center">
 
-**Built with ☕, green glow, and quiet focus**
+**Built with ☕, static HTML, and quiet focus**
 
 `rubenmtzb.github.io` · [rubenitx.me](https://rubenitx.me/) · [@rubenmtzb](https://github.com/rubenmtzb)
 
