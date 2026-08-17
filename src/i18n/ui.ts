@@ -11,27 +11,28 @@ export const NAV = [
   { id: 'contact', en: 'Contact', es: 'Contacto' },
 ] as const
 
-/**
- * Anclas heredadas de las 10 superficies anteriores.
- * Se emiten como alias vacíos dentro del área que las absorbe para que
- * ningún enlace entrante existente quede sin destino.
- */
-/** Las tres áreas navegables de la V2. Identity es el propio inicio. */
+/** Las cuatro áreas navegables de la V2. Identity es el propio inicio. */
 export const V2_NAV = [
   { id: 'work', key: 'v2.nav.work' },
+  { id: 'about', key: 'v2.nav.about' },
   { id: 'archive', key: 'v2.nav.archive' },
   { id: 'contact', key: 'v2.nav.contact' },
 ] as const
 
 /**
- * Tras el intercambio, / pasa a servir la V2. Los enlaces entrantes a las
- * anclas de las 10 superficies originales tienen que seguir aterrizando
- * en algún sitio con sentido, así que la V2 también las emite.
+ * Anclas heredadas de las 10 superficies anteriores. Se emiten como alias
+ * vacíos dentro del área que las absorbe, para que ningún enlace entrante
+ * quede sin destino tras el intercambio de la Fase 5.
+ *
+ * Cada lista contiene solo anclas heredadas: el id propio de la sección
+ * nunca se repite aquí, o la página saldría con dos elementos con el mismo
+ * id, que es HTML inválido.
  */
 export const V2_ANCHOR_ALIASES: Record<string, string[]> = {
-  identity: ['home', 'about', 'stack'],
+  identity: ['home', 'stack'],
   work: ['experience', 'projects', 'research'],
-  contact: ['education', 'certifications', 'resume'],
+  about: ['education', 'certifications', 'background'],
+  contact: ['resume'],
 }
 
 export const ANCHOR_ALIASES: Record<string, string[]> = {
@@ -120,42 +121,46 @@ export const ui = {
     'cv.portfolio': 'Portfolio',
     'cv.langSwitch': 'Ver el CV en español',
 
-    'v2.nav.work': 'Work',
+    'v2.nav.work': 'Experience',
+    'v2.nav.about': 'About & Education',
     'v2.nav.archive': 'Outside the Code',
     'v2.nav.contact': 'Contact',
-    'v2.hero.cta': 'See my work',
     'v2.hero.cv': 'Read my CV',
-    'v2.hero.system': 'system.render()',
-    'v2.hero.systemNote': 'Interactive view of how I build. Decorative — everything you need to read is text.',
-    'v2.work.title': 'Work',
-    'v2.work.lede': 'What I have built, where, and with what.',
-    'v2.work.now': 'Now',
-    'v2.work.before': 'Before',
+    'v2.work.title': 'Experience',
+    'v2.work.timeline': 'Professional timeline',
     'v2.work.projects': 'Selected projects',
     'v2.work.case': 'Read the case',
     'v2.work.visit': 'Visit',
-    'v2.archive.title': 'Outside the Code',
-    'v2.archive.lede': 'A little more about the person behind the systems.',
-    'v2.archive.open': 'Open photograph',
-    'v2.archive.close': 'Close',
-    'v2.archive.prev': 'Previous photograph',
-    'v2.archive.next': 'Next photograph',
-    'v2.archive.counter': 'Photograph',
+    'v2.work.carousel': 'Featured projects',
+    'v2.work.previousProject': 'Previous project',
+    'v2.work.nextProject': 'Next project',
+    'v2.work.goToProject': 'Go to project',
     'v2.contact.title': 'Contact',
-    'v2.contact.lede': 'Open to conversations about ambitious backend, full-stack or research-oriented work.',
+    'v2.contact.headline': 'The next good system starts with a clear signal.',
+    'v2.contact.lede': 'For a role, an idea, or a system worth building: start a conversation.',
+    'v2.contact.signal': 'Signal received // channel open',
+    'v2.contact.route': 'Email route // ready',
+    'v2.contact.horizon': 'Three-way handshake // start a conversation',
     'v2.contact.write': 'Write to me',
     'v2.case.back': 'Back to work',
     'v2.case.overview': 'Overview',
     'otc.title': 'Outside the Code',
-    'otc.lede': 'What exists behind the engineer.',
-    'otc.travel': 'Travel',
-    'otc.travelNote': 'Places, light and the habit of looking twice.',
-    'otc.markets': 'Markets',
-    'otc.marketsNote': 'Crypto and markets read as systems: incentives, feedback loops and the shape of a curve. No positions on display, no numbers to sell you.',
+    'otc.lede': 'Life, sports, travel — the things that shape how I think.',
+    'otc.travel': 'About Me',
+    'otc.travelNote': 'Climbing, via ferratas, world journeys, sunsets, and the moments that happen away from the screen.',
+    'otc.keysKicker': 'Hobbies // travel · climbing · markets · keyboards',
     'otc.keys': 'Mechanical keyboards',
-    'otc.keysNote': 'The tool you touch ten hours a day deserves thought. Type — this one answers to your own keyboard.',
-    'otc.keysHint': 'Press any key',
+    'otc.trialBox': 'Typing speed trial: type the text shown here',
+    'otc.sandboxBox': 'Free typing sandbox: type anything to hear the switches',
+    'otc.keysNote': 'Mechanical keyboards are a hands-on hobby: each build balances layout, materials, switches, sound, and feel. This is not just a desk accessory; it is a tool tuned around how I think and work.',
+    'otc.keysDetail': 'The speed trial is a small way to share that obsession with feedback. The Build Photos archive is still in the making: it will document the choices behind each keyboard, from the case to the switch.',
     'v2.case.stack': 'Stack',
+
+    'v2.hero.status': 'Available for opportunities',
+    'v2.hero.greeting': "Hi, I'm",
+    'otc.soundOn': 'Sound enabled',
+    'otc.soundOff': 'Sound disabled',
+    'v2.footer.gameHint': 'Press ⚡ for Killua Mini-Game',
 
     'time.year': 'year',
     'time.years': 'years',
@@ -241,42 +246,46 @@ export const ui = {
     'cv.portfolio': 'Portfolio',
     'cv.langSwitch': 'View the CV in English',
 
-    'v2.nav.work': 'Trayectoria',
+    'v2.nav.work': 'Experiencia',
+    'v2.nav.about': 'Sobre mí & Estudios',
     'v2.nav.archive': 'Outside the Code',
     'v2.nav.contact': 'Contacto',
-    'v2.hero.cta': 'Ver mi trabajo',
     'v2.hero.cv': 'Leer mi CV',
-    'v2.hero.system': 'system.render()',
-    'v2.hero.systemNote': 'Vista interactiva de cómo construyo. Es decorativa: todo lo que hay que leer es texto.',
-    'v2.work.title': 'Trayectoria',
-    'v2.work.lede': 'Qué he construido, dónde y con qué.',
-    'v2.work.now': 'Ahora',
-    'v2.work.before': 'Antes',
+    'v2.work.title': 'Experiencia',
+    'v2.work.timeline': 'Trayectoria profesional',
     'v2.work.projects': 'Proyectos seleccionados',
     'v2.work.case': 'Leer el caso',
     'v2.work.visit': 'Visitar',
-    'v2.archive.title': 'Outside the Code',
-    'v2.archive.lede': 'Algo más sobre la persona que hay detrás de los sistemas.',
-    'v2.archive.open': 'Abrir fotografía',
-    'v2.archive.close': 'Cerrar',
-    'v2.archive.prev': 'Fotografía anterior',
-    'v2.archive.next': 'Fotografía siguiente',
-    'v2.archive.counter': 'Fotografía',
+    'v2.work.carousel': 'Proyectos destacados',
+    'v2.work.previousProject': 'Proyecto anterior',
+    'v2.work.nextProject': 'Proyecto siguiente',
+    'v2.work.goToProject': 'Ir al proyecto',
     'v2.contact.title': 'Contacto',
-    'v2.contact.lede': 'Abierto a conversaciones sobre backend, full-stack o proyectos con componente de investigación.',
+    'v2.contact.headline': 'El siguiente buen sistema empieza con una señal clara.',
+    'v2.contact.lede': 'Para un reto, una idea o un sistema que merezca la pena construir: empecemos una conversación.',
+    'v2.contact.signal': 'Señal recibida // canal abierto',
+    'v2.contact.route': 'Ruta de email // preparada',
+    'v2.contact.horizon': 'Handshake de red // inicia una conversación',
     'v2.contact.write': 'Escríbeme',
     'v2.case.back': 'Volver a trayectoria',
     'v2.case.overview': 'Resumen',
     'otc.title': 'Outside the Code',
-    'otc.lede': 'Lo que existe detrás del ingeniero.',
-    'otc.travel': 'Viajes',
-    'otc.travelNote': 'Lugares, luz y la costumbre de mirar dos veces.',
-    'otc.markets': 'Mercados',
-    'otc.marketsNote': 'Crypto y mercados leídos como sistemas: incentivos, bucles de realimentación y la forma de una curva. Sin posiciones a la vista y sin cifras que venderte.',
+    'otc.lede': 'Vida, deporte y viajes — lo que da forma a cómo pienso.',
+    'otc.travel': 'Sobre mí (About Me)',
+    'otc.travelNote': 'Escalada, vías ferratas, viajes por el mundo, atardeceres y momentos que me definen más allá de la pantalla.',
+    'otc.keysKicker': 'Hobbies // viajes · escalada · mercados · teclados',
     'otc.keys': 'Teclados mecánicos',
-    'otc.keysNote': 'La herramienta que tocas diez horas al día merece criterio. Escribe: este responde a tu propio teclado.',
-    'otc.keysHint': 'Pulsa cualquier tecla',
+    'otc.trialBox': 'Prueba de velocidad: escribe aquí el texto que aparece',
+    'otc.sandboxBox': 'Escritura libre: teclea lo que quieras para oír los switches',
+    'otc.keysNote': 'Los teclados mecánicos son un hobby práctico: cada build equilibra distribución, materiales, switches, sonido y tacto. No son solo un accesorio de escritorio; son una herramienta ajustada a cómo pienso y trabajo.',
+    'otc.keysDetail': 'El reto de velocidad es una pequeña forma de compartir esa obsesión por el feedback. El archivo de Fotos Build está en construcción: documentará las decisiones detrás de cada teclado, desde el case hasta el switch.',
     'v2.case.stack': 'Stack',
+
+    'v2.hero.status': 'Disponible para nuevos retos',
+    'v2.hero.greeting': 'Hola, soy',
+    'otc.soundOn': 'Sonido activado',
+    'otc.soundOff': 'Sonido desactivado',
+    'v2.footer.gameHint': 'Pulsa ⚡ para el minijuego de Killua',
 
     'time.year': 'año',
     'time.years': 'años',

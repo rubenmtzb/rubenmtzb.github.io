@@ -1,4 +1,4 @@
-import { getCollection, type CollectionEntry } from 'astro:content'
+import { getCollection } from 'astro:content'
 import { DEFAULT_LANG, t, type Lang } from '../i18n/ui'
 
 export const SITE = 'https://rubenitx.me'
@@ -73,7 +73,33 @@ export async function getCluster(key: string) {
   }
 }
 
+/**
+ * La otra versión lingüística de la misma página, que es lo que alimenta el
+ * selector de idioma. Cuatro componentes lo resolvían por su cuenta con un
+ * `find(...)!`; si el clúster quedara incompleto, el build se paraba con un
+ * "undefined" en lugar de decir qué falta.
+ */
+export async function getAlternate(key: string, lang: Lang) {
+  const { alternates } = await getCluster(key)
+  const other = alternates.find((a) => a.lang !== lang)
+  if (!other) throw new Error(`pages: el clúster "${key}" no tiene alternativa a "${lang}"`)
+  return other
+}
+
 export const abs = (path: string) => new URL(path, SITE).href
+
+/**
+ * Proyectos con ficha propia. La V1 y la V2 enlazan a la misma página, así
+ * que el mapa vive aquí: si mañana hay una segunda ficha, se añade una vez.
+ */
+const CASE_PATHS: Record<string, string> = { 'sars-cov-2': '/work/sars-cov-2/' }
+
+/** Ruta de la ficha en el idioma dado, o null si el proyecto no tiene ficha. */
+export function casePath(projectKey: string, lang: Lang): string | null {
+  const path = CASE_PATHS[projectKey]
+  if (!path) return null
+  return lang === 'es' ? `/es${path}` : path
+}
 
 /* ------------------------------------------------------------------ */
 /* Fechas — la antigüedad nunca se escribe a mano                      */
@@ -149,13 +175,7 @@ export function coveredMonths(periods: Period[]): number {
 
 /** Antigüedad en el puesto actual: el que no tiene fecha de fin. */
 export function tenureMonths(entries: Period[]): number {
-  const current = entries.filter((e) => e.end === null)
-  return coveredMonths(current)
-}
-
-/** Trayectoria completa: unión de todos los periodos, sin contar solapes. */
-export function careerMonths(entries: Period[]): number {
-  return coveredMonths(entries)
+  return coveredMonths(entries.filter((e) => e.end === null))
 }
 
 /**
@@ -275,6 +295,3 @@ export async function buildJsonLd({ lang, pageUrl, pageType, pageName, pageDescr
 
   return { '@context': 'https://schema.org', '@graph': [person, website, page, ...works] }
 }
-
-export type ExperienceData = CollectionEntry<'experience'>['data']
-export type ProjectData = CollectionEntry<'projects'>['data']

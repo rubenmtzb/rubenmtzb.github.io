@@ -1,8 +1,17 @@
 ---
 import Icon from './Icon.astro'
+import TechChip from './v2/TechChip.astro'
 import { getExperience, getProjects, formatPeriod } from '../lib/content'
 import { t, type Lang } from '../i18n/ui'
 
+/**
+ * Ficha de proyecto en profundidad.
+ *
+ * Comparte hoja de estilos con la V2, así que usa su vocabulario:
+ * los tokens --ink/--line/--fg y las clases tipográficas t-*. Las chips
+ * de stack son el mismo componente que en la portada, no una píldora
+ * paralela que pudiera divergir de color o de enlace.
+ */
 interface Props { lang: Lang; projectKey: string }
 const { lang, projectKey } = Astro.props
 
@@ -12,23 +21,25 @@ if (!project) throw new Error(`Ficha: no existe el proyecto "${projectKey}"`)
 /** El puesto desde el que se construyó, si lo hubo. */
 const role = (await getExperience(lang)).find((e) => e.company === project.deep?.partnerName)
 const backPath = lang === 'es' ? '/es/#work' : '/#work'
+
+const CARD = 'rounded-xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-5'
+const CARD_LABEL = 't-meta text-[0.62rem] text-[color:var(--fg-3)]'
 ---
 
 <article class="mx-auto w-full max-w-3xl px-5 pb-24 pt-28 sm:px-8 sm:pt-36">
-  <a href={backPath} class="inline-flex items-center gap-2 text-sm text-[var(--v2-fg-dim)] transition hover:text-[var(--v2-fg)]">
+  <a href={backPath} class="inline-flex items-center gap-2 text-sm text-[color:var(--fg-3)] transition hover:text-[color:var(--fg)]">
     <Icon name="arrowLeft" class="h-4 w-4" />
     {t(lang, 'v2.case.back')}
   </a>
 
-  <p class="v2-eyebrow mt-8">{project.eyebrow}</p>
-  <h1 class="v2-display mt-4 text-[clamp(1.9rem,5vw,3.2rem)]">{project.title}</h1>
-  <p class="v2-lede mt-6 max-w-none">{project.description}</p>
+  <p class="t-meta mt-8 text-[color:var(--blue-bright)]">{project.eyebrow}</p>
+  <h1 class="t-display mt-4">{project.title}</h1>
+  <p class="t-lead mt-6 max-w-none">{project.description}</p>
 
   <div class="mt-8 flex flex-wrap gap-3">
     {
       project.link && (
-        <a href={project.link} target="_blank" rel="noopener noreferrer"
-           class="inline-flex items-center gap-2 rounded-lg bg-[#00ff88] px-5 py-3 text-sm font-semibold text-[#06120c] transition hover:bg-[#5cffb4]">
+        <a href={project.link} target="_blank" rel="noopener noreferrer" class="btn btn-primary">
           {t(lang, 'v2.work.visit')}
           <Icon name="arrowUpRight" class="h-4 w-4" />
         </a>
@@ -36,8 +47,7 @@ const backPath = lang === 'es' ? '/es/#work' : '/#work'
     }
     {
       project.publication && (
-        <a href={project.publication.href} target="_blank" rel="noopener noreferrer"
-           class="inline-flex items-center gap-2 rounded-lg border border-[var(--v2-line)] px-5 py-3 text-sm font-semibold transition hover:border-[#37424e] hover:bg-[var(--v2-raised)]">
+        <a href={project.publication.href} target="_blank" rel="noopener noreferrer" class="btn btn-ghost">
           <Icon name="book" class="h-4 w-4" />
           {project.publication.label}
         </a>
@@ -49,11 +59,11 @@ const backPath = lang === 'es' ? '/es/#work' : '/#work'
     project.deep && (
       <>
         <section class="mt-14">
-          <h2 class="v2-eyebrow">{t(lang, 'v2.case.overview')}</h2>
+          <h2 class="t-meta text-[color:var(--cyan)]">{t(lang, 'v2.case.overview')}</h2>
           <ul class="mt-5 space-y-3">
             {project.deep.highlights.map((h) => (
-              <li class="flex gap-3 leading-relaxed text-[var(--v2-fg-muted)]">
-                <span class="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--v2-accent)]" aria-hidden="true" />
+              <li class="flex gap-3 leading-relaxed text-[color:var(--fg-2)]">
+                <span class="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--blue-bright)]" aria-hidden="true" />
                 {h}
               </li>
             ))}
@@ -61,19 +71,19 @@ const backPath = lang === 'es' ? '/es/#work' : '/#work'
         </section>
 
         <section class="mt-12 grid gap-4 sm:grid-cols-2">
-          <div class="v2-card p-5">
-            <p class="text-[0.62rem] uppercase tracking-[0.22em] text-[var(--v2-fg-dim)]">{project.deep.partnerLabel}</p>
-            <p class="mt-2 font-semibold">{project.deep.partnerName}</p>
-            <p class="mt-2 text-sm leading-relaxed text-[var(--v2-fg-muted)]">{project.deep.partnerDescription}</p>
+          <div class={CARD}>
+            <p class={CARD_LABEL}>{project.deep.partnerLabel}</p>
+            <p class="mt-2 font-semibold text-[color:var(--fg)]">{project.deep.partnerName}</p>
+            <p class="mt-2 text-sm leading-relaxed text-[color:var(--fg-2)]">{project.deep.partnerDescription}</p>
           </div>
           <div class="flex flex-col gap-4">
-            <div class="v2-card p-5">
-              <p class="text-[0.62rem] uppercase tracking-[0.22em] text-[var(--v2-fg-dim)]">{project.deep.focusLabel}</p>
-              <p class="mt-2 text-sm">{project.deep.focusText}</p>
+            <div class={CARD}>
+              <p class={CARD_LABEL}>{project.deep.focusLabel}</p>
+              <p class="mt-2 text-sm text-[color:var(--fg-2)]">{project.deep.focusText}</p>
             </div>
-            <div class="v2-card p-5">
-              <p class="text-[0.62rem] uppercase tracking-[0.22em] text-[var(--v2-fg-dim)]">{project.deep.intersectionLabel}</p>
-              <p class="mt-2 text-sm">{project.deep.intersectionText}</p>
+            <div class={CARD}>
+              <p class={CARD_LABEL}>{project.deep.intersectionLabel}</p>
+              <p class="mt-2 text-sm text-[color:var(--fg-2)]">{project.deep.intersectionText}</p>
             </div>
           </div>
         </section>
@@ -82,18 +92,20 @@ const backPath = lang === 'es' ? '/es/#work' : '/#work'
   }
 
   <section class="mt-12">
-    <h2 class="v2-eyebrow">{t(lang, 'v2.case.stack')}</h2>
+    <h2 class="t-meta text-[color:var(--cyan)]">{t(lang, 'v2.case.stack')}</h2>
     <ul class="mt-4 flex flex-wrap gap-2">
-      {[...project.tech, ...project.domains].map((tech) => <li class="v2-chip">{tech}</li>)}
+      {[...project.tech, ...project.domains].map((tech) => (
+        <li><TechChip tag={tech} lang={lang} /></li>
+      ))}
     </ul>
   </section>
 
   {
     role && (
-      <section class="mt-12 border-t border-[var(--v2-line-soft)] pt-8">
-        <p class="text-sm text-[var(--v2-fg-muted)]">
-          <span class="font-semibold text-[var(--v2-fg)]">{role.role}</span>
-          <span class="text-[var(--v2-fg-dim)]"> · {role.company} · {formatPeriod(role.start, role.end, lang)}</span>
+      <section class="mt-12 border-t border-[color:var(--line-soft)] pt-8">
+        <p class="text-sm text-[color:var(--fg-2)]">
+          <span class="font-semibold text-[color:var(--fg)]">{role.role}</span>
+          <span class="text-[color:var(--fg-3)]"> · {role.company} · {formatPeriod(role.start, role.end, lang)}</span>
         </p>
       </section>
     )

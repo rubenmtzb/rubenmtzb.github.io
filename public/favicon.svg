@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <rect width="32" height="32" rx="7" fill="#05080f"/>
+  <rect width="30" height="30" x="1" y="1" rx="6" fill="none" stroke="#2b6bff" stroke-width="1" stroke-opacity="0.6"/>
+  <!-- Killua ASCII Pixel Hair -->
+  <path d="M7 6h4v3H7zm14 0h4v3h-4zm-8-2h6v3h-6zM5 9h22v4H5zm-2 4h26v4H3z" fill="#f0f4fc"/>
+  <path d="M4 15h24v2H4z" fill="#b2c2e0"/>
+  <!-- Face -->
+  <rect x="7" y="17" width="18" height="8" rx="1" fill="#f7dfcb"/>
+  <!-- Electric Cyan Eyes -->
+  <rect x="9" y="19" width="4" height="3" rx="1" fill="#05080f"/>
+  <rect x="19" y="19" width="4" height="3" rx="1" fill="#05080f"/>
+  <rect x="10" y="20" width="2" height="2" fill="#6fe3ff"/>
+  <rect x="20" y="20" width="2" height="2" fill="#6fe3ff"/>
+  <!-- Electric Sparks -->
+  <path d="M26 4l-3 4h2l-2 4 4-5h-2z" fill="#6fe3ff"/>
+</svg>

@@ -1,15 +1,35 @@
 ---
 import { getProfile } from '../../lib/content'
 import { t, type Lang } from '../../i18n/ui'
-interface Props { lang: Lang }
-const { lang } = Astro.props
+/**
+ * El pie es común a la portada y a las fichas de proyecto, que no tienen la
+ * sección de identidad. Cada página declara cuál es su principio, así que
+ * "Volver arriba" siempre tiene destino.
+ */
+interface Props { lang: Lang; topId?: string }
+const { lang, topId = 'identity' } = Astro.props
 const profile = await getProfile(lang)
 const year = new Date().getFullYear()
 ---
-<footer class="border-t border-[color:var(--line-soft)]">
-  <div class="shell flex flex-col gap-4 py-10 sm:flex-row sm:items-baseline sm:justify-between">
-    <p class="t-meta normal-case tracking-[0.12em]">© {year} {profile.name}</p>
-    <p class="t-meta normal-case tracking-[0.12em]">Astro · {lang === 'es' ? 'HTML estático' : 'static HTML'}</p>
-    <a href="#identity" class="t-meta normal-case tracking-[0.12em] transition hover:text-[color:var(--blue-bright)]">{t(lang, 'footer.top')}</a>
+<footer class="border-t border-[color:var(--line-soft)] bg-[color:var(--ink-900)]">
+  <div class="shell flex flex-col gap-4 py-10 sm:flex-row sm:items-center sm:justify-between">
+    <div class="flex items-center gap-3">
+      <p class="t-meta normal-case tracking-[0.12em]">© {year} {profile.name}</p>
+      <button
+        type="button"
+        id="gm-trigger"
+        class="rounded p-1 text-sm text-[color:var(--fg-3)] opacity-60 transition hover:opacity-100 hover:text-[color:var(--cyan)] hover:scale-125"
+        title={t(lang, 'v2.footer.gameHint')}
+        aria-label={t(lang, 'v2.footer.gameHint')}
+      >
+        ⚡
+      </button>
+    </div>
+    <p class="t-meta normal-case tracking-[0.12em] text-[color:var(--fg-3)]">
+      Astro · {lang === 'es' ? 'HTML estático' : 'static HTML'}
+    </p>
+    <a href={`#${topId}`} class="t-meta normal-case tracking-[0.12em] transition hover:text-[color:var(--blue-bright)]">
+      {t(lang, 'footer.top')} ↑
+    </a>
   </div>
 </footer>

@@ -3,6 +3,7 @@ import Seo from '../components/Seo.astro'
 import Nav from '../components/v2/Nav.astro'
 import Identity from '../components/v2/Identity.astro'
 import Work from '../components/v2/Work.astro'
+import About from '../components/v2/About.astro'
 import OutsideTheCode from '../components/v2/OutsideTheCode.astro'
 import Contact from '../components/v2/Contact.astro'
 import Footer from '../components/v2/Footer.astro'
@@ -26,6 +27,7 @@ const cvPath = lang === 'es' ? '/es/cv/' : '/cv/'
     <main id="main">
       <Identity lang={lang} cvPath={cvPath} />
       <Work lang={lang} />
+      <About lang={lang} />
       <OutsideTheCode lang={lang} />
       <Contact lang={lang} cvPath={cvPath} />
     </main>

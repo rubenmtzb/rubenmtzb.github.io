@@ -1,44 +1,110 @@
 ---
 import Icon from '../Icon.astro'
-import { getCluster } from '../../lib/content'
+import { getAlternate } from '../../lib/content'
 import { V2_NAV, t, type Lang, type UiKey } from '../../i18n/ui'
 
 interface Props { lang: Lang; pageKey: string }
 const { lang, pageKey } = Astro.props
-const cluster = await getCluster(pageKey)
-const other = cluster.alternates.find((a) => a.lang !== lang)!
+const other = await getAlternate(pageKey, lang)
 ---
 <!--
-  Capa propia por encima de todo. Ningún ancestro lleva transform,
-  filter ni contain, que es lo que antes atrapaba la cabecera bajo el
-  contenido. El fondo solo aparece al hacer scroll.
+  Cabecera fija con navegación directa, selector de idioma y acceso al Modo Juego.
+
+  No hay menú hamburguesa: las cuatro áreas caben en la barra en cualquier
+  anchura, así que no existe un desplegable duplicado que mantener en
+  sincronía ni que ocultar con JavaScript.
 -->
 <header id="site-header" class="site-header">
-  <nav aria-label="Principal" class="shell flex items-center justify-between py-5">
-    <a href="#identity" class="text-sm font-bold tracking-[0.34em]">RM</a>
+  <nav aria-label="Principal" class="shell flex items-center justify-between py-4 sm:py-5">
+    <a href="#identity" id="header-brand-link" class="relative flex items-center gap-2.5 font-mono group text-[color:var(--fg)] hover:text-[color:var(--cyan)] transition-colors" aria-label="Inicio">
+      <!-- Personaje Pixel Art de Killua asomándose por detrás del avatar -->
+      <div class="relative shrink-0 flex items-center justify-center">
+        <div class="header-killua-peeker absolute pointer-events-none" aria-hidden="true">
+          <img
+            src="/killua-pixel.png"
+            width="22"
+            height="48"
+            alt=""
+            class="header-killua-sprite"
+          />
+        </div>
 
-    <div class="hidden items-center gap-9 md:flex">
+        <img
+          src="/avatar.png"
+          width="28"
+          height="28"
+          alt="Killua"
+          class="relative z-10 h-7 w-7 rounded-full border border-[color:var(--blue-bright)]/60 bg-[color:var(--ink-800)] object-cover shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:border-[color:var(--cyan)] group-hover:shadow-[0_0_12px_rgba(111,227,255,0.45)]"
+        />
+      </div>
+      <span class="text-sm font-bold tracking-[0.25em] text-[color:var(--fg)] group-hover:text-[color:var(--cyan)] transition-colors">RM</span>
+    </a>
+
+    <!-- Navegación directa y limpia siempre visible sin menú hamburguesa -->
+    <div class="flex items-center gap-3.5 sm:gap-6 md:gap-7">
       {V2_NAV.map((item) => (
-        <a href={`#${item.id}`} data-nav={item.id} class="nav-link">{t(lang, item.key as UiKey)}</a>
+        <a href={`#${item.id}`} data-nav={item.id} class="nav-link text-xs sm:text-sm">{t(lang, item.key as UiKey)}</a>
       ))}
-      <a href={other.path} hreflang={other.lang} rel="alternate" class="nav-link" aria-label={t(lang, 'nav.langSwitch')}>
+      <a href={other.path} hreflang={other.lang} rel="alternate" class="nav-link text-xs sm:text-sm" aria-label={t(lang, 'nav.langSwitch')}>
         {t(lang, 'nav.langNext')}
       </a>
+
+      <!-- Botón Game Mode con Icono (i) de Información interactivo -->
+      <div class="flex items-center gap-1 ml-1 sm:ml-2">
+        <button
+          type="button"
+          id="nav-game-btn"
+          class="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--blue-bright)]/40 bg-[color:var(--ink-800)] px-2.5 sm:px-3 py-1 text-xs font-mono text-[color:var(--cyan)] transition hover:border-[color:var(--cyan)] hover:bg-[color:var(--cyan)]/10 hover:shadow-[0_0_15px_rgba(111,227,255,0.35)]"
+          title={lang === 'es' ? 'Activar Modo Juego Killua' : 'Activate Killua Game Mode'}
+          aria-label={lang === 'es' ? 'Activar Modo Juego Killua' : 'Activate Killua Game Mode'}
+        >
+          <span class="relative flex h-2 w-2">
+            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--cyan)] opacity-75"></span>
+            <span class="relative inline-flex h-2 w-2 rounded-full bg-[color:var(--cyan)]"></span>
+          </span>
+          <Icon name="gamepad" class="h-3.5 w-3.5" />
+          <span class="hidden sm:inline">{lang === 'es' ? 'Modo Juego' : 'Game Mode'}</span>
+        </button>
+
+        <!-- Badge (i) de Información con Tooltip al pasar el mouse por encima -->
+        <div class="relative group flex items-center">
+          <button
+            type="button"
+            class="flex h-6 w-6 items-center justify-center rounded-full border border-[color:var(--blue-bright)]/40 bg-[color:var(--ink-800)] text-xs font-mono font-bold text-[color:var(--cyan)] transition hover:border-[color:var(--cyan)] hover:bg-[color:var(--cyan)]/15 hover:shadow-[0_0_10px_rgba(111,227,255,0.3)]"
+            aria-label={lang === 'es' ? 'Información y controles del juego' : 'Game info and controls'}
+            title={lang === 'es' ? 'Información del minijuego' : 'Mini-game information'}
+          >
+            i
+          </button>
+
+          <!-- Tooltip flotante al pasar el mouse por encima del botón (i) -->
+          <div class="nav-game-hover-card pointer-events-none opacity-0 transition-all duration-200 ease-out group-hover:pointer-events-auto group-hover:opacity-100 absolute top-full right-0 mt-2.5 w-80 rounded-xl border border-[color:var(--blue-bright)]/50 bg-[color:var(--ink-900)]/95 p-3.5 shadow-[0_12px_36px_rgba(0,0,0,0.7)] backdrop-blur-xl z-50">
+            <div class="flex items-center justify-between border-b border-[color:var(--line-soft)] pb-1.5 mb-2">
+              <span class="font-mono text-xs font-bold text-[color:var(--cyan)] tracking-wider flex items-center gap-1">
+                ⚡ KILLUA GODSPEED
+              </span>
+              <span class="font-mono text-[0.62rem] text-[color:var(--fg-3)] bg-[color:var(--ink-700)] px-1.5 py-0.5 rounded border border-[color:var(--line)]">
+                3 {lang === 'es' ? 'Niveles' : 'Levels'}
+              </span>
+            </div>
+            <p class="text-[0.72rem] text-[color:var(--fg-2)] leading-relaxed mb-2.5">
+              {lang === 'es'
+                ? 'Minijuego interactivo: guía a Killua saltando sobre los elementos del currículum, recoge los orbes de cada sección y desata el Modo Kanmuru eléctrico.'
+                : 'Interactive mini-game: guide Killua across resume milestones, collect section orbs, and unleash electric Kanmuru Godspeed.'}
+            </p>
+            <div class="space-y-1 font-mono text-[0.68rem] text-[color:var(--fg-3)] border-t border-[color:var(--line-soft)] pt-2">
+              <div class="flex justify-between"><span>A / D · ◀ ▶</span> <span class="text-[color:var(--fg)]">{lang === 'es' ? 'Mover personaje' : 'Move character'}</span></div>
+              <div class="flex justify-between"><span>Espacio / W · ▲</span> <span class="text-[color:var(--fg)]">{lang === 'es' ? 'Salto / Doble Salto' : 'Jump / Double Jump'}</span></div>
+              <div class="flex justify-between"><span>Q / F · ⚡</span> <span class="text-[color:var(--cyan)] font-bold">{lang === 'es' ? 'Modo Godspeed ⚡' : 'Godspeed Aura ⚡'}</span></div>
+              <div class="flex justify-between"><span>S / ▼</span> <span class="text-[color:var(--fg)]">{lang === 'es' ? 'Atravesar plataforma' : 'Drop Down'}</span></div>
+              <div class="flex justify-between"><span>Esc</span> <span class="text-[color:var(--fg)]">{lang === 'es' ? 'Salir' : 'Exit'}</span></div>
+            </div>
+            <div class="mt-2.5 text-center border-t border-[color:var(--line-soft)]/60 pt-2 text-[0.68rem] font-mono text-[color:var(--cyan)] font-semibold flex items-center justify-center gap-1">
+              ⚡ {lang === 'es' ? 'Haz clic en Modo Juego para jugar' : 'Click Game Mode to play'}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <button type="button" id="menu-toggle" aria-expanded="false" aria-controls="menu"
-      class="btn btn-ghost !p-2.5 md:hidden"
-      aria-label={t(lang, 'nav.openMenu')} data-close-label={t(lang, 'nav.closeMenu')}>
-      <Icon name="menu" class="h-5 w-5" />
-    </button>
   </nav>
-
-  <div id="menu" class="border-t border-[color:var(--line)] bg-[color:var(--ink-900)] md:hidden">
-    <ul class="shell flex flex-col py-3">
-      {V2_NAV.map((item) => (
-        <li><a href={`#${item.id}`} class="block py-3.5 text-lg">{t(lang, item.key as UiKey)}</a></li>
-      ))}
-      <li><a href={other.path} hreflang={other.lang} rel="alternate" class="block py-3.5 text-lg text-[color:var(--fg-2)]">{t(lang, 'nav.langNext')}</a></li>
-    </ul>
-  </div>
 </header>

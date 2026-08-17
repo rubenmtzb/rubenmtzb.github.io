@@ -6,53 +6,157 @@ import { V2_ANCHOR_ALIASES, t, type Lang } from '../../i18n/ui'
 interface Props { lang: Lang; cvPath: string }
 const { lang, cvPath } = Astro.props
 const profile = await getProfile(lang)
-const ICONS = { LinkedIn: 'linkedin', GitHub: 'github' } as const
-const headline = lang === 'es'
-  ? ['Construyamos', 'algo', 'interesante.']
-  : ["Let's build", 'something', 'interesting.']
 ---
 <section id="contact" class="band border-t border-[color:var(--line-soft)]">
   {(V2_ANCHOR_ALIASES['contact'] ?? []).map((a) => <span id={a} class="anchor-alias" aria-hidden="true" />)}
 
   <div class="shell">
     <header class="rule-head reveal">
-      <span class="t-index">03</span>
+      <span class="t-index">04</span>
       <h2 class="t-h2">{t(lang, 'v2.contact.title')}</h2>
     </header>
 
-    <p class="t-display reveal mt-16" style="--i:1">
-      {headline.map((line) => <span class="block">{line}</span>)}
-    </p>
-
-    <!-- El email es la pieza, no un enlace más de una lista -->
-    <div class="reveal mt-14" style="--i:2">
-      <p class="t-meta">Email</p>
-      <a href={`mailto:${profile.email}`} class="mail mt-3">{profile.email}</a>
-      <button type="button" id="copy-mail" hidden
-        class="t-meta ml-5 align-middle normal-case tracking-[0.12em] text-[color:var(--fg-3)] transition hover:text-[color:var(--blue-bright)]"
-        data-mail={profile.email}
-        data-label={lang === 'es' ? 'copiar' : 'copy'}
-        data-done={lang === 'es' ? 'copiado ✓' : 'copied ✓'}>{lang === 'es' ? 'copiar' : 'copy'}</button>
-    </div>
-
-    <div class="reveal mt-16 grid gap-x-12 gap-y-10 sm:grid-cols-3" style="--i:3">
-      <div>
-        <p class="t-meta">{lang === 'es' ? 'Ubicación' : 'Location'}</p>
-        <p class="mt-3 text-[color:var(--fg-2)]">{profile.locality} · {lang === 'es' ? 'España' : 'Spain'}</p>
+    <div class="mt-8 max-w-3xl">
+      <div class="reveal inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-mono text-emerald-400 mb-4 shadow-[0_0_12px_rgba(16,185,129,0.15)]">
+        <span class="relative flex h-2 w-2">
+          <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-400"></span>
+        </span>
+        <span>{lang === 'es' ? 'Disponible para nuevos retos profesionales' : 'Available for new opportunities'}</span>
       </div>
-      {profile.socials.map((s) => (
-        <div>
-          <p class="t-meta">{s.label}</p>
-          <a href={s.href} target="_blank" rel="noopener noreferrer" class="link-underline mt-3 inline-flex items-center gap-2">
-            <Icon name={ICONS[s.label as keyof typeof ICONS] ?? 'globe'} class="h-4 w-4" />
-            {s.href.includes('linkedin') ? 'in/rubenmartinezbernabe' : 'rubenmtzb'}
-          </a>
-        </div>
-      ))}
+
+      <h3 class="reveal text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-[color:var(--fg)] leading-snug" style="--i:1">
+        <span
+          data-contact-type
+          data-contact-message={t(lang, 'v2.contact.headline')}
+        >{t(lang, 'v2.contact.headline')}</span><span class="contact-type-cursor" aria-hidden="true">_</span>
+      </h3>
+
+      <p class="reveal text-sm sm:text-base text-[color:var(--fg-3)] mt-3 leading-relaxed max-w-xl" style="--i:2">
+        {t(lang, 'v2.contact.lede')}
+      </p>
     </div>
 
-    <p class="reveal mt-14" style="--i:4">
-      <a href={cvPath} class="btn btn-ghost">{t(lang, 'v2.hero.cv')}<Icon name="arrowUpRight" class="h-4 w-4" /></a>
-    </p>
+    <!-- Señal de contacto: el nodo visual enmarca una única acción, sin competir con ella. -->
+    <div class="reveal mt-10 grid gap-6 lg:grid-cols-12" style="--i:3">
+      <div class="contact-signal lg:col-span-12 relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-6 sm:p-8 shadow-2xl">
+        <div class="contact-signal-glow pointer-events-none absolute inset-0" aria-hidden="true"></div>
+        <div class="relative z-10 grid items-center gap-7 md:grid-cols-[11rem_minmax(0,1fr)]">
+          <div class="contact-singularity hidden md:flex" aria-hidden="true">
+            <div class="contact-handshake">
+              <span class="contact-handshake-node handshake-idea">01</span>
+              <span class="contact-handshake-link link-out"><span class="contact-handshake-packet">SYN</span></span>
+              <span class="contact-handshake-node handshake-core">&gt;_</span>
+              <span class="contact-handshake-link link-back"><span class="contact-handshake-packet">ACK</span></span>
+              <span class="contact-handshake-node handshake-reply">OK</span>
+            </div>
+            <span class="contact-horizon-label">{t(lang, 'v2.contact.horizon')}</span>
+          </div>
+          <div class="min-w-0">
+            <span class="font-mono text-xs font-bold uppercase tracking-wider text-[color:var(--cyan)]">{t(lang, 'v2.contact.signal')}</span>
+            <p class="mt-3 max-w-2xl text-sm leading-relaxed text-[color:var(--fg-2)]">
+              {lang === 'es'
+                ? 'Si hay una pregunta interesante que resolver o un producto que hacer más sólido, este es el punto de entrada.'
+                : 'If there is an interesting question to solve or a product to make more resilient, this is the entry point.'}
+            </p>
+            <div class="mt-5 flex flex-col gap-3 border-t border-[color:var(--line-soft)] pt-4 sm:flex-row sm:items-center sm:justify-between">
+              <a href={`mailto:${profile.email}`} class="contact-email-route font-mono text-sm text-[color:var(--fg)] hover:text-[color:var(--cyan)]">
+                <span class="text-[color:var(--fg-3)]">{t(lang, 'v2.contact.route')}:</span> {profile.email}
+              </a>
+              <div class="flex flex-wrap items-center gap-3 shrink-0">
+                <!-- Copiar requiere JavaScript: el botón nace oculto y lo revela el
+                     script. Sin él, el correo sigue en el enlace y en el mailto. -->
+                <button
+                  type="button"
+                  id="copy-mail"
+                  hidden
+                  class="inline-flex items-center gap-2 rounded-xl border border-[color:var(--line)] bg-[color:var(--ink-900)] px-4 py-2.5 text-xs font-mono tracking-wider text-[color:var(--fg-2)] transition hover:border-[color:var(--cyan)] hover:text-[color:var(--cyan)] hover:shadow-[0_0_15px_rgba(111,227,255,0.2)]"
+                  data-mail={profile.email}
+                  data-label={lang === 'es' ? 'Copiar email' : 'Copy email'}
+                  data-done={lang === 'es' ? '¡Copiado! ✓' : 'Copied! ✓'}
+                >
+                  <span>📋</span>
+                  <span>{lang === 'es' ? 'Copiar email' : 'Copy email'}</span>
+                </button>
+                <a href={`mailto:${profile.email}`} class="btn btn-primary text-xs !py-2.5 !px-5">
+                  <span>{t(lang, 'v2.contact.write')}</span>
+                  <Icon name="mail" class="h-4 w-4" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta 1: Ubicación & Hora Local en Tiempo Real -->
+      <div class="lg:col-span-4 rounded-2xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-5 shadow-xl flex flex-col justify-between hover:border-[color:var(--blue-bright)] transition-all">
+        <div>
+          <div class="flex items-center justify-between border-b border-[color:var(--line-soft)] pb-2.5 mb-3">
+            <span class="font-mono text-[0.68rem] tracking-wider text-[color:var(--fg-3)] font-bold uppercase">{lang === 'es' ? 'Ubicación & Hora' : 'Location & Time'}</span>
+            <span class="h-2 w-2 rounded-full bg-[color:var(--cyan)]"></span>
+          </div>
+          <p class="text-sm font-semibold text-[color:var(--fg)]">{profile.locality} · {lang === 'es' ? 'España' : 'Spain'}</p>
+        </div>
+        <div class="mt-4 pt-3 border-t border-[color:var(--line-soft)] flex items-center justify-between">
+          <span id="local-offset" class="text-xs text-[color:var(--fg-3)] font-mono">UTC+2</span>
+          <span id="local-time" class="font-mono text-xs font-bold text-[color:var(--cyan)]">--:--:-- CEST</span>
+        </div>
+      </div>
+
+      <!-- Tarjeta 2: LinkedIn Profesional -->
+      <a
+        href={profile.socials.find(s => s.label === 'LinkedIn')?.href ?? 'https://linkedin.com'}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="lg:col-span-4 rounded-2xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-5 shadow-xl flex flex-col justify-between hover:border-[color:var(--blue-bright)] group transition-all"
+      >
+        <div>
+          <div class="flex items-center justify-between border-b border-[color:var(--line-soft)] pb-2.5 mb-3">
+            <span class="font-mono text-[0.68rem] tracking-wider text-[color:var(--fg-3)] font-bold uppercase">LINKEDIN // NETWORK</span>
+            <Icon name="arrowUpRight" class="h-3.5 w-3.5 text-[color:var(--fg-3)] group-hover:text-[color:var(--blue-bright)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+          </div>
+          <div class="flex items-center gap-2.5">
+            <Icon name="linkedin" class="h-5 w-5 text-[color:var(--blue-bright)]" />
+            <span class="text-sm font-semibold text-[color:var(--fg)] group-hover:text-[color:var(--blue-bright)] transition-colors">in/rubenmartinezbernabe</span>
+          </div>
+        </div>
+        <div class="mt-4 pt-3 border-t border-[color:var(--line-soft)] text-xs text-[color:var(--fg-3)]">
+          {lang === 'es' ? 'Conectemos y conversemos' : "Let's connect professionally"}
+        </div>
+      </a>
+
+      <!-- Tarjeta 3: GitHub & Código -->
+      <a
+        href={profile.socials.find(s => s.label === 'GitHub')?.href ?? 'https://github.com/rubenmtzb'}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="lg:col-span-4 rounded-2xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-5 shadow-xl flex flex-col justify-between hover:border-[color:var(--cyan)] group transition-all"
+      >
+        <div>
+          <div class="flex items-center justify-between border-b border-[color:var(--line-soft)] pb-2.5 mb-3">
+            <span class="font-mono text-[0.68rem] tracking-wider text-[color:var(--fg-3)] font-bold uppercase">GITHUB // REPOS</span>
+            <Icon name="arrowUpRight" class="h-3.5 w-3.5 text-[color:var(--fg-3)] group-hover:text-[color:var(--cyan)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+          </div>
+          <div class="flex items-center gap-2.5">
+            <Icon name="github" class="h-5 w-5 text-[color:var(--cyan)]" />
+            <span class="text-sm font-semibold text-[color:var(--fg)] group-hover:text-[color:var(--cyan)] transition-colors">github.com/rubenmtzb</span>
+          </div>
+        </div>
+        <div class="mt-4 pt-3 border-t border-[color:var(--line-soft)] text-xs text-[color:var(--fg-3)]">
+          {lang === 'es' ? 'Explora mis proyectos y código' : 'Check out repositories & code'}
+        </div>
+      </a>
+    </div>
+
+    <!-- Barra de Acciones Final con Enlace a CV -->
+    <div class="reveal mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-[color:var(--line-soft)] pt-6" style="--i:3">
+      <span class="t-meta text-xs text-[color:var(--fg-3)]">
+        {lang === 'es' ? '¿Prefieres un resumen completo en documento?' : 'Looking for a full printer-ready summary?'}
+      </span>
+      <a href={cvPath} class="btn btn-ghost text-xs !py-2 !px-4">
+        <span>{t(lang, 'v2.hero.cv')}</span>
+        <Icon name="arrowUpRight" class="h-4 w-4" />
+      </a>
+    </div>
   </div>
 </section>
