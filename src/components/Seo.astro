@@ -1,0 +1,80 @@
+---
+import { abs, buildJsonLd, getCluster, getPage } from '../lib/content'
+import type { Lang } from '../i18n/ui'
+
+interface Props {
+  pageKey: string
+  lang: Lang
+  pageType?: 'WebPage' | 'ProfilePage'
+}
+
+const { pageKey, lang, pageType = 'WebPage' } = Astro.props
+
+const page = await getPage(pageKey, lang)
+const cluster = await getCluster(pageKey)
+const canonical = abs(page.path)
+
+/**
+ * Invariante del clúster: todos los miembros emiten el MISMO conjunto
+ * hreflang, se incluyen a sí mismos y declaran x-default. Se genera desde
+ * los datos, así que no puede divergir entre páginas del mismo clúster.
+ */
+const alternates = cluster.alternates.map((a) => ({ lang: a.lang, href: abs(a.path) }))
+const xDefault = abs(cluster.xDefault)
+
+const jsonLd = await buildJsonLd({
+  lang,
+  pageUrl: canonical,
+  pageType,
+  pageName: page.title,
+  pageDescription: page.description,
+})
+
+const ogLocale = lang === 'es' ? 'es_ES' : 'en_US'
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>{page.title}</title>
+<meta name="description" content={page.description} />
+<meta name="author" content="Rubén Martínez Bernabe" />
+<meta name="robots" content={page.indexable ? 'index, follow' : 'noindex, follow'} />
+
+<link rel="canonical" href={canonical} />
+{
+  /*
+   * hreflang solo en páginas indexables. Google lo ignora en páginas con
+   * noindex, y declararlo hacia una URL no indexable es un error de
+   * configuración: la preview y una eventual V1 en noindex no lo emiten.
+   */
+  page.indexable && (
+    <>
+      {alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={a.href} />)}
+      <link rel="alternate" hreflang="x-default" href={xDefault} />
+    </>
+  )
+}
+
+<meta property="og:type" content="profile" />
+<meta property="og:site_name" content="rubenitx.me" />
+<meta property="og:locale" content={ogLocale} />
+<meta property="og:url" content={canonical} />
+<meta property="og:title" content={page.title} />
+<meta property="og:description" content={page.description} />
+<meta property="og:image" content={abs(page.ogImage)} />
+<meta property="og:image:alt" content={page.ogImageAlt} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={canonical} />
+<meta name="twitter:title" content={page.title} />
+<meta name="twitter:description" content={page.description} />
+<meta name="twitter:image" content={abs(page.ogImage)} />
+<meta name="twitter:image:alt" content={page.ogImageAlt} />
+
+<link rel="icon" type="image/png" href="/avatar.png" />
+<link rel="apple-touch-icon" href="/avatar.png" />
+<link rel="manifest" href="/manifest.json" />
+<meta name="theme-color" content="#030712" />
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />

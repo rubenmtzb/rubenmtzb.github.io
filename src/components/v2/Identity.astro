@@ -1,0 +1,131 @@
+---
+import Icon from '../Icon.astro'
+import { getProfile } from '../../lib/content'
+import { TECH } from '../../lib/tech'
+import { V2_ANCHOR_ALIASES, t, type Lang } from '../../i18n/ui'
+
+interface Props { lang: Lang; cvPath: string }
+const { lang, cvPath } = Astro.props
+
+const profile = await getProfile(lang)
+
+/**
+ * Las seis tecnologías del hero. El color, el icono y el enlace salen de TECH.
+ * Todas son marcas con logotipo y sitio propio: si alguna dejara de tenerlos
+ * el build falla aquí, en lugar de emitir una chip rota o un enlace vacío.
+ */
+const HERO_TECH = ['Java', 'Spring Boot', 'React', 'TypeScript', 'Docker', 'Python'] as const
+const mainTech = HERO_TECH.map((name) => {
+  const meta = TECH[name]
+  if (!meta?.icon || !meta.url) throw new Error(`hero: "${name}" necesita icon y url en TECH`)
+  return { name, ...meta, icon: meta.icon, url: meta.url }
+})
+
+const ICONS = { LinkedIn: 'linkedin', GitHub: 'github' } as const
+---
+
+<section id="identity" class="relative">
+  {(V2_ANCHOR_ALIASES['identity'] ?? []).map((a) => <span id={a} class="anchor-alias" aria-hidden="true" />)}
+
+  <div class="shell">
+    <div class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-10 lg:gap-14 pt-24 pb-12 sm:pt-28 sm:pb-16 lg:pt-32 lg:pb-16 min-h-[60vh]">
+
+      <!-- Retrato ASCII del Avatar (Centrado, compacto y 100% responsive) -->
+      <figure class="reveal m-0 shrink-0 flex justify-center order-1 md:order-2" style="--i:1">
+        <div class="ascii-card relative rounded-2xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-3 sm:p-4 shadow-xl">
+          <div class="ascii-stage">
+            <canvas id="ascii" class="ascii-canvas" aria-hidden="true"></canvas>
+            <noscript>
+              <img src="/avatar.png" width="280" height="280" alt={profile.name} class="ascii-fallback" />
+            </noscript>
+          </div>
+        </div>
+      </figure>
+
+      <!-- Bloque de texto e introducción -->
+      <div class="flex flex-col items-center text-center md:items-start md:text-left max-w-lg order-2 md:order-1">
+        <!-- Badge de disponibilidad sutil -->
+        <div class="reveal inline-flex items-center gap-2 rounded-full border border-[color:var(--line)] bg-[color:var(--ink-800)] px-3 py-1 text-xs">
+          <span class="relative flex h-2 w-2">
+            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--cyan)] opacity-75"></span>
+            <span class="relative inline-flex h-2 w-2 rounded-full bg-[color:var(--cyan)]"></span>
+          </span>
+          <span class="t-meta text-[0.68rem] text-[color:var(--fg-2)]">{t(lang, 'v2.hero.status')}</span>
+        </div>
+
+        <!-- Título con animación typewriter alternante: rubén <-> rubenitx -->
+        <h1 class="reveal mt-3.5 text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-[color:var(--fg)]">
+          <span id="hero-typewriter">
+            {t(lang, 'v2.hero.greeting')}{' '}
+            <span class="text-[color:var(--blue-bright)] font-extrabold">{profile.name.split(' ')[0].toLowerCase()}</span>
+            <span class="text-[color:var(--fg-2)] font-normal">.</span>
+          </span>
+          <span class="intro-cursor text-[color:var(--cyan)] font-light animate-pulse" aria-hidden="true">|</span>
+        </h1>
+
+        <p class="reveal mt-2 text-base sm:text-lg font-medium text-[color:var(--fg-2)]" style="--i:1">
+          {profile.jobTitle} — {profile.locality}, {lang === 'es' ? 'España' : 'Spain'}
+        </p>
+
+        <p class="reveal mt-3 text-sm leading-relaxed text-[color:var(--fg-3)] max-w-md" style="--i:2">
+          {profile.headline}
+        </p>
+
+        <!-- Chips de tecnologías principales interactivos y con glow -->
+        <ul class="reveal mt-4 flex flex-wrap justify-center md:justify-start items-center gap-2" style="--i:3">
+          {mainTech.map((tech) => (
+            <li>
+              <a
+                href={tech.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hero-tech-chip"
+                style={`--chip-color: ${tech.color}; --chip-glow: ${tech.glow};`}
+                aria-label={`${tech.name} — ${lang === 'es' ? 'sitio oficial' : 'official site'}`}
+              >
+                <img
+                  src={tech.icon}
+                  alt={tech.name}
+                  width="14"
+                  height="14"
+                  loading="eager"
+                  decoding="async"
+                />
+                <span>{tech.name}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        <!-- Botones de acción y contacto -->
+        <div class="reveal mt-6 flex flex-wrap justify-center md:justify-start items-center gap-3" style="--i:4">
+          <a href={`mailto:${profile.email}`} class="btn btn-primary text-xs sm:text-sm !py-2 !px-4">
+            <Icon name="mail" class="h-3.5 w-3.5" />
+            {lang === 'es' ? '¡Escríbeme!' : 'Say hi!'}
+          </a>
+          <a href={cvPath} class="btn btn-ghost text-xs sm:text-sm !py-2 !px-4">
+            {t(lang, 'v2.hero.cv')}
+          </a>
+        </div>
+
+        <!-- Enlaces a redes y trigger del juego -->
+        <ul class="reveal mt-5 flex items-center justify-center md:justify-start gap-4" style="--i:5">
+          {profile.socials.map((s) => (
+            <li>
+              <a
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-[color:var(--fg-3)] transition hover:text-[color:var(--blue-bright)]"
+                aria-label={s.label}
+              >
+                <Icon name={ICONS[s.label as keyof typeof ICONS] ?? 'globe'} class="h-4 w-4" />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>

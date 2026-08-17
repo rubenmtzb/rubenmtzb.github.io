@@ -1,0 +1,109 @@
+---
+import Icon from '../Icon.astro'
+import { getAlternate } from '../../lib/content'
+import { NAV, t, type Lang } from '../../i18n/ui'
+
+interface Props {
+  lang: Lang
+  pageKey: string
+}
+const { lang, pageKey } = Astro.props
+
+/** Selector de idioma: enlace real a la URL equivalente, no estado en cliente. */
+const other = await getAlternate(pageKey, lang)
+---
+
+<header class="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 no-print">
+  <nav
+    id="site-nav"
+    aria-label="Principal"
+    class="mx-auto flex w-full max-w-6xl items-center justify-between rounded-2xl border border-transparent bg-black/20 px-4 py-3 transition-all duration-300 sm:px-6"
+  >
+    <a
+      href="#home"
+      class="text-left font-mono text-lg font-bold uppercase tracking-[0.4em] text-green-300 text-glow-green transition hover:text-green-200"
+      aria-label={t(lang, 'nav.home')}>RMB</a
+    >
+
+    <!-- Desktop: todos los enlaces existen en el HTML -->
+    <div class="hidden items-center gap-1 lg:flex">
+      <div id="nav-links" class="relative flex items-center gap-1">
+        <span class="nav-pill" aria-hidden="true"></span>
+        {
+          NAV.map((item) => (
+            <a
+              href={`#${item.id}`}
+              data-nav={item.id}
+              class="relative isolate z-10 whitespace-nowrap rounded-full px-2.5 py-2 text-xs uppercase tracking-[0.2em] text-dim transition duration-300 hover:text-green-200"
+            >
+              {item[lang]}
+            </a>
+          ))
+        }
+      </div>
+      <div class="ml-2 border-l border-green-500/20 pl-3">
+        <a
+          href={other.path}
+          hreflang={other.lang}
+          rel="alternate"
+          class="flex items-center gap-2 rounded-full border border-green-500/20 bg-black/40 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-green-300 transition hover:border-green-300/40 hover:bg-green-500/10 hover:text-green-100"
+          aria-label={t(lang, 'nav.langSwitch')}
+        >
+          <Icon name="globe" class="h-3.5 w-3.5" />
+          <span>{t(lang, 'nav.langNext')}</span>
+        </a>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      id="menu-toggle"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      class="inline-flex items-center justify-center rounded-xl border border-green-500/20 bg-black/40 p-2 text-green-300 transition hover:border-green-400/40 hover:text-green-200 lg:hidden"
+      aria-label={t(lang, 'nav.openMenu')}
+      data-close-label={t(lang, 'nav.closeMenu')}
+    >
+      <Icon name="menu" class="h-5 w-5" />
+    </button>
+  </nav>
+
+  <!--
+    El menú móvil y sus enlaces existen siempre en el HTML de build.
+    El script solo alterna el atributo hidden: sin JavaScript el menú
+    permanece visible y la navegación sigue siendo operativa.
+  -->
+  <div
+    id="mobile-menu"
+    class="mx-auto mt-3 w-full max-w-6xl overflow-hidden rounded-2xl border border-green-500/20 bg-black/80 backdrop-blur-md lg:hidden"
+  >
+    <ul class="space-y-1 p-3">
+      {
+        NAV.map((item) => (
+          <li>
+            <a
+              href={`#${item.id}`}
+              data-nav-mobile={item.id}
+              class="flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-sm uppercase tracking-[0.3em] text-dim transition hover:bg-green-500/5 hover:text-green-300"
+            >
+              <span>{item[lang]}</span>
+              <span class="text-xs text-dim">/{item.id}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="border-t border-green-500/20 p-3">
+      <a
+        href={other.path}
+        hreflang={other.lang}
+        rel="alternate"
+        class="inline-flex items-center gap-2 rounded-full border border-green-500/20 bg-black/40 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-green-300"
+        aria-label={t(lang, 'nav.langSwitch')}
+      >
+        <Icon name="globe" class="h-3.5 w-3.5" />
+        <span>{t(lang, 'nav.langNext')}</span>
+      </a>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,210 @@
+@import 'tailwindcss';
+/* Tipografía autohospedada: elimina el tercero de Google Fonts y su
+   petición bloqueante. Solo el subconjunto latino. */
+@import '@fontsource-variable/jetbrains-mono/wght.css';
+
+/* ============================================================
+   Identidad visual de la V1 — portada desde src/index.css.
+   Se han retirado seis reglas que estaban definidas y sin usar:
+   text-glow-cyan, text-glow-purple, blink-anim, border-glow,
+   section-container y section-title.
+   ============================================================ */
+
+@theme {
+  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', 'Fira Code', 'SF Mono', 'Cascadia Code', monospace;
+}
+
+/* ---------- BASE ---------- */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background: #030712;
+  color: #e2e8f0;
+  font-family: var(--font-mono);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: #00ff8833;
+  color: #00ff88;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #030712; }
+::-webkit-scrollbar-thumb { background: #00ff8844; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #00ff8866; }
+
+/* ---------- ACCESIBILIDAD ----------
+   Contraste: los tonos anteriores (green-500/45 en la navegación y
+   green-500/30 en las etiquetas del hero) daban ~2,5:1 sobre #030712,
+   muy por debajo del 4,5:1 exigido. Estos tokens superan 7:1 y
+   mantienen la jerarquía visual entre estado activo e inactivo.        */
+:root {
+  --green-dim: #56b381;   /* ~7.8:1 sobre #030712 */
+  --green-soft: #7fd4a6;  /* estados hover */
+}
+
+.text-dim { color: var(--green-dim); }
+
+:where(a, button, [tabindex]):focus-visible {
+  outline: 2px solid #7fd4a6;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 50%;
+  top: 0.5rem;
+  translate: -50% -200%;
+  z-index: 100;
+  background: #030712;
+  border: 1px solid #4ade80;
+  color: #bbf7d0;
+  padding: 0.6rem 1.2rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  transition: translate 0.2s ease;
+}
+.skip-link:focus-visible { translate: -50% 0; }
+
+/* Alias de anclas heredadas: destino invisible, sin efecto semántico. */
+.anchor-alias {
+  display: block;
+  height: 0;
+  scroll-margin-top: 6rem;
+}
+
+/* ---------- REVELADO PROGRESIVO ----------
+   Regla: visible es el estado por defecto. El estado inicial de la
+   animación solo se aplica cuando hay JS confirmado y el usuario no ha
+   pedido menos movimiento. Así el HTML de build nunca sale con
+   opacity:0 en contenido.                                              */
+.reveal { opacity: 1; transform: none; }
+
+html.js .reveal {
+  opacity: 0;
+  transform: translateY(1.25rem);
+}
+html.js .reveal.is-in {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--i, 0) * 80ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  html.js .reveal,
+  html.js .reveal.is-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .scanline-anim,
+  .particle,
+  .glow-pulse,
+  .grid-move,
+  .glitch-layer::before,
+  .glitch-layer::after,
+  .pulse-dot { animation: none !important; }
+}
+
+/* ---------- ANIMACIONES ---------- */
+@keyframes scanline {
+  0% { transform: translate3d(0, -12px, 0); }
+  100% { transform: translate3d(0, calc(100vh + 12px), 0); }
+}
+@keyframes floatParticle {
+  0% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.5; }
+  50% { transform: translate3d(0, -24px, 0) scale(1.15); opacity: 1; }
+  100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.5; }
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 8px #00ff88, 0 0 18px #00ff8844; }
+  50% { box-shadow: 0 0 22px #00ff88, 0 0 44px #00ff8877, 0 0 70px #00ff8822; }
+}
+@keyframes gridMove {
+  0% { background-position: 0 0; }
+  100% { background-position: 40px 40px; }
+}
+@keyframes glitch {
+  0% { clip-path: inset(0 0 95% 0); transform: translate(-4px, 0); }
+  10% { clip-path: inset(25% 0 55% 0); transform: translate(4px, 0); }
+  20% { clip-path: inset(55% 0 25% 0); transform: translate(-3px, 0); }
+  30% { clip-path: inset(75% 0 8% 0); transform: translate(3px, 0); }
+  40% { clip-path: inset(0 0 0 0); transform: translate(0, 0); }
+  100% { clip-path: inset(0 0 0 0); transform: translate(0, 0); }
+}
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(1.35); }
+}
+
+.scanline-anim { animation: scanline 3.5s linear infinite; will-change: transform; }
+.particle { animation: floatParticle var(--dur, 3s) ease-in-out var(--delay, 0s) infinite; will-change: transform, opacity; }
+.glow-pulse { animation: pulse-glow 2s ease-in-out infinite; }
+.grid-move { animation: gridMove 3s linear infinite; will-change: background-position; }
+.pulse-dot { animation: pulseDot 1.8s ease-in-out infinite; }
+
+/* ---------- GLOWS ---------- */
+.text-glow-green { text-shadow: 0 0 12px #00ff88, 0 0 24px #00ff8866; }
+.box-glow-green { box-shadow: 0 0 15px #00ff8833, 0 0 30px #00ff8811; }
+.box-glow-green-strong { box-shadow: 0 0 20px #00ff8855, 0 0 40px #00ff8822, 0 0 60px #00ff8811; }
+
+/* ---------- GLITCH ---------- */
+.glitch-layer { position: relative; display: inline-block; }
+.glitch-layer::before,
+.glitch-layer::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+}
+.glitch-layer::before { color: #00ffff; animation: glitch 5s ease-in-out infinite; animation-delay: 0.15s; }
+.glitch-layer::after { color: #ff00ff; animation: glitch 5s ease-in-out infinite; animation-delay: 0.3s; }
+
+.terminal-prompt::before { content: '> '; color: #00ff88; }
+
+/* ---------- NAVEGACIÓN ----------
+   La píldora activa sustituye al layoutId de Framer Motion: un único
+   elemento absoluto cuya posición fija el script de scroll-spy.        */
+.nav-pill {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 0;
+  border-radius: 9999px;
+  border: 1px solid rgb(134 239 172 / 0.7);
+  background: linear-gradient(135deg, rgb(0 255 136 / 0.24), rgb(0 255 136 / 0.08));
+  box-shadow: 0 0 0 1px rgb(134 239 172 / 0.12), 0 0 18px rgb(0 255 136 / 0.28);
+  opacity: 0;
+  pointer-events: none;
+}
+html.js .nav-pill {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), width 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  html.js .nav-pill { transition: none; }
+}
+
+/* Menú móvil: el markup y los enlaces existen siempre en el HTML;
+   el script solo alterna el atributo hidden. */
+#mobile-menu[hidden] { display: none; }
+
+/* ---------- IMPRESIÓN DEL CV ---------- */
+@media print {
+  .no-print { display: none !important; }
+  html, body { background: #fff !important; color: #111 !important; }
+  a { color: #111 !important; text-decoration: underline; }
+  .cv-page { box-shadow: none !important; border: 0 !important; }
+}

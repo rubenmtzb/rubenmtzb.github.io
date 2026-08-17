@@ -1,0 +1,180 @@
+[
+  {
+    "id": "en:ruben",
+    "key": "ruben",
+    "lang": "en",
+    "name": "Rubén Martínez Bernabe",
+    "jobTitle": "Software Engineer",
+    "positioning": "Full-Stack Developer",
+    "locality": "Barcelona",
+    "region": "Cataluña",
+    "country": "ES",
+    "email": "rmartbernabe@gmail.com",
+    "bioShort": "Full-Stack Developer with solid experience in the Java ecosystem, turning complex problems into efficient, scalable and robust software.",
+    "bioLong": "Full-Stack Developer with solid experience in the Java ecosystem. I focus on transforming complex problems into efficient, scalable, and robust solutions for large-scale projects. I build backend services with Spring Boot and interactive frontends with React, with a track record in REST API design, batch processing, and Liferay portal development. My goal is to deliver value through clean code and high performance.",
+    "socials": [
+      {
+        "label": "LinkedIn",
+        "href": "https://www.linkedin.com/in/rubenmartinezbernabe/"
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/rubenmtzb"
+      }
+    ],
+    "focus": "Solid architectures and products with real impact.",
+    "mindset": "Systems thinking, constant iteration, and obsession with detail.",
+    "terminalCard": {
+      "role": "Software Engineer",
+      "company": "Egarsat",
+      "location": "Barcelona, Spain",
+      "passion": [
+        "Clean Code",
+        "System Design",
+        "AI/ML"
+      ]
+    },
+    "contactHeadline": "Have an interesting project?",
+    "contactSubheadline": "I'm open to conversations about ambitious backend, full-stack, or research-oriented projects.",
+    "languages": [
+      {
+        "name": "Spanish",
+        "level": "Native"
+      },
+      {
+        "name": "Catalan",
+        "level": "Native"
+      },
+      {
+        "name": "English",
+        "level": "Professional working proficiency"
+      }
+    ],
+    "cvOnly": {
+      "availability": "Open to remote, hybrid, or on-site opportunities",
+      "referencesNote": "References available upon request.",
+      "summaryTitle": "Professional Summary",
+      "summaryKicker": "A concise snapshot for recruiters scanning the CV quickly.",
+      "summaryLead": "Full-Stack Developer with {years} of enterprise experience delivering software across backend, frontend, and platform layers.",
+      "summaryBody": "I build reliable digital products end to end — from REST APIs and batch workflows to React interfaces, Liferay portals, and production-ready deployments. My profile combines hands-on delivery at Egarsat, people leadership in fast-paced environments, ongoing Computer Science studies at UOC, and research collaboration through a published SARS-CoV-2 mutation portal. I am currently deepening my expertise in DevOps, AI/LLMs, and blockchain technology.",
+      "metrics": [
+        {
+          "title": "Enterprise Delivery",
+          "description": "Shipping production software for {years}, with backend, frontend, and portal ownership."
+        },
+        {
+          "title": "Core Stack",
+          "description": "Java, Spring Boot, React, TypeScript, Liferay, Docker, MySQL, REST APIs."
+        },
+        {
+          "title": "Extra Edge",
+          "description": "Published research collaboration plus leadership experience in high-pressure environments."
+        }
+      ],
+      "interests": [
+        {
+          "title": "AI & Large Language Models",
+          "description": "Building stronger intuition for modern AI tooling and workflows."
+        },
+        {
+          "title": "Blockchain & Smart Contracts",
+          "description": "Exploring decentralized systems, protocols, and practical applications."
+        },
+        {
+          "title": "System Design & Clean Architecture",
+          "description": "Designing resilient software that scales with product and team growth."
+        }
+      ]
+    },
+    "headline": "Software engineer building scalable systems — Java, Spring Boot and React, from the API to production."
+  },
+  {
+    "id": "es:ruben",
+    "key": "ruben",
+    "lang": "es",
+    "name": "Rubén Martínez Bernabe",
+    "jobTitle": "Ingeniero de Software",
+    "positioning": "Desarrollador Full-Stack",
+    "locality": "Barcelona",
+    "region": "Cataluña",
+    "country": "ES",
+    "email": "rmartbernabe@gmail.com",
+    "bioShort": "Desarrollador Full-Stack con sólida experiencia en el ecosistema Java, transformando problemas complejos en software eficiente, escalable y robusto.",
+    "bioLong": "Desarrollador Full-Stack con sólida experiencia en el ecosistema Java. Me enfoco en transformar problemas complejos en soluciones eficientes, escalables y robustas para proyectos de gran envergadura. Construyo servicios backend con Spring Boot e interfaces interactivas con React, con historial en diseño de APIs REST, procesamiento batch y desarrollo sobre portales Liferay. Mi objetivo es aportar valor mediante código limpio y alto rendimiento.",
+    "socials": [
+      {
+        "label": "LinkedIn",
+        "href": "https://www.linkedin.com/in/rubenmartinezbernabe/"
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/rubenmtzb"
+      }
+    ],
+    "focus": "Arquitecturas sólidas y producto con impacto real.",
+    "mindset": "Pensamiento sistémico, iteración constante y obsesión por el detalle.",
+    "terminalCard": {
+      "role": "Ingeniero de Software",
+      "company": "Egarsat",
+      "location": "Barcelona, España",
+      "passion": [
+        "Clean Code",
+        "System Design",
+        "AI/ML"
+      ]
+    },
+    "contactHeadline": "¿Tienes un proyecto interesante?",
+    "contactSubheadline": "Estoy abierto a conversaciones sobre proyectos ambiciosos de backend, full-stack o investigación.",
+    "languages": [
+      {
+        "name": "Español",
+        "level": "Nativo"
+      },
+      {
+        "name": "Catalán",
+        "level": "Nativo"
+      },
+      {
+        "name": "Inglés",
+        "level": "Competencia profesional"
+      }
+    ],
+    "cvOnly": {
+      "availability": "Disponible para oportunidades remotas, híbridas o presenciales",
+      "referencesNote": "Referencias disponibles bajo petición.",
+      "summaryTitle": "Resumen profesional",
+      "summaryKicker": "Una visión clara para recruiters que escanean el CV en segundos.",
+      "summaryLead": "Desarrollador Full-Stack con {years} de experiencia empresarial entregando software en backend, frontend y capas de plataforma.",
+      "summaryBody": "Construyo productos digitales fiables de extremo a extremo: desde APIs REST y procesos batch hasta interfaces con React, portales Liferay y despliegues listos para producción. Mi perfil combina entrega técnica en Egarsat, liderazgo de equipos en entornos exigentes, estudios actuales de Ingeniería Informática en la UOC y colaboración investigadora en un portal publicado sobre mutaciones de SARS-CoV-2. Actualmente sigo profundizando en DevOps, IA/LLMs y tecnología blockchain.",
+      "metrics": [
+        {
+          "title": "Entrega empresarial",
+          "description": "Desarrollando software en producción desde hace {years}, con ownership de backend, frontend y portales."
+        },
+        {
+          "title": "Stack principal",
+          "description": "Java, Spring Boot, React, TypeScript, Liferay, Docker, MySQL y APIs REST."
+        },
+        {
+          "title": "Valor diferencial",
+          "description": "Colaboración en investigación publicada y experiencia liderando equipos en escenarios de alta presión."
+        }
+      ],
+      "interests": [
+        {
+          "title": "IA y Grandes Modelos de Lenguaje",
+          "description": "Desarrollando mejor criterio sobre herramientas y flujos de trabajo con IA moderna."
+        },
+        {
+          "title": "Blockchain y Smart Contracts",
+          "description": "Explorando sistemas descentralizados, protocolos y aplicaciones prácticas."
+        },
+        {
+          "title": "System Design y Clean Architecture",
+          "description": "Diseñando software resiliente que escala con el producto y el equipo."
+        }
+      ]
+    },
+    "headline": "Ingeniero de software construyendo sistemas escalables — Java, Spring Boot y React, de la API a producción."
+  }
+]

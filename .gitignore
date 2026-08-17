@@ -22,3 +22,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Astro
+.astro/
+
+# Material personal original: nunca entra al repositorio.
+# Las versiones WebP optimizadas de src/assets/personal-web/ sí se versionan
+# para que el build estático sea reproducible fuera del equipo local.
+*.jpeg
+*.JPG
+*.MOV
+*.mp4
+*.heic

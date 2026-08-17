@@ -1,0 +1,461 @@
+---
+import Icon from '../Icon.astro'
+import EduProgram from './EduProgram.astro'
+import TechChip from './TechChip.astro'
+import { getProfile, getEducation, getCerts } from '../../lib/content'
+import { V2_ANCHOR_ALIASES, type Lang } from '../../i18n/ui'
+
+interface Props { lang: Lang }
+const { lang } = Astro.props
+
+const profile = await getProfile(lang)
+const education = await getEducation(lang)
+const certs = await getCerts(lang)
+const currentEducation = education.find((item) => item.inProgress) ?? education[0]
+
+type EduEntry = (typeof education)[number]
+
+/*
+ * Un bloque por centro, no por titulación: de Instituto la Guineueta salen DAW
+ * y SMX, así que el centro aparecía dos veces en las píldoras y en el slider.
+ * Se agrupa conservando el orden del contenido y las dos titulaciones se
+ * muestran dentro del mismo bloque, igual que ya hace alumniOf en el JSON-LD.
+ */
+const eduGroups: Array<{ institution: string; items: EduEntry[] }> = []
+for (const item of education) {
+  const group = eduGroups.find((g) => g.institution === item.institution)
+  if (group) group.items.push(item)
+  else eduGroups.push({ institution: item.institution, items: [item] })
+}
+
+/** Periodo del centro: rango que cubre todas sus titulaciones. */
+const groupPeriod = (items: EduEntry[]) => {
+  if (items.length === 1) return items[0].periodLabel
+  const startYear = items.reduce((min, i) => (i.start < min ? i.start : min), items[0].start).slice(0, 4)
+  if (items.some((i) => i.end === null)) return `${startYear} - ${lang === 'es' ? 'Actualidad' : 'Present'}`
+  const endYear = items.reduce((max, i) => ((i.end ?? '') > max ? (i.end ?? '') : max), '').slice(0, 4)
+  return `${startYear} - ${endYear}`
+}
+
+/** Instituciones sin logotipo propio verificable: se usa el icono genérico 'graduation'. */
+const ICONS_MAP: Record<string, string | undefined> = {
+  uoc: '/icons/uoc.svg',
+  'inesem-devops': '/icons/inesem.svg',
+  daw: undefined,
+  smx: undefined,
+}
+
+const BRAND_METAS: Record<string, { logo: string; bg: string; text: string; border: string; glow: string; summary: string }> = {
+  'claude-code': {
+    logo: '/icons/anthropic.svg',
+    bg: 'rgba(217, 119, 6, 0.14)',
+    text: '#fbbf24',
+    border: 'rgba(217, 119, 6, 0.4)',
+    glow: 'rgba(251, 191, 36, 0.3)',
+    summary: lang === 'es' ? 'Ingeniería de prompts avanzada, flujos agénticos y automatización de código con LLMs de Anthropic.' : 'Advanced prompt engineering, agentic workflows, and code automation with Anthropic LLMs.'
+  },
+  'python-master': {
+    logo: '/icons/udemy.svg',
+    bg: 'rgba(56, 189, 248, 0.14)',
+    text: '#38bdf8',
+    border: 'rgba(56, 189, 248, 0.4)',
+    glow: 'rgba(56, 189, 248, 0.3)',
+    summary: lang === 'es' ? 'Programación orientada a objetos, scripting de automatización, análisis de datos y control de versiones con Git.' : 'Object-oriented programming, automation scripting, data analysis, and Git workflows.'
+  },
+  'javascript-master': {
+    logo: '/icons/udemy.svg',
+    bg: 'rgba(250, 204, 21, 0.14)',
+    text: '#facc15',
+    border: 'rgba(250, 204, 21, 0.4)',
+    glow: 'rgba(250, 204, 21, 0.3)',
+    summary: lang === 'es' ? 'JavaScript moderno (ES6+), programación asíncrona, promesas, manipulación del DOM y arquitectura SPA.' : 'Modern JavaScript (ES6+), asynchronous programming, promises, DOM manipulation, and SPA architecture.'
+  },
+  'java-junior': {
+    logo: '/icons/esplai.png',
+    bg: 'rgba(249, 115, 22, 0.14)',
+    text: '#fb923c',
+    border: 'rgba(249, 115, 22, 0.4)',
+    glow: 'rgba(249, 115, 22, 0.3)',
+    summary: lang === 'es' ? 'Fundamentos de Java empresarial, POO, estructuras de datos y desarrollo backend con control de versiones.' : 'Enterprise Java foundations, OOP, data structures, and backend development with version control.'
+  },
+}
+---
+
+<section id="about" class="band border-t border-[color:var(--line-soft)]">
+  {(V2_ANCHOR_ALIASES['about'] ?? []).map((a) => <span id={a} class="anchor-alias" aria-hidden="true" />)}
+
+  <div class="shell">
+    <!-- Cabecera de sección 02 -->
+    <header class="rule-head reveal">
+      <span class="t-index">02</span>
+      <h2 class="t-h2">{lang === 'es' ? 'Sobre Mí & Formación' : 'About & Education'}</h2>
+    </header>
+
+    <!-- ══════════ 02.1 // PERFIL & FILOSOFÍA DE INGENIERÍA ══════════ -->
+    <div class="reveal mt-12" style="--i:1">
+      <div class="flex items-center justify-between mb-6 border-b border-[color:var(--line-soft)] pb-3">
+        <span class="font-mono text-xs text-[color:var(--cyan)] font-bold tracking-wider uppercase">02.1 // PROFILE & MINDSET</span>
+        <span class="t-meta text-xs text-[color:var(--fg-3)]">{lang === 'es' ? 'Ingeniería con propósito' : 'Purpose-driven engineering'}</span>
+      </div>
+
+      <div id="profile-workbench" class="profile-workbench overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[color:var(--ink-900)] shadow-2xl">
+        <div class="profile-workbench-bar flex items-center justify-between border-b border-[color:var(--line-soft)] px-4 py-3 font-mono text-[0.68rem] text-[color:var(--fg-3)]">
+          <div class="flex items-center gap-1.5" aria-hidden="true">
+            <span class="h-2.5 w-2.5 rounded-full bg-rose-500/80"></span>
+            <span class="h-2.5 w-2.5 rounded-full bg-amber-500/80"></span>
+            <span class="h-2.5 w-2.5 rounded-full bg-emerald-500/80"></span>
+          </div>
+          <span>ruben.workspace</span>
+          <span class="hidden sm:block text-emerald-400">{lang === 'es' ? 'sesión activa' : 'active session'}</span>
+        </div>
+
+        <div class="grid lg:grid-cols-[13rem_minmax(0,1fr)]">
+          <aside class="border-b border-[color:var(--line-soft)] bg-[color:var(--ink-950)]/70 p-3 lg:border-b-0 lg:border-r" aria-label={lang === 'es' ? 'Archivos del perfil' : 'Profile files'}>
+            <p class="px-2 pb-2 font-mono text-[0.62rem] uppercase tracking-[0.18em] text-[color:var(--fg-3)]">
+              {lang === 'es' ? 'Explorador' : 'Explorer'}
+            </p>
+            <div class="flex gap-1 overflow-x-auto lg:flex-col">
+              <button type="button" class="profile-file is-active" data-profile-tab="identity" aria-selected="true">
+                <span class="profile-file-icon text-[color:var(--cyan)]">{'{ }'}</span><span>identity.json</span>
+              </button>
+              <button type="button" class="profile-file" data-profile-tab="focus" aria-selected="false">
+                <Icon name="briefcase" class="h-3.5 w-3.5 text-[color:var(--blue-bright)]" /><span>engineering.md</span>
+              </button>
+              <button type="button" class="profile-file" data-profile-tab="learning" aria-selected="false">
+                <Icon name="graduation" class="h-3.5 w-3.5 text-emerald-400" /><span>learning.log</span>
+              </button>
+            </div>
+          </aside>
+
+          <div class="min-w-0">
+            <div class="flex items-center border-b border-[color:var(--line-soft)] px-4">
+              <span id="profile-tab-label" class="border-b-2 border-[color:var(--cyan)] py-3 font-mono text-xs text-[color:var(--fg)]">identity.json</span>
+            </div>
+
+            <section class="profile-panel is-active p-5 sm:p-7" data-profile-panel="identity">
+              <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]">
+                <div>
+                  <p class="font-mono text-xs text-[color:var(--cyan)]">$ cat identity.json</p>
+                  <h3 class="mt-4 text-xl font-bold tracking-tight text-[color:var(--fg)] sm:text-2xl">
+                    {lang === 'es' ? 'Sistemas claros, decisiones sólidas y software que llega a producción.' : 'Clear systems, sound decisions, and software that reaches production.'}
+                  </h3>
+                  <p class="mt-4 text-sm leading-relaxed text-[color:var(--fg-2)]">{profile.bioLong}</p>
+                </div>
+                <pre class="profile-code"><code>{`{\n  "role": "${profile.jobTitle}",\n  "location": "${profile.locality}, ${lang === 'es' ? 'España' : 'Spain'}",\n  "focus": "${profile.focus}",\n  "mindset": "${profile.mindset}"\n}`}</code></pre>
+              </div>
+            </section>
+
+            <section class="profile-panel p-5 sm:p-7" data-profile-panel="focus" hidden>
+              <p class="font-mono text-xs text-[color:var(--cyan)]">$ open engineering.md</p>
+              <div class="mt-5 grid gap-3 md:grid-cols-3">
+                <article class="profile-signal">
+                  <span class="font-mono text-[0.65rem] text-[color:var(--blue-bright)]">01 / ARCHITECTURE</span>
+                  <h3>{lang === 'es' ? 'Diseñar límites' : 'Design boundaries'}</h3>
+                  <p>{lang === 'es' ? 'Dominios claros, APIs mantenibles y decisiones que resisten el crecimiento.' : 'Clear domains, maintainable APIs, and decisions that withstand growth.'}</p>
+                </article>
+                <article class="profile-signal">
+                  <span class="font-mono text-[0.65rem] text-[color:var(--cyan)]">02 / RESEARCH</span>
+                  <h3>{lang === 'es' ? 'Convertir datos en criterio' : 'Turn data into insight'}</h3>
+                  <p>{lang === 'es' ? 'Software aplicado a bioinformática y exploración visual de información científica.' : 'Software applied to bioinformatics and visual exploration of scientific information.'}</p>
+                </article>
+                <article class="profile-signal">
+                  <span class="font-mono text-[0.65rem] text-emerald-400">03 / LEARNING</span>
+                  <h3>{lang === 'es' ? 'Aprender construyendo' : 'Learn by building'}</h3>
+                  <p>{lang === 'es' ? 'IA, DevOps y sistemas distribuidos como práctica constante, no como tendencia.' : 'AI, DevOps, and distributed systems as constant practice, not a trend.'}</p>
+                </article>
+              </div>
+            </section>
+
+            <section class="profile-panel p-5 sm:p-7" data-profile-panel="learning" hidden>
+              <p class="font-mono text-xs text-[color:var(--cyan)]">$ tail -f learning.log</p>
+              <div class="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+                <div class="profile-learning-stream">
+                  <span class="text-emerald-400">●</span>
+                  <div>
+                    <p class="font-mono text-xs text-[color:var(--fg-3)]">{currentEducation.periodLabel}</p>
+                    <h3 class="mt-1 text-lg font-bold text-[color:var(--fg)]">{currentEducation.title}</h3>
+                    <p class="mt-2 text-sm leading-relaxed text-[color:var(--fg-2)]">{currentEducation.description}</p>
+                  </div>
+                </div>
+                <a href="#education" class="inline-flex items-center justify-center gap-2 rounded-lg border border-[color:var(--cyan)]/40 bg-[color:var(--cyan)]/10 px-4 py-2 text-xs font-mono text-[color:var(--cyan)] transition hover:bg-[color:var(--cyan)]/20">
+                  <span>{lang === 'es' ? 'Abrir estudios' : 'Open education'}</span><span>↗</span>
+                </a>
+              </div>
+            </section>
+
+            <form id="profile-command" class="flex items-center gap-2 border-t border-[color:var(--line-soft)] bg-[color:var(--ink-950)]/45 px-4 py-3">
+              <span class="font-mono text-sm text-[color:var(--cyan)]">$</span>
+              <label class="sr-only" for="profile-command-input">{lang === 'es' ? 'Comando de perfil' : 'Profile command'}</label>
+              <input id="profile-command-input" class="min-w-0 flex-1 bg-transparent font-mono text-xs text-[color:var(--fg)] outline-none placeholder:text-[color:var(--fg-3)]" placeholder={lang === 'es' ? 'Prueba: open profile, open focus, open learning' : 'Try: open profile, open focus, open learning'} autocomplete="off" />
+              <button type="submit" class="rounded-md border border-[color:var(--line)] px-2 py-1 font-mono text-[0.65rem] text-[color:var(--fg-2)] transition hover:border-[color:var(--cyan)] hover:text-[color:var(--cyan)]">
+                run ↵
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ 02.2 // FORMACIÓN ACADÉMICA (DYNAMIC TIMELINE SLIDE) ══════════ -->
+    <div class="reveal mt-14 sm:mt-20" style="--i:2">
+      <!-- Cabecera de Formación -->
+      <div class="flex flex-wrap items-center justify-between mb-6 gap-3 border-b border-[color:var(--line-soft)] pb-3">
+        <div>
+          <span class="font-mono text-xs text-[color:var(--cyan)] font-bold tracking-wider uppercase">02.2 // ACADEMIC FOUNDATIONS</span>
+          <h3 class="t-h3 text-[color:var(--fg)] mt-0.5">{lang === 'es' ? 'Estudios & Grado Universitario' : 'Academic Background'}</h3>
+        </div>
+      </div>
+
+      <!-- Selector de Centros / Píldoras de Progreso -->
+      <div class="mb-5 flex flex-wrap gap-2" role="tablist" aria-label="Etapas académicas">
+        {eduGroups.map((group, idx) => {
+          const head = group.items[0]
+          return (
+            <button
+              type="button"
+              class={`edu-timeline-pill flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-mono transition-all ${idx === 0 ? 'is-active' : ''}`}
+              data-edu-index={idx}
+              role="tab"
+              aria-selected={idx === 0 ? 'true' : 'false'}
+            >
+              {ICONS_MAP[head.key] ? (
+                <span class="inline-grid h-4 w-4 shrink-0 place-items-center rounded bg-[color:var(--fg)] p-0.5">
+                  <img src={ICONS_MAP[head.key]} alt="" width="16" height="16" class="h-full w-full object-contain" />
+                </span>
+              ) : (
+                <Icon name="graduation" class="h-3.5 w-3.5 text-[color:var(--blue-bright)]" />
+              )}
+              <span class="font-bold">{group.institution.split('(')[0].trim()}</span>
+              {group.items.length > 1 && (
+                <span class="rounded border border-[color:var(--line-soft)] px-1 text-[0.6rem] text-[color:var(--fg-3)]">
+                  ×{group.items.length}
+                </span>
+              )}
+              {group.items.some((item) => item.inProgress) && (
+                <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" title="En curso"></span>
+              )}
+              {group.items.some((item) => item.grade) && (
+                <span class="text-[0.65rem] text-[color:var(--cyan)] font-bold">★</span>
+              )}
+            </button>
+          )
+        })}
+      </div>
+
+      <!-- Escenario del Slider de Educación: un slide por centro -->
+      <div id="edu-slider-stage" class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-6 sm:p-8 shadow-2xl min-h-[300px]">
+        {eduGroups.map((group, idx) => {
+          const head = group.items[0]
+          const multi = group.items.length > 1
+          const inProgress = group.items.some((item) => item.inProgress)
+          return (
+            <div
+              class={`edu-slide flex flex-col justify-between ${idx === 0 ? 'is-active' : ''}`}
+              data-edu-slide={idx}
+            >
+              <div>
+                <div class="flex flex-wrap items-start justify-between gap-3 mb-4">
+                  <div class="flex items-center gap-2.5">
+                    {ICONS_MAP[head.key] ? (
+                      <span class="inline-grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-[color:var(--fg)] p-1.5 shadow-sm">
+                        <img src={ICONS_MAP[head.key]} alt="" width="36" height="36" class="h-full w-full object-contain" />
+                      </span>
+                    ) : (
+                      <Icon name="graduation" class="h-7 w-7 shrink-0 text-[color:var(--blue-bright)]" />
+                    )}
+                    <div>
+                      <span class="font-mono text-xs font-bold text-[color:var(--blue-bright)] block">
+                        {group.institution}
+                      </span>
+                      <span class="font-mono text-[0.7rem] text-[color:var(--fg-3)]">
+                        {groupPeriod(group.items)}
+                        {multi && (
+                          <span> · {group.items.length} {lang === 'es' ? 'titulaciones' : 'programs'}</span>
+                        )}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    {inProgress ? (
+                      <span class="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-mono text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.2)]">
+                        <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span>{lang === 'es' ? 'En curso · Actualidad' : 'In progress · Current'}</span>
+                      </span>
+                    ) : (!multi && head.grade) ? (
+                      <span class="inline-flex items-center gap-1 rounded-full border border-[color:var(--cyan)]/40 bg-[color:var(--cyan)]/10 px-3 py-1 text-xs font-mono text-[color:var(--cyan)] shadow-[0_0_12px_rgba(111,227,255,0.2)]">
+                        <span>🏆</span>
+                        <span>{head.grade}</span>
+                      </span>
+                    ) : null}
+                  </div>
+                </div>
+
+                {multi ? (
+                  <div class="grid gap-4 lg:grid-cols-2">
+                    {group.items.map((item) => (
+                      <EduProgram item={item} lang={lang} variant="card" />
+                    ))}
+                  </div>
+                ) : (
+                  <EduProgram item={head} lang={lang} variant="solo" />
+                )}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      <!-- Navegación inferior, compartiendo el lenguaje del showcase. -->
+      <div class="slider-footer">
+        <button type="button" id="edu-prev" class="slider-nav-arrow" aria-label={lang === 'es' ? 'Etapa anterior' : 'Previous stage'}>‹</button>
+        <div class="flex items-center gap-3">
+          <span id="edu-counter" class="font-mono text-xs text-[color:var(--fg-3)]">01 / {String(eduGroups.length).padStart(2, '0')}</span>
+          <div id="edu-dots" class="flex items-center gap-2">
+            {eduGroups.map((_, i) => (
+              <button
+                type="button"
+                class={`edu-dot-indicator h-1.5 w-2 rounded-full bg-[color:var(--line)] transition-all duration-300 hover:bg-[color:var(--blue-bright)] ${i === 0 ? 'is-active' : ''}`}
+                data-edu-dot={i}
+                aria-label={`Slide ${i + 1}`}
+              />
+            ))}
+          </div>
+        </div>
+        <button type="button" id="edu-next" class="slider-nav-arrow" aria-label={lang === 'es' ? 'Siguiente etapa' : 'Next stage'}>›</button>
+      </div>
+    </div>
+
+    <!-- ══════════ 02.3 // CERTIFICACIONES OFICIALES (DYNAMIC SPOTLIGHT SLIDE) ══════════ -->
+    <div class="reveal mt-14 sm:mt-20" style="--i:3">
+      <!-- Cabecera de Certificaciones -->
+      <div class="flex flex-wrap items-center justify-between mb-6 gap-3 border-b border-[color:var(--line-soft)] pb-3">
+        <div>
+          <span class="font-mono text-xs text-[color:var(--cyan)] font-bold tracking-wider uppercase">02.3 // VERIFIED CREDENTIALS</span>
+          <h3 class="t-h3 text-[color:var(--fg)] mt-0.5">{lang === 'es' ? 'Certificaciones Oficiales' : 'Official Certifications'}</h3>
+        </div>
+      </div>
+
+      <!-- Selector de Certificados en Pills -->
+      <div class="mb-5 flex flex-wrap gap-2" role="tablist" aria-label="Certificaciones oficiales">
+        {certs.map((cert, idx) => {
+          const meta = BRAND_METAS[cert.key] || { logo: '●', bg: 'transparent', text: 'var(--cyan)', border: 'var(--line)', glow: 'none', summary: '' }
+          return (
+            <button
+              type="button"
+              class={`cert-pill flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-mono transition-all ${idx === 0 ? 'is-active' : ''}`}
+              data-cert-pill={idx}
+              role="tab"
+              aria-selected={idx === 0 ? 'true' : 'false'}
+            >
+              {meta.logo.startsWith('/') ? (
+                <span class="inline-grid h-4 w-4 shrink-0 place-items-center rounded bg-[color:var(--fg)] p-0.5">
+                  <img src={meta.logo} alt="" width="16" height="16" class="h-full w-full object-contain" />
+                </span>
+              ) : (
+                <span>{meta.logo}</span>
+              )}
+              <span class="font-bold">{cert.issuer}</span>
+              <span class="text-[0.68rem] text-[color:var(--fg-3)]">· {cert.title.split(' ')[0]}</span>
+            </button>
+          )
+        })}
+      </div>
+
+      <!-- Escenario del Slider de Certificaciones -->
+      <div id="certs-stage" class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-6 sm:p-8 shadow-2xl min-h-[300px]">
+        {certs.map((cert, idx) => {
+          const meta = BRAND_METAS[cert.key] || { logo: '●', bg: 'rgba(91, 155, 255, 0.12)', text: '#5b9bff', border: 'rgba(91, 155, 255, 0.35)', glow: 'rgba(91, 155, 255, 0.2)', summary: '' }
+          return (
+            <div
+              class={`cert-slide flex flex-col justify-between ${idx === 0 ? 'is-active' : ''}`}
+              data-cert-slide={idx}
+            >
+              <div>
+                <!-- Brand Badge & Date -->
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                  <div class="flex items-center gap-3">
+                    {meta.logo.startsWith('/') ? (
+                      <span class="inline-grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-[color:var(--fg)] p-1.5 shadow-sm">
+                        <img src={meta.logo} alt="" width="36" height="36" class="h-full w-full object-contain" />
+                      </span>
+                    ) : (
+                      <span class="text-3xl">{meta.logo}</span>
+                    )}
+                    <div>
+                      <span
+                        class="inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 text-xs font-mono font-bold"
+                        style={`background: ${meta.bg}; color: ${meta.text}; border: 1px solid ${meta.border}; box-shadow: 0 0 12px ${meta.glow};`}
+                      >
+                        <span>●</span>
+                        <span>{cert.issuer}</span>
+                      </span>
+                      <span class="font-mono text-xs text-[color:var(--fg-3)] ml-2.5">
+                        {cert.date}
+                      </span>
+                    </div>
+                  </div>
+
+                  {cert.credentialId && (
+                    <span class="font-mono text-xs text-[color:var(--fg-2)] bg-[color:var(--ink-950)] px-3 py-1 rounded-lg border border-[color:var(--line-soft)]">
+                      Credential ID: <strong class="text-[color:var(--cyan)]">{cert.credentialId}</strong>
+                    </span>
+                  )}
+                </div>
+
+                <h4 class="text-xl sm:text-2xl font-bold text-[color:var(--fg)] mb-3">
+                  {cert.title}
+                </h4>
+
+                <p class="text-sm sm:text-base text-[color:var(--fg-2)] leading-relaxed mb-6 max-w-3xl">
+                  {meta.summary}
+                </p>
+              </div>
+
+              <div class="border-t border-[color:var(--line-soft)] pt-4 flex flex-wrap items-center justify-between gap-4">
+                {cert.tags && (
+                  <ul class="flex flex-wrap items-center gap-1.5">
+                    <li class="text-[0.68rem] font-mono text-[color:var(--fg-3)] mr-1">{lang === 'es' ? 'Validaciones:' : 'Skills validated:'}</li>
+                    {cert.tags.map((tag) => (
+                      <li><TechChip tag={tag} lang={lang} /></li>
+                    ))}
+                  </ul>
+                )}
+
+                {cert.verifyUrl && (
+                  <a
+                    href={cert.verifyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-2 rounded-lg border border-[color:var(--cyan)]/40 bg-[color:var(--cyan)]/10 px-4 py-1.5 text-xs font-mono text-[color:var(--cyan)] hover:bg-[color:var(--cyan)]/20 transition shadow-[0_0_12px_rgba(111,227,255,0.15)]"
+                  >
+                    <span>{lang === 'es' ? 'Verificar credencial oficial' : 'Verify official credential'}</span>
+                    <span>↗</span>
+                  </a>
+                )}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      <div class="slider-footer">
+        <button type="button" id="certs-prev" class="slider-nav-arrow" aria-label={lang === 'es' ? 'Certificación anterior' : 'Previous certification'}>‹</button>
+        <div class="flex items-center gap-3">
+          <span id="certs-counter" class="font-mono text-xs text-[color:var(--fg-3)]">01 / {String(certs.length).padStart(2, '0')}</span>
+          <div id="certs-dots" class="flex items-center gap-2">
+            {certs.map((_, i) => (
+              <button
+                type="button"
+                class={`cert-dot-indicator h-1.5 w-2 rounded-full bg-[color:var(--line)] transition-all duration-300 hover:bg-[color:var(--blue-bright)] ${i === 0 ? 'is-active' : ''}`}
+                data-cert-dot={i}
+                aria-label={`Slide ${i + 1}`}
+              />
+            ))}
+          </div>
+        </div>
+        <button type="button" id="certs-next" class="slider-nav-arrow" aria-label={lang === 'es' ? 'Siguiente certificación' : 'Next certification'}>›</button>
+      </div>
+    </div>
+  </div>
+</section>

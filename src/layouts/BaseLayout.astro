@@ -1,0 +1,33 @@
+---
+import Seo from '../components/Seo.astro'
+import { t, type Lang } from '../i18n/ui'
+import '../styles/global.css'
+
+interface Props {
+  pageKey: string
+  lang: Lang
+  pageType?: 'WebPage' | 'ProfilePage'
+  bodyClass?: string
+}
+
+const { pageKey, lang, pageType = 'WebPage', bodyClass = '' } = Astro.props
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <Seo pageKey={pageKey} lang={lang} pageType={pageType} />
+    <!--
+      Marca JS antes del primer paint. El revelado solo se activa si esta
+      clase existe, de modo que sin JavaScript el contenido queda visible
+      y nunca sale del build con opacity:0.
+    -->
+    <script is:inline>
+      document.documentElement.classList.add('js')
+    </script>
+  </head>
+  <body class={`bg-[#030712] font-mono text-slate-100 ${bodyClass}`}>
+    <a class="skip-link no-print" href="#main">{t(lang, 'nav.skip')}</a>
+    <slot />
+  </body>
+</html>

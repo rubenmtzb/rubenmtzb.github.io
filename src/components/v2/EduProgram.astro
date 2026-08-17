@@ -1,0 +1,86 @@
+---
+import TechChip from './TechChip.astro'
+import type { Lang } from '../../i18n/ui'
+
+/**
+ * Una titulación dentro de un bloque de centro. Existe porque un mismo centro
+ * puede tener varias titulaciones (Instituto la Guineueta: DAW y SMX) y ambas
+ * variantes comparten título, descripción, competencias y credencial.
+ *   - `solo`: el centro tiene una sola titulación (ocupa el ancho del slide).
+ *   - `card`: convive con otras dentro de la misma tarjeta de centro.
+ */
+interface Program {
+  title: string
+  periodLabel: string
+  inProgress?: boolean
+  grade?: string
+  description?: string
+  tags?: string[]
+  credential?: { verifyUrl: string; id?: string }
+}
+
+interface Props { item: Program; lang: Lang; variant?: 'solo' | 'card' }
+const { item, lang, variant = 'solo' } = Astro.props
+
+const isCard = variant === 'card'
+const tags = item.tags ?? []
+const hasFooter = tags.length > 0 || Boolean(item.credential?.verifyUrl)
+---
+
+<article class={isCard ? 'flex h-full flex-col rounded-xl border border-[color:var(--line-soft)] bg-[color:var(--ink-900)]/60 p-4 sm:p-5' : ''}>
+  {isCard && (
+    <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
+      <span class="font-mono text-[0.7rem] text-[color:var(--fg-3)]">{item.periodLabel}</span>
+      {item.inProgress ? (
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[0.68rem] font-mono text-emerald-400">
+          <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>{lang === 'es' ? 'En curso' : 'In progress'}</span>
+        </span>
+      ) : item.grade ? (
+        <span class="inline-flex items-center gap-1 rounded-full border border-[color:var(--cyan)]/40 bg-[color:var(--cyan)]/10 px-2.5 py-0.5 text-[0.68rem] font-mono text-[color:var(--cyan)]">
+          <span>🏆</span>
+          <span>{item.grade}</span>
+        </span>
+      ) : null}
+    </div>
+  )}
+
+  <h4 class={isCard
+    ? 'text-base sm:text-lg font-bold text-[color:var(--fg)] mb-2'
+    : 'text-xl sm:text-2xl font-bold text-[color:var(--fg)] mb-3'}>
+    {item.title}
+  </h4>
+
+  {item.description && (
+    <p class={isCard
+      ? 'text-sm text-[color:var(--fg-2)] leading-relaxed mb-4'
+      : 'text-sm sm:text-base text-[color:var(--fg-2)] leading-relaxed mb-6 max-w-3xl'}>
+      {item.description}
+    </p>
+  )}
+
+  {hasFooter && (
+    <div class={`mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-[color:var(--line-soft)] ${isCard ? 'pt-3' : 'pt-4'}`}>
+      {tags.length > 0 && (
+        <ul class="flex flex-wrap items-center gap-1.5">
+          <li class="mr-1 font-mono text-[0.68rem] text-[color:var(--fg-3)]">{lang === 'es' ? 'Competencias clave:' : 'Key competencies:'}</li>
+          {tags.map((tag) => (
+            <li><TechChip tag={tag} lang={lang} /></li>
+          ))}
+        </ul>
+      )}
+
+      {item.credential?.verifyUrl && (
+        <a
+          href={item.credential.verifyUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 rounded-lg border border-[color:var(--cyan)]/40 bg-[color:var(--cyan)]/10 px-3.5 py-1.5 text-xs font-mono text-[color:var(--cyan)] hover:bg-[color:var(--cyan)]/20 transition shadow-[0_0_12px_rgba(111,227,255,0.15)]"
+        >
+          <span>{lang === 'es' ? 'Verificar título oficial' : 'Verify credential'}</span>
+          <span>↗</span>
+        </a>
+      )}
+    </div>
+  )}
+</article>

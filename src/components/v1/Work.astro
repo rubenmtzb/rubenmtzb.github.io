@@ -1,0 +1,194 @@
+---
+import Section from './Section.astro'
+import Icon from '../Icon.astro'
+import { casePath, formatDuration, formatPeriod, getExperience, getProjects } from '../../lib/content'
+import { t, type Lang } from '../../i18n/ui'
+
+interface Props { lang: Lang }
+const { lang } = Astro.props
+
+const experience = await getExperience(lang)
+const projects = await getProjects(lang)
+
+const PROJECT_ICON: Record<string, 'microscope' | 'lock' | 'globe'> = {
+  'sars-cov-2': 'microscope',
+  'financial-architecture': 'lock',
+  portfolio: 'globe',
+}
+---
+
+<Section id="work" title={t(lang, 'work.title')}>
+  <h3 class="reveal mb-8 text-center text-xs font-semibold uppercase tracking-[0.35em] text-green-300/85">
+    {t(lang, 'work.experience')}
+  </h3>
+
+  <div class="relative mb-20">
+    <div class="absolute bottom-0 left-5 top-0 w-px bg-gradient-to-b from-transparent via-green-400/70 to-transparent md:left-1/2 md:-translate-x-1/2" aria-hidden="true"></div>
+
+    <ol class="space-y-8 md:space-y-10">
+      {
+        experience.map((item, index) => {
+          const isLeft = index % 2 === 0
+          const current = item.end === null
+          const period = formatPeriod(item.start, item.end, lang)
+          const duration = formatDuration(item.start, item.end, lang)
+          return (
+            <li class="relative md:grid md:grid-cols-2 md:gap-12">
+              <div class={`${isLeft ? 'md:col-start-1' : 'md:col-start-2'} ml-12 md:ml-0`}>
+                <article class="reveal relative rounded-xl border border-green-500/20 bg-black/40 p-6 backdrop-blur-sm" style={`--i:${index}`}>
+                  <div class="mb-5 flex flex-wrap items-center gap-3">
+                    <span class="inline-flex items-center gap-2 rounded-full border border-green-500/30 bg-green-500/10 px-3 py-1 text-xs uppercase tracking-[0.25em] text-green-300">
+                      <Icon name="briefcase" class="h-3.5 w-3.5" />
+                      {item.company}
+                    </span>
+                    {current && (
+                      <span class="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs uppercase tracking-[0.25em] text-cyan-200">
+                        <span class="pulse-dot inline-block h-2 w-2 rounded-full bg-green-400" aria-hidden="true" />
+                        {t(lang, 'work.current')}
+                      </span>
+                    )}
+                  </div>
+
+                  <h4 class="text-2xl font-semibold text-white">{item.role}</h4>
+                  <p class="mt-2 text-sm uppercase tracking-[0.3em] text-green-400 text-glow-green">{item.company}</p>
+
+                  <div class="mt-4 flex flex-wrap gap-3 text-xs text-gray-300">
+                    <span class="inline-flex items-center gap-2 rounded-full border border-green-500/20 bg-black/40 px-3 py-1.5">
+                      <Icon name="calendar" class="h-3.5 w-3.5 text-green-400" />
+                      {period}
+                      {duration && <span class="text-dim">· ~{duration}</span>}
+                    </span>
+                    {item.location && (
+                      <span class="inline-flex items-center gap-2 rounded-full border border-green-500/20 bg-black/40 px-3 py-1.5">
+                        <Icon name="mapPin" class="h-3.5 w-3.5 text-green-400" />
+                        {item.location}
+                      </span>
+                    )}
+                    {item.mode && (
+                      <span class="inline-flex items-center rounded-full border border-cyan-400/20 bg-cyan-400/5 px-3 py-1.5 text-cyan-200">{item.mode}</span>
+                    )}
+                  </div>
+
+                  <p class="mt-4 leading-7 text-gray-300">{item.summary}</p>
+
+                  {(item.tech.length > 0 || item.practices.length > 0) && (
+                    <ul class="mt-5 flex flex-wrap gap-2">
+                      {item.tech.map((tag) => (
+                        <li class="rounded-full border border-green-500/30 bg-green-500/10 px-3 py-1 text-xs text-green-300">{tag}</li>
+                      ))}
+                      {item.practices.map((tag) => (
+                        <li class="rounded-full border border-cyan-400/25 bg-cyan-400/5 px-3 py-1 text-xs text-cyan-200">{tag}</li>
+                      ))}
+                    </ul>
+                  )}
+                </article>
+              </div>
+
+              <div class="absolute left-5 top-8 flex h-6 w-6 -translate-x-1/2 items-center justify-center md:left-1/2" aria-hidden="true">
+                <span
+                  class:list={[
+                    'h-3.5 w-3.5 rounded-full border',
+                    current ? 'border-green-300 bg-green-400 shadow-[0_0_18px_#00ff88] pulse-dot' : 'border-green-400/70 bg-[#030712]',
+                  ]}
+                />
+              </div>
+            </li>
+          )
+        })
+      }
+    </ol>
+  </div>
+
+  <h3 class="reveal mb-8 text-center text-xs font-semibold uppercase tracking-[0.35em] text-green-300/85">
+    {t(lang, 'work.projects')}
+  </h3>
+
+  <div class="grid gap-6 lg:grid-cols-2">
+    {
+      projects.map((project, index) => (
+        <article
+          class:list={[
+            'reveal relative flex h-full flex-col overflow-hidden rounded-xl border bg-black/40 p-5 backdrop-blur-sm sm:p-6',
+            project.featured ? 'border-green-500/40 shadow-[0_0_30px_rgba(0,255,136,0.12)]' : 'border-green-500/20',
+            !project.featured && 'lg:col-span-2',
+          ]}
+          style={`--i:${index}`}
+        >
+          <div class="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-green-400/60 to-transparent" aria-hidden="true" />
+
+          <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <div class="mb-2 flex flex-wrap items-center gap-3 text-green-300">
+                <span class="rounded-full border border-green-500/20 bg-green-500/10 p-2">
+                  <Icon name={PROJECT_ICON[project.key] ?? 'globe'} class="h-4 w-4" />
+                </span>
+                <span class="text-[0.62rem] uppercase tracking-[0.24em] text-green-300/85 sm:text-[0.68rem] sm:tracking-[0.35em]">{project.eyebrow}</span>
+              </div>
+              <h4 class="text-lg font-bold text-white sm:text-xl md:text-2xl">{project.title}</h4>
+            </div>
+            <span
+              class:list={[
+                'self-start rounded-full border px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.2em] sm:shrink-0',
+                project.badge === 'live' ? 'border-cyan-400/30 bg-cyan-500/10 text-cyan-200' : 'border-amber-400/30 bg-amber-500/10 text-amber-200',
+              ]}
+            >
+              {t(lang, project.badge === 'live' ? 'work.badge.live' : project.badge === 'private' ? 'work.badge.private' : 'work.comingSoon')}
+            </span>
+          </div>
+
+          <p class="text-sm leading-6 text-slate-300/90 sm:leading-7">{project.description}</p>
+
+          <ul class="mt-6 flex flex-wrap gap-2">
+            {project.tech.map((tech) => (
+              <li class="rounded-full border border-green-500/30 bg-green-500/10 px-3 py-1 text-xs text-green-300">{tech}</li>
+            ))}
+            {project.domains.map((d) => (
+              <li class="rounded-full border border-purple-400/25 bg-purple-500/10 px-3 py-1 text-xs text-purple-200">{d}</li>
+            ))}
+          </ul>
+
+          <div class="mt-6 flex flex-col items-start gap-4 border-t border-green-500/15 pt-5 sm:flex-row sm:items-center sm:justify-between">
+            <p class="text-xs uppercase tracking-[0.18em] text-dim sm:tracking-[0.28em]">{project.status}</p>
+            <div class="flex flex-wrap gap-3">
+              {casePath(project.key, lang) && (
+                <a
+                  href={casePath(project.key, lang)}
+                  class="inline-flex items-center gap-2 rounded-full border border-green-400/35 bg-green-500/10 px-4 py-2 text-sm font-semibold text-green-200 transition hover:-translate-y-0.5 hover:border-green-300/55"
+                >
+                  {t(lang, 'v2.work.case')}
+                  <Icon name="arrowUpRight" class="h-4 w-4" />
+                </a>
+              )}
+              {project.publication && (
+                <a
+                  href={project.publication.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-2 rounded-full border border-purple-400/30 bg-purple-500/10 px-4 py-2 text-sm font-semibold text-purple-100 transition hover:-translate-y-0.5 hover:border-purple-300/50"
+                >
+                  <Icon name="book" class="h-4 w-4" />
+                  {t(lang, 'work.publication')}
+                </a>
+              )}
+              {project.link ? (
+                <a
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-500/10 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:-translate-y-0.5 hover:border-cyan-300/50"
+                >
+                  {t(lang, 'work.visit')}
+                  <Icon name="arrowUpRight" class="h-4 w-4" />
+                </a>
+              ) : (
+                <span class="inline-flex items-center rounded-full border border-amber-400/30 bg-amber-500/10 px-4 py-2 text-sm font-semibold text-amber-100">
+                  {t(lang, 'work.comingSoon')}
+                </span>
+              )}
+            </div>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</Section>

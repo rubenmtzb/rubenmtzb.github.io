@@ -1,0 +1,56 @@
+---
+import Icon from '../Icon.astro'
+import { getProfile } from '../../lib/content'
+import { t, type Lang } from '../../i18n/ui'
+
+interface Props { lang: Lang }
+const { lang } = Astro.props
+
+const profile = await getProfile(lang)
+const year = new Date().getFullYear()
+---
+
+<footer class="relative overflow-hidden border-t border-green-500/20 bg-[#020409]">
+  <div
+    class="absolute inset-0 opacity-20"
+    style="background-image:linear-gradient(rgba(0,255,136,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,136,.1) 1px,transparent 1px);background-size:34px 34px"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="relative z-10 mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-10 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
+    <div class="space-y-3">
+      <p class="terminal-prompt break-words text-xs uppercase tracking-[0.18em] text-green-300/90 sm:text-sm sm:tracking-[0.3em]">
+        rubenitx.me — {t(lang, 'footer.built')}
+      </p>
+      <p class="text-xs uppercase tracking-[0.24em] text-dim">© {year} {profile.name} · {t(lang, 'footer.rights')}</p>
+    </div>
+
+    <div class="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-6">
+      <ul class="flex flex-wrap items-center gap-3">
+        {
+          profile.socials.map((s) => (
+            <li>
+              <a
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 rounded-full border border-green-500/20 bg-black/35 px-4 py-2 text-xs uppercase tracking-[0.18em] text-green-300 transition hover:border-green-300/35 hover:bg-green-500/10 hover:text-green-100 sm:tracking-[0.24em]"
+              >
+                <Icon name={s.label === 'LinkedIn' ? 'linkedin' : 'github'} class="h-4 w-4" />
+                {s.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <a
+        href="#home"
+        class="inline-flex items-center gap-2 rounded-full border border-green-500/20 bg-black/35 px-4 py-2 text-xs uppercase tracking-[0.18em] text-green-300 transition hover:-translate-y-0.5 hover:border-green-300/35 hover:bg-green-500/10 hover:text-green-100 sm:tracking-[0.24em]"
+      >
+        <Icon name="arrowUp" class="h-4 w-4" />
+        {t(lang, 'footer.top')}
+      </a>
+    </div>
+  </div>
+</footer>
