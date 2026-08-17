@@ -93,7 +93,7 @@ const badgeLabel = (badge: 'live' | 'private' | 'coming-soon') =>
 
                 <ul class="mt-6 flex flex-wrap gap-1.5 border-t border-[color:var(--line-soft)] pt-4">
                   {[...item.tech, ...item.practices].map((tag) => (
-                    <li><TechChip tag={tag} lang={lang} /></li>
+                    <li><TechChip tag={tag} lang={lang} variant="experience" /></li>
                   ))}
                 </ul>
               </div>

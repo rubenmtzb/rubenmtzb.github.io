@@ -175,6 +175,11 @@ function suite(page, dom) {
     'al pulsar la segunda empresa cambia el panel')
   check(jobTabs[1].getAttribute('aria-selected') === 'true' && jobTabs[0].getAttribute('aria-selected') === 'false',
     'aria-selected sigue al estado visual')
+  const experienceChips = all('#job-panels .experience-tech-chip')
+  check(
+    experienceChips.length > 0 && experienceChips.every((chip) => chip.tagName === 'SPAN' && !chip.closest('a')),
+    'las tecnologías de experiencia son chips contextuales, no enlaces',
+  )
 
   console.log('\n· Workbench de perfil')
   const files = all('[data-profile-tab]')
