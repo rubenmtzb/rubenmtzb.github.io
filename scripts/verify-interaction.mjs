@@ -135,6 +135,16 @@ function suite(page, dom) {
   check(reveals.length > 0 && reveals.every((r) => r.classList.contains('is-in')),
     `las ${reveals.length} secciones .reveal quedan visibles`)
 
+  console.log('\n· Navegación móvil')
+  const mobileNav = el('mobile-nav')
+  const mobileLinks = mobileNav ? [...mobileNav.querySelectorAll('[data-nav]')] : []
+  check(mobileLinks.length === 4, 'el menú compacto conserva las cuatro áreas')
+  if (mobileNav && mobileLinks[0]) {
+    mobileNav.open = true
+    fire(mobileLinks[0], 'click')
+    check(mobileNav.open === false, 'el menú compacto se cierra al navegar')
+  }
+
   console.log('\n· Carruseles')
   const carousels = [
     { name: 'proyectos', slides: '.project-slide', next: 'proj-next', dots: '[data-dot-index]' },

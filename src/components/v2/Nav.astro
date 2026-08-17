@@ -10,9 +10,8 @@ const other = await getAlternate(pageKey, lang)
 <!--
   Cabecera fija con navegación directa, selector de idioma y acceso al Modo Juego.
 
-  No hay menú hamburguesa: las cuatro áreas caben en la barra en cualquier
-  anchura, así que no existe un desplegable duplicado que mantener en
-  sincronía ni que ocultar con JavaScript.
+  En escritorio las cuatro áreas permanecen visibles. En móvil se agrupan en
+  un details nativo para no comprimir textos ni controles en una sola fila.
 -->
 <header id="site-header" class="site-header">
   <nav aria-label="Principal" class="shell flex items-center justify-between py-4 sm:py-5">
@@ -40,12 +39,12 @@ const other = await getAlternate(pageKey, lang)
       <span class="text-sm font-bold tracking-[0.25em] text-[color:var(--fg)] group-hover:text-[color:var(--cyan)] transition-colors">RM</span>
     </a>
 
-    <!-- Navegación directa y limpia siempre visible sin menú hamburguesa -->
+    <!-- En escritorio se conserva la navegación directa completa. -->
     <div class="flex items-center gap-3.5 sm:gap-6 md:gap-7">
       {V2_NAV.map((item) => (
-        <a href={`#${item.id}`} data-nav={item.id} class="nav-link text-xs sm:text-sm">{t(lang, item.key as UiKey)}</a>
+        <a href={`#${item.id}`} data-nav={item.id} class="primary-nav-link nav-link text-xs sm:text-sm">{t(lang, item.key as UiKey)}</a>
       ))}
-      <a href={other.path} hreflang={other.lang} rel="alternate" class="nav-link text-xs sm:text-sm" aria-label={t(lang, 'nav.langSwitch')}>
+      <a href={other.path} hreflang={other.lang} rel="alternate" class="language-nav-link nav-link text-xs sm:text-sm" aria-label={t(lang, 'nav.langSwitch')}>
         {t(lang, 'nav.langNext')}
       </a>
 
@@ -67,7 +66,7 @@ const other = await getAlternate(pageKey, lang)
         </button>
 
         <!-- Badge (i) de Información con Tooltip al pasar el mouse por encima -->
-        <div class="relative group flex items-center">
+        <div class="nav-game-info relative group flex items-center">
           <button
             type="button"
             class="flex h-6 w-6 items-center justify-center rounded-full border border-[color:var(--blue-bright)]/40 bg-[color:var(--ink-800)] text-xs font-mono font-bold text-[color:var(--cyan)] transition hover:border-[color:var(--cyan)] hover:bg-[color:var(--cyan)]/15 hover:shadow-[0_0_10px_rgba(111,227,255,0.3)]"
@@ -105,6 +104,22 @@ const other = await getAlternate(pageKey, lang)
           </div>
         </div>
       </div>
+
+      <!-- En móvil, las cuatro áreas pasan a una superficie compacta sin
+           duplicar acciones ni alterar la composición de escritorio. -->
+      <details id="mobile-nav" class="mobile-nav sm:hidden">
+        <summary class="mobile-nav-trigger" aria-label={lang === 'es' ? 'Abrir navegación' : 'Open navigation'}>
+          <Icon name="menu" class="h-4 w-4" />
+          <span>{lang === 'es' ? 'Menú' : 'Menu'}</span>
+        </summary>
+        <div class="mobile-nav-panel">
+          {V2_NAV.map((item) => (
+            <a href={`#${item.id}`} data-nav={item.id} class="mobile-nav-link">
+              {t(lang, item.key as UiKey)}
+            </a>
+          ))}
+        </div>
+      </details>
     </div>
   </nav>
 </header>
