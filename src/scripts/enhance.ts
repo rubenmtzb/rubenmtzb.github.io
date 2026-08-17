@@ -37,7 +37,8 @@ function initMobileMenu() {
   if (!toggle || !menu) return
 
   const openLabel = toggle.getAttribute('aria-label') ?? ''
-  let closeLabel = openLabel
+  // La etiqueta de cierre viaja en un data-attribute para no duplicar i18n.
+  const closeLabel = toggle.dataset.closeLabel ?? openLabel
 
   menu.hidden = true
   toggle.setAttribute('aria-expanded', 'false')
@@ -47,9 +48,6 @@ function initMobileMenu() {
     toggle.setAttribute('aria-expanded', String(open))
     toggle.setAttribute('aria-label', open ? closeLabel : openLabel)
   }
-
-  // La etiqueta de cierre viaja en un data-attribute para no duplicar i18n.
-  closeLabel = toggle.dataset.closeLabel ?? openLabel
 
   toggle.addEventListener('click', () => setOpen(menu.hidden))
   menu.addEventListener('click', (e) => {
@@ -77,7 +75,7 @@ function initScrollSpy() {
   const mobileLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-nav-mobile]'))
   if (links.length === 0) return
 
-  const ids = links.map((l) => l.dataset.nav!).filter(Boolean)
+  const ids = links.map((l) => l.dataset.nav).filter((id): id is string => Boolean(id))
   let activeId = ''
   let navigating = false
   let frame: number | null = null
