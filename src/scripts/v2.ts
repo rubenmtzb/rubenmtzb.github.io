@@ -1131,36 +1131,30 @@ function createBuildPanel(panel: HTMLElement, root: HTMLElement) {
   return {
     element: panel,
     stage,
-    model,
     readout,
     scrub,
-    range,
-    partButtons,
-    partLayers,
-    photoCount: photoSlides.length,
 
     get spread() { return spread },
-    get pinnedPart() { return pinnedPart },
+    get camera() { return { tilt, spin } },
 
     setSpread(next: number) {
       spread = Math.max(0, Math.min(1, next))
       renderSpread()
     },
-    orbit(deltaTilt: number, deltaSpin: number) {
-      tilt = Math.max(BX_TILT.min, Math.min(BX_TILT.max, tilt + deltaTilt))
-      spin = Math.max(BX_SPIN.min, Math.min(BX_SPIN.max, spin + deltaSpin))
-      renderCamera()
-    },
+    /** Órbita absoluta desde un punto de partida: es la que usa el arrastre. */
     orbitFrom(baseTilt: number, baseSpin: number, deltaTilt: number, deltaSpin: number) {
       tilt = Math.max(BX_TILT.min, Math.min(BX_TILT.max, baseTilt + deltaTilt))
       spin = Math.max(BX_SPIN.min, Math.min(BX_SPIN.max, baseSpin + deltaSpin))
       renderCamera()
     },
+    /** Órbita relativa a la posición actual: es la que usan las flechas. */
+    orbit(deltaTilt: number, deltaSpin: number) {
+      this.orbitFrom(tilt, spin, deltaTilt, deltaSpin)
+    },
     zoomBy(factor: number) {
       zoom = Math.max(BX_ZOOM.min, Math.min(BX_ZOOM.max, zoom * factor))
       renderCamera()
     },
-    get camera() { return { tilt, spin } },
     resetCamera() {
       tilt = BX_TILT.home
       spin = BX_SPIN.home
@@ -1202,7 +1196,6 @@ function createBuildPanel(panel: HTMLElement, root: HTMLElement) {
       pinnedPart = null
       setActivePart(null)
     },
-    partSpec(partId: string) { return partDetails.get(partId) },
     showModelHints(showModel: boolean) {
       if (photoHint) photoHint.hidden = showModel
       if (modelHint) modelHint.hidden = !showModel
@@ -1244,6 +1237,20 @@ function initKeyboardBuildExplorer() {
   let drag: { x: number, y: number, tilt: number, spin: number, moved: boolean, partId: string | null } | null = null
   let suppressPartClick = false
 
+  /** El rótulo describe siempre lo que se está viendo, presets incluidos. */
+  const syncStatus = () => {
+    if (!status) return
+    if (viewMode === 'photo') {
+      status.textContent = `${activeKey.toUpperCase()} // ${say('Foto original', 'Original photo')}`
+      return
+    }
+    const percent = Math.round((active?.spread ?? 0) * 100)
+    const label = percent === 0 ? root.dataset.assembled
+      : percent === 100 ? root.dataset.exploded
+        : `${root.dataset.exploded} ${percent}%`
+    status.textContent = `${activeKey.toUpperCase()} // ${label}`
+  }
+
   const setViewMode = (mode: typeof viewMode) => {
     viewMode = mode
     const exploded = mode === 'exploded'
@@ -1261,20 +1268,6 @@ function initKeyboardBuildExplorer() {
     }
 
     syncStatus()
-  }
-
-  /** El rótulo describe siempre lo que se está viendo, presets incluidos. */
-  const syncStatus = () => {
-    if (!status) return
-    if (viewMode === 'photo') {
-      status.textContent = `${activeKey.toUpperCase()} // ${say('Foto original', 'Original photo')}`
-      return
-    }
-    const percent = Math.round((active?.spread ?? 0) * 100)
-    const label = percent === 0 ? root.dataset.assembled
-      : percent === 100 ? root.dataset.exploded
-        : `${root.dataset.exploded} ${percent}%`
-    status.textContent = `${activeKey.toUpperCase()} // ${label}`
   }
 
   const showGallery = () => {
@@ -1312,9 +1305,6 @@ function initKeyboardBuildExplorer() {
     closeButton?.focus()
   }
 
-  for (const button of openButtons) {
-    button.addEventListener('click', () => openBuild(button.dataset.bxOpen ?? ''))
-  }
   closeButton?.addEventListener('click', showGallery)
   photoButton?.addEventListener('click', () => setViewMode('photo'))
   assembledButton?.addEventListener('click', () => setViewMode('assembled'))
@@ -1338,6 +1328,9 @@ function initKeyboardBuildExplorer() {
    */
   root.addEventListener('click', (event) => {
     const target = event.target as HTMLElement
+
+    const opener = target.closest<HTMLElement>('[data-bx-open]')
+    if (opener) return openBuild(opener.dataset.bxOpen ?? '')
     if (!active) return
 
     if (target.closest('[data-bx-photo-prev]')) return active.stepPhoto(-1)
@@ -1353,15 +1346,25 @@ function initKeyboardBuildExplorer() {
     }
   })
 
+  const PART_HOLDER = '[data-bx-part-button], [data-bx-part]'
+  const holderOf = (node: EventTarget | null) =>
+    (node as HTMLElement | null)?.closest?.<HTMLElement>(PART_HOLDER) ?? null
+
   root.addEventListener('pointerover', (event) => {
     if (!active || viewMode === 'photo') return
-    const holder = (event.target as HTMLElement).closest<HTMLElement>('[data-bx-part-button], [data-bx-part]')
+    const holder = holderOf(event.target)
     if (!holder) return
     active.previewPart(holder.dataset.bxPartButton ?? holder.dataset.bxPart ?? null)
   })
+  /*
+   * `pointerout` burbujea, así que moverse entre las teclas dibujadas de una
+   * capa lo dispara constantemente. Solo cuenta como salida si el puntero
+   * aterriza fuera de la misma pieza.
+   */
   root.addEventListener('pointerout', (event) => {
     if (!active || viewMode === 'photo') return
-    if (!(event.target as HTMLElement).closest('[data-bx-part-button], [data-bx-part]')) return
+    const from = holderOf(event.target)
+    if (!from || holderOf(event.relatedTarget) === from) return
     active.previewPart(null)
   })
   root.addEventListener('focusin', (event) => {
