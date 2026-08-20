@@ -1,5 +1,10 @@
 @import 'tailwindcss';
-@import '@fontsource-variable/archivo/wdth.css';
+/*
+ * Solo el eje de grosor. El fichero `wdth` trae además el eje de anchura
+ * (font-stretch), que el sitio no usa en ninguna regla, y pesa 88 kB frente
+ * a los 34 kB de este: 54 kB menos en la fuente que pinta el titular.
+ */
+@import '@fontsource-variable/archivo/wght.css';
 @import '@fontsource-variable/jetbrains-mono/wght.css';
 
 /* ============================================================
