@@ -2,6 +2,7 @@
 import { Picture } from 'astro:assets'
 import { getCollection } from 'astro:content'
 import { t, type Lang } from '../../i18n/ui'
+import KeyboardBuildExplorer from './KeyboardBuildExplorer.astro'
 
 interface Props { lang: Lang }
 const { lang } = Astro.props
@@ -185,7 +186,6 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
               >
                 <span class="text-sm mb-0.5">📸</span>
                 <span>{lang === 'es' ? 'Fotos Build' : 'Build Photos'}</span>
-                <span class="mt-0.5 text-[0.56rem] uppercase tracking-wider text-amber-300/90">{lang === 'es' ? 'pronto' : 'soon'}</span>
               </button>
             </div>
           </div>
@@ -327,55 +327,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
           </figcaption>
         </div>
 
-        <!--
-          2. Panel de Fotos del Teclado — pendiente.
-          Todavía no hay fotografías propias de los builds, así que el panel
-          declara el estado en lugar de rellenarse con imágenes que no son de
-          teclados. El laboratorio con hotspots y ficha técnica vuelve cuando
-          exista el archivo fotográfico real.
-        -->
-        <div id="kb-panel-photos" class="hidden rounded-xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-4 sm:p-6 shadow-xl">
-          <div class="flex flex-wrap items-center justify-between border-b border-[color:var(--line-soft)] pb-3 mb-4 gap-3">
-            <div>
-              <span class="font-mono text-[0.68rem] font-bold text-[color:var(--cyan)] tracking-wider">LABORATORY // BUILD ARCHIVE</span>
-              <h4 class="text-sm sm:text-base font-bold text-[color:var(--fg)] mt-0.5">
-                {lang === 'es' ? 'Fotos de mis builds' : 'My build photos'}
-              </h4>
-            </div>
-            <span class="inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 px-3 py-1 text-[0.7rem] font-mono text-amber-300">
-              <span class="h-1.5 w-1.5 rounded-full bg-amber-300 animate-pulse"></span>
-              <span>{lang === 'es' ? 'En construcción' : 'Under construction'}</span>
-            </span>
-          </div>
-
-          <div class="rounded-xl border border-dashed border-[color:var(--line)] bg-[color:var(--ink-950)] px-5 py-10 text-center">
-            <span class="text-2xl" aria-hidden="true">📸</span>
-            <p class="mt-3 font-mono text-sm font-bold text-[color:var(--fg)]">
-              {lang === 'es' ? 'Próximamente' : 'Coming soon'}
-            </p>
-            <p class="mx-auto mt-2 max-w-sm text-xs leading-relaxed text-[color:var(--fg-2)]">
-              {lang === 'es'
-                ? 'Estoy documentando cada build con fotos propias: case, placa, montaje y switches. Cuando el archivo esté listo, aparecerá aquí con su ficha técnica.'
-                : 'I am documenting each build with my own photos: case, plate, mounting, and switches. Once the archive is ready, it will land here with its technical breakdown.'}
-            </p>
-            <div class="mt-5 flex flex-wrap justify-center gap-1.5">
-              {(lang === 'es'
-                ? ['Case', 'Placa y montaje', 'Switches y lubricado', 'Keycaps']
-                : ['Case', 'Plate & mounting', 'Switches & lube', 'Keycaps']
-              ).map((item) => (
-                <span class="rounded-lg border border-[color:var(--line-soft)] bg-[color:var(--ink-900)] px-2.5 py-1 text-[0.68rem] font-mono text-[color:var(--fg-3)]">
-                  {item}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <p class="mt-4 text-center font-mono text-[0.68rem] text-[color:var(--fg-3)]">
-            {lang === 'es'
-              ? 'Mientras tanto, prueba el Speed Trial o el simulador para escuchar los switches.'
-              : 'Meanwhile, try the Speed Trial or the simulator to hear the switches.'}
-          </p>
-        </div>
+        <KeyboardBuildExplorer {lang} />
       </div>
     </div>
   </div>

@@ -153,7 +153,7 @@ export const ui = {
     'otc.trialBox': 'Typing speed trial: type the text shown here',
     'otc.sandboxBox': 'Free typing sandbox: type anything to hear the switches',
     'otc.keysNote': 'Mechanical keyboards are a hands-on hobby: each build balances layout, materials, switches, sound, and feel. This is not just a desk accessory; it is a tool tuned around how I think and work.',
-    'otc.keysDetail': 'The speed trial is a small way to share that obsession with feedback. The Build Photos archive is still in the making: it will document the choices behind each keyboard, from the case to the switch.',
+    'otc.keysDetail': 'The speed trial shares that obsession with feedback. The Build Photos explorer documents each keyboard layer by layer, from the case to the switch.',
     'v2.case.stack': 'Stack',
 
     'v2.hero.status': 'Available for opportunities',
@@ -278,7 +278,7 @@ export const ui = {
     'otc.trialBox': 'Prueba de velocidad: escribe aquí el texto que aparece',
     'otc.sandboxBox': 'Escritura libre: teclea lo que quieras para oír los switches',
     'otc.keysNote': 'Los teclados mecánicos son un hobby práctico: cada build equilibra distribución, materiales, switches, sonido y tacto. No son solo un accesorio de escritorio; son una herramienta ajustada a cómo pienso y trabajo.',
-    'otc.keysDetail': 'El reto de velocidad es una pequeña forma de compartir esa obsesión por el feedback. El archivo de Fotos Build está en construcción: documentará las decisiones detrás de cada teclado, desde el case hasta el switch.',
+    'otc.keysDetail': 'El reto de velocidad comparte esa obsesión por el feedback. El explorador de Fotos Build documenta cada teclado capa a capa, desde el case hasta el switch.',
     'v2.case.stack': 'Stack',
 
     'v2.hero.status': 'Disponible para nuevos retos',

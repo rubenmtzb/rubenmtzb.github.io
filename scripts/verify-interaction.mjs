@@ -115,6 +115,7 @@ async function run(page, runIndex) {
       const ev = new window.Event(type, { bubbles: true, cancelable: true })
       Object.assign(ev, init)
       node.dispatchEvent(ev)
+      return ev
     },
     key(type, { target = document.body, ...rest }) {
       const ev = { type, target, preventDefault: noop, stopPropagation: noop, repeat: false, ...rest }
@@ -253,6 +254,67 @@ function suite(page, dom) {
   check(el('kb-sound-label').textContent === page.soundOff, `el toggle usa i18n ("${el('kb-sound-label').textContent}")`)
   fire(el('kb-sound-toggle'), 'click')
   check(el('kb-sound-label').textContent === page.soundOn, 'y vuelve al estado inicial')
+
+  console.log('\n· Archivo de builds')
+  fire(el('kb-tab-photos'), 'click')
+  check(el('kb-panel-photos').classList.contains('hidden') === false && el('kb-panel-interactive').classList.contains('hidden'),
+    'la pestaña de fotos abre el archivo y oculta el speed trial')
+
+  const buildGallery = document.querySelector('[data-bx-gallery]')
+  const buildViewer = document.querySelector('[data-bx-viewer]')
+  const buildRoot = document.querySelector('[data-kb-build-explorer]')
+  const buildOpen = document.querySelector('[data-bx-open]')
+  const buildClose = document.querySelector('[data-bx-close]')
+  const buildPhoto = document.querySelector('[data-bx-photo-view]')
+  const buildPhotoPrevious = document.querySelector('[data-bx-photo-prev]')
+  const buildPhotoNext = document.querySelector('[data-bx-photo-next]')
+  const buildPhotoCounter = document.querySelector('[data-bx-photo-counter]')
+  const buildPhotoSlides = [...document.querySelectorAll('[data-bx-photo-slide]')]
+  const buildAssembled = document.querySelector('[data-bx-assembled-view]')
+  const buildExplode = document.querySelector('[data-bx-explode]')
+  const firstBuildPart = document.querySelector('[data-bx-part-button]')
+  const firstBuildLayer = document.querySelector('[data-bx-part="keycaps"]')
+  const buildStage = document.querySelector('[data-bx-stage]')
+  const buildModel = document.querySelector('[data-bx-model]')
+
+  check(buildOpen && buildViewer?.hidden === true, 'la galería contiene el Neo65 y el visor comienza cerrado')
+  fire(buildOpen, 'click')
+  check(buildGallery.hidden === true && buildViewer.hidden === false, 'abrir el Neo65 entra en el visor')
+  check(buildRoot.classList.contains('is-photo-view') && buildPhoto.getAttribute('aria-pressed') === 'true',
+    'la fotografía original es la vista principal del build')
+  fire(buildPhotoNext, 'click')
+  check(buildPhotoSlides[0].hidden && !buildPhotoSlides[1].hidden && buildPhotoCounter.textContent === '02 / 04',
+    'la flecha siguiente recorre los ángulos y actualiza el contador')
+  fire(buildPhotoPrevious, 'click')
+  check(!buildPhotoSlides[0].hidden && buildPhotoCounter.textContent === '01 / 04',
+    'la flecha anterior vuelve a la portada oscura')
+  fire(buildAssembled, 'click')
+  check(!buildRoot.classList.contains('is-photo-view') && buildAssembled.getAttribute('aria-pressed') === 'true',
+    'la vista montada revela el modelo técnico sin perder la fotografía')
+  fire(buildExplode, 'click')
+  check(buildRoot.classList.contains('is-exploded') && buildExplode.getAttribute('aria-pressed') === 'true',
+    'el control de explosión separa las capas y actualiza su estado accesible')
+
+  fire(firstBuildLayer, 'pointerdown', { pointerType: 'mouse', button: 0, pointerId: 1, clientX: 100, clientY: 100 })
+  fire(buildStage, 'pointerup', { pointerId: 1, clientX: 100, clientY: 100 })
+  check(firstBuildPart.getAttribute('aria-pressed') === 'true', 'un clic corto sobre una capa la fija')
+  fire(firstBuildPart, 'click')
+
+  const modelStyle = buildModel.getAttribute('style')
+  fire(firstBuildLayer, 'pointerdown', { pointerType: 'mouse', button: 0, pointerId: 2, clientX: 100, clientY: 100 })
+  fire(buildStage, 'pointermove', { pointerId: 2, clientX: 145, clientY: 78 })
+  fire(buildStage, 'pointerup', { pointerId: 2, clientX: 145, clientY: 78 })
+  check(buildModel.getAttribute('style') !== modelStyle && !buildStage.classList.contains('is-dragging'),
+    'arrastrar desde una capa orbita y libera el puntero al terminar')
+  check(firstBuildPart.getAttribute('aria-pressed') === 'false', 'orbitar no fija accidentalmente la capa')
+  check(fire(buildStage, 'selectstart').defaultPrevented, 'el visor bloquea la selección nativa durante la interacción')
+
+  fire(firstBuildPart, 'click')
+  check(buildRoot.classList.contains('has-active') && firstBuildPart.getAttribute('aria-pressed') === 'true',
+    'seleccionar una pieza la aísla y mantiene pulsado su control')
+  fire(buildClose, 'click')
+  check(buildGallery.hidden === false && buildViewer.hidden === true && !buildRoot.classList.contains('is-exploded'),
+    'volver a la galería restablece el visor')
 
   console.log('\n· Contacto')
   check(el('copy-mail').hidden === false, 'el botón de copiar email lo revela el JS')

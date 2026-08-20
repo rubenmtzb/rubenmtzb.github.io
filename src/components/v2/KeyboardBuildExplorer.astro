@@ -1,0 +1,490 @@
+---
+import { Picture } from 'astro:assets'
+import type { Lang } from '../../i18n/ui'
+import neo65Front from '../../assets/keyboards/neo65-gallery/front-dark.webp'
+import neo65Angle from '../../assets/keyboards/neo65-gallery/angle.webp'
+import neo65Profile from '../../assets/keyboards/neo65-gallery/profile.webp'
+import neo65RearWeight from '../../assets/keyboards/neo65-gallery/rear-weight.webp'
+
+interface Props { lang: Lang }
+const { lang } = Astro.props
+
+const photos = [
+  {
+    src: neo65Front,
+    label: lang === 'es' ? 'FRONTAL' : 'FRONT',
+    alt: lang === 'es' ? 'Vista frontal oscura del teclado mecánico Neo65' : 'Dark front view of the Neo65 mechanical keyboard',
+  },
+  {
+    src: neo65Angle,
+    label: lang === 'es' ? 'ÁNGULO' : 'THREE-QUARTER',
+    alt: lang === 'es' ? 'Vista diagonal del Neo65 y sus keycaps PBTfans Frontier' : 'Three-quarter view of the Neo65 and its PBTfans Frontier keycaps',
+  },
+  {
+    src: neo65Profile,
+    label: lang === 'es' ? 'PERFIL' : 'LOW PROFILE',
+    alt: lang === 'es' ? 'Perfil bajo del chasis y las keycaps del Neo65' : 'Low profile of the Neo65 case and keycaps',
+  },
+  {
+    src: neo65RearWeight,
+    label: lang === 'es' ? 'CONTRAPESO' : 'REAR WEIGHT',
+    alt: lang === 'es' ? 'Reverso del Neo65 con contrapeso PVD iridiscente' : 'Underside of the Neo65 with iridescent PVD rear weight',
+  },
+]
+
+const keyRows: Array<Array<[number, string]>> = [
+  [[1, 'Esc'], [1, '1'], [1, '2'], [1, '3'], [1, '4'], [1, '5'], [1, '6'], [1, '7'], [1, '8'], [1, '9'], [1, '0'], [1, '-'], [1, '='], [2, 'Del'], [1, 'Pg']],
+  [[1.5, 'Tab'], [1, 'Q'], [1, 'W'], [1, 'E'], [1, 'R'], [1, 'T'], [1, 'Y'], [1, 'U'], [1, 'I'], [1, 'O'], [1, 'P'], [1, '['], [1, ']'], [1.5, '\\'], [1, 'End']],
+  [[1.75, 'Ctrl'], [1, 'A'], [1, 'S'], [1, 'D'], [1, 'F'], [1, 'G'], [1, 'H'], [1, 'J'], [1, 'K'], [1, 'L'], [1, ';'], [1, "'"], [2.25, 'Enter'], [1, 'Fn']],
+  [[2.25, 'Shift'], [1, 'Z'], [1, 'X'], [1, 'C'], [1, 'V'], [1, 'B'], [1, 'N'], [1, 'M'], [1, ','], [1, '.'], [1, '/'], [1.75, 'Shift'], [1, 'Up'], [1, 'Fn']],
+  [[1.25, 'Alt'], [1.25, 'Cmd'], [1.25, 'Fn'], [6.25, ''], [1.5, 'Alt'], [1.5, 'Fn'], [1, 'Left'], [1, 'Down'], [1, 'Right']],
+]
+
+const units = 16
+const keys = keyRows.flatMap((row, rowIndex) => {
+  let x = 0
+  return row.map(([width, label]) => {
+    const key = { x, y: rowIndex, width, label }
+    x += width
+    return key
+  })
+})
+
+const parts = [
+  { id: 'keycaps', label: lang === 'es' ? 'KEYCAPS' : 'KEYCAPS', spec: 'PBTfans Frontier · doubleshot PBT', color: '#73766d', z: 46, exploded: 300 },
+  { id: 'switches', label: lang === 'es' ? 'SWITCHES' : 'SWITCHES', spec: 'Gazzew Boba U4 · silent tactile', color: '#eef1f4', z: 28, exploded: 232 },
+  { id: 'plate', label: lang === 'es' ? 'PLACA' : 'PLATE', spec: lang === 'es' ? 'Polipropileno negro · 1,5 mm' : 'Black polypropylene · 1.5 mm', color: '#262a30', z: 19, exploded: 172 },
+  { id: 'pcb', label: 'PCB', spec: lang === 'es' ? 'Hotswap cableada · sin flex cuts' : 'Wired hotswap · non-flex cut', color: '#e6eaef', z: 11, exploded: 118 },
+  { id: 'foam', label: 'FOAM', spec: lang === 'es' ? 'Poron en case, placa y PCB' : 'Poron case, plate & PCB foam', color: '#1b1e23', z: 3, exploded: 66 },
+  { id: 'case', label: 'CASE', spec: lang === 'es' ? 'Aluminio CNC · anodizado azul marino' : 'CNC aluminium · navy anodised', color: '#34466f', z: 0, exploded: 0 },
+  { id: 'weight', label: lang === 'es' ? 'CONTRAPESO' : 'REAR WEIGHT', spec: lang === 'es' ? 'Acabado espejo · PVD iridiscente' : 'Mirror-polished · iridescent PVD', color: '#9d8a5e', z: -34, exploded: -150 },
+]
+
+const keyStyle = (key: typeof keys[number]) =>
+  `--x:${(key.x / units) * 100}%;--y:${key.y * 20}%;--w:${(key.width / units) * 100}%`
+---
+
+<div
+  id="kb-panel-photos"
+  class="kb-build-explorer hidden"
+  data-kb-build-explorer
+  data-assembled={lang === 'es' ? 'Montado' : 'Assembled'}
+  data-exploded={lang === 'es' ? 'Explotado' : 'Exploded'}
+>
+  <header class="bx-header">
+    <div>
+      <span class="bx-kicker">LABORATORY // BUILD ARCHIVE</span>
+      <h4>{lang === 'es' ? 'Fotos de mis builds' : 'My build photos'}</h4>
+    </div>
+    <span class="bx-status"><i></i><span data-bx-status>01 BUILD // ARCHIVED</span></span>
+  </header>
+
+  <div class="bx-gallery" data-bx-gallery>
+    <p class="bx-intro">
+      {lang === 'es'
+        ? 'Una vista de los teclados que he montado. Abre uno para inspeccionar cada pieza en el orden real de ensamblaje.'
+        : "A view into the keyboards I've built. Open one to inspect every part in its real assembly order."}
+    </p>
+
+    <button class="bx-build-card" type="button" data-bx-open>
+      <span class="bx-card-visual">
+        <Picture
+          src={neo65Front}
+          formats={['avif', 'webp']}
+          widths={[720, 1100, 1600]}
+          sizes="(max-width: 1024px) 100vw, 760px"
+          alt={lang === 'es' ? 'Teclado mecánico Neo65 terminado con keycaps PBTfans Frontier' : 'Finished Neo65 mechanical keyboard with PBTfans Frontier keycaps'}
+          loading="lazy"
+          decoding="async"
+          class="bx-card-photo"
+        />
+        <span class="bx-card-index">BUILD 01</span>
+        <span class="bx-card-authentic"><i></i>{lang === 'es' ? 'BUILD REAL' : 'REAL BUILD'}</span>
+      </span>
+      <span class="bx-card-copy">
+        <span>
+          <strong>Neo65</strong>
+          <small>65% · Gasket mount · Wired hotswap</small>
+        </span>
+        <span class="bx-inspect">{lang === 'es' ? 'Inspeccionar' : 'Inspect'} <b aria-hidden="true">→</b></span>
+      </span>
+    </button>
+  </div>
+
+  <div class="bx-viewer" data-bx-viewer hidden>
+    <div class="bx-toolbar">
+      <button type="button" class="bx-back" data-bx-close>
+        <span aria-hidden="true">←</span> {lang === 'es' ? 'Todos los builds' : 'All builds'}
+      </button>
+      <div class="bx-view-switch" role="group" aria-label={lang === 'es' ? 'Vista del teclado' : 'Keyboard view'}>
+        <button type="button" data-bx-photo-view aria-pressed="true">{lang === 'es' ? 'Foto' : 'Photo'}</button>
+        <button type="button" data-bx-assembled-view aria-pressed="false">{lang === 'es' ? 'Montado' : 'Assembled'}</button>
+        <button type="button" data-bx-explode aria-pressed="false">{lang === 'es' ? 'Explotado' : 'Exploded'}</button>
+      </div>
+    </div>
+
+    <div class="bx-workbench">
+      <div class="bx-stage-column">
+        <div
+          class="bx-stage"
+          data-bx-stage
+          tabindex="0"
+          role="group"
+          aria-label={lang === 'es' ? 'Modelo interactivo por capas del teclado Neo65' : 'Interactive layered model of the Neo65 keyboard'}
+        >
+          <div class="bx-photo-stage" data-bx-photo-stage>
+            <div class="bx-photo-frame">
+              <div class="bx-photo-slides" data-bx-photo-slides>
+                {photos.map((photo, index) => (
+                  <figure class="bx-photo-slide" data-bx-photo-slide={index} data-bx-photo-label={photo.label} hidden={index !== 0}>
+                    <Picture
+                      src={photo.src}
+                      formats={['avif', 'webp']}
+                      widths={[720, 1100, 1600]}
+                      sizes="(max-width: 900px) 100vw, 680px"
+                      alt={photo.alt}
+                      loading="lazy"
+                      decoding="async"
+                      draggable="false"
+                    />
+                  </figure>
+                ))}
+              </div>
+              <span class="bx-photo-meta">
+                <span data-bx-photo-caption>{photos[0].label}</span>
+                <b data-bx-photo-counter>01 / {String(photos.length).padStart(2, '0')}</b>
+              </span>
+            </div>
+            <button class="bx-photo-nav bx-photo-prev" type="button" data-bx-photo-prev aria-label={lang === 'es' ? 'Foto anterior' : 'Previous photo'} title={lang === 'es' ? 'Foto anterior' : 'Previous photo'}>←</button>
+            <button class="bx-photo-nav bx-photo-next" type="button" data-bx-photo-next aria-label={lang === 'es' ? 'Foto siguiente' : 'Next photo'} title={lang === 'es' ? 'Foto siguiente' : 'Next photo'}>→</button>
+          </div>
+
+          <div class="bx-model" data-bx-model>
+            <div class="bx-floor"></div>
+
+            <div class="bx-layer bx-weight" data-bx-part="weight" style="--z:-34px;--ze:-150px;--delay:0ms">
+              <div class="bx-weight-strip"></div>
+            </div>
+
+            <div class="bx-layer bx-case" data-bx-part="case" style="--z:0px;--ze:0px;--delay:70ms">
+              <div class="bx-case-well"></div>
+              <div class="bx-case-mark">NEO</div>
+            </div>
+
+            <div class="bx-layer bx-foam" data-bx-part="foam" style="--z:3px;--ze:66px;--delay:140ms">
+              {keys.map((key) => <i class="bx-cutout" style={keyStyle(key)}></i>)}
+            </div>
+
+            <div class="bx-layer bx-pcb" data-bx-part="pcb" style="--z:11px;--ze:118px;--delay:210ms">
+              <div class="bx-circuit bx-circuit-a"></div>
+              <div class="bx-circuit bx-circuit-b"></div>
+              {keys.map((key) => <i class="bx-socket" style={keyStyle(key)}></i>)}
+            </div>
+
+            <div class="bx-layer bx-plate" data-bx-part="plate" style="--z:19px;--ze:172px;--delay:280ms">
+              {keys.map((key) => <i class="bx-cutout" style={keyStyle(key)}></i>)}
+            </div>
+
+            <div class="bx-layer bx-switches" data-bx-part="switches" style="--z:28px;--ze:232px;--delay:350ms">
+              {keys.map((key) => <i class="bx-switch" style={keyStyle(key)}><b></b></i>)}
+            </div>
+
+            <div class="bx-layer bx-keycaps" data-bx-part="keycaps" style="--z:46px;--ze:300px;--delay:420ms">
+              {keys.map((key) => <i class="bx-model-key" style={keyStyle(key)}><span>{key.label}</span></i>)}
+            </div>
+          </div>
+
+          <div class="bx-active-chip" data-bx-chip aria-live="polite">
+            <b data-bx-chip-index>01</b>
+            <span data-bx-chip-label>KEYCAPS</span>
+            <i></i>
+            <small data-bx-chip-spec>PBTfans Frontier · doubleshot PBT</small>
+          </div>
+          <span class="bx-view-readout" data-bx-readout>100% · 56° / -29°</span>
+        </div>
+        <p class="bx-hint">
+          <span data-bx-photo-hint>{lang === 'es' ? 'Neo65 terminado · PBTfans Frontier · fotografía original' : 'Finished Neo65 · PBTfans Frontier · original photograph'}</span>
+          <span data-bx-model-hint hidden>
+            <span class="bx-hint-wide">{lang === 'es' ? 'Arrastra para orbitar · rueda para ampliar · doble clic para restablecer' : 'Drag to orbit · scroll to zoom · double-click to reset'}</span>
+            <span class="bx-hint-narrow">{lang === 'es' ? 'Arrastra para orbitar · toca una pieza para aislarla' : 'Drag to orbit · tap a part to isolate'}</span>
+          </span>
+        </p>
+      </div>
+
+      <aside class="bx-specs">
+        <span class="bx-kicker">BUILD 01 // ARCHIVE</span>
+        <h5>Neo65</h5>
+        <p>65% · Gasket mount · Wired hotswap</p>
+        <div class="bx-parts-head">
+          <span>{lang === 'es' ? 'Orden de montaje' : 'Assembly order'}</span>
+          <span>{parts.length} {lang === 'es' ? 'piezas' : 'parts'}</span>
+        </div>
+        <ol class="bx-parts">
+          {parts.map((part, index) => (
+            <li>
+              <button type="button" data-bx-part-button={part.id} aria-pressed="false">
+                <span class="bx-part-index">{String(index + 1).padStart(2, '0')}</span>
+                <i style={`--swatch:${part.color}`}></i>
+                <span><strong>{part.label}</strong><small>{part.spec}</small></span>
+              </button>
+            </li>
+          ))}
+        </ol>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<style>
+  .kb-build-explorer {
+    container-type: inline-size;
+    border: 1px solid var(--line);
+    border-radius: .75rem;
+    background: var(--ink-800);
+    padding: clamp(1rem, 2.2vw, 1.5rem);
+    box-shadow: 0 20px 45px -28px rgba(0, 0, 0, .9);
+  }
+  .kb-build-explorer[hidden], .bx-viewer[hidden], .bx-gallery[hidden] { display: none; }
+  .bx-header, .bx-toolbar, .bx-card-copy, .bx-parts-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .bx-header { padding-bottom: .85rem; border-bottom: 1px solid var(--line-soft); }
+  .bx-kicker {
+    display: block;
+    color: var(--cyan);
+    font: 700 .66rem/1.2 var(--font-mono);
+    letter-spacing: .12em;
+  }
+  .bx-header h4 { margin-top: .3rem; color: var(--fg); font-size: 1rem; font-weight: 700; }
+  .bx-status {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    color: var(--fg-3);
+    font: 500 .64rem/1 var(--font-mono);
+    letter-spacing: .06em;
+    white-space: nowrap;
+  }
+  .bx-status i { width: .35rem; height: .35rem; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 10px rgba(111, 227, 255, .55); }
+  .bx-gallery { padding-top: 1rem; }
+  .bx-intro { max-width: 60ch; color: var(--fg-2); font-size: .82rem; line-height: 1.65; }
+  .bx-build-card {
+    display: block;
+    width: 100%;
+    margin-top: 1.15rem;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: .6rem;
+    background: var(--ink-950);
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: transform .35s cubic-bezier(.22, 1, .36, 1), border-color .3s ease, box-shadow .3s ease;
+  }
+  .bx-build-card:hover { transform: translateY(-3px); border-color: rgba(111, 227, 255, .45); box-shadow: 0 24px 48px -30px #000; }
+  .bx-build-card:focus-visible, .bx-back:focus-visible, .bx-view-switch button:focus-visible, .bx-photo-nav:focus-visible, .bx-parts button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+  .bx-card-visual {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 2.35 / 1;
+    overflow: hidden;
+    background: var(--ink-950);
+  }
+  .bx-card-visual::after { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(5, 8, 15, .22), transparent 40%, rgba(5, 8, 15, .38)); pointer-events: none; }
+  .bx-card-visual :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform .7s cubic-bezier(.22, 1, .36, 1), filter .4s ease; }
+  .bx-build-card:hover .bx-card-visual :global(img) { transform: scale(1.025); filter: brightness(1.06); }
+  .bx-card-index, .bx-card-authentic { position: absolute; z-index: 2; top: .75rem; font: 600 .58rem/1 var(--font-mono); letter-spacing: .12em; }
+  .bx-card-index { left: .8rem; color: var(--fg); text-shadow: 0 1px 8px rgba(0, 0, 0, .85); }
+  .bx-card-authentic { right: .8rem; display: inline-flex; align-items: center; gap: .4rem; padding: .38rem .5rem; border: 1px solid rgba(111, 227, 255, .35); border-radius: .3rem; background: rgba(5, 8, 15, .72); color: var(--cyan); backdrop-filter: blur(8px); }
+  .bx-card-authentic i, .bx-photo-stage > span i { width: .3rem; height: .3rem; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 8px rgba(111, 227, 255, .65); }
+  .bx-model-key, .bx-cutout, .bx-socket, .bx-switch {
+    position: absolute;
+    left: calc(var(--x) + .35%);
+    top: calc(var(--y) + 1.4%);
+    width: calc(var(--w) - .7%);
+    height: 17.2%;
+  }
+  .bx-preview-board i { border-radius: 2px; background: linear-gradient(155deg, #85887e, #595c55); box-shadow: inset 0 1px rgba(255, 255, 255, .22), 0 2px #41443d; }
+  .bx-card-copy { padding: .8rem .9rem; border-top: 1px solid var(--line-soft); }
+  .bx-card-copy > span:first-child { display: grid; gap: .2rem; }
+  .bx-card-copy strong { color: var(--fg); font-size: .86rem; }
+  .bx-card-copy small, .bx-specs > p { color: var(--fg-3); font: 400 .63rem/1.35 var(--font-mono); }
+  .bx-inspect { color: var(--cyan); font: 600 .65rem/1 var(--font-mono); white-space: nowrap; }
+  .bx-inspect b { display: inline-block; margin-left: .2rem; transition: transform .2s ease; }
+  .bx-build-card:hover .bx-inspect b { transform: translateX(3px); }
+  .bx-viewer { padding-top: .9rem; }
+  .bx-back { border: 0; background: transparent; color: var(--fg-3); font: 600 .68rem/1 var(--font-mono); cursor: pointer; }
+  .bx-back:hover { color: var(--fg); }
+  .bx-view-switch { display: grid; grid-template-columns: repeat(3, auto); padding: .2rem; border: 1px solid var(--line); border-radius: .45rem; background: var(--ink-950); }
+  .bx-view-switch button { min-height: 1.9rem; padding: .35rem .65rem; border: 0; border-radius: .28rem; background: transparent; color: var(--fg-3); font: 600 .61rem/1 var(--font-mono); cursor: pointer; transition: background .2s ease, color .2s ease, box-shadow .2s ease; }
+  .bx-view-switch button:hover { color: var(--fg); }
+  .bx-view-switch button[aria-pressed='true'] { background: var(--ink-700); color: var(--cyan); box-shadow: inset 0 0 0 1px rgba(111, 227, 255, .32); }
+  .bx-workbench {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(14rem, .8fr);
+    gap: clamp(1rem, 2.4vw, 1.7rem);
+    margin-top: .85rem;
+    padding: clamp(.75rem, 2vw, 1.25rem);
+    border: 1px solid transparent;
+    background: transparent;
+  }
+  .bx-stage-column { min-width: 0; }
+  .bx-stage {
+    position: relative;
+    display: grid;
+    place-items: center;
+    height: 24rem;
+    overflow: hidden;
+    perspective: 1500px;
+    perspective-origin: 50% 45%;
+    touch-action: none;
+    overscroll-behavior: contain;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: grab;
+    transition: height .7s cubic-bezier(.22, 1, .36, 1);
+  }
+  .bx-stage *, .bx-stage :global(img) { user-select: none; -webkit-user-select: none; -webkit-user-drag: none; }
+  .bx-stage.is-dragging { cursor: grabbing; }
+  .bx-stage.is-dragging .bx-layer { cursor: grabbing; }
+  .bx-photo-stage { position: absolute; inset: .25rem; z-index: 4; display: grid; place-items: center; opacity: 0; visibility: hidden; transform: translateY(5px); transition: opacity .4s ease, transform .5s cubic-bezier(.22, 1, .36, 1), visibility .4s; }
+  .bx-photo-frame { position: absolute; inset: 0; display: grid; place-items: center; width: min(88%, 44rem); height: 100%; margin-inline: auto; }
+  .bx-photo-slides { align-self: start; width: 100%; height: calc(100% - 1.5rem); }
+  .bx-photo-slide { width: 100%; height: 100%; }
+  .bx-photo-slide { position: relative; margin: 0; overflow: hidden; }
+  .bx-photo-slide[hidden] { display: none; }
+  .bx-photo-frame :global(picture) { display: contents; }
+  .bx-photo-stage :global(img) { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; }
+  .bx-photo-meta { position: absolute; right: 0; bottom: .25rem; display: inline-flex; align-items: center; gap: .55rem; color: var(--fg-2); font: 600 .54rem/1 var(--font-mono); letter-spacing: .08em; }
+  .bx-photo-meta b { padding-left: .55rem; border-left: 1px solid var(--line); color: var(--cyan); font: inherit; }
+  .bx-photo-nav { position: absolute; z-index: 2; top: 50%; display: grid; place-items: center; width: 2rem; aspect-ratio: 1; border: 1px solid var(--line); border-radius: 50%; background: rgba(6, 10, 18, .72); color: var(--fg); font: 600 .9rem/1 var(--font-mono); cursor: pointer; backdrop-filter: blur(8px); transform: translateY(-50%); transition: border-color .2s ease, color .2s ease, background .2s ease; }
+  .bx-photo-nav:hover { border-color: rgba(111, 227, 255, .55); background: rgba(6, 10, 18, .92); color: var(--cyan); }
+  .bx-photo-prev { left: 0; }
+  .bx-photo-next { right: 0; }
+  .kb-build-explorer.is-photo-view .bx-photo-stage { opacity: 1; visibility: visible; transform: none; }
+  .kb-build-explorer.is-photo-view .bx-model { opacity: 0; pointer-events: none; transform: translate(-50%, -50%) scale(.92) rotateX(var(--rx)) rotateZ(var(--rz)); }
+  .kb-build-explorer.is-photo-view .bx-active-chip, .kb-build-explorer.is-photo-view .bx-view-readout { opacity: 0 !important; }
+  .kb-build-explorer.is-photo-view .bx-stage { height: 22rem; cursor: default; }
+  .bx-model {
+    --rx: 56deg;
+    --rz: -29deg;
+    --fit: .64;
+    --zoom: 1;
+    --offset-y: 0px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 502px;
+    height: 172px;
+    transform-style: preserve-3d;
+    transform: translate(-50%, calc(-50% + var(--offset-y))) scale(calc(var(--fit) * var(--zoom))) rotateX(var(--rx)) rotateZ(var(--rz));
+    opacity: 1;
+    transition: transform .5s cubic-bezier(.22, 1, .36, 1), opacity .35s ease;
+  }
+  .bx-stage.is-dragging .bx-model { transition: none; }
+  .bx-floor { display: none; }
+  .bx-layer {
+    position: absolute;
+    inset: 0;
+    border-radius: 9px;
+    transform-style: preserve-3d;
+    transform: translateZ(var(--z));
+    transition: transform .82s cubic-bezier(.32, 1.22, .4, 1), filter .25s ease, opacity .25s ease;
+    transition-delay: var(--delay), 0ms, 0ms;
+    cursor: pointer;
+  }
+  .kb-build-explorer.is-exploded .bx-stage { height: 32rem; }
+  .kb-build-explorer.is-exploded .bx-model { --fit: .58; --offset-y: 42px; }
+  .kb-build-explorer.is-exploded .bx-layer { transform: translateZ(var(--ze)); }
+  .kb-build-explorer.is-exploded .bx-floor { transform: translateZ(-210px); }
+  .kb-build-explorer.has-active .bx-layer:not(.is-active) { filter: brightness(.52) saturate(.6); opacity: .64; }
+  .kb-build-explorer .bx-layer.is-active { filter: brightness(1.18) saturate(1.08); }
+  .bx-weight { background: linear-gradient(155deg, #34436f, #172039); box-shadow: inset 0 1px rgba(255, 255, 255, .12), 0 7px 0 #101728, 0 14px 22px rgba(0, 0, 0, .58); }
+  .bx-weight-strip { position: absolute; inset: 14px 18%; border: 1px solid rgba(255, 244, 205, .38); border-radius: 5px; background: linear-gradient(135deg, rgba(255,255,255,.25), transparent 25%), repeating-linear-gradient(112deg, rgba(255,255,255,.06) 0 1px, transparent 1px 4px), linear-gradient(135deg, #c9a24a, #756f87 42%, #3f6f83 76%, #6e9176); box-shadow: inset 0 0 12px rgba(255, 255, 255, .14), 0 3px 5px rgba(0, 0, 0, .35); }
+  .bx-case { border: 10px solid #2b3a5e; background: repeating-linear-gradient(105deg, rgba(255,255,255,.035) 0 1px, transparent 1px 5px), linear-gradient(155deg, #9ba8bc, #69768b); box-shadow: inset 0 1px rgba(255,255,255,.32), inset 0 0 0 1px rgba(8,13,24,.45), inset 0 0 24px rgba(0, 0, 0, .58), 0 5px 0 #283754, 0 11px 0 #1d2845, 0 21px 20px rgba(0, 0, 0, .5); }
+  .bx-case-well { position: absolute; inset: 9px; border: 2px solid rgba(13, 18, 31, .5); border-radius: 5px; }
+  .bx-case-mark { position: absolute; right: 17px; bottom: 11px; color: rgba(255, 255, 255, .2); font: 700 10px/1 var(--font-mono); letter-spacing: .2em; }
+  .bx-foam, .bx-pcb, .bx-plate { inset: 17px; }
+  .bx-foam { background: radial-gradient(circle at 30% 25%, rgba(255,255,255,.055) 0 1px, transparent 1.5px), repeating-linear-gradient(125deg, #1d2026 0 4px, #14171c 4px 8px); background-size: 8px 8px, auto; box-shadow: inset 0 1px rgba(255,255,255,.06), 0 3px 0 #11141a, 0 7px 0 #090b0f, 0 11px 12px rgba(0,0,0,.4); }
+  .bx-pcb { background-color: #e6eaef; background-image: linear-gradient(28deg, transparent 20%, rgba(113,132,151,.25) 20% 20.5%, transparent 20.5% 48%, rgba(113,132,151,.18) 48% 48.5%, transparent 48.5%), radial-gradient(#8d98a4 1px, transparent 1px); background-size: 72px 32px, 9px 9px; box-shadow: inset 0 1px rgba(255,255,255,.85), inset 0 0 0 1px rgba(68,79,91,.32), 0 3px 0 #c5cbd3, 0 6px 0 #9ea6b0, 0 10px 12px rgba(0,0,0,.35); }
+  .bx-plate { background-color: #24282f; background-image: repeating-linear-gradient(115deg, rgba(255,255,255,.035) 0 1px, transparent 1px 5px), linear-gradient(150deg, rgba(255,255,255,.08), transparent 45%); box-shadow: inset 0 1px rgba(255,255,255,.16), inset 0 0 0 1px #343942, 0 3px 0 #191c22, 0 7px 0 #0e1116, 0 11px 14px rgba(0,0,0,.42); }
+  .bx-cutout { background: #070a10; border: 1px solid rgba(0,0,0,.82); border-radius: 1px; transform: scale(.58); box-shadow: inset 0 3px 3px #000, 0 1px rgba(255,255,255,.08); }
+  .bx-socket { height: 12%; top: calc(var(--y) + 4%); background: linear-gradient(145deg, #30343b, #111318); border: 1px solid #080a0d; border-radius: 2px; transform: scale(.62); box-shadow: inset 0 1px rgba(255,255,255,.18), 0 2px 0 #080a0d, 0 4px 4px rgba(0,0,0,.28); }
+  .bx-circuit { position: absolute; height: 1px; background: #a8b1ba; transform-origin: left; opacity: .7; }
+  .bx-circuit-a { width: 58%; left: 20%; top: 40%; transform: rotate(18deg); }
+  .bx-circuit-b { width: 42%; left: 35%; top: 63%; transform: rotate(-14deg); }
+  .bx-switch { display: grid; place-items: center; height: 16%; top: calc(var(--y) + 2%); transform: scale(.56); transform-style: preserve-3d; border: 1px solid rgba(87,94,104,.55); border-radius: 2px; background: linear-gradient(145deg, #fbfcfd, #d5d9df 58%, #b8bec7); box-shadow: inset 0 1px rgba(255,255,255,.95), inset 0 -2px rgba(111,119,130,.18), 0 2px 0 #c8cdd4, 0 5px 0 #9ca3ad, 0 8px 0 #777f8a, 0 12px 9px rgba(0, 0, 0, .5); }
+  .bx-switch::before { content: ''; position: absolute; inset: 18%; border: 1px solid rgba(75,84,96,.35); border-radius: 1px; background: linear-gradient(145deg, rgba(255,255,255,.82), rgba(194,201,210,.6)); box-shadow: inset 0 1px rgba(255,255,255,.85), 0 2px 2px rgba(0,0,0,.18); }
+  .bx-switch::after { content: ''; position: absolute; left: 13%; right: 13%; bottom: -22%; height: 24%; border-radius: 0 0 2px 2px; background: linear-gradient(180deg, #9ca4ae, #747d88); box-shadow: 0 2px 3px rgba(0,0,0,.35); }
+  .bx-switch b { position: relative; z-index: 2; width: 42%; aspect-ratio: 1; border: 1px solid rgba(31,68,106,.55); border-radius: 1px; background: linear-gradient(145deg, #7db8e9, #467fbe 56%, #315f96); box-shadow: inset 0 1px rgba(255,255,255,.42), 0 2px 0 #356aa4, 0 5px 0 #244d7b, 0 7px 5px rgba(0,0,0,.38); }
+  .bx-switch b::before, .bx-switch b::after { content: ''; position: absolute; background: rgba(20,55,91,.55); border-radius: 1px; }
+  .bx-switch b::before { left: 22%; right: 22%; top: 43%; height: 14%; }
+  .bx-switch b::after { top: 22%; bottom: 22%; left: 43%; width: 14%; }
+  .bx-model-key { display: grid; place-items: center; transform-style: preserve-3d; border: 1px solid rgba(46,49,45,.7); border-radius: 4px; background: linear-gradient(155deg, #64675f, #454840); box-shadow: 0 2px 0 #5a5d55, 0 5px 0 #4d5048, 0 8px 0 #3e413b, 0 11px 9px rgba(0, 0, 0, .58); }
+  .bx-model-key::before { content: ''; position: absolute; inset: 1px 1px 3px; z-index: 0; border-radius: 3px; background: radial-gradient(circle at 28% 22%, rgba(255,255,255,.18), transparent 34%), repeating-linear-gradient(110deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px), linear-gradient(155deg, #898b81, #74776e 54%, #62655d); box-shadow: inset 0 1px rgba(255,255,255,.34), inset 0 -2px 3px rgba(0,0,0,.25); }
+  .bx-model-key::after { content: ''; position: absolute; left: 9%; right: 9%; bottom: -3px; height: 4px; z-index: -1; border-radius: 0 0 3px 3px; background: linear-gradient(180deg, #53564e, #3c3f38); }
+  .bx-model-key span { position: relative; z-index: 1; overflow: hidden; color: #e4cb4b; font: 600 8px/1 var(--font-mono); text-shadow: 0 1px rgba(0,0,0,.65), 0 0 4px rgba(228,203,75,.12); text-overflow: clip; }
+  .bx-active-chip, .bx-view-readout { position: absolute; z-index: 5; border: 1px solid rgba(111, 227, 255, .25); border-radius: .4rem; background: rgba(6, 10, 18, .88); font-family: var(--font-mono); pointer-events: none; }
+  .bx-active-chip { top: .15rem; left: .15rem; display: flex; align-items: center; gap: .55rem; max-width: calc(100% - .3rem); padding: .45rem .7rem; opacity: 0; transform: translateY(-4px); transition: opacity .2s ease, transform .2s ease; }
+  .kb-build-explorer.has-active .bx-active-chip { opacity: 1; transform: none; }
+  .bx-active-chip b { color: var(--cyan); font-size: .57rem; }
+  .bx-active-chip span { color: var(--fg); font-size: .64rem; font-weight: 700; }
+  .bx-active-chip i { width: 1px; height: .7rem; background: var(--line); }
+  .bx-active-chip small { overflow: hidden; color: var(--fg-2); font-size: .6rem; text-overflow: ellipsis; white-space: nowrap; }
+  .bx-view-readout { right: .15rem; bottom: .15rem; padding: .35rem .55rem; border-color: var(--line-soft); color: var(--fg-3); font-size: .56rem; opacity: 0; transition: opacity .2s ease; }
+  .bx-stage.is-dragging .bx-view-readout, .bx-view-readout.is-visible { opacity: 1; }
+  .bx-hint { margin-top: .5rem; color: var(--fg-3); font: 400 .57rem/1.4 var(--font-mono); letter-spacing: .04em; text-align: center; }
+  .bx-hint-narrow { display: none; }
+  .bx-specs { min-width: 0; padding-top: .25rem; }
+  .bx-specs h5 { margin-top: .35rem; color: var(--fg); font-size: 1.2rem; font-weight: 700; }
+  .bx-specs > p { margin-top: .25rem; }
+  .bx-parts-head { margin-top: 1.15rem; padding: .8rem 0 .35rem; border-top: 1px solid var(--line-soft); color: var(--fg-3); font: 500 .56rem/1 var(--font-mono); letter-spacing: .11em; text-transform: uppercase; }
+  .bx-parts { list-style: none; }
+  .bx-parts button { display: grid; grid-template-columns: 1.2rem .55rem 1fr; align-items: start; gap: .55rem; width: 100%; padding: .55rem .65rem; border: 0; border-radius: .35rem; background: transparent; color: inherit; text-align: left; cursor: pointer; transition: background .2s ease, box-shadow .2s ease; }
+  .bx-parts button:hover, .bx-parts button[aria-pressed='true'] { background: rgba(111, 227, 255, .07); box-shadow: inset 2px 0 var(--cyan); }
+  .bx-part-index { padding-top: .16rem; color: var(--fg-3); font: 400 .56rem/1 var(--font-mono); }
+  .bx-parts button > i { width: .52rem; height: .52rem; margin-top: .12rem; border: 1px solid rgba(255, 255, 255, .16); border-radius: 2px; background: var(--swatch); }
+  .bx-parts button > span:last-child { display: grid; gap: .15rem; min-width: 0; }
+  .bx-parts strong { color: var(--fg); font: 600 .67rem/1.2 var(--font-mono); letter-spacing: .05em; }
+  .bx-parts small { color: var(--fg-3); font-size: .66rem; line-height: 1.25; }
+  .bx-parts button[aria-pressed='true'] strong, .bx-parts button:hover strong { color: var(--cyan); }
+  @container (max-width: 48rem) {
+    .bx-workbench { grid-template-columns: 1fr; }
+    .bx-stage { height: 22rem; }
+    .kb-build-explorer.is-exploded .bx-stage { height: 29rem; }
+    .bx-model { --fit: .72; }
+    .kb-build-explorer.is-exploded .bx-model { --fit: .68; --offset-y: 38px; }
+  }
+  @media (max-width: 900px) {
+    .bx-workbench { grid-template-columns: 1fr; }
+    .bx-stage { height: 22rem; }
+    .kb-build-explorer.is-exploded .bx-stage { height: 29rem; }
+    .bx-model { --fit: .72; }
+    .kb-build-explorer.is-exploded .bx-model { --fit: .68; --offset-y: 38px; }
+  }
+  @media (max-width: 600px) {
+    .kb-build-explorer { padding: .85rem; }
+    .bx-header { align-items: flex-start; }
+    .bx-status { font-size: .55rem; }
+    .bx-workbench { padding: .5rem; }
+    .bx-toolbar { align-items: flex-start; flex-direction: column; }
+    .bx-view-switch { width: 100%; grid-template-columns: repeat(3, 1fr); }
+    .bx-stage { height: 17rem; }
+    .kb-build-explorer.is-photo-view .bx-stage { height: 15rem; }
+    .bx-photo-frame { width: calc(100% - 2.5rem); }
+    .bx-photo-nav { width: 1.75rem; }
+    .kb-build-explorer.is-exploded .bx-stage { height: 23rem; }
+    .bx-model { --fit: .47; }
+    .kb-build-explorer.is-exploded .bx-model { --fit: .43; --offset-y: 28px; }
+    .bx-active-chip small, .bx-hint-wide { display: none; }
+    .bx-hint-narrow { display: inline; }
+    .bx-card-authentic { top: .55rem; right: .55rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bx-build-card, .bx-layer, .bx-model, .bx-stage, .bx-floor, .bx-active-chip { transition-duration: .01ms !important; }
+  }
+</style>
