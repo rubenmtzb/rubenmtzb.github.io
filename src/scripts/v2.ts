@@ -1666,7 +1666,6 @@ function initKeyboard() {
     })
   }
 
-  initKeyboardBuildExplorer()
   loadNewQuote()
 }
 
@@ -1827,6 +1826,7 @@ initEducationSlider()
 initCertsSlider()
 initMomentCards()
 initKeyboard()
+initKeyboardBuildExplorer()
 initMail()
 initClock()
 initContactSignal()
