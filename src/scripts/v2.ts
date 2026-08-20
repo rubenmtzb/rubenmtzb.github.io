@@ -1496,18 +1496,36 @@ function initKeyboard() {
       && target !== monkeyBox && target !== sandbox.element
   }
 
+  /*
+   * El bloque solo secuestra el espacio y el retroceso cuando está de
+   * verdad en juego: con el foco dentro del archivo, o con el panel a la
+   * vista. Antes bastaba con estar en modo Speed Trial —el modo por
+   * defecto—, así que la barra espaciadora dejaba de hacer scroll en toda
+   * la página desde el primer render.
+   */
+  let panelOnScreen = false
+  const interactivePanel = document.getElementById('kb-panel-interactive')
+  if (interactivePanel && 'IntersectionObserver' in window) {
+    new IntersectionObserver(
+      ([entry]) => { panelOnScreen = entry.isIntersecting },
+      { threshold: 0.35 },
+    ).observe(interactivePanel)
+  }
+
   window.addEventListener('keydown', (e) => {
     if (isForeignField(e.target) || activeMode === 'photos') return
 
     const insideArchive = (e.target as HTMLElement)?.closest('#archive') !== null
-    const focused = document.activeElement === monkeyBox
+    const engaged = document.activeElement === monkeyBox
       || document.activeElement === sandbox.element
       || insideArchive
+      || panelOnScreen
 
-    // Espacio, Tab y Retroceso mueven la página o navegan hacia atrás: aquí no.
-    if (focused || activeMode === 'speed' || activeMode === 'sim') {
-      if (e.code === 'Space' || e.code === 'Tab' || e.code === 'Backspace') e.preventDefault()
-    }
+    /*
+     * El tabulador nunca se bloquea: es la única forma de recorrer la
+     * página con el teclado y no le pertenece a este widget.
+     */
+    if (engaged && (e.code === 'Space' || e.code === 'Backspace')) e.preventDefault()
 
     press(e.code, true)
 
@@ -1557,23 +1575,29 @@ function initKeyboard() {
   const tabSpeed = document.getElementById('kb-tab-speed')
   const tabSim = document.getElementById('kb-tab-sim')
   const tabPhotos = document.getElementById('kb-tab-photos')
-  const panelInteractive = document.getElementById('kb-panel-interactive')
   const panelPhotos = document.getElementById('kb-panel-photos')
 
+  /*
+   * Patrón ARIA de pestañas completo: además del estado visual, el grupo
+   * mantiene un único punto de tabulación y las flechas recorren los tres
+   * modos, que es como un lector de pantalla espera navegar un `tablist`.
+   */
   const setTabActive = (activeBtn: HTMLElement | null, inactiveBtns: (HTMLElement | null)[]) => {
     activeBtn?.classList.add('active')
     activeBtn?.setAttribute('aria-selected', 'true')
+    activeBtn?.removeAttribute('tabindex')
 
     inactiveBtns.forEach((btn) => {
       btn?.classList.remove('active')
       btn?.setAttribute('aria-selected', 'false')
+      btn?.setAttribute('tabindex', '-1')
     })
   }
 
   tabSpeed?.addEventListener('click', () => {
     activeMode = 'speed'
     setTabActive(tabSpeed, [tabSim, tabPhotos])
-    panelInteractive?.classList.remove('hidden')
+    interactivePanel?.classList.remove('hidden')
     panelPhotos?.classList.add('hidden')
     kbSpeedModeWrap?.classList.remove('hidden')
     kbFreeModeWrap?.classList.add('hidden')
@@ -1583,7 +1607,7 @@ function initKeyboard() {
   tabSim?.addEventListener('click', () => {
     activeMode = 'sim'
     setTabActive(tabSim, [tabSpeed, tabPhotos])
-    panelInteractive?.classList.remove('hidden')
+    interactivePanel?.classList.remove('hidden')
     panelPhotos?.classList.add('hidden')
     kbSpeedModeWrap?.classList.add('hidden')
     kbFreeModeWrap?.classList.remove('hidden')
@@ -1594,9 +1618,27 @@ function initKeyboard() {
   tabPhotos?.addEventListener('click', () => {
     activeMode = 'photos'
     setTabActive(tabPhotos, [tabSpeed, tabSim])
-    panelInteractive?.classList.add('hidden')
+    interactivePanel?.classList.add('hidden')
     panelPhotos?.classList.remove('hidden')
   })
+
+  const tabs = [tabSpeed, tabSim, tabPhotos].filter((tab): tab is HTMLElement => tab !== null)
+  const TAB_STEPS: Record<string, (index: number) => number> = {
+    ArrowLeft: (i) => i - 1,
+    ArrowRight: (i) => i + 1,
+    Home: () => 0,
+    End: () => tabs.length - 1,
+  }
+  for (const [index, tab] of tabs.entries()) {
+    tab.addEventListener('keydown', (event) => {
+      const step = TAB_STEPS[event.key]
+      if (!step) return
+      event.preventDefault()
+      const next = tabs[(step(index) + tabs.length) % tabs.length]
+      next.focus()
+      next.click()
+    })
+  }
 
   initKeyboardBuildExplorer()
   loadNewQuote()
