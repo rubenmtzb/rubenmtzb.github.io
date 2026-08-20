@@ -52,6 +52,15 @@ export async function getStackByGroup() {
   return grouped
 }
 
+/**
+ * Builds de teclado, en orden de montaje. El contenido es bilingüe dentro
+ * de cada build (una sola imagen, dos textos), así que aquí solo se ordena:
+ * la resolución del idioma la hace el componente con `pick`.
+ */
+export async function getKeyboards() {
+  return byOrder(await getCollection('keyboards')).map((e) => e.data)
+}
+
 export async function getPage(key: string, lang: Lang) {
   const all = await getCollection('pages')
   const entry = all.find((e) => e.data.key === key && e.data.lang === lang)

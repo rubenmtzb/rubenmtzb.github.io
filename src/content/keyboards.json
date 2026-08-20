@@ -1,0 +1,219 @@
+[
+  {
+    "id": "neo65",
+    "key": "neo65",
+    "order": 1,
+    "name": "Neo65",
+    "year": "2024",
+    "summary": {
+      "en": "65% · Gasket mount · Wired hotswap",
+      "es": "65% · Montaje gasket · Hotswap por cable"
+    },
+    "layout": {
+      "en": "65% · 68 keys",
+      "es": "65% · 68 teclas"
+    },
+    "photos": [
+      {
+        "image": "./../assets/keyboards/neo65-gallery/front-dark.webp",
+        "label": {
+          "en": "FRONT",
+          "es": "FRONTAL"
+        },
+        "alt": {
+          "en": "Top-down view of the finished Neo65 with dark keycaps, yellow legends and blue novelty icons.",
+          "es": "Vista cenital del Neo65 terminado con keycaps oscuras, leyendas amarillas e iconos novelty azules."
+        },
+        "cutout": true,
+        "fade": {
+          "x": 4,
+          "y": 13
+        }
+      },
+      {
+        "image": "./../assets/keyboards/neo65-gallery/angle.webp",
+        "label": {
+          "en": "THREE-QUARTER",
+          "es": "ÁNGULO"
+        },
+        "alt": {
+          "en": "Three-quarter view of the Neo65 showing the keycap profile and the low front bezel.",
+          "es": "Vista en tres cuartos del Neo65 con el perfil de las keycaps y el bisel frontal bajo."
+        },
+        "cutout": false
+      },
+      {
+        "image": "./../assets/keyboards/neo65-gallery/profile.webp",
+        "label": {
+          "en": "LOW PROFILE",
+          "es": "PERFIL"
+        },
+        "alt": {
+          "en": "Eye-level side view of the Neo65 showing the typing angle and the height of the case.",
+          "es": "Vista lateral a ras de mesa del Neo65 con el ángulo de tecleo y la altura del chasis."
+        },
+        "cutout": false
+      },
+      {
+        "image": "./../assets/keyboards/neo65-gallery/rear-weight.webp",
+        "label": {
+          "en": "REAR WEIGHT",
+          "es": "CONTRAPESO"
+        },
+        "alt": {
+          "en": "Underside of the Neo65 with its mirror-polished, iridescent PVD rear weight engraved neo and LXV.",
+          "es": "Reverso del Neo65 con su contrapeso PVD iridiscente pulido a espejo, grabado neo y LXV."
+        },
+        "cutout": true,
+        "fade": {
+          "x": 9,
+          "y": 20
+        }
+      }
+    ],
+    "parts": [
+      {
+        "id": "keycaps",
+        "label": {
+          "en": "KEYCAPS",
+          "es": "KEYCAPS"
+        },
+        "spec": {
+          "en": "Doubleshot PBT · yellow legends, novelty icons",
+          "es": "PBT doubleshot · leyendas amarillas e iconos novelty"
+        },
+        "color": "#3a3b38",
+        "z": 46,
+        "exploded": 300
+      },
+      {
+        "id": "switches",
+        "label": {
+          "en": "SWITCHES",
+          "es": "SWITCHES"
+        },
+        "spec": {
+          "en": "Silent tactile · lubed",
+          "es": "Táctiles silenciosos · lubricados"
+        },
+        "color": "#eef1f4",
+        "z": 28,
+        "exploded": 232
+      },
+      {
+        "id": "plate",
+        "label": {
+          "en": "PLATE",
+          "es": "PLACA"
+        },
+        "spec": {
+          "en": "Black polypropylene · 1.5 mm",
+          "es": "Polipropileno negro · 1,5 mm"
+        },
+        "color": "#262a30",
+        "z": 19,
+        "exploded": 172
+      },
+      {
+        "id": "pcb",
+        "label": {
+          "en": "PCB",
+          "es": "PCB"
+        },
+        "spec": {
+          "en": "Wired hotswap · non-flex cut",
+          "es": "Hotswap cableada · sin flex cuts"
+        },
+        "color": "#e6eaef",
+        "z": 11,
+        "exploded": 118
+      },
+      {
+        "id": "foam",
+        "label": {
+          "en": "FOAM",
+          "es": "FOAM"
+        },
+        "spec": {
+          "en": "Poron case, plate & PCB foam",
+          "es": "Poron en case, placa y PCB"
+        },
+        "color": "#1b1e23",
+        "z": 3,
+        "exploded": 66
+      },
+      {
+        "id": "case",
+        "label": {
+          "en": "CASE",
+          "es": "CASE"
+        },
+        "spec": {
+          "en": "CNC aluminium · dark anodised",
+          "es": "Aluminio CNC · anodizado oscuro"
+        },
+        "color": "#1d2431",
+        "z": 0,
+        "exploded": 0
+      },
+      {
+        "id": "weight",
+        "label": {
+          "en": "REAR WEIGHT",
+          "es": "CONTRAPESO"
+        },
+        "spec": {
+          "en": "Mirror-polished · iridescent PVD",
+          "es": "Acabado espejo · PVD iridiscente"
+        },
+        "color": "#9d8a5e",
+        "z": -34,
+        "exploded": -150
+      }
+    ],
+    "specs": [
+      {
+        "label": {
+          "en": "Layout",
+          "es": "Distribución"
+        },
+        "value": "65% · 68"
+      },
+      {
+        "label": {
+          "en": "Mount",
+          "es": "Montaje"
+        },
+        "value": "Gasket"
+      },
+      {
+        "label": {
+          "en": "Case",
+          "es": "Chasis"
+        },
+        "value": "CNC aluminium"
+      },
+      {
+        "label": {
+          "en": "Plate",
+          "es": "Placa"
+        },
+        "value": "PP 1.5 mm"
+      },
+      {
+        "label": {
+          "en": "Connection",
+          "es": "Conexión"
+        },
+        "value": "USB-C"
+      },
+      {
+        "label": {
+          "en": "Weight",
+          "es": "Contrapeso"
+        },
+        "value": "PVD"
+      }
+    ]
+  }
+]

@@ -222,6 +222,77 @@ const personal = defineCollection({
     }),
 })
 
+/**
+ * Archivo de teclados montados a mano.
+ *
+ * El explorador de builds era markup: la foto, el orden de montaje, los
+ * colores del modelo y la ficha técnica estaban escritos dentro del
+ * componente. Aquí cada build es un dato, así que añadir el segundo teclado
+ * es una entrada más en este fichero y no una cirugía sobre el HTML.
+ *
+ * `z` y `exploded` son la altura de la capa en el modelo 3D, montada y
+ * separada, en píxeles del propio modelo. El orden de la lista es el orden
+ * real de ensamblaje, de arriba abajo.
+ */
+const keyboards = defineCollection({
+  loader: file('src/content/keyboards.json'),
+  schema: ({ image }) =>
+    z.object({
+      key: z.string().min(1),
+      order: z.number().int(),
+      name: z.string().min(1),
+      year: z.string().min(4),
+      /** Resumen de una línea: tamaño, montaje y conexión. */
+      summary: z.object({ en: z.string().min(1), es: z.string().min(1) }),
+      layout: z.object({ en: z.string().min(1), es: z.string().min(1) }),
+      photos: z
+        .array(
+          z.object({
+            image: image(),
+            label: z.object({ en: z.string().min(1), es: z.string().min(1) }),
+            alt: z.object({ en: z.string().min(10), es: z.string().min(10) }),
+            /**
+             * Encuadre plano sobre fondo uniforme: admite el tratamiento de
+             * render, que disuelve el fondo real contra el panel. Las tomas
+             * con contexto de escritorio se enmarcan sin recortar.
+             */
+            cutout: z.boolean().default(false),
+            /**
+             * Margen que ocupa el fondo en la toma, en % de la propia foto.
+             * Es lo que el desvanecido tiene que comerse: solo lo sabe quien
+             * encuadró la fotografía, así que viaja con ella.
+             */
+            fade: z
+              .object({ x: z.number().min(0).max(40), y: z.number().min(0).max(40) })
+              .default({ x: 4, y: 12 }),
+          }),
+        )
+        .min(1),
+      parts: z
+        .array(
+          z.object({
+            id: z.string().min(1),
+            label: z.object({ en: z.string().min(1), es: z.string().min(1) }),
+            spec: z.object({ en: z.string().min(1), es: z.string().min(1) }),
+            /** Muestra de color del listado y tinte de la capa en el modelo. */
+            color: z.string().regex(/^#[0-9a-f]{6}$/i),
+            z: z.number(),
+            exploded: z.number(),
+          }),
+        )
+        .min(1),
+      /** Ficha técnica del panel lateral. Pares etiqueta/valor, en orden. */
+      specs: z
+        .array(
+          z.object({
+            label: z.object({ en: z.string().min(1), es: z.string().min(1) }),
+            value: z.string().min(1),
+          }),
+        )
+        .default([]),
+    }),
+})
+
 /** Metadata SEO por página e idioma. Un título y una descripción únicos. */
 const pages = defineCollection({
   loader: file('src/content/pages.json'),
@@ -238,4 +309,4 @@ const pages = defineCollection({
   }),
 })
 
-export const collections = { profile, experience, projects, education, certs, stack, personal, pages }
+export const collections = { profile, experience, projects, education, certs, stack, personal, keyboards, pages }
