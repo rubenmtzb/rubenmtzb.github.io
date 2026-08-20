@@ -244,7 +244,6 @@ const keyboards = defineCollection({
       year: z.string().min(4),
       /** Resumen de una línea: tamaño, montaje y conexión. */
       summary: z.object({ en: z.string().min(1), es: z.string().min(1) }),
-      layout: z.object({ en: z.string().min(1), es: z.string().min(1) }),
       photos: z
         .array(
           z.object({
