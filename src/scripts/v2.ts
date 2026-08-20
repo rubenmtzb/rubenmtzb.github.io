@@ -553,7 +553,20 @@ function initMomentCards() {
   }
 
   applyLayout()
-  window.addEventListener('resize', applyLayout, { passive: true })
+
+  /*
+   * `applyLayout` mide cada carta, así que en un redimensionado continuo
+   * costaba un reflujo por evento. Se agrupa en un fotograma: el resultado
+   * es idéntico y el trabajo pasa a ser uno por frame.
+   */
+  let layoutFrame: number | null = null
+  window.addEventListener('resize', () => {
+    if (layoutFrame !== null) return
+    layoutFrame = requestAnimationFrame(() => {
+      layoutFrame = null
+      applyLayout()
+    })
+  }, { passive: true })
 
   cardStates.forEach((st) => {
     const card = st.el
@@ -562,6 +575,8 @@ function initMomentCards() {
     let startPointerY = 0
     let startCardX = 0
     let startCardY = 0
+    /** Rotación al empezar el gesto: la de trabajo se deriva de ella, nunca de sí misma. */
+    let startCardRot = 0
     let hasMoved = false
 
     type PosSample = { x: number; y: number; time: number }
@@ -577,6 +592,7 @@ function initMomentCards() {
       startPointerY = e.clientY
       startCardX = st.x
       startCardY = st.y
+      startCardRot = st.rot
       pointerHistory = [{ x: e.clientX, y: e.clientY, time: performance.now() }]
 
       card.classList.remove('is-flying')
@@ -596,14 +612,21 @@ function initMomentCards() {
       }
 
       if (hasMoved) {
-        const dynamicRot = window.innerWidth <= 768
-          ? clamp(st.rot + dx * 0.1, 16)
-          : st.rot + clamp(dx * 0.1, 16)
-        const bounds = boundsFor(card, dynamicRot)
-        st.x = window.innerWidth <= 768
+        const isNarrow = window.innerWidth <= 768
+        /*
+         * La inclinación se calcula siempre desde la rotación inicial del
+         * gesto y se guarda en el estado. Antes solo vivía en el transform
+         * del arrastre, así que al soltar sin impulso la carta volvía de
+         * golpe a su ángulo de origen.
+         */
+        st.rot = isNarrow
+          ? clamp(startCardRot + dx * 0.1, 16)
+          : startCardRot + clamp(dx * 0.1, 16)
+        const bounds = boundsFor(card, st.rot)
+        st.x = isNarrow
           ? Math.max(-bounds.x, Math.min(bounds.x, startCardX + dx))
           : startCardX + dx
-        st.y = window.innerWidth <= 768
+        st.y = isNarrow
           ? Math.max(-bounds.y, Math.min(bounds.y, startCardY + dy))
           : startCardY + dy
 
@@ -611,7 +634,7 @@ function initMomentCards() {
         pointerHistory.push({ x: e.clientX, y: e.clientY, time: now })
         if (pointerHistory.length > 5) pointerHistory.shift()
 
-        card.style.transform = `translate3d(${st.x}px, ${st.y}px, 0) rotate(${dynamicRot}deg)`
+        card.style.transform = `translate3d(${st.x}px, ${st.y}px, 0) rotate(${st.rot}deg)`
       }
     })
 
@@ -706,6 +729,9 @@ function initMomentCards() {
   // Botón para reorganizar el mazo a su posición original
   resetBtn?.addEventListener('click', () => {
     applyLayout()
+    // El apilado vuelve a su base: si no, cada reorganización arrastra el
+    // z-index acumulado de todos los arrastres anteriores.
+    highestZ = 20
     cardStates.forEach((st, i) => {
       st.el.classList.remove('is-flying', 'is-dragging', 'is-flipped')
       st.el.style.zIndex = String(10 + i)
