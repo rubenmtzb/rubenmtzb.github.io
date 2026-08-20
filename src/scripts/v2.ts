@@ -1054,12 +1054,6 @@ function createBuildPanel(panel: HTMLElement, root: HTMLElement) {
   const stage = q('[data-bx-stage]')
   const model = q('[data-bx-model]')
   const readout = q('[data-bx-readout]')
-  const photoHint = q('[data-bx-photo-hint]')
-  const modelHint = q('[data-bx-model-hint]')
-  const photoSlides = all('[data-bx-photo-slide]')
-  const photoDots = all<HTMLButtonElement>('[data-bx-photo-dot]')
-  const photoCounter = q('[data-bx-photo-counter]')
-  const photoCaption = q('[data-bx-photo-caption]')
   const chipIndex = q('[data-bx-chip-index]')
   const chipLabel = q('[data-bx-chip-label]')
   const chipSpec = q('[data-bx-chip-spec]')
@@ -1068,7 +1062,6 @@ function createBuildPanel(panel: HTMLElement, root: HTMLElement) {
   const rangeOut = q('[data-bx-range-out]')
   const partButtons = all<HTMLButtonElement>('[data-bx-part-button]')
   const partLayers = all('[data-bx-part]')
-  const photoImages = all<HTMLImageElement>('[data-bx-photo-slide] img')
 
   /** Ficha de cada pieza, leída del propio listado: el texto vive en el HTML. */
   const partDetails = new Map(partButtons.map((button, index) => [
@@ -1085,7 +1078,6 @@ function createBuildPanel(panel: HTMLElement, root: HTMLElement) {
   let zoom = 1
   /** 0 montado, 1 totalmente separado. Es el único origen de la explosión. */
   let spread = 0
-  let photoIndex = 0
   let pinnedPart: string | null = null
 
   const renderCamera = () => {
@@ -1106,14 +1098,6 @@ function createBuildPanel(panel: HTMLElement, root: HTMLElement) {
       range.style.setProperty('--fill', `${percent}%`)
     }
     if (rangeOut) rangeOut.textContent = `${percent}%`
-  }
-
-  const renderPhoto = () => {
-    photoSlides.forEach((slide, index) => { slide.hidden = index !== photoIndex })
-    photoDots.forEach((dot, index) => dot.setAttribute('aria-current', String(index === photoIndex)))
-    const active = photoSlides[photoIndex]
-    if (photoCaption) photoCaption.textContent = active?.dataset.bxPhotoLabel ?? ''
-    if (photoCounter) photoCounter.textContent = `${pad(photoIndex + 1)} / ${pad(photoSlides.length)}`
   }
 
   const setActivePart = (partId: string | null) => {
@@ -1162,29 +1146,6 @@ function createBuildPanel(panel: HTMLElement, root: HTMLElement) {
       renderCamera()
       readout?.classList.remove('is-visible')
     },
-    stepPhoto(direction: number) {
-      if (photoSlides.length === 0) return
-      photoIndex = (photoIndex + direction + photoSlides.length) % photoSlides.length
-      renderPhoto()
-    },
-    goToPhoto(index: number) {
-      if (index < 0 || index >= photoSlides.length) return
-      photoIndex = index
-      renderPhoto()
-    },
-    resetPhoto() {
-      photoIndex = 0
-      renderPhoto()
-    },
-    /*
-     * Las diapositivas nacen perezosas para no descargar cuatro fotos que
-     * quizá nadie abra. En cuanto se entra en el build dejan de serlo: si no,
-     * la primera pulsación de "siguiente" enseñaba un hueco vacío mientras
-     * el navegador iba a buscar la imagen.
-     */
-    warmPhotos() {
-      for (const image of photoImages) image.loading = 'eager'
-    },
     previewPart(partId: string | null) {
       setActivePart(partId ?? pinnedPart)
     },
@@ -1196,15 +1157,11 @@ function createBuildPanel(panel: HTMLElement, root: HTMLElement) {
       pinnedPart = null
       setActivePart(null)
     },
-    showModelHints(showModel: boolean) {
-      if (photoHint) photoHint.hidden = showModel
-      if (modelHint) modelHint.hidden = !showModel
-    },
   }
 }
 
 /**
- * Explorador de builds: galería, visor fotográfico y modelo 3D por capas.
+ * Explorador de builds: portada fotográfica y modelo 3D por capas.
  *
  * El componente renderiza un panel por build, así que aquí no hay nada
  * atado al Neo65: al abrir una tarjeta se engancha el panel correspondiente
@@ -1214,10 +1171,55 @@ function initKeyboardBuildExplorer() {
   const root = document.querySelector<HTMLElement>('[data-kb-build-explorer]')
   if (!root) return
 
+  /*
+   * Las fotos viven en la portada, no en un visor aparte. Cada build mantiene
+   * su propio índice y admite botones, barras, teclado y gesto táctil.
+   */
+  for (const carousel of root.querySelectorAll<HTMLElement>('[data-bx-card-carousel]')) {
+    const slides = [...carousel.querySelectorAll<HTMLElement>('[data-bx-card-slide]')]
+    const dots = [...carousel.querySelectorAll<HTMLButtonElement>('[data-bx-card-dot]')]
+    const caption = carousel.querySelector<HTMLElement>('[data-bx-card-caption]')
+    const counter = carousel.querySelector<HTMLElement>('[data-bx-card-counter]')
+    const previous = carousel.querySelector<HTMLButtonElement>('[data-bx-card-prev]')
+    const next = carousel.querySelector<HTMLButtonElement>('[data-bx-card-next]')
+    if (slides.length === 0) continue
+
+    let index = 0
+    const show = (target: number) => {
+      index = (target + slides.length) % slides.length
+      slides.forEach((slide, slideIndex) => {
+        const active = slideIndex === index
+        slide.hidden = !active
+        slide.setAttribute('aria-hidden', String(!active))
+      })
+      dots.forEach((dot, dotIndex) => dot.setAttribute('aria-current', String(dotIndex === index)))
+      if (caption) caption.textContent = slides[index].dataset.bxCardLabel ?? ''
+      if (counter) counter.textContent = `${pad(index + 1)} / ${pad(slides.length)}`
+
+      const image = slides[index].querySelector<HTMLImageElement>('img')
+      if (image) image.loading = 'eager'
+    }
+
+    previous?.addEventListener('click', () => show(index - 1))
+    next?.addEventListener('click', () => show(index + 1))
+    dots.forEach((dot) => dot.addEventListener('click', () => show(Number(dot.dataset.bxCardDot))))
+    carousel.addEventListener('keydown', (event) => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
+      event.preventDefault()
+      show(index + (event.key === 'ArrowLeft' ? -1 : 1))
+    })
+    carousel.addEventListener('pointermove', (event) => {
+      const rect = carousel.getBoundingClientRect()
+      carousel.style.setProperty('--bx-pointer-x', `${event.clientX - rect.left}px`)
+      carousel.style.setProperty('--bx-pointer-y', `${event.clientY - rect.top}px`)
+    })
+    onSwipe(carousel, (direction) => show(index + direction))
+    show(0)
+  }
+
   const gallery = root.querySelector<HTMLElement>('[data-bx-gallery]')
   const viewer = root.querySelector<HTMLElement>('[data-bx-viewer]')
   const closeButton = root.querySelector<HTMLButtonElement>('[data-bx-close]')
-  const photoButton = root.querySelector<HTMLButtonElement>('[data-bx-photo-view]')
   const assembledButton = root.querySelector<HTMLButtonElement>('[data-bx-assembled-view]')
   const explodeButton = root.querySelector<HTMLButtonElement>('[data-bx-explode]')
   const status = root.querySelector<HTMLElement>('[data-bx-status]')
@@ -1233,17 +1235,12 @@ function initKeyboardBuildExplorer() {
   const archivedLabel = status?.textContent ?? ''
   let active: BuildPanel | null = null
   let activeKey = ''
-  let viewMode: 'photo' | 'assembled' | 'exploded' = 'photo'
   let drag: { x: number, y: number, tilt: number, spin: number, moved: boolean, partId: string | null } | null = null
   let suppressPartClick = false
 
   /** El rótulo describe siempre lo que se está viendo, presets incluidos. */
   const syncStatus = () => {
     if (!status) return
-    if (viewMode === 'photo') {
-      status.textContent = `${activeKey.toUpperCase()} // ${say('Foto original', 'Original photo')}`
-      return
-    }
     const percent = Math.round((active?.spread ?? 0) * 100)
     const label = percent === 0 ? root.dataset.assembled
       : percent === 100 ? root.dataset.exploded
@@ -1251,20 +1248,14 @@ function initKeyboardBuildExplorer() {
     status.textContent = `${activeKey.toUpperCase()} // ${label}`
   }
 
-  const setViewMode = (mode: typeof viewMode) => {
-    viewMode = mode
+  const setViewMode = (mode: 'assembled' | 'exploded') => {
     const exploded = mode === 'exploded'
-    root.classList.toggle('is-photo-view', mode === 'photo')
-    photoButton?.setAttribute('aria-pressed', String(mode === 'photo'))
     assembledButton?.setAttribute('aria-pressed', String(mode === 'assembled'))
     explodeButton?.setAttribute('aria-pressed', String(exploded))
 
     if (active) {
-      active.showModelHints(mode !== 'photo')
-      if (active.scrub) active.scrub.hidden = mode === 'photo'
-      // Los dos presets son posiciones del mismo mando continuo.
-      if (mode !== 'photo') active.setSpread(exploded ? 1 : 0)
-      if (mode === 'photo') active.resetPhoto()
+      if (active.scrub) active.scrub.hidden = false
+      active.setSpread(exploded ? 1 : 0)
     }
 
     syncStatus()
@@ -1278,7 +1269,6 @@ function initKeyboardBuildExplorer() {
       active.clearPart()
       active.setSpread(0)
       active.resetCamera()
-      active.resetPhoto()
     }
     root.classList.remove('is-exploded', 'is-spread', 'has-active', 'is-scrubbing')
     if (status) status.textContent = archivedLabel
@@ -1300,13 +1290,11 @@ function initKeyboardBuildExplorer() {
     panel.clearPart()
     panel.setSpread(0)
     panel.resetCamera()
-    panel.warmPhotos()
-    setViewMode('photo')
+    setViewMode('assembled')
     closeButton?.focus()
   }
 
   closeButton?.addEventListener('click', showGallery)
-  photoButton?.addEventListener('click', () => setViewMode('photo'))
   assembledButton?.addEventListener('click', () => setViewMode('assembled'))
   explodeButton?.addEventListener('click', () => setViewMode('exploded'))
 
@@ -1321,11 +1309,7 @@ function initKeyboardBuildExplorer() {
     showGallery()
   })
 
-  /*
-   * Delegación: la galería, las flechas de foto, los puntos y el listado de
-   * piezas son listas que crecen con cada build nuevo, así que se escuchan
-   * desde la raíz en lugar de enganchar un listener por elemento.
-   */
+  /** La apertura y el listado de piezas crecen con cada build. */
   root.addEventListener('click', (event) => {
     const target = event.target as HTMLElement
 
@@ -1333,17 +1317,8 @@ function initKeyboardBuildExplorer() {
     if (opener) return openBuild(opener.dataset.bxOpen ?? '')
     if (!active) return
 
-    if (target.closest('[data-bx-photo-prev]')) return active.stepPhoto(-1)
-    if (target.closest('[data-bx-photo-next]')) return active.stepPhoto(1)
-
-    const dot = target.closest<HTMLElement>('[data-bx-photo-dot]')
-    if (dot) return active.goToPhoto(Number(dot.dataset.bxPhotoDot))
-
     const partButton = target.closest<HTMLElement>('[data-bx-part-button]')
-    if (partButton) {
-      if (viewMode === 'photo') setViewMode('assembled')
-      active.togglePart(partButton.dataset.bxPartButton ?? '')
-    }
+    if (partButton) active.togglePart(partButton.dataset.bxPartButton ?? '')
   })
 
   const PART_HOLDER = '[data-bx-part-button], [data-bx-part]'
@@ -1351,7 +1326,7 @@ function initKeyboardBuildExplorer() {
     (node as HTMLElement | null)?.closest?.<HTMLElement>(PART_HOLDER) ?? null
 
   root.addEventListener('pointerover', (event) => {
-    if (!active || viewMode === 'photo') return
+    if (!active) return
     const holder = holderOf(event.target)
     if (!holder) return
     active.previewPart(holder.dataset.bxPartButton ?? holder.dataset.bxPart ?? null)
@@ -1362,13 +1337,13 @@ function initKeyboardBuildExplorer() {
    * aterriza fuera de la misma pieza.
    */
   root.addEventListener('pointerout', (event) => {
-    if (!active || viewMode === 'photo') return
+    if (!active) return
     const from = holderOf(event.target)
     if (!from || holderOf(event.relatedTarget) === from) return
     active.previewPart(null)
   })
   root.addEventListener('focusin', (event) => {
-    if (!active || viewMode === 'photo') return
+    if (!active) return
     const button = (event.target as HTMLElement).closest<HTMLElement>('[data-bx-part-button]')
     active.previewPart(button?.dataset.bxPartButton ?? null)
   })
@@ -1382,7 +1357,6 @@ function initKeyboardBuildExplorer() {
     // Los presets siguen al mando: el estado accesible nunca miente.
     const exploded = active.spread > .999
     const assembled = active.spread < .001
-    viewMode = exploded ? 'exploded' : 'assembled'
     assembledButton?.setAttribute('aria-pressed', String(assembled))
     explodeButton?.setAttribute('aria-pressed', String(exploded))
     syncStatus()
@@ -1405,7 +1379,7 @@ function initKeyboardBuildExplorer() {
 
   root.addEventListener('pointerdown', (event) => {
     const stage = (event.target as HTMLElement).closest<HTMLElement>('[data-bx-stage]')
-    if (!active || !stage || viewMode === 'photo') return
+    if (!active || !stage) return
     if (event.pointerType === 'mouse' && event.button !== 0) return
     event.preventDefault()
     stage.focus({ preventScroll: true })
@@ -1451,12 +1425,6 @@ function initKeyboardBuildExplorer() {
     const stage = (event.target as HTMLElement).closest('[data-bx-stage]')
     if (!active || !stage) return
 
-    if (viewMode === 'photo') {
-      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
-      event.preventDefault()
-      return active.stepPhoto(event.key === 'ArrowLeft' ? -1 : 1)
-    }
-
     /*
      * Orbitar y separar con el teclado: el modelo dejaba de existir para
      * quien no puede arrastrar, aunque el contenedor ya fuese enfocable.
@@ -1499,7 +1467,7 @@ function initKeyboardBuildExplorer() {
   /* ---------- Zoom con rueda ---------- */
   root.addEventListener('wheel', (event) => {
     const stage = (event.target as HTMLElement).closest<HTMLElement>('[data-bx-stage]')
-    if (!active || !stage || viewMode === 'photo') return
+    if (!active || !stage) return
     /*
      * El zoom solo se apropia de la rueda cuando el escenario tiene el foco.
      * Pasar el cursor por encima mientras se lee la página no debe bloquear
@@ -1510,13 +1478,6 @@ function initKeyboardBuildExplorer() {
     active.zoomBy(event.deltaY > 0 ? .9 : 1.1)
     active.readout?.classList.add('is-visible')
   }, { passive: false })
-
-  /* ---------- Deslizamiento táctil entre fotos ---------- */
-  for (const panel of panels.values()) {
-    if (panel.stage) onSwipe(panel.stage, (direction) => {
-      if (viewMode === 'photo') panel.stepPhoto(direction)
-    })
-  }
 }
 
 /* ---------------- Teclado mecánico dinámico con MonkeyType Killua Speed Trial ---------------- */

@@ -4,67 +4,35 @@
     "key": "neo65",
     "order": 1,
     "name": "Neo65",
-    "year": "2024",
+    "status": "complete",
     "summary": {
       "en": "65% · Gasket mount · Wired hotswap",
       "es": "65% · Montaje gasket · Hotswap por cable"
     },
     "photos": [
       {
-        "image": "./../assets/keyboards/neo65-gallery/front-dark.webp",
+        "image": "./../assets/keyboards/neo65-gallery/neo1.png",
         "label": {
-          "en": "FRONT",
-          "es": "FRONTAL"
+          "en": "ASSEMBLED",
+          "es": "MONTADO"
         },
         "alt": {
-          "en": "Top-down view of the finished Neo65 with dark keycaps, yellow legends and blue novelty icons.",
-          "es": "Vista cenital del Neo65 terminado con keycaps oscuras, leyendas amarillas e iconos novelty azules."
+          "en": "Three-quarter view of the assembled Neo65 with a navy case, dark keycaps, yellow legends and blue novelty icons.",
+          "es": "Vista en tres cuartos del Neo65 montado, con chasis azul marino, keycaps oscuras, leyendas amarillas e iconos novelty azules."
         },
-        "cutout": true,
-        "fade": {
-          "x": 4,
-          "y": 13
-        }
+        "preserve": true
       },
       {
-        "image": "./../assets/keyboards/neo65-gallery/angle.webp",
-        "label": {
-          "en": "THREE-QUARTER",
-          "es": "ÁNGULO"
-        },
-        "alt": {
-          "en": "Three-quarter view of the Neo65 showing the keycap profile and the low front bezel.",
-          "es": "Vista en tres cuartos del Neo65 con el perfil de las keycaps y el bisel frontal bajo."
-        },
-        "cutout": false
-      },
-      {
-        "image": "./../assets/keyboards/neo65-gallery/profile.webp",
-        "label": {
-          "en": "LOW PROFILE",
-          "es": "PERFIL"
-        },
-        "alt": {
-          "en": "Eye-level side view of the Neo65 showing the typing angle and the height of the case.",
-          "es": "Vista lateral a ras de mesa del Neo65 con el ángulo de tecleo y la altura del chasis."
-        },
-        "cutout": false
-      },
-      {
-        "image": "./../assets/keyboards/neo65-gallery/rear-weight.webp",
+        "image": "./../assets/keyboards/neo65-gallery/neo2.png",
         "label": {
           "en": "REAR WEIGHT",
           "es": "CONTRAPESO"
         },
         "alt": {
-          "en": "Underside of the Neo65 with its mirror-polished, iridescent PVD rear weight engraved neo and LXV.",
+          "en": "Underside of the Neo65 with its mirror-polished iridescent PVD weight, engraved neo and LXV.",
           "es": "Reverso del Neo65 con su contrapeso PVD iridiscente pulido a espejo, grabado neo y LXV."
         },
-        "cutout": true,
-        "fade": {
-          "x": 9,
-          "y": 20
-        }
+        "preserve": true
       }
     ],
     "parts": [
@@ -75,12 +43,16 @@
           "es": "KEYCAPS"
         },
         "spec": {
-          "en": "Doubleshot PBT · yellow legends, novelty icons",
-          "es": "PBT doubleshot · leyendas amarillas e iconos novelty"
+          "en": "PBTfans Frontier · doubleshot PBT, yellow legends",
+          "es": "PBTfans Frontier · PBT doubleshot, leyendas amarillas"
         },
-        "color": "#3a3b38",
+        "color": "#464a4e",
         "z": 46,
-        "exploded": 300
+        "exploded": 300,
+        "source": {
+          "label": "PBTfans",
+          "href": "https://pbt.fans/products/pbtfans-frontier?variant=40533875785817"
+        }
       },
       {
         "id": "switches",
@@ -89,12 +61,16 @@
           "es": "SWITCHES"
         },
         "spec": {
-          "en": "Silent tactile · lubed",
-          "es": "Táctiles silenciosos · lubricados"
+          "en": "Gazzew Boba U4 · silent tactile, lubed",
+          "es": "Gazzew Boba U4 · táctiles silenciosos, lubricados"
         },
         "color": "#eef1f4",
         "z": 28,
-        "exploded": 232
+        "exploded": 232,
+        "source": {
+          "label": "ThereminGoat",
+          "href": "https://www.theremingoat.com/blog/boba-u4-switch-review"
+        }
       },
       {
         "id": "plate",
@@ -117,8 +93,8 @@
           "es": "PCB"
         },
         "spec": {
-          "en": "Wired hotswap · non-flex cut",
-          "es": "Hotswap cableada · sin flex cuts"
+          "en": "Hotswap · wired USB-C, non-flex cut",
+          "es": "Hotswap · USB-C por cable, sin flex cuts"
         },
         "color": "#e6eaef",
         "z": 11,
@@ -131,8 +107,8 @@
           "es": "FOAM"
         },
         "spec": {
-          "en": "Poron case, plate & PCB foam",
-          "es": "Poron en case, placa y PCB"
+          "en": "Poron · case, plate and PCB",
+          "es": "Poron · en case, placa y PCB"
         },
         "color": "#1b1e23",
         "z": 3,
@@ -145,12 +121,16 @@
           "es": "CASE"
         },
         "spec": {
-          "en": "CNC aluminium · dark anodised",
-          "es": "Aluminio CNC · anodizado oscuro"
+          "en": "CNC aluminium · navy anodised",
+          "es": "Aluminio CNC · anodizado azul marino"
         },
-        "color": "#1d2431",
+        "color": "#313a50",
         "z": 0,
-        "exploded": 0
+        "exploded": 0,
+        "source": {
+          "label": "Eloquent Clicks",
+          "href": "https://eloquentclicks.com/es/products/neo65-teclado-mecanico"
+        }
       },
       {
         "id": "weight",
@@ -160,9 +140,9 @@
         },
         "spec": {
           "en": "Mirror-polished · iridescent PVD",
-          "es": "Acabado espejo · PVD iridiscente"
+          "es": "Pulido a espejo · PVD iridiscente"
         },
-        "color": "#9d8a5e",
+        "color": "#c0741c",
         "z": -34,
         "exploded": -150
       }
@@ -173,42 +153,935 @@
           "en": "Layout",
           "es": "Distribución"
         },
-        "value": "65% · 68"
+        "value": {
+          "en": "65% · 68 keys",
+          "es": "65% · 68 teclas"
+        }
       },
       {
         "label": {
           "en": "Mount",
           "es": "Montaje"
         },
-        "value": "Gasket"
+        "value": {
+          "en": "Gasket",
+          "es": "Gasket"
+        }
       },
       {
         "label": {
           "en": "Case",
           "es": "Chasis"
         },
-        "value": "CNC aluminium"
+        "value": {
+          "en": "CNC aluminium",
+          "es": "Aluminio CNC"
+        }
+      },
+      {
+        "label": {
+          "en": "Finish",
+          "es": "Acabado"
+        },
+        "value": {
+          "en": "Navy anodised",
+          "es": "Anodizado azul marino"
+        }
       },
       {
         "label": {
           "en": "Plate",
           "es": "Placa"
         },
-        "value": "PP 1.5 mm"
+        "value": {
+          "en": "PP · 1.5 mm",
+          "es": "PP · 1,5 mm"
+        }
+      },
+      {
+        "label": {
+          "en": "Switches",
+          "es": "Switches"
+        },
+        "value": {
+          "en": "Gazzew Boba U4",
+          "es": "Gazzew Boba U4"
+        }
+      },
+      {
+        "label": {
+          "en": "Keycaps",
+          "es": "Keycaps"
+        },
+        "value": {
+          "en": "PBTfans Frontier",
+          "es": "PBTfans Frontier"
+        }
       },
       {
         "label": {
           "en": "Connection",
           "es": "Conexión"
         },
-        "value": "USB-C"
+        "value": {
+          "en": "Wired USB-C",
+          "es": "USB-C por cable"
+        }
       },
       {
         "label": {
           "en": "Weight",
           "es": "Contrapeso"
         },
-        "value": "PVD"
+        "value": {
+          "en": "Iridescent PVD",
+          "es": "PVD iridiscente"
+        }
+      }
+    ]
+  },
+  {
+    "id": "hhkb-professional-hybrid-type-s",
+    "key": "hhkb-professional-hybrid-type-s",
+    "order": 2,
+    "name": "HHKB Professional Hybrid Type-S",
+    "status": "complete",
+    "layout": "hhkb",
+    "summary": {
+      "en": "60% · Type-S Topre 45g · Snow + Wasabi · Hand-lubed",
+      "es": "60% · Topre Type-S 45g · Snow + Wasabi · Lubricado a mano"
+    },
+    "photos": [
+      {
+        "image": "./../assets/keyboards/hhkb-gallery/hhkb.png",
+        "label": {
+          "en": "ASSEMBLED",
+          "es": "MONTADO"
+        },
+        "alt": {
+          "en": "Three-quarter view of the assembled white HHKB Professional Hybrid Type-S with mint and white keycaps on a dark textured surface.",
+          "es": "Vista en tres cuartos del HHKB Professional Hybrid Type-S blanco montado, con keycaps verde menta y blancas sobre una superficie oscura texturizada."
+        },
+        "preserve": true
+      }
+    ],
+    "parts": [
+      {
+        "id": "keycaps",
+        "label": {
+          "en": "KEYCAPS",
+          "es": "KEYCAPS"
+        },
+        "spec": {
+          "en": "PFU PBT · mixed Snow + Wasabi colorways",
+          "es": "PBT de PFU · combinación Snow + Wasabi"
+        },
+        "color": "#a9cdb0",
+        "z": 46,
+        "exploded": 320,
+        "source": {
+          "label": "HHKB",
+          "href": "https://www.hhkeyboard.com/uk/products/hybrid-type-s"
+        }
+      },
+      {
+        "id": "sliders",
+        "label": {
+          "en": "TYPE-S SLIDERS",
+          "es": "SLIDERS TYPE-S"
+        },
+        "spec": {
+          "en": "Factory-silenced Topre sliders · rails hand-lubed",
+          "es": "Sliders Topre silenciados de fábrica · guías lubricadas a mano"
+        },
+        "color": "#22272b",
+        "z": 31,
+        "exploded": 250,
+        "source": {
+          "label": "Topre switch",
+          "href": "https://deskthority.net/wiki/Topre_switch"
+        }
+      },
+      {
+        "id": "housing",
+        "label": {
+          "en": "SLIDER HOUSING",
+          "es": "ALOJAMIENTO"
+        },
+        "spec": {
+          "en": "Integrated top frame · guides and retains every slider",
+          "es": "Marco superior integrado · guía y retiene cada slider"
+        },
+        "color": "#ebe9e2",
+        "z": 20,
+        "exploded": 185,
+        "source": {
+          "label": "Topre patent",
+          "href": "https://patents.google.com/patent/US4584444"
+        }
+      },
+      {
+        "id": "domes",
+        "label": {
+          "en": "RUBBER DOMES",
+          "es": "DOMOS DE GOMA"
+        },
+        "spec": {
+          "en": "Topre dome sheet · uniform 45g tactile resistance",
+          "es": "Lámina de domos Topre · resistencia táctil uniforme de 45g"
+        },
+        "color": "#b9bcc1",
+        "z": 12,
+        "exploded": 125,
+        "source": {
+          "label": "Topre patent",
+          "href": "https://patents.google.com/patent/US4584444"
+        }
+      },
+      {
+        "id": "springs",
+        "label": {
+          "en": "CONICAL SPRINGS",
+          "es": "MUELLES CÓNICOS"
+        },
+        "spec": {
+          "en": "60 capacitive electrodes · non-contact sensing",
+          "es": "60 electrodos capacitivos · detección sin contacto"
+        },
+        "color": "#c5c9ce",
+        "z": 7,
+        "exploded": 75,
+        "source": {
+          "label": "Topre patent",
+          "href": "https://patents.google.com/patent/US4584444"
+        }
+      },
+      {
+        "id": "pcb",
+        "label": {
+          "en": "CAPACITIVE PCB",
+          "es": "PCB CAPACITIVA"
+        },
+        "spec": {
+          "en": "Green FR4 · sensing pads, USB-C and wireless controller",
+          "es": "FR4 verde · pads sensores, USB-C y controlador inalámbrico"
+        },
+        "color": "#2f6b46",
+        "z": 0,
+        "exploded": 25,
+        "source": {
+          "label": "Topre switch",
+          "href": "https://deskthority.net/wiki/Topre_switch"
+        }
+      },
+      {
+        "id": "case",
+        "label": {
+          "en": "BOTTOM CASE",
+          "es": "CARCASA INFERIOR"
+        },
+        "spec": {
+          "en": "Factory lower shell · controller and 2×AA battery bay",
+          "es": "Carcasa inferior de fábrica · controlador y hueco para 2×AA"
+        },
+        "color": "#eceae3",
+        "z": -16,
+        "exploded": -80,
+        "source": {
+          "label": "HHKB",
+          "href": "https://www.hhkeyboard.com/uk/products/hybrid-type-s"
+        }
+      }
+    ],
+    "specs": [
+      {
+        "label": {
+          "en": "Layout",
+          "es": "Distribución"
+        },
+        "value": {
+          "en": "60% · 60 keys · HHKB US",
+          "es": "60% · 60 teclas · HHKB US"
+        }
+      },
+      {
+        "label": {
+          "en": "Switches",
+          "es": "Switches"
+        },
+        "value": {
+          "en": "Topre EC Type-S · uniform 45g",
+          "es": "Topre EC Type-S · 45g uniformes"
+        }
+      },
+      {
+        "label": {
+          "en": "Keycaps",
+          "es": "Keycaps"
+        },
+        "value": {
+          "en": "PFU PBT · Snow + Wasabi mix",
+          "es": "PBT de PFU · mezcla Snow + Wasabi"
+        }
+      },
+      {
+        "label": {
+          "en": "Silencing",
+          "es": "Silenciado"
+        },
+        "value": {
+          "en": "Factory Type-S slider dampers",
+          "es": "Amortiguadores Type-S de fábrica"
+        }
+      },
+      {
+        "label": {
+          "en": "Modification",
+          "es": "Modificación"
+        },
+        "value": {
+          "en": "Slider rails hand-lubed",
+          "es": "Guías de sliders lubricadas a mano"
+        }
+      },
+      {
+        "label": {
+          "en": "Connection",
+          "es": "Conexión"
+        },
+        "value": {
+          "en": "Bluetooth 4.2 · USB-C",
+          "es": "Bluetooth 4.2 · USB-C"
+        }
+      },
+      {
+        "label": {
+          "en": "Power",
+          "es": "Alimentación"
+        },
+        "value": {
+          "en": "2×AA in wireless mode",
+          "es": "2×AA en modo inalámbrico"
+        }
+      },
+      {
+        "label": {
+          "en": "Assembly",
+          "es": "Montaje"
+        },
+        "value": {
+          "en": "Factory preassembled · user serviced",
+          "es": "Premontado de fábrica · mantenido por el usuario"
+        }
+      }
+    ]
+  },
+  {
+    "id": "evo75",
+    "key": "evo75",
+    "order": 3,
+    "name": "EVO75",
+    "status": "complete",
+    "layout": "evo75",
+    "summary": {
+      "en": "75% · Butterfly Leaf Spring · Tri-mode · Factory stock",
+      "es": "75% · Butterfly Leaf Spring · Trimodo · De fábrica"
+    },
+    "photos": [
+      {
+        "image": "./../assets/keyboards/evo75-gallery/evo1.png",
+        "label": {
+          "en": "ASSEMBLED",
+          "es": "MONTADO"
+        },
+        "alt": {
+          "en": "Three-quarter view of the assembled white EVO75 with white, grey and red keycaps on a black textured surface.",
+          "es": "Vista en tres cuartos del EVO75 blanco montado, con keycaps blancas, grises y rojas sobre una superficie negra texturizada."
+        },
+        "preserve": true
+      },
+      {
+        "image": "./../assets/keyboards/evo75-gallery/evo2.png",
+        "label": {
+          "en": "REAR WEIGHT",
+          "es": "PESO TRASERO"
+        },
+        "alt": {
+          "en": "Bottom view of the white EVO75 showing its polished silver rear weight, engraved logo and four feet.",
+          "es": "Vista inferior del EVO75 blanco mostrando su peso trasero plateado pulido, el logotipo grabado y las cuatro patas."
+        },
+        "preserve": true
+      }
+    ],
+    "parts": [
+      {
+        "id": "keycaps",
+        "label": {
+          "en": "KEYCAPS",
+          "es": "KEYCAPS"
+        },
+        "spec": {
+          "en": "1.7 mm dye-sub PBT · white, grey and red factory set",
+          "es": "PBT dye-sub de 1,7 mm · set de fábrica blanco, gris y rojo"
+        },
+        "color": "#e7e6e2",
+        "z": 50,
+        "exploded": 365,
+        "source": {
+          "label": "EvoWorks",
+          "href": "https://lumekeebs.com/products/evoworks-evo75-keyboard"
+        }
+      },
+      {
+        "id": "top-case",
+        "label": {
+          "en": "TOP CASE",
+          "es": "MARCO SUPERIOR"
+        },
+        "spec": {
+          "en": "CNC 6063 aluminium · Nova White spray coating · ball catch",
+          "es": "Aluminio CNC 6063 · acabado Nova White · cierre ball-catch"
+        },
+        "color": "#efeee9",
+        "z": 39,
+        "exploded": 315,
+        "source": {
+          "label": "Divinikey",
+          "href": "https://divinikey.com/products/evoworks-evo75-keyboard"
+        }
+      },
+      {
+        "id": "switches",
+        "label": {
+          "en": "LINEAR SWITCHES",
+          "es": "SWITCHES LINEALES"
+        },
+        "spec": {
+          "en": "Stock pair: Amber with FR4 or Rye with PP · fitted option not recorded",
+          "es": "Pareja stock: Amber con FR4 o Rye con PP · variante montada no registrada"
+        },
+        "color": "#d18a38",
+        "z": 30,
+        "exploded": 265,
+        "source": {
+          "label": "EvoWorks",
+          "href": "https://lumekeebs.com/products/evoworks-evo75-keyboard"
+        }
+      },
+      {
+        "id": "plate",
+        "label": {
+          "en": "FLEX PLATE",
+          "es": "PLACA FLEX"
+        },
+        "spec": {
+          "en": "Stock option: FR4 or polypropylene · paired to the switches",
+          "es": "Opción stock: FR4 o polipropileno · emparejada con los switches"
+        },
+        "color": "#d2d0c7",
+        "z": 20,
+        "exploded": 210,
+        "source": {
+          "label": "EvoWorks",
+          "href": "https://lumekeebs.com/products/evoworks-evo75-keyboard"
+        }
+      },
+      {
+        "id": "mount",
+        "label": {
+          "en": "BUTTERFLY MOUNT",
+          "es": "MONTAJE BUTTERFLY"
+        },
+        "spec": {
+          "en": "Leaf-spring supports · silicone cushions and gasket strips",
+          "es": "Soportes leaf-spring · apoyos de silicona y tiras gasket"
+        },
+        "color": "#d84c45",
+        "z": 15,
+        "exploded": 160,
+        "source": {
+          "label": "Divinikey",
+          "href": "https://divinikey.com/products/evoworks-evo75-keyboard"
+        }
+      },
+      {
+        "id": "pcb",
+        "label": {
+          "en": "TRI-MODE PCB",
+          "es": "PCB TRIMODO"
+        },
+        "spec": {
+          "en": "ANSI hotswap · per-key RGB · VIA · 1000Hz wired/2.4G",
+          "es": "ANSI hotswap · RGB por tecla · VIA · 1000Hz por cable/2.4G"
+        },
+        "color": "#315f43",
+        "z": 9,
+        "exploded": 105,
+        "source": {
+          "label": "EvoWorks",
+          "href": "https://lumekeebs.com/products/evoworks-evo75-keyboard"
+        }
+      },
+      {
+        "id": "dampening",
+        "label": {
+          "en": "SILICONE DAMPENING",
+          "es": "AMORTIGUACIÓN"
+        },
+        "spec": {
+          "en": "Factory triple-layer silicone acoustic pack",
+          "es": "Paquete acústico de fábrica con tres capas de silicona"
+        },
+        "color": "#34383d",
+        "z": 2,
+        "exploded": 55,
+        "source": {
+          "label": "Divinikey",
+          "href": "https://divinikey.com/products/evoworks-evo75-keyboard"
+        }
+      },
+      {
+        "id": "battery",
+        "label": {
+          "en": "DUAL BATTERY",
+          "es": "DOBLE BATERÍA"
+        },
+        "spec": {
+          "en": "2 × 4000mAh · NTC-protected 10W fast charging",
+          "es": "2 × 4000mAh · carga rápida de 10W protegida por NTC"
+        },
+        "color": "#59616b",
+        "z": -6,
+        "exploded": 8,
+        "source": {
+          "label": "EvoWorks",
+          "href": "https://lumekeebs.com/products/evoworks-evo75-keyboard"
+        }
+      },
+      {
+        "id": "bottom-case",
+        "label": {
+          "en": "BOTTOM CASE",
+          "es": "CARCASA INFERIOR"
+        },
+        "spec": {
+          "en": "CNC 6063 aluminium · magnetic internal connectors",
+          "es": "Aluminio CNC 6063 · conectores internos magnéticos"
+        },
+        "color": "#e6e5e0",
+        "z": -16,
+        "exploded": -48,
+        "source": {
+          "label": "Divinikey",
+          "href": "https://divinikey.com/products/evoworks-evo75-keyboard"
+        }
+      },
+      {
+        "id": "weight",
+        "label": {
+          "en": "REAR WEIGHT",
+          "es": "PESO TRASERO"
+        },
+        "spec": {
+          "en": "Mirror-polished stainless steel · engraved EVO75",
+          "es": "Acero inoxidable pulido a espejo · grabado EVO75"
+        },
+        "color": "#c8c9c9",
+        "z": -38,
+        "exploded": -150,
+        "source": {
+          "label": "EvoWorks",
+          "href": "https://lumekeebs.com/products/evoworks-evo75-keyboard"
+        }
+      }
+    ],
+    "specs": [
+      {
+        "label": {
+          "en": "Layout",
+          "es": "Distribución"
+        },
+        "value": {
+          "en": "75% ANSI · 80 keys",
+          "es": "75% ANSI · 80 teclas"
+        }
+      },
+      {
+        "label": {
+          "en": "Mount",
+          "es": "Montaje"
+        },
+        "value": {
+          "en": "Butterfly Leaf Spring · gasket + silicone",
+          "es": "Butterfly Leaf Spring · gasket + silicona"
+        }
+      },
+      {
+        "label": {
+          "en": "Case",
+          "es": "Chasis"
+        },
+        "value": {
+          "en": "CNC 6063 aluminium · Nova White",
+          "es": "Aluminio CNC 6063 · Nova White"
+        }
+      },
+      {
+        "label": {
+          "en": "Stock pairing",
+          "es": "Pareja stock"
+        },
+        "value": {
+          "en": "PP + Rye / FR4 + Amber · option unrecorded",
+          "es": "PP + Rye / FR4 + Amber · opción no registrada"
+        }
+      },
+      {
+        "label": {
+          "en": "PCB",
+          "es": "PCB"
+        },
+        "value": {
+          "en": "Tri-mode ANSI hotswap · per-key RGB",
+          "es": "ANSI hotswap trimodo · RGB por tecla"
+        }
+      },
+      {
+        "label": {
+          "en": "Connection",
+          "es": "Conexión"
+        },
+        "value": {
+          "en": "USB-C · Bluetooth · 2.4GHz",
+          "es": "USB-C · Bluetooth · 2.4GHz"
+        }
+      },
+      {
+        "label": {
+          "en": "Polling",
+          "es": "Polling"
+        },
+        "value": {
+          "en": "1000Hz wired/2.4G · 125Hz Bluetooth",
+          "es": "1000Hz cable/2.4G · 125Hz Bluetooth"
+        }
+      },
+      {
+        "label": {
+          "en": "Battery",
+          "es": "Batería"
+        },
+        "value": {
+          "en": "2 × 4000mAh · 10W charging",
+          "es": "2 × 4000mAh · carga de 10W"
+        }
+      },
+      {
+        "label": {
+          "en": "Keycaps",
+          "es": "Keycaps"
+        },
+        "value": {
+          "en": "1.7 mm dye-sub PBT",
+          "es": "PBT dye-sub de 1,7 mm"
+        }
+      },
+      {
+        "label": {
+          "en": "Size / weight",
+          "es": "Tamaño / peso"
+        },
+        "value": {
+          "en": "323.35 × 143.42 mm · 1997g",
+          "es": "323,35 × 143,42 mm · 1997g"
+        }
+      },
+      {
+        "label": {
+          "en": "Modification",
+          "es": "Modificación"
+        },
+        "value": {
+          "en": "None · factory preassembled",
+          "es": "Ninguna · premontado de fábrica"
+        }
+      }
+    ]
+  },
+  {
+    "id": "corne-v4",
+    "key": "corne-v4",
+    "order": 4,
+    "name": "Corne V4",
+    "status": "complete",
+    "buildInProgress": true,
+    "layout": "corne",
+    "summary": {
+      "en": "42-key split · Integrated RP2040 · Wired TRRS · Low-profile case",
+      "es": "Split de 42 teclas · RP2040 integrado · TRRS cableado · Case de perfil bajo"
+    },
+    "photos": [
+      {
+        "image": "./../assets/keyboards/corne-v4-gallery/corne.png",
+        "label": {
+          "en": "ASSEMBLED",
+          "es": "MONTADO"
+        },
+        "alt": {
+          "en": "Top view of a wired Corne V4 split keyboard with two black low-profile halves, 42 blank white keycaps and a central TRRS cable.",
+          "es": "Vista superior de un Corne V4 split cableado con dos mitades negras de perfil bajo, 42 keycaps blancas sin leyendas y cable TRRS central."
+        },
+        "preserve": true
+      }
+    ],
+    "parts": [
+      {
+        "id": "keycaps",
+        "label": {
+          "en": "BLANK KEYCAPS",
+          "es": "KEYCAPS SIN LEYENDAS"
+        },
+        "spec": {
+          "en": "42 sculpted white caps · material and profile unrecorded",
+          "es": "42 keycaps blancas esculpidas · material y perfil no registrados"
+        },
+        "color": "#efeee9",
+        "z": 48,
+        "exploded": 325
+      },
+      {
+        "id": "switches",
+        "label": {
+          "en": "MX SWITCHES",
+          "es": "SWITCHES MX"
+        },
+        "spec": {
+          "en": "42 Cherry MX-compatible switches · fitted model not visible",
+          "es": "42 switches compatibles con Cherry MX · modelo montado no visible"
+        },
+        "color": "#d7d9dc",
+        "z": 29,
+        "exploded": 255,
+        "source": {
+          "label": "Corne build guide",
+          "href": "https://github.com/foostan/crkbd/blob/main/docs/corne-cherry/v4/buildguide_en.md"
+        }
+      },
+      {
+        "id": "plate",
+        "label": {
+          "en": "TOP / SWITCH PLATES",
+          "es": "PLACAS SUPERIORES"
+        },
+        "spec": {
+          "en": "Two black FR4 switch plates · official 1.6mm specification",
+          "es": "Dos switch plates FR4 negras · especificación oficial de 1,6 mm"
+        },
+        "color": "#20252b",
+        "z": 19,
+        "exploded": 190,
+        "source": {
+          "label": "Corne build guide",
+          "href": "https://github.com/foostan/crkbd/blob/main/docs/corne-cherry/v4/buildguide_en.md"
+        }
+      },
+      {
+        "id": "pcb",
+        "label": {
+          "en": "SPLIT PCBS",
+          "es": "PCBS DIVIDIDAS"
+        },
+        "spec": {
+          "en": "Corne Cherry V4.x hotswap · RP2040, 16MB flash and RGB per half",
+          "es": "Corne Cherry V4.x hotswap · RP2040, flash de 16MB y RGB por mitad"
+        },
+        "color": "#26313a",
+        "z": 9,
+        "exploded": 125,
+        "source": {
+          "label": "foostan/crkbd",
+          "href": "https://github.com/foostan/crkbd"
+        }
+      },
+      {
+        "id": "interconnect",
+        "label": {
+          "en": "TRRS INTERCONNECT",
+          "es": "INTERCONEXIÓN TRRS"
+        },
+        "spec": {
+          "en": "Visible 4-pole cable links both wired halves",
+          "es": "Cable visible de 4 polos que enlaza ambas mitades cableadas"
+        },
+        "color": "#252a30",
+        "z": 6,
+        "exploded": 90,
+        "source": {
+          "label": "Corne build guide",
+          "href": "https://github.com/foostan/crkbd/blob/main/docs/corne-cherry/v4/buildguide_en.md"
+        }
+      },
+      {
+        "id": "spacers",
+        "label": {
+          "en": "M2 STANDOFFS",
+          "es": "SEPARADORES M2"
+        },
+        "spec": {
+          "en": "8 × 7.5mm standoffs · 16 × 5mm case screws",
+          "es": "8 separadores de 7,5 mm · 16 tornillos de carcasa de 5 mm"
+        },
+        "color": "#aaa7a0",
+        "z": 1,
+        "exploded": 48,
+        "source": {
+          "label": "Corne build guide",
+          "href": "https://github.com/foostan/crkbd/blob/main/docs/corne-cherry/v4/buildguide_en.md"
+        }
+      },
+      {
+        "id": "bottom-case",
+        "label": {
+          "en": "LOW-PROFILE CASES",
+          "es": "CASES DE PERFIL BAJO"
+        },
+        "spec": {
+          "en": "Two glossy black housings · photographed material unrecorded",
+          "es": "Dos carcasas negras brillantes · material fotografiado no registrado"
+        },
+        "color": "#151a20",
+        "z": -11,
+        "exploded": -22
+      },
+      {
+        "id": "feet",
+        "label": {
+          "en": "RUBBER FEET",
+          "es": "PATAS DE GOMA"
+        },
+        "spec": {
+          "en": "8 anti-slip cushions · four under each half",
+          "es": "8 apoyos antideslizantes · cuatro bajo cada mitad"
+        },
+        "color": "#30343a",
+        "z": -28,
+        "exploded": -105,
+        "source": {
+          "label": "Corne build guide",
+          "href": "https://github.com/foostan/crkbd/blob/main/docs/corne-cherry/v4/buildguide_en.md"
+        }
+      }
+    ],
+    "specs": [
+      {
+        "label": {
+          "en": "Layout",
+          "es": "Distribución"
+        },
+        "value": {
+          "en": "Split 3×6 + 3 · 42 keys",
+          "es": "Split 3×6 + 3 · 42 teclas"
+        }
+      },
+      {
+        "label": {
+          "en": "Revision",
+          "es": "Revisión"
+        },
+        "value": {
+          "en": "Corne Cherry V4.x hotswap",
+          "es": "Corne Cherry V4.x hotswap"
+        }
+      },
+      {
+        "label": {
+          "en": "Controllers",
+          "es": "Controladores"
+        },
+        "value": {
+          "en": "2 × integrated RP2040 · 2 × 16MB flash",
+          "es": "2 × RP2040 integrados · 2 × 16MB de flash"
+        }
+      },
+      {
+        "label": {
+          "en": "Switches",
+          "es": "Switches"
+        },
+        "value": {
+          "en": "MX-compatible · installed model unrecorded",
+          "es": "Compatibles con MX · modelo instalado no registrado"
+        }
+      },
+      {
+        "label": {
+          "en": "Case",
+          "es": "Carcasa"
+        },
+        "value": {
+          "en": "Black low-profile housings · M2 hardware",
+          "es": "Cases negros de perfil bajo · tornillería M2"
+        }
+      },
+      {
+        "label": {
+          "en": "Connection",
+          "es": "Conexión"
+        },
+        "value": {
+          "en": "USB-C host · TRRS between halves",
+          "es": "USB-C al equipo · TRRS entre mitades"
+        }
+      },
+      {
+        "label": {
+          "en": "Wireless",
+          "es": "Inalámbrico"
+        },
+        "value": {
+          "en": "Not native · no batteries in this build",
+          "es": "No nativo · esta build no lleva baterías"
+        }
+      },
+      {
+        "label": {
+          "en": "Firmware",
+          "es": "Firmware"
+        },
+        "value": {
+          "en": "QMK · VIA / Vial compatible",
+          "es": "QMK · compatible con VIA / Vial"
+        }
+      },
+      {
+        "label": {
+          "en": "Matrix",
+          "es": "Matriz"
+        },
+        "value": {
+          "en": "Direct GPIO · no per-key diodes",
+          "es": "GPIO directo · sin diodos por tecla"
+        }
+      },
+      {
+        "label": {
+          "en": "Lighting",
+          "es": "Iluminación"
+        },
+        "value": {
+          "en": "46 integrated SK6812 Mini-E RGB LEDs",
+          "es": "46 LED RGB SK6812 Mini-E integrados"
+        }
+      },
+      {
+        "label": {
+          "en": "Encoders",
+          "es": "Encoders"
+        },
+        "value": {
+          "en": "None fitted · PCB supports up to four",
+          "es": "Ninguno montado · la PCB admite hasta cuatro"
+        }
       }
     ]
   }

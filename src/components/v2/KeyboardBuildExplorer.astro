@@ -7,37 +7,89 @@ interface Props { lang: Lang }
 const { lang } = Astro.props
 
 const builds = await getKeyboards()
+const buildDisplayStatus = (build: (typeof builds)[number]) =>
+  build.buildInProgress ? 'in-progress' : build.status
+const completeBuilds = builds.filter((build) => buildDisplayStatus(build) === 'complete').length
 
 /** Resuelve un par {en, es} al idioma del documento. */
 const pick = <T,>(pair: { en: T, es: T }) => (lang === 'es' ? pair.es : pair.en)
 
-/**
- * Distribución 65 % del modelo: [unidades de ancho, glifo]. Solo alimenta la
- * geometría del teclado dibujado, que es común a todos los builds de este
- * tamaño; las fotos y la ficha técnica salen de la colección de contenido.
- */
-const KEY_ROWS: Array<Array<[number, string]>> = [
-  [[1, 'Esc'], [1, '1'], [1, '2'], [1, '3'], [1, '4'], [1, '5'], [1, '6'], [1, '7'], [1, '8'], [1, '9'], [1, '0'], [1, '-'], [1, '='], [2, 'Del'], [1, 'Pg']],
-  [[1.5, 'Tab'], [1, 'Q'], [1, 'W'], [1, 'E'], [1, 'R'], [1, 'T'], [1, 'Y'], [1, 'U'], [1, 'I'], [1, 'O'], [1, 'P'], [1, '['], [1, ']'], [1.5, '\\'], [1, 'End']],
-  [[1.75, 'Ctrl'], [1, 'A'], [1, 'S'], [1, 'D'], [1, 'F'], [1, 'G'], [1, 'H'], [1, 'J'], [1, 'K'], [1, 'L'], [1, ';'], [1, "'"], [2.25, 'Enter'], [1, 'Fn']],
-  [[2.25, 'Shift'], [1, 'Z'], [1, 'X'], [1, 'C'], [1, 'V'], [1, 'B'], [1, 'N'], [1, 'M'], [1, ','], [1, '.'], [1, '/'], [1.75, 'Shift'], [1, 'Up'], [1, 'Fn']],
-  [[1.25, 'Alt'], [1.25, 'Cmd'], [1.25, 'Fn'], [6.25, ''], [1.5, 'Alt'], [1.5, 'Fn'], [1, 'Left'], [1, 'Down'], [1, 'Right']],
+type KeyVariant = 'snow' | 'wasabi' | 'evo-white' | 'evo-grey' | 'evo-red' | 'corne-white'
+type KeyDefinition = [
+  width: number,
+  label: string,
+  variant?: KeyVariant,
+  gapBefore?: number,
+  yOffset?: number,
+  rotation?: number,
+]
+type KeyRow = { offset?: number, keys: KeyDefinition[] }
+
+const ANSI65_ROWS: KeyRow[] = [
+  { keys: [[1, 'Esc'], [1, '1'], [1, '2'], [1, '3'], [1, '4'], [1, '5'], [1, '6'], [1, '7'], [1, '8'], [1, '9'], [1, '0'], [1, '-'], [1, '='], [2, 'Del'], [1, 'Pg']] },
+  { keys: [[1.5, 'Tab'], [1, 'Q'], [1, 'W'], [1, 'E'], [1, 'R'], [1, 'T'], [1, 'Y'], [1, 'U'], [1, 'I'], [1, 'O'], [1, 'P'], [1, '['], [1, ']'], [1.5, '\\'], [1, 'End']] },
+  { keys: [[1.75, 'Ctrl'], [1, 'A'], [1, 'S'], [1, 'D'], [1, 'F'], [1, 'G'], [1, 'H'], [1, 'J'], [1, 'K'], [1, 'L'], [1, ';'], [1, "'"], [2.25, 'Enter'], [1, 'Fn']] },
+  { keys: [[2.25, 'Shift'], [1, 'Z'], [1, 'X'], [1, 'C'], [1, 'V'], [1, 'B'], [1, 'N'], [1, 'M'], [1, ','], [1, '.'], [1, '/'], [1.75, 'Shift'], [1, 'Up'], [1, 'Fn']] },
+  { keys: [[1.25, 'Alt'], [1.25, 'Cmd'], [1.25, 'Fn'], [6.25, ''], [1.5, 'Alt'], [1.5, 'Fn'], [1, 'Left'], [1, 'Down'], [1, 'Right']] },
 ]
 
-const UNITS = 16
+/**
+ * Distribución HHKB US de 60 teclas. La mezcla reproduce la unidad real:
+ * alfas y espacio Wasabi; fila numérica y modificadores principalmente Snow.
+ */
+const HHKB_ROWS: KeyRow[] = [
+  { keys: [[1, 'Esc', 'wasabi'], [1, '1', 'snow'], [1, '2', 'snow'], [1, '3', 'snow'], [1, '4', 'snow'], [1, '5', 'snow'], [1, '6', 'snow'], [1, '7', 'snow'], [1, '8', 'snow'], [1, '9', 'snow'], [1, '0', 'snow'], [1, '-', 'snow'], [1, '=', 'snow'], [1, '\\', 'wasabi'], [1, '`', 'wasabi']] },
+  { keys: [[1.5, 'Tab', 'snow'], [1, 'Q', 'wasabi'], [1, 'W', 'wasabi'], [1, 'E', 'wasabi'], [1, 'R', 'wasabi'], [1, 'T', 'wasabi'], [1, 'Y', 'wasabi'], [1, 'U', 'wasabi'], [1, 'I', 'wasabi'], [1, 'O', 'wasabi'], [1, 'P', 'wasabi'], [1, '[', 'wasabi'], [1, ']', 'wasabi'], [1.5, 'Del', 'snow']] },
+  { keys: [[1.75, 'Ctrl', 'snow'], [1, 'A', 'wasabi'], [1, 'S', 'wasabi'], [1, 'D', 'wasabi'], [1, 'F', 'wasabi'], [1, 'G', 'wasabi'], [1, 'H', 'wasabi'], [1, 'J', 'wasabi'], [1, 'K', 'wasabi'], [1, 'L', 'wasabi'], [1, ';', 'wasabi'], [1, "'", 'wasabi'], [2.25, 'Return', 'snow']] },
+  { keys: [[2.25, 'Shift', 'snow'], [1, 'Z', 'wasabi'], [1, 'X', 'wasabi'], [1, 'C', 'wasabi'], [1, 'V', 'wasabi'], [1, 'B', 'wasabi'], [1, 'N', 'wasabi'], [1, 'M', 'wasabi'], [1, ',', 'wasabi'], [1, '.', 'wasabi'], [1, '/', 'wasabi'], [1.75, 'Shift', 'wasabi'], [1, 'Fn', 'snow']] },
+  { offset: 1.5, keys: [[1.5, 'Alt', 'snow'], [1.5, 'Cmd', 'snow'], [6, '', 'wasabi'], [1.5, 'Cmd', 'snow'], [1.5, 'Alt', 'snow']] },
+]
 
-const keys = KEY_ROWS.flatMap((row, rowIndex) => {
-  let x = 0
-  return row.map(([width, label]) => {
-    const key = { x, y: rowIndex, width, label }
-    x += width
-    return key
+/**
+ * Distribución ANSI de 80 teclas del EVO75. Los huecos reproducen la fila F,
+ * el bloque de navegación y las flechas separados que aparecen en la unidad.
+ */
+const EVO75_ROWS: KeyRow[] = [
+  { keys: [[1, 'Esc', 'evo-red'], [1, 'F1', 'evo-grey', .75], [1, 'F2', 'evo-grey'], [1, 'F3', 'evo-grey'], [1, 'F4', 'evo-grey'], [1, 'F5', 'evo-grey', .25], [1, 'F6', 'evo-grey'], [1, 'F7', 'evo-grey'], [1, 'F8', 'evo-grey'], [1, 'F9', 'evo-grey', .25], [1, 'F10', 'evo-grey'], [1, 'F11', 'evo-grey'], [1, 'F12', 'evo-grey'], [1, 'Del', 'evo-red', .75]] },
+  { keys: [[1, '`', 'evo-grey'], [1, '1', 'evo-white'], [1, '2', 'evo-white'], [1, '3', 'evo-white'], [1, '4', 'evo-white'], [1, '5', 'evo-white'], [1, '6', 'evo-white'], [1, '7', 'evo-white'], [1, '8', 'evo-white'], [1, '9', 'evo-white'], [1, '0', 'evo-white'], [1, '-', 'evo-white'], [1, '=', 'evo-white'], [2, 'Back', 'evo-grey'], [1, 'Home', 'evo-grey', .25]] },
+  { keys: [[1.5, 'Tab', 'evo-grey'], [1, 'Q', 'evo-white'], [1, 'W', 'evo-white'], [1, 'E', 'evo-white'], [1, 'R', 'evo-white'], [1, 'T', 'evo-white'], [1, 'Y', 'evo-white'], [1, 'U', 'evo-white'], [1, 'I', 'evo-white'], [1, 'O', 'evo-white'], [1, 'P', 'evo-white'], [1, '[', 'evo-white'], [1, ']', 'evo-white'], [1.5, '\\', 'evo-white'], [1, 'PgUp', 'evo-grey', .25]] },
+  { keys: [[1.75, 'Caps', 'evo-grey'], [1, 'A', 'evo-white'], [1, 'S', 'evo-white'], [1, 'D', 'evo-white'], [1, 'F', 'evo-white'], [1, 'G', 'evo-white'], [1, 'H', 'evo-white'], [1, 'J', 'evo-white'], [1, 'K', 'evo-white'], [1, 'L', 'evo-white'], [1, ';', 'evo-white'], [1, "'", 'evo-white'], [2.25, 'Enter', 'evo-red'], [1, 'PgDn', 'evo-grey', .25]] },
+  { keys: [[2.25, 'Shift', 'evo-grey'], [1, 'Z', 'evo-white'], [1, 'X', 'evo-white'], [1, 'C', 'evo-white'], [1, 'V', 'evo-white'], [1, 'B', 'evo-white'], [1, 'N', 'evo-white'], [1, 'M', 'evo-white'], [1, ',', 'evo-white'], [1, '.', 'evo-white'], [1, '/', 'evo-white'], [1.75, 'Shift', 'evo-grey'], [1, '↑', 'evo-grey', .25]] },
+  { keys: [[1.25, 'Ctrl', 'evo-grey'], [1.25, 'Super', 'evo-grey'], [1.25, 'Alt', 'evo-grey'], [6.25, '', 'evo-white'], [1.25, 'Alt', 'evo-grey'], [1.25, 'Fn', 'evo-grey'], [1, '←', 'evo-grey', .75], [1, '↓', 'evo-grey'], [1, '→', 'evo-grey']] },
+]
+
+/** Corne estándar 3×6 + 3 por mitad, con stagger y pulgares espejados. */
+const CORNE_ROWS: KeyRow[] = [
+  { keys: [[1, '', 'corne-white', 0, .35], [1, '', 'corne-white', 0, .35], [1, '', 'corne-white', 0, .05], [1, '', 'corne-white', 0, -.15], [1, '', 'corne-white', 0, .05], [1, '', 'corne-white', 0, .3], [1, '', 'corne-white', 3.5, .3], [1, '', 'corne-white', 0, .05], [1, '', 'corne-white', 0, -.15], [1, '', 'corne-white', 0, .05], [1, '', 'corne-white', 0, .35], [1, '', 'corne-white', 0, .35]] },
+  { keys: [[1, '', 'corne-white', 0, .35], [1, '', 'corne-white', 0, .35], [1, '', 'corne-white', 0, .05], [1, '', 'corne-white', 0, -.15], [1, '', 'corne-white', 0, .05], [1, '', 'corne-white', 0, .3], [1, '', 'corne-white', 3.5, .3], [1, '', 'corne-white', 0, .05], [1, '', 'corne-white', 0, -.15], [1, '', 'corne-white', 0, .05], [1, '', 'corne-white', 0, .35], [1, '', 'corne-white', 0, .35]] },
+  { keys: [[1, '', 'corne-white', 0, .35], [1, '', 'corne-white', 0, .35], [1, '', 'corne-white', 0, .05], [1, '', 'corne-white', 0, -.15], [1, '', 'corne-white', 0, .05], [1, '', 'corne-white', 0, .3], [1, '', 'corne-white', 3.5, .3], [1, '', 'corne-white', 0, .05], [1, '', 'corne-white', 0, -.15], [1, '', 'corne-white', 0, .05], [1, '', 'corne-white', 0, .35], [1, '', 'corne-white', 0, .35]] },
+  { offset: 3, keys: [[1, '', 'corne-white', 0, 0, -8], [1.1, '', 'corne-white', 0, -.04, -16], [1.4, '', 'corne-white', 0, .08, -25], [1.4, '', 'corne-white', 3, .08, 25], [1.1, '', 'corne-white', 0, -.04, 16], [1, '', 'corne-white', 0, 0, 8]] },
+]
+
+const MODEL_LAYOUTS = {
+  ansi65: { units: 16, rows: ANSI65_ROWS },
+  hhkb: { units: 15, rows: HHKB_ROWS },
+  evo75: { units: 16.25, rows: EVO75_ROWS },
+  corne: { units: 15.5, rows: CORNE_ROWS },
+}
+
+const modelKeys = ({ rows }: typeof MODEL_LAYOUTS[keyof typeof MODEL_LAYOUTS]) =>
+  rows.flatMap((row, rowIndex) => {
+    let x = row.offset ?? 0
+    return row.keys.map(([width, label, variant, gapBefore = 0, yOffset = 0, rotation = 0]) => {
+      x += gapBefore
+      const key = { x, y: rowIndex + yOffset, width, label, variant, rotation }
+      x += width
+      return key
+    })
   })
-})
 
-/** Posición de una tecla en porcentaje del modelo: la comparten las 5 capas. */
-const keyStyle = (key: typeof keys[number]) =>
-  `--x:${(key.x / UNITS) * 100}%;--y:${key.y * 20}%;--w:${(key.width / UNITS) * 100}%`
+/** Posición de una tecla compartida por todas las capas de su propio modelo. */
+type ModelKey = ReturnType<typeof modelKeys>[number]
+const keyStyle = (key: ModelKey, layout: typeof MODEL_LAYOUTS[keyof typeof MODEL_LAYOUTS]) => {
+  const rowHeight = 100 / layout.rows.length
+  return `--x:${(key.x / layout.units) * 100}%;--cx:${((key.x + key.width / 2) / layout.units) * 100}%;--y:${key.y * rowHeight}%;--cy:${(key.y + .5) * rowHeight}%;--w:${(key.width / layout.units) * 100}%;--kh:${rowHeight - 2.8}%;--sh:${rowHeight * .8}%;--sy:${rowHeight * .1}%;--soh:${rowHeight * .6}%;--soy:${rowHeight * .2}%;--kr:${key.rotation}deg`
+}
 
 /**
  * El escalonado de la explosión sale del orden de montaje, no de un número
@@ -46,6 +98,14 @@ const keyStyle = (key: typeof keys[number]) =>
  */
 const STAGGER_MS = 70
 
+/** Nunca pide al pipeline un corte mayor que el original de cada fotografía. */
+const photoWidths = (width: number) =>
+  [...new Set([640, 960, 1280, 1600, 2048].filter((candidate) => candidate < width).concat(width))]
+
+/** PNG lossless con al menos 3x los píxeles que ocupa la tarjeta en escritorio. */
+const preservedPhotoWidths = (width: number) =>
+  [...new Set([960, 1280].filter((candidate) => candidate < width).concat(width))]
+
 /** El modelo dibuja las capas de abajo arriba; la ficha las lista al revés. */
 type Part = (typeof builds)[number]['parts'][number]
 const layerStyle = (part: Part, order: number) =>
@@ -53,26 +113,37 @@ const layerStyle = (part: Part, order: number) =>
 
 const copy = {
   intro: lang === 'es'
-    ? 'Los teclados que he montado, pieza a pieza. Abre uno para verlo en fotos y para desmontarlo capa a capa en 3D.'
-    : 'The keyboards I have built, piece by piece. Open one to see the photos and to take it apart layer by layer in 3D.',
+    ? 'Un archivo en crecimiento: builds terminados, modelos en preparación y el próximo teclado en fase de concepto.'
+    : 'A growing archive: completed builds, models in preparation and the next keyboard at concept stage.',
   inspect: lang === 'es' ? 'Inspeccionar' : 'Inspect',
+  openDraft: lang === 'es' ? 'Abrir borrador' : 'Open draft',
   allBuilds: lang === 'es' ? 'Todos los builds' : 'All builds',
   view: lang === 'es' ? 'Vista del teclado' : 'Keyboard view',
-  photo: lang === 'es' ? 'Foto' : 'Photo',
   assembled: lang === 'es' ? 'Montado' : 'Assembled',
   exploded: lang === 'es' ? 'Explotado' : 'Exploded',
   separation: lang === 'es' ? 'Separación' : 'Separation',
   model: lang === 'es' ? 'Modelo interactivo por capas' : 'Interactive layered model',
-  previous: lang === 'es' ? 'Foto anterior' : 'Previous photo',
-  next: lang === 'es' ? 'Foto siguiente' : 'Next photo',
-  goTo: lang === 'es' ? 'Ir a la foto' : 'Go to photo',
+  cover: lang === 'es' ? 'Portada fotográfica del build' : 'Build photo cover',
+  previous: lang === 'es' ? 'Imagen anterior' : 'Previous image',
+  next: lang === 'es' ? 'Imagen siguiente' : 'Next image',
+  goTo: lang === 'es' ? 'Ir a la imagen' : 'Go to image',
   order: lang === 'es' ? 'Orden de montaje' : 'Assembly order',
   pieces: lang === 'es' ? 'piezas' : 'parts',
   sheet: lang === 'es' ? 'Ficha técnica' : 'Spec sheet',
-  realBuild: lang === 'es' ? 'BUILD REAL' : 'REAL BUILD',
-  photoHint: lang === 'es'
-    ? 'Fotografía original · flechas para recorrer los ángulos'
-    : 'Original photograph · arrow keys to move through the angles',
+  source: lang === 'es' ? 'Dónde conseguir' : 'Where to get',
+  status: {
+    complete: lang === 'es' ? 'BUILD REAL' : 'REAL BUILD',
+    'in-progress': lang === 'es' ? 'EN CONSTRUCCIÓN' : 'BUILD IN PROGRESS',
+    scaffold: lang === 'es' ? 'CAPAS EN PREP.' : 'LAYER DRAFT',
+    planning: lang === 'es' ? 'EN PROCESO' : 'IN PROGRESS',
+  },
+  prototype: lang === 'es'
+    ? 'MODELO PROVISIONAL // BASE DE CAPAS NEO65'
+    : 'PROTOTYPE MODEL // NEO65 LAYER BASE',
+  prototypePart: lang === 'es'
+    ? 'Geometría temporal de referencia · pendiente de sustituir'
+    : 'Temporary reference geometry · pending replacement',
+  prototypeOrder: lang === 'es' ? 'Capas provisionales' : 'Prototype layers',
   hintWide: lang === 'es'
     ? 'Arrastra o usa las flechas para orbitar · rueda para ampliar · doble clic para restablecer'
     : 'Drag or use the arrow keys to orbit · scroll to zoom · double-click to reset',
@@ -96,7 +167,12 @@ const copy = {
       <span class="bx-kicker">LABORATORY // BUILD ARCHIVE</span>
       <h4>{lang === 'es' ? 'Fotos de mis builds' : 'My build photos'}</h4>
     </div>
-    <span class="bx-status"><i></i><span data-bx-status>{String(builds.length).padStart(2, '0')} BUILD // ARCHIVED</span></span>
+    <span class="bx-status">
+      <i></i>
+      <span data-bx-status>
+        {String(builds.length).padStart(2, '0')} BUILDS // {String(completeBuilds).padStart(2, '0')} COMPLETE
+      </span>
+    </span>
   </header>
 
   <div class="bx-gallery" data-bx-gallery>
@@ -105,35 +181,81 @@ const copy = {
     <ul class="bx-build-grid">
       {builds.map((item, index) => (
         <li>
-          <button class="bx-build-card" type="button" data-bx-open={item.key}>
-            <span class="bx-card-visual">
-              <Picture
-                src={item.photos[0].image}
-                formats={['avif']}
-                fallbackFormat="webp"
-                widths={[520, 780, 1100]}
-                width={1100}
-                quality={76}
-                sizes="(max-width: 1024px) 92vw, 720px"
-                alt={pick(item.photos[0].alt)}
-                loading="lazy"
-                decoding="async"
-                class="bx-card-photo"
-              />
+          <article class={`bx-build-card is-${buildDisplayStatus(item)}`}>
+            <div
+              class="bx-card-visual"
+              data-bx-card-carousel
+              tabindex="0"
+              role="region"
+              aria-roledescription="carousel"
+              aria-label={`${copy.cover}: ${item.name}`}
+            >
+              {item.photos.map((photo, photoIndex) => (
+                <figure
+                  class="bx-card-slide"
+                  data-bx-card-slide={photoIndex}
+                  data-bx-card-label={pick(photo.label)}
+                  aria-hidden={photoIndex === 0 ? 'false' : 'true'}
+                  hidden={photoIndex !== 0}
+                >
+                  <Picture
+                    src={photo.image}
+                    formats={photo.preserve ? ['png'] : ['avif', 'webp']}
+                    fallbackFormat="png"
+                    widths={photo.preserve
+                      ? preservedPhotoWidths(photo.image.width)
+                      : photoWidths(photo.image.width)}
+                    width={photo.image.width}
+                    quality={photo.preserve ? 100 : 94}
+                    sizes="(max-width: 544px) calc(100vw - 4rem), (max-width: 1024px) 44vw, 340px"
+                    alt={pick(photo.alt)}
+                    loading="lazy"
+                    decoding="async"
+                    draggable="false"
+                    class="bx-card-photo"
+                  />
+                </figure>
+              ))}
+              <span class="bx-card-pointer-light" aria-hidden="true"></span>
               <span class="bx-card-index">BUILD {String(index + 1).padStart(2, '0')}</span>
-              <span class="bx-card-authentic"><i></i>{copy.realBuild}</span>
-            </span>
-            <span class="bx-card-copy">
+              <span class="bx-card-authentic"><i></i>{copy.status[buildDisplayStatus(item)]}</span>
+              {item.photos.length > 1 && (
+                <button class="bx-card-nav bx-card-prev" type="button" data-bx-card-prev aria-label={copy.previous}>‹</button>
+              )}
+              {item.photos.length > 1 && (
+                <button class="bx-card-nav bx-card-next" type="button" data-bx-card-next aria-label={copy.next}>›</button>
+              )}
+              <span class="bx-card-photo-meta">
+                <span data-bx-card-caption>{pick(item.photos[0].label)}</span>
+                {item.photos.length > 1 && (
+                  <b data-bx-card-counter>01 / {String(item.photos.length).padStart(2, '0')}</b>
+                )}
+              </span>
+              {item.photos.length > 1 && (
+                <span class="bx-card-pagination" role="group" aria-label={`${item.photos.length} ${lang === 'es' ? 'imágenes' : 'images'}`}>
+                  {item.photos.map((photo, photoIndex) => (
+                    <button
+                      type="button"
+                      data-bx-card-dot={photoIndex}
+                      aria-label={`${copy.goTo} ${photoIndex + 1}: ${pick(photo.label)}`}
+                      aria-current={photoIndex === 0 ? 'true' : 'false'}
+                    ></button>
+                  ))}
+                </span>
+              )}
+            </div>
+            <div class="bx-card-copy">
               <span class="bx-card-id">
                 <strong>{item.name}</strong>
                 <small>{pick(item.summary)}</small>
               </span>
               <span class="bx-card-meta">
-                <span class="bx-card-year">{item.year}</span>
-                <span class="bx-inspect">{copy.inspect} <b aria-hidden="true">→</b></span>
+                <button class="bx-inspect" type="button" data-bx-open={item.key}>
+                  {item.status === 'complete' ? copy.inspect : copy.openDraft} <b aria-hidden="true">→</b>
+                </button>
               </span>
-            </span>
-          </button>
+            </div>
+          </article>
         </li>
       ))}
     </ul>
@@ -145,14 +267,21 @@ const copy = {
         <span aria-hidden="true">←</span> {copy.allBuilds}
       </button>
       <div class="bx-view-switch" role="group" aria-label={copy.view}>
-        <button type="button" data-bx-photo-view aria-pressed="true">{copy.photo}</button>
-        <button type="button" data-bx-assembled-view aria-pressed="false">{copy.assembled}</button>
+        <button type="button" data-bx-assembled-view aria-pressed="true">{copy.assembled}</button>
         <button type="button" data-bx-explode aria-pressed="false">{copy.exploded}</button>
       </div>
     </div>
 
-    {builds.map((build) => (
-      <div class="bx-build-panel" data-bx-build={build.key} hidden>
+    {builds.map((build) => {
+      const layout = MODEL_LAYOUTS[build.layout]
+      const keys = modelKeys(layout)
+      return (
+      <div
+        class={`bx-build-panel is-${build.status} is-${buildDisplayStatus(build)}`}
+        data-bx-build={build.key}
+        data-layout={build.layout}
+        hidden
+      >
         <div class="bx-workbench">
           <div class="bx-stage-column">
             <div
@@ -162,52 +291,6 @@ const copy = {
               role="group"
               aria-label={`${copy.model} — ${build.name}`}
             >
-              <div class="bx-photo-stage">
-                <div class="bx-photo-frame">
-                  <div class="bx-photo-slides">
-                    {build.photos.map((photo, index) => (
-                      <figure
-                        class:list={['bx-photo-slide', photo.cutout && 'is-render']}
-                        data-bx-photo-slide={index}
-                        data-bx-photo-label={pick(photo.label)}
-                        style={`--ar:${photo.image.width} / ${photo.image.height};--fade-x:${photo.fade.x}%;--fade-y:${photo.fade.y}%`}
-                        hidden={index !== 0}
-                      >
-                        <Picture
-                          src={photo.image}
-                          formats={['avif']}
-                          fallbackFormat="webp"
-                          widths={[520, 780, 1100]}
-                          width={1100}
-                          quality={76}
-                          sizes="(max-width: 900px) 92vw, 660px"
-                          alt={pick(photo.alt)}
-                          loading="lazy"
-                          decoding="async"
-                          draggable="false"
-                        />
-                      </figure>
-                    ))}
-                  </div>
-                  <span class="bx-photo-meta">
-                    <span data-bx-photo-caption>{pick(build.photos[0].label)}</span>
-                    <b data-bx-photo-counter>01 / {String(build.photos.length).padStart(2, '0')}</b>
-                  </span>
-                </div>
-                <button class="bx-photo-nav bx-photo-prev" type="button" data-bx-photo-prev aria-label={copy.previous} title={copy.previous}>←</button>
-                <button class="bx-photo-nav bx-photo-next" type="button" data-bx-photo-next aria-label={copy.next} title={copy.next}>→</button>
-                <div class="bx-photo-dots">
-                  {build.photos.map((photo, index) => (
-                    <button
-                      type="button"
-                      data-bx-photo-dot={index}
-                      aria-label={`${copy.goTo} ${index + 1}: ${pick(photo.label)}`}
-                      aria-current={index === 0 ? 'true' : 'false'}
-                    ></button>
-                  ))}
-                </div>
-              </div>
-
               <div class="bx-model" data-bx-model>
                 {[...build.parts].reverse().map((part, reverseIndex) => (
                   <div
@@ -215,31 +298,70 @@ const copy = {
                     data-bx-part={part.id}
                     style={layerStyle(part, build.parts.length - 1 - reverseIndex)}
                   >
-                    {part.id === 'weight' && <div class="bx-weight-strip"></div>}
-                    {part.id === 'case' && <div class="bx-case-well"></div>}
-                    {part.id === 'case' && <div class="bx-case-mark">{build.name.slice(0, 3).toUpperCase()}</div>}
-                    {part.id === 'foam' && keys.map((key) => <i class="bx-cutout" style={keyStyle(key)}></i>)}
+                    {part.id === 'weight' && (
+                      <div class="bx-weight-strip">
+                        {build.layout === 'evo75' && <i class="bx-evo-weight-vents is-left"></i>}
+                        {build.layout === 'evo75' && <i class="bx-evo-weight-vents is-right"></i>}
+                      </div>
+                    )}
+                    {(part.id === 'case' || part.id === 'bottom-case') && build.layout !== 'corne' && <div class="bx-case-well"></div>}
+                    {(part.id === 'case' || part.id === 'bottom-case') && build.layout !== 'corne' && <div class="bx-case-mark">{build.name.slice(0, 3).toUpperCase()}</div>}
+                    {part.id === 'case' && build.layout === 'hhkb' && <div class="bx-hhkb-battery"></div>}
+                    {part.id === 'top-case' && <div class="bx-evo-case-opening"></div>}
+                    {part.id === 'top-case' && <i class="bx-evo-grille is-left"></i>}
+                    {part.id === 'top-case' && <i class="bx-evo-grille is-right"></i>}
+                    {part.id === 'mount' && Array.from({ length: 8 }, (_, index) => <i class={`bx-evo-leaf is-${index + 1}`}></i>)}
+                    {(part.id.includes('foam') || part.id === 'dampening') && keys.map((key) => <i class="bx-cutout" style={keyStyle(key, layout)}></i>)}
+                    {part.id === 'dampening' && <div class="bx-evo-silicone-core"></div>}
+                    {part.id === 'battery' && <i class="bx-evo-cell is-left"></i>}
+                    {part.id === 'battery' && <i class="bx-evo-cell is-right"></i>}
+                    {build.layout === 'corne' && ['plate', 'pcb', 'spacers', 'bottom-case'].includes(part.id) && <i class={`bx-corne-half is-left is-${part.id}`}></i>}
+                    {build.layout === 'corne' && ['plate', 'pcb', 'spacers', 'bottom-case'].includes(part.id) && <i class={`bx-corne-half is-right is-${part.id}`}></i>}
+                    {part.id === 'pcb' && build.layout === 'corne' && <i class="bx-corne-mcu is-left"></i>}
+                    {part.id === 'pcb' && build.layout === 'corne' && <i class="bx-corne-mcu is-right"></i>}
+                    {part.id === 'interconnect' && <i class="bx-corne-cable"></i>}
+                    {part.id === 'interconnect' && <i class="bx-corne-jack is-left"></i>}
+                    {part.id === 'interconnect' && <i class="bx-corne-jack is-right"></i>}
+                    {part.id === 'spacers' && Array.from({ length: 8 }, (_, index) => <i class={`bx-corne-standoff is-${index + 1}`}></i>)}
+                    {part.id === 'feet' && Array.from({ length: 8 }, (_, index) => <i class={`bx-corne-foot is-${index + 1}`}></i>)}
                     {part.id === 'pcb' && <div class="bx-circuit bx-circuit-a"></div>}
                     {part.id === 'pcb' && <div class="bx-circuit bx-circuit-b"></div>}
-                    {part.id === 'pcb' && keys.map((key) => <i class="bx-socket" style={keyStyle(key)}></i>)}
-                    {part.id === 'plate' && keys.map((key) => <i class="bx-cutout" style={keyStyle(key)}></i>)}
-                    {part.id === 'switches' && keys.map((key) => <i class="bx-switch" style={keyStyle(key)}><b></b></i>)}
-                    {part.id === 'keycaps' && keys.map((key) => <i class="bx-model-key" style={keyStyle(key)}><span>{key.label}</span></i>)}
+                    {part.id === 'pcb' && build.layout !== 'hhkb' && keys.map((key) => <i class="bx-socket" style={keyStyle(key, layout)}></i>)}
+                    {part.id === 'pcb' && build.layout === 'hhkb' && keys.map((key) => <i class="bx-cap-pad" style={keyStyle(key, layout)}></i>)}
+                    {part.id === 'plate' && keys.map((key) => <i class="bx-cutout" style={keyStyle(key, layout)}></i>)}
+                    {part.id === 'switches' && keys.map((key) => <i class="bx-switch" style={keyStyle(key, layout)}><b></b></i>)}
+                    {part.id === 'sliders' && keys.map((key) => <i class="bx-topre-slider" style={keyStyle(key, layout)}><b></b></i>)}
+                    {part.id === 'housing' && keys.map((key) => <i class="bx-housing-bore" style={keyStyle(key, layout)}></i>)}
+                    {part.id === 'domes' && keys.map((key) => <i class="bx-topre-dome" style={keyStyle(key, layout)}></i>)}
+                    {part.id === 'springs' && keys.map((key) => <i class="bx-topre-spring" style={keyStyle(key, layout)}></i>)}
+                    {part.id === 'keycaps' && keys.map((key) => (
+                      <i
+                        class:list={['bx-model-key', key.variant && `is-${key.variant}`]}
+                        style={keyStyle(key, layout)}
+                      >
+                        <span>{key.label}</span>
+                      </i>
+                    ))}
                     <span class="bx-layer-tag" aria-hidden="true">{pick(part.label)}</span>
                   </div>
                 ))}
               </div>
 
+              {build.status !== 'complete' && (
+                <span class="bx-prototype-note">{copy.prototype}</span>
+              )}
               <div class="bx-active-chip" data-bx-chip aria-live="polite">
                 <b data-bx-chip-index>01</b>
                 <span data-bx-chip-label>{pick(build.parts[0].label)}</span>
                 <i></i>
-                <small data-bx-chip-spec>{pick(build.parts[0].spec)}</small>
+                <small data-bx-chip-spec>
+                  {build.status === 'complete' ? pick(build.parts[0].spec) : copy.prototypePart}
+                </small>
               </div>
               <span class="bx-view-readout" data-bx-readout>100% · 56° / -29°</span>
             </div>
 
-            <div class="bx-scrub" data-bx-scrub hidden>
+            <div class="bx-scrub" data-bx-scrub>
               <label for={`bx-spread-${build.key}`}>{copy.separation}</label>
               <input
                 id={`bx-spread-${build.key}`}
@@ -252,10 +374,8 @@ const copy = {
               />
               <output data-bx-range-out>0%</output>
             </div>
-
             <p class="bx-hint">
-              <span data-bx-photo-hint>{copy.photoHint}</span>
-              <span data-bx-model-hint hidden>
+              <span>
                 <span class="bx-hint-wide">{copy.hintWide}</span>
                 <span class="bx-hint-narrow">{copy.hintNarrow}</span>
               </span>
@@ -265,10 +385,11 @@ const copy = {
           <aside class="bx-specs">
             <span class="bx-kicker">{build.name.toUpperCase()} // ARCHIVE</span>
             <h5>{build.name}</h5>
+            <span class="bx-detail-status"><i></i>{copy.status[buildDisplayStatus(build)]}</span>
             <p>{pick(build.summary)}</p>
 
             <div class="bx-parts-head">
-              <span>{copy.order}</span>
+              <span>{build.status === 'complete' ? copy.order : copy.prototypeOrder}</span>
               <span>{build.parts.length} {copy.pieces}</span>
             </div>
             <ol class="bx-parts">
@@ -277,26 +398,45 @@ const copy = {
                   <button type="button" data-bx-part-button={part.id} aria-pressed="false">
                     <span class="bx-part-index">{String(index + 1).padStart(2, '0')}</span>
                     <i style={`--swatch:${part.color}`}></i>
-                    <span><strong>{pick(part.label)}</strong><small>{pick(part.spec)}</small></span>
+                    <span>
+                      <strong>{pick(part.label)}</strong>
+                      <small>{build.status === 'complete' ? pick(part.spec) : copy.prototypePart}</small>
+                    </span>
                   </button>
+                  {build.status === 'complete' && part.source && (
+                    <a
+                      class="bx-source"
+                      href={part.source.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${copy.source} ${pick(part.label)}: ${part.source.label}`}
+                    >
+                      <i aria-hidden="true"></i>
+                      <span>{part.source.label}</span>
+                      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M7 17 17 7"></path><path d="M8 7h9v9"></path>
+                      </svg>
+                    </a>
+                  )}
                 </li>
               ))}
             </ol>
 
             {build.specs.length > 0 && (
-              <div class="bx-parts-head"><span>{copy.sheet}</span><span>{build.year}</span></div>
+              <div class="bx-parts-head"><span>{copy.sheet}</span></div>
             )}
             {build.specs.length > 0 && (
               <dl class="bx-sheet">
                 {build.specs.map((spec) => (
-                  <div><dt>{pick(spec.label)}</dt><dd>{spec.value}</dd></div>
+                  <div><dt>{pick(spec.label)}</dt><dd>{pick(spec.value)}</dd></div>
                 ))}
               </dl>
             )}
           </aside>
         </div>
       </div>
-    ))}
+      )
+    })}
   </div>
 </div>
 
@@ -336,7 +476,7 @@ const copy = {
     letter-spacing: .06em;
     white-space: nowrap;
   }
-  .bx-status i, .bx-card-authentic i {
+  .bx-status i {
     width: .35rem;
     height: .35rem;
     border-radius: 50%;
@@ -349,13 +489,15 @@ const copy = {
   .bx-intro { max-width: 60ch; color: var(--fg-2); font-size: .82rem; line-height: 1.65; }
   .bx-build-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .8rem;
     margin-top: 1.15rem;
     list-style: none;
   }
   .bx-build-card {
-    display: block;
+    --bx-status: var(--cyan);
+    display: flex;
+    flex-direction: column;
     width: 100%;
     height: 100%;
     overflow: hidden;
@@ -364,24 +506,31 @@ const copy = {
     background: var(--ink-950);
     color: inherit;
     text-align: left;
-    cursor: pointer;
-    transition: transform .35s cubic-bezier(.22, 1, .36, 1), border-color .3s ease, box-shadow .3s ease;
+    transition: border-color .3s ease, box-shadow .3s ease;
   }
-  .bx-build-card:hover { transform: translateY(-3px); border-color: rgba(111, 227, 255, .45); box-shadow: 0 24px 48px -30px #000; }
-  .bx-build-card:focus-visible,
+  .bx-build-card.is-scaffold { --bx-status: #f0bd68; }
+  .bx-build-card.is-in-progress { --bx-status: #f0bd68; }
+  .bx-build-card.is-planning { --bx-status: #a995ff; }
+  .bx-build-card:hover { border-color: rgba(111, 227, 255, .45); box-shadow: 0 24px 48px -30px #000; }
+  .bx-card-visual:focus-visible,
   .bx-back:focus-visible,
   .bx-view-switch button:focus-visible,
-  .bx-photo-nav:focus-visible,
-  .bx-photo-dots button:focus-visible,
+  .bx-card-nav:focus-visible,
+  .bx-card-pagination button:focus-visible,
+  .bx-inspect:focus-visible,
   .bx-parts button:focus-visible,
+  .bx-source:focus-visible,
   .bx-scrub input:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
   .bx-card-visual {
+    --bx-pointer-x: 50%;
+    --bx-pointer-y: 50%;
     position: relative;
     display: grid;
     place-items: center;
-    aspect-ratio: 2.35 / 1;
+    aspect-ratio: 3 / 2;
     overflow: hidden;
     background: radial-gradient(120% 100% at 50% 18%, rgba(43, 107, 255, .16), transparent 62%), var(--ink-950);
+    isolation: isolate;
   }
   .bx-card-visual::after {
     content: '';
@@ -391,42 +540,123 @@ const copy = {
     background: linear-gradient(180deg, rgba(5, 8, 15, .22), transparent 40%, rgba(5, 8, 15, .38));
     pointer-events: none;
   }
-  .bx-card-visual :global(img) {
+  .bx-card-slide {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    margin: 0;
+    background: var(--ink-950);
+  }
+  .bx-card-slide[hidden] { display: none; }
+  .bx-card-slide :global(picture) { display: contents; }
+  .bx-card-slide :global(img) {
+    display: block;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    transition: transform .7s cubic-bezier(.22, 1, .36, 1), filter .4s ease;
+    object-fit: contain;
+    image-rendering: auto;
+    user-select: none;
+    -webkit-user-drag: none;
   }
-  .bx-build-card:hover .bx-card-visual :global(img) { transform: scale(1.025); filter: brightness(1.06); }
-  .bx-card-index, .bx-card-authentic { position: absolute; z-index: 2; top: .75rem; font: 600 .58rem/1 var(--font-mono); letter-spacing: .12em; }
-  .bx-card-index { left: .8rem; color: var(--fg); text-shadow: 0 1px 8px rgba(0, 0, 0, .85); }
+  .bx-card-pointer-light {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: radial-gradient(
+      circle 7rem at var(--bx-pointer-x) var(--bx-pointer-y),
+      rgba(111, 227, 255, .16),
+      transparent 66%
+    );
+    opacity: 0;
+    transition: opacity .3s ease;
+    pointer-events: none;
+  }
+  .bx-card-visual:hover .bx-card-pointer-light,
+  .bx-card-visual:focus-within .bx-card-pointer-light { opacity: 1; }
+  .bx-card-index, .bx-card-authentic { position: absolute; z-index: 3; top: .55rem; font: 600 .5rem/1 var(--font-mono); letter-spacing: .1em; }
+  .bx-card-index { left: .6rem; color: var(--fg); text-shadow: 0 1px 8px rgba(0, 0, 0, .85); }
   .bx-card-authentic {
-    right: .8rem;
+    right: .6rem;
     display: inline-flex;
     align-items: center;
-    gap: .4rem;
-    padding: .38rem .5rem;
-    border: 1px solid rgba(111, 227, 255, .35);
+    gap: .32rem;
+    padding: .32rem .4rem;
+    border: 1px solid currentColor;
     border-radius: .3rem;
     background: rgba(5, 8, 15, .72);
-    color: var(--cyan);
+    color: var(--bx-status);
     backdrop-filter: blur(8px);
   }
-  .bx-card-copy { padding: .8rem .9rem; border-top: 1px solid var(--line-soft); }
+  .bx-card-authentic i { width: .3rem; height: .3rem; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
+  .bx-card-nav {
+    position: absolute;
+    z-index: 4;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: 1.7rem;
+    aspect-ratio: 1;
+    border: 1px solid rgba(255, 255, 255, .18);
+    border-radius: 50%;
+    background: rgba(5, 8, 15, .7);
+    color: var(--fg);
+    font: 500 .85rem/1 var(--font-mono);
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transform: translateY(-50%);
+    transition: border-color .2s ease, background .2s ease, color .2s ease;
+  }
+  .bx-card-nav:hover { border-color: rgba(111, 227, 255, .65); background: rgba(5, 8, 15, .9); color: var(--cyan); }
+  .bx-card-prev { left: .45rem; }
+  .bx-card-next { right: .45rem; }
+  .bx-card-photo-meta {
+    position: absolute;
+    right: .6rem;
+    bottom: .55rem;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    color: var(--fg-2);
+    font: 600 .46rem/1 var(--font-mono);
+    letter-spacing: .09em;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, .9);
+  }
+  .bx-card-photo-meta b { padding-left: .5rem; border-left: 1px solid rgba(255, 255, 255, .25); color: var(--cyan); font: inherit; }
+  .bx-card-pagination {
+    position: absolute;
+    left: 50%;
+    bottom: .6rem;
+    z-index: 4;
+    display: flex;
+    gap: .35rem;
+    transform: translateX(-50%);
+  }
+  .bx-card-pagination button {
+    width: 1.15rem;
+    height: 2px;
+    padding: 0;
+    border: 0;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, .24);
+    cursor: pointer;
+    transition: width .25s ease, background .25s ease, box-shadow .25s ease;
+  }
+  .bx-card-pagination button[aria-current='true'] { width: 1.7rem; background: var(--cyan); box-shadow: 0 0 8px rgba(111, 227, 255, .7); }
+  .bx-card-copy { flex: 1; min-height: 4.2rem; padding: .65rem .7rem; border-top: 1px solid var(--line-soft); }
   .bx-card-id { display: grid; gap: .2rem; min-width: 0; }
-  .bx-card-id strong { color: var(--fg); font-size: .86rem; }
-  .bx-card-id small, .bx-specs > p { color: var(--fg-3); font: 400 .63rem/1.35 var(--font-mono); }
+  .bx-card-id strong { color: var(--fg); font-size: .78rem; line-height: 1.2; }
+  .bx-card-id small, .bx-specs > p { color: var(--fg-3); font: 400 .56rem/1.35 var(--font-mono); }
   .bx-card-meta { display: grid; justify-items: end; gap: .3rem; }
-  .bx-card-year { color: var(--fg-3); font: 400 .58rem/1 var(--font-mono); letter-spacing: .12em; }
-  .bx-inspect { color: var(--cyan); font: 600 .65rem/1 var(--font-mono); white-space: nowrap; }
+  .bx-inspect { padding: .3rem 0 .3rem .4rem; border: 0; background: transparent; color: var(--cyan); font: 600 .55rem/1 var(--font-mono); white-space: nowrap; cursor: pointer; }
   .bx-inspect b { display: inline-block; margin-left: .2rem; transition: transform .2s ease; }
-  .bx-build-card:hover .bx-inspect b { transform: translateX(3px); }
+  .bx-inspect:hover b { transform: translateX(3px); }
 
   /* ---------------- Visor ---------------- */
   .bx-viewer { padding-top: .9rem; }
   .bx-back { border: 0; background: transparent; color: var(--fg-3); font: 600 .68rem/1 var(--font-mono); cursor: pointer; }
   .bx-back:hover { color: var(--fg); }
-  .bx-view-switch { display: grid; grid-template-columns: repeat(3, auto); padding: .2rem; border: 1px solid var(--line); border-radius: .45rem; background: var(--ink-950); }
+  .bx-view-switch { display: grid; grid-template-columns: repeat(2, auto); padding: .2rem; border: 1px solid var(--line); border-radius: .45rem; background: var(--ink-950); }
   .bx-view-switch button { min-height: 1.9rem; padding: .35rem .65rem; border: 0; border-radius: .28rem; background: transparent; color: var(--fg-3); font: 600 .61rem/1 var(--font-mono); cursor: pointer; transition: background .2s ease, color .2s ease, box-shadow .2s ease; }
   .bx-view-switch button:hover { color: var(--fg); }
   .bx-view-switch button[aria-pressed='true'] { background: var(--ink-700); color: var(--cyan); box-shadow: inset 0 0 0 1px rgba(111, 227, 255, .32); }
@@ -460,111 +690,6 @@ const copy = {
   }
   .bx-stage *, .bx-stage :global(img) { user-select: none; -webkit-user-select: none; -webkit-user-drag: none; }
   .bx-stage.is-dragging, .bx-stage.is-dragging .bx-layer { cursor: grabbing; }
-
-  /* ---------------- Fotografía tratada como render de estudio ---------------- */
-  .bx-photo-stage {
-    position: absolute;
-    inset: .25rem;
-    z-index: 4;
-    display: grid;
-    place-items: center;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(5px);
-    transition: opacity .4s ease, transform .5s cubic-bezier(.22, 1, .36, 1), visibility .4s;
-  }
-  /*
-   * El marco reserva su pie con padding, así que la caja de las diapositivas
-   * tiene altura definida y `max-height` sobre la imagen puede resolverse.
-   * Con la altura en porcentaje sobre una caja automática, la foto vertical
-   * se desbordaba por encima del contador y de los puntos.
-   */
-  .bx-photo-frame { position: absolute; inset: 0; width: min(88%, 44rem); padding-bottom: 2.6rem; margin-inline: auto; }
-  /*
-   * Contenedor de tamaño: da a la imagen una referencia de alto (`cqh`) con
-   * la que calcular su propio ancho. Es lo que permite que la caja de la
-   * imagen sea exactamente la fotografía —como haría `object-fit: contain`,
-   * pero sin el hueco del letterbox— y por tanto que la máscara del borde
-   * caiga sobre la foto y no sobre aire.
-   */
-  .bx-photo-slides { position: relative; container-type: size; width: 100%; height: 100%; }
-  .bx-photo-slide { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; }
-  .bx-photo-slide[hidden] { display: none; }
-  .bx-photo-frame :global(picture) { display: contents; }
-  /*
-   * La imagen se dimensiona a sí misma en lugar de estirarse a la caja: así
-   * su caja coincide con la fotografía visible, que es la condición para
-   * poder desvanecer el borde real y no el hueco del letterbox.
-   */
-  .bx-photo-stage :global(img) {
-    position: relative;
-    z-index: 1;
-    display: block;
-    max-width: 100%;
-    max-height: 100%;
-    /* `--ar` viene del tamaño real del fichero, así que no hay que medirlo. */
-    aspect-ratio: var(--ar);
-    width: min(100%, calc(var(--ar) * 100cqh));
-    height: auto;
-    border: 1px solid rgba(255, 255, 255, .06);
-    border-radius: 6px;
-    /*
-     * Nivelado común a las cuatro tomas: se hicieron con luz de casa y a
-     * distintas horas, así que un mismo grado de contraste y saturación las
-     * convierte en una serie coherente en vez de cuatro fotos sueltas.
-     */
-    filter: contrast(1.12) saturate(1.06) brightness(1.03);
-  }
-  /*
-   * "Recorte" de las tomas cenitales. No hay silueta recortada —eso exige
-   * retocar el original—, sino un desvanecido del borde: la moqueta se
-   * disuelve contra el panel y el teclado queda flotando, que es el efecto
-   * que se busca al pedir un render. Las dos rampas se cruzan, así que el
-   * resultado es un marco suave y no un óvalo que muerda la pieza.
-   */
-  .bx-photo-slide.is-render :global(img) {
-    border: 0;
-    border-radius: 0;
-    filter: contrast(1.2) saturate(1.04) brightness(1.02);
-    -webkit-mask-image:
-      linear-gradient(to bottom, transparent 0%, #000 var(--fade-y), #000 calc(100% - var(--fade-y)), transparent 100%),
-      linear-gradient(to right, transparent 0%, #000 var(--fade-x), #000 calc(100% - var(--fade-x)), transparent 100%);
-    mask-image:
-      linear-gradient(to bottom, transparent 0%, #000 var(--fade-y), #000 calc(100% - var(--fade-y)), transparent 100%),
-      linear-gradient(to right, transparent 0%, #000 var(--fade-x), #000 calc(100% - var(--fade-x)), transparent 100%);
-    -webkit-mask-composite: source-in;
-    mask-composite: intersect;
-    /* Reflejo de plinto: mejora progresiva; quien no lo soporte no pierde nada. */
-    -webkit-box-reflect: below 2px linear-gradient(transparent 68%, rgba(255, 255, 255, .12));
-  }
-  /* Plinto: halo frío bajo la pieza, el gesto que lee como estudio de producto. */
-  .bx-photo-slide::before {
-    content: '';
-    position: absolute;
-    left: 50%;
-    bottom: 6%;
-    z-index: 0;
-    width: 58%;
-    height: 15%;
-    background: radial-gradient(closest-side, rgba(43, 107, 255, .34), transparent 78%);
-    filter: blur(8px);
-    transform: translateX(-50%);
-    pointer-events: none;
-  }
-  .bx-photo-meta { position: absolute; right: 0; bottom: 1.4rem; display: inline-flex; align-items: center; gap: .55rem; color: var(--fg-2); font: 600 .54rem/1 var(--font-mono); letter-spacing: .08em; }
-  .bx-photo-meta b { padding-left: .55rem; border-left: 1px solid var(--line); color: var(--cyan); font: inherit; }
-  .bx-photo-nav { position: absolute; z-index: 2; top: 50%; display: grid; place-items: center; width: 2rem; aspect-ratio: 1; border: 1px solid var(--line); border-radius: 50%; background: rgba(6, 10, 18, .72); color: var(--fg); font: 600 .9rem/1 var(--font-mono); cursor: pointer; backdrop-filter: blur(8px); transform: translateY(-50%); transition: border-color .2s ease, color .2s ease, background .2s ease; }
-  .bx-photo-nav:hover { border-color: rgba(111, 227, 255, .55); background: rgba(6, 10, 18, .92); color: var(--cyan); }
-  .bx-photo-prev { left: 0; }
-  .bx-photo-next { right: 0; }
-  .bx-photo-dots { position: absolute; left: 50%; bottom: .15rem; z-index: 2; display: flex; gap: .4rem; transform: translateX(-50%); }
-  .bx-photo-dots button { width: 1.5rem; height: .2rem; padding: 0; border: 0; border-radius: 99px; background: var(--line); cursor: pointer; transition: background .25s ease, width .25s ease; }
-  .bx-photo-dots button:hover { background: var(--fg-3); }
-  .bx-photo-dots button[aria-current='true'] { width: 2.4rem; background: var(--cyan); }
-  .kb-build-explorer.is-photo-view .bx-photo-stage { opacity: 1; visibility: visible; transform: none; }
-  .kb-build-explorer.is-photo-view .bx-model { opacity: 0; pointer-events: none; transform: translate(-50%, -50%) scale(.92) rotateX(var(--rx)) rotateZ(var(--rz)); }
-  .kb-build-explorer.is-photo-view .bx-active-chip, .kb-build-explorer.is-photo-view .bx-view-readout { opacity: 0 !important; }
-  .kb-build-explorer.is-photo-view .bx-stage { height: 22rem; cursor: default; }
 
   /* ---------------- Modelo 3D por capas ---------------- */
   .bx-model {
@@ -652,20 +777,161 @@ const copy = {
     left: calc(var(--x) + .35%);
     top: calc(var(--y) + 1.4%);
     width: calc(var(--w) - .7%);
-    height: 17.2%;
+    height: var(--kh);
+    rotate: var(--kr, 0deg);
   }
   .bx-cutout { background: #070a10; border: 1px solid rgba(0,0,0,.82); border-radius: 1px; transform: scale(.58); box-shadow: inset 0 3px 3px #000, 0 1px rgba(255,255,255,.08); }
-  .bx-socket { height: 12%; top: calc(var(--y) + 4%); background: linear-gradient(145deg, #30343b, #111318); border: 1px solid #080a0d; border-radius: 2px; transform: scale(.62); box-shadow: inset 0 1px rgba(255,255,255,.18), 0 2px 0 #080a0d, 0 4px 4px rgba(0,0,0,.28); }
+  .bx-socket { height: var(--soh); top: calc(var(--y) + var(--soy)); background: linear-gradient(145deg, #30343b, #111318); border: 1px solid #080a0d; border-radius: 2px; transform: scale(.62); box-shadow: inset 0 1px rgba(255,255,255,.18), 0 2px 0 #080a0d, 0 4px 4px rgba(0,0,0,.28); }
   .bx-circuit { position: absolute; height: 1px; background: #a8b1ba; transform-origin: left; opacity: .7; }
   .bx-circuit-a { width: 58%; left: 20%; top: 40%; transform: rotate(18deg); }
   .bx-circuit-b { width: 42%; left: 35%; top: 63%; transform: rotate(-14deg); }
-  .bx-switch { display: grid; place-items: center; height: 16%; top: calc(var(--y) + 2%); transform: scale(.56); transform-style: preserve-3d; border: 1px solid rgba(87,94,104,.55); border-radius: 2px; background: linear-gradient(145deg, #fbfcfd, #d5d9df 58%, #b8bec7); box-shadow: inset 0 1px rgba(255,255,255,.95), inset 0 -2px rgba(111,119,130,.18), 0 2px 0 #c8cdd4, 0 5px 0 #9ca3ad, 0 8px 0 #777f8a, 0 12px 9px rgba(0, 0, 0, .5); }
+  .bx-switch { display: grid; place-items: center; height: var(--sh); top: calc(var(--y) + var(--sy)); transform: scale(.56); transform-style: preserve-3d; border: 1px solid rgba(87,94,104,.55); border-radius: 2px; background: linear-gradient(145deg, #fbfcfd, #d5d9df 58%, #b8bec7); box-shadow: inset 0 1px rgba(255,255,255,.95), inset 0 -2px rgba(111,119,130,.18), 0 2px 0 #c8cdd4, 0 5px 0 #9ca3ad, 0 8px 0 #777f8a, 0 12px 9px rgba(0, 0, 0, .5); }
   .bx-switch::before { content: ''; position: absolute; inset: 18%; border: 1px solid rgba(75,84,96,.35); border-radius: 1px; background: linear-gradient(145deg, rgba(255,255,255,.82), rgba(194,201,210,.6)); box-shadow: inset 0 1px rgba(255,255,255,.85), 0 2px 2px rgba(0,0,0,.18); }
   .bx-switch::after { content: ''; position: absolute; left: 13%; right: 13%; bottom: -22%; height: 24%; border-radius: 0 0 2px 2px; background: linear-gradient(180deg, #9ca4ae, #747d88); box-shadow: 0 2px 3px rgba(0,0,0,.35); }
   .bx-switch b { position: relative; z-index: 2; width: 42%; aspect-ratio: 1; border: 1px solid rgba(31,68,106,.55); border-radius: 1px; background: linear-gradient(145deg, #7db8e9, #467fbe 56%, #315f96); box-shadow: inset 0 1px rgba(255,255,255,.42), 0 2px 0 #356aa4, 0 5px 0 #244d7b, 0 7px 5px rgba(0,0,0,.38); }
   .bx-switch b::before, .bx-switch b::after { content: ''; position: absolute; background: rgba(20,55,91,.55); border-radius: 1px; }
   .bx-switch b::before { left: 22%; right: 22%; top: 43%; height: 14%; }
   .bx-switch b::after { top: 22%; bottom: 22%; left: 43%; width: 14%; }
+
+  /* ---------------- Arquitectura Topre del HHKB ---------------- */
+  .bx-build-panel[data-layout='hhkb'] .bx-housing,
+  .bx-build-panel[data-layout='hhkb'] .bx-domes,
+  .bx-build-panel[data-layout='hhkb'] .bx-springs,
+  .bx-build-panel[data-layout='hhkb'] .bx-pcb { inset: 8px; }
+  .bx-build-panel[data-layout='hhkb'] .bx-case {
+    border: 9px solid #d9d7d0;
+    background: linear-gradient(155deg, #f4f2ec, #dcdad3);
+    box-shadow: inset 0 1px #fff, inset 0 0 0 1px rgba(72, 75, 78, .16), 0 5px 0 #c9c7c0, 0 10px 0 #b7b5ae, 0 18px 22px rgba(0, 0, 0, .42);
+  }
+  .bx-build-panel[data-layout='hhkb'] .bx-case-well { border-color: rgba(72, 75, 78, .2); }
+  .bx-build-panel[data-layout='hhkb'] .bx-case-mark { color: rgba(29, 34, 38, .28); }
+  .bx-hhkb-battery {
+    position: absolute;
+    left: 37%;
+    top: -15px;
+    width: 26%;
+    height: 24px;
+    border: 2px solid #c8c6bf;
+    border-radius: 8px 8px 2px 2px;
+    background: linear-gradient(#eceae4, #d2d0ca);
+    box-shadow: inset 0 1px #fff, 0 3px 4px rgba(0, 0, 0, .22);
+  }
+  .bx-housing {
+    border: 7px solid #dedcd5;
+    background: linear-gradient(150deg, #f5f3ed, #dfddd6);
+    box-shadow: inset 0 1px #fff, inset 0 0 0 1px rgba(70, 74, 77, .16), 0 4px 0 #cccac3, 0 9px 12px rgba(0, 0, 0, .34);
+  }
+  .bx-domes {
+    background: linear-gradient(155deg, rgba(224, 226, 228, .76), rgba(170, 174, 178, .7));
+    box-shadow: inset 0 1px rgba(255, 255, 255, .62), 0 3px 0 rgba(120, 124, 128, .6), 0 7px 10px rgba(0, 0, 0, .3);
+  }
+  .bx-springs {
+    border: 1px solid rgba(183, 188, 193, .58);
+    background: linear-gradient(155deg, rgba(223, 227, 230, .16), rgba(123, 130, 136, .1));
+    box-shadow: 0 3px 8px rgba(0, 0, 0, .24);
+  }
+  .bx-build-panel[data-layout='hhkb'] .bx-pcb {
+    background-color: #315f43;
+    background-image:
+      linear-gradient(25deg, transparent 18%, rgba(199, 169, 79, .26) 18% 18.5%, transparent 18.5% 60%, rgba(199, 169, 79, .2) 60% 60.5%, transparent 60.5%),
+      radial-gradient(rgba(216, 193, 114, .38) 1px, transparent 1px);
+    background-size: 82px 38px, 12px 12px;
+    box-shadow: inset 0 1px rgba(255,255,255,.28), inset 0 0 0 1px #1d3d2a, 0 3px 0 #244b34, 0 7px 0 #183424, 0 12px 14px rgba(0,0,0,.38);
+  }
+  .bx-topre-slider,
+  .bx-housing-bore,
+  .bx-topre-dome,
+  .bx-topre-spring,
+  .bx-cap-pad {
+    position: absolute;
+    left: var(--cx);
+    top: var(--cy);
+    transform: translate(-50%, -50%);
+  }
+  .bx-housing-bore {
+    width: 3.8%;
+    height: 13.5%;
+    border: 2px solid #c9c7c0;
+    border-radius: 47% 47% 38% 38%;
+    background: radial-gradient(circle, #1b1f22 0 42%, #62666a 44% 53%, #d8d6cf 55%);
+    box-shadow: inset 0 2px 3px rgba(0, 0, 0, .48), 0 1px #fff;
+  }
+  .bx-topre-slider {
+    display: grid;
+    place-items: center;
+    width: 3.35%;
+    height: 12%;
+    border: 1px solid #090b0d;
+    border-radius: 46% 46% 34% 34%;
+    background: linear-gradient(145deg, #3b4145, #15191c 68%);
+    box-shadow: inset 0 1px rgba(255, 255, 255, .2), 0 3px 0 #0d1012, 0 7px 6px rgba(0, 0, 0, .45);
+  }
+  .bx-topre-slider::before,
+  .bx-topre-slider::after {
+    content: '';
+    position: absolute;
+    z-index: 2;
+    background: #090b0c;
+    border-radius: 1px;
+  }
+  .bx-topre-slider::before { width: 52%; height: 16%; }
+  .bx-topre-slider::after { width: 16%; height: 52%; }
+  .bx-topre-slider b {
+    position: absolute;
+    inset: -2px;
+    border: 2px solid rgba(208, 211, 213, .72);
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px rgba(22, 25, 27, .75);
+  }
+  .bx-topre-slider b::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border: 1px solid rgba(174, 179, 182, .62);
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(16, 19, 21, .72);
+  }
+  .bx-topre-dome {
+    width: 4.35%;
+    height: 14.5%;
+    border: 1px solid rgba(120, 124, 128, .58);
+    border-radius: 48% 48% 38% 38%;
+    background: radial-gradient(circle at 38% 28%, rgba(255,255,255,.72), rgba(199,202,205,.78) 36%, rgba(142,147,151,.82) 72%);
+    box-shadow: inset 0 2px 3px rgba(255, 255, 255, .5), 0 3px 3px rgba(0, 0, 0, .28);
+  }
+  .bx-topre-dome::after {
+    content: '';
+    position: absolute;
+    left: 26%;
+    right: 26%;
+    bottom: 12%;
+    height: 28%;
+    border-radius: 50%;
+    background: rgba(64, 69, 73, .3);
+  }
+  .bx-topre-spring {
+    width: 3.8%;
+    height: 13%;
+    border: 1px solid #d5d9dc;
+    border-radius: 50%;
+    background: repeating-radial-gradient(ellipse, transparent 0 2px, rgba(215, 219, 222, .95) 2.5px 3.5px, transparent 4px 5px);
+    box-shadow: 0 2px 3px rgba(0, 0, 0, .35);
+  }
+  .bx-topre-spring::after {
+    content: '';
+    position: absolute;
+    inset: 28%;
+    border: 1px solid rgba(223, 226, 229, .9);
+    border-radius: 50%;
+  }
+  .bx-cap-pad {
+    width: 4%;
+    height: 13%;
+    border: 1px solid rgba(205, 174, 82, .72);
+    border-radius: 50%;
+    background: radial-gradient(circle, #315f43 0 28%, #d1ad55 31% 42%, #315f43 45% 60%, #ba9448 63% 70%, #254b35 72%);
+    box-shadow: inset 0 0 4px rgba(255, 221, 123, .34);
+  }
   /*
    * Keycaps del build real: PBT oscuro con leyendas amarillas. Los tonos
    * salen de las fotografías del propio teclado, no de un set genérico.
@@ -674,6 +940,372 @@ const copy = {
   .bx-model-key::before { content: ''; position: absolute; inset: 1px 1px 3px; z-index: 0; border-radius: 3px; background: radial-gradient(circle at 28% 22%, rgba(255,255,255,.14), transparent 34%), repeating-linear-gradient(110deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px), linear-gradient(155deg, #46473f, #383930 54%, #2b2c26); box-shadow: inset 0 1px rgba(255,255,255,.22), inset 0 -2px 3px rgba(0,0,0,.3); }
   .bx-model-key::after { content: ''; position: absolute; left: 9%; right: 9%; bottom: -3px; height: 4px; z-index: -1; border-radius: 0 0 3px 3px; background: linear-gradient(180deg, #2a2b25, #1c1d19); }
   .bx-model-key span { position: relative; z-index: 1; overflow: hidden; color: #e4cb4b; font: 600 8px/1 var(--font-mono); text-shadow: 0 1px rgba(0,0,0,.65), 0 0 4px rgba(228,203,75,.12); text-overflow: clip; }
+  .bx-build-panel[data-layout='hhkb'] .bx-model-key {
+    border-color: rgba(101, 105, 104, .4);
+    background: linear-gradient(155deg, #f2f1ec, #cfcec8);
+    box-shadow: 0 2px 0 #e0dfd9, 0 5px 0 #c9c8c2, 0 8px 0 #b4b3ad, 0 11px 9px rgba(0, 0, 0, .38);
+  }
+  .bx-build-panel[data-layout='hhkb'] .bx-model-key::before {
+    background: radial-gradient(circle at 28% 22%, rgba(255,255,255,.7), transparent 36%), linear-gradient(155deg, #f8f7f3, #e8e7e1 58%, #d5d4ce);
+    box-shadow: inset 0 1px #fff, inset 0 -2px 3px rgba(90, 94, 93, .16);
+  }
+  .bx-build-panel[data-layout='hhkb'] .bx-model-key::after { background: linear-gradient(180deg, #d7d6d0, #bdbcb6); }
+  .bx-build-panel[data-layout='hhkb'] .bx-model-key.is-wasabi {
+    border-color: rgba(83, 119, 94, .48);
+    background: linear-gradient(155deg, #b9dbbf, #8fbd9b);
+    box-shadow: 0 2px 0 #a5cfae, 0 5px 0 #8db799, 0 8px 0 #759e82, 0 11px 9px rgba(0, 0, 0, .38);
+  }
+  .bx-build-panel[data-layout='hhkb'] .bx-model-key.is-wasabi::before {
+    background: radial-gradient(circle at 28% 22%, rgba(255,255,255,.55), transparent 36%), linear-gradient(155deg, #c7e5cc, #acd4b5 58%, #94c2a0);
+  }
+  .bx-build-panel[data-layout='hhkb'] .bx-model-key.is-wasabi::after { background: linear-gradient(180deg, #8db899, #749b80); }
+  .bx-build-panel[data-layout='hhkb'] .bx-model-key span { color: #2a302c; font-size: 7px; text-shadow: 0 1px rgba(255,255,255,.5); }
+
+  /* ---------------- Arquitectura stock del EvoWorks EVO75 ---------------- */
+  .bx-build-panel[data-layout='evo75'] .bx-model {
+    width: 520px;
+    height: 230px;
+  }
+  .bx-build-panel[data-layout='evo75'] .bx-layer { border-radius: 12px; }
+  .bx-build-panel[data-layout='evo75'] .bx-pcb,
+  .bx-build-panel[data-layout='evo75'] .bx-plate,
+  .bx-build-panel[data-layout='evo75'] .bx-dampening { inset: 10px; }
+  .bx-build-panel[data-layout='evo75'] .bx-bottom-case {
+    border: 10px solid #dad9d5;
+    background: linear-gradient(155deg, #f8f7f3, #e5e4df 62%, #cfcec9);
+    box-shadow: inset 0 1px #fff, inset 0 0 0 1px rgba(79, 82, 84, .15), 0 5px 0 #d1d0cb, 0 11px 0 #bab9b4, 0 21px 22px rgba(0, 0, 0, .45);
+  }
+  .bx-build-panel[data-layout='evo75'] .bx-case-well {
+    inset: 11px;
+    border-color: rgba(76, 80, 82, .18);
+    border-radius: 8px;
+  }
+  .bx-build-panel[data-layout='evo75'] .bx-case-mark {
+    color: rgba(30, 34, 36, .24);
+    letter-spacing: .25em;
+  }
+  .bx-build-panel[data-layout='evo75'] .bx-top-case {
+    border: 12px solid #e5e4df;
+    background: transparent;
+    box-shadow: inset 0 1px #fff, inset 0 0 0 1px rgba(66, 70, 72, .14), 0 4px 0 #d1d0cb, 0 9px 0 #bebdb8, 0 15px 17px rgba(0, 0, 0, .36);
+  }
+  .bx-evo-case-opening {
+    position: absolute;
+    inset: 5px;
+    border: 1px solid rgba(101, 104, 105, .22);
+    border-radius: 7px;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, .16), 0 1px rgba(255, 255, 255, .8);
+  }
+  .bx-evo-grille {
+    position: absolute;
+    top: 2.1%;
+    width: 3.8%;
+    height: 13.2%;
+    border: 1px solid #a92422;
+    border-radius: 3px;
+    background-color: #ba302c;
+    background-image: radial-gradient(circle, #33100f 0 1px, transparent 1.5px);
+    background-size: 4px 4px;
+    box-shadow: inset 0 1px rgba(255,255,255,.25), 0 2px 0 #7b1b1a, 0 4px 4px rgba(0,0,0,.3);
+  }
+  .bx-evo-grille.is-left { left: 7.7%; }
+  .bx-evo-grille.is-right { right: 7.4%; }
+  .bx-build-panel[data-layout='evo75'] .bx-plate {
+    background:
+      linear-gradient(90deg, rgba(239, 238, 231, .96) 0 50%, rgba(59, 65, 68, .92) 50%),
+      linear-gradient(155deg, #eceae4, #3d4246);
+    box-shadow: inset 0 1px rgba(255,255,255,.65), inset 0 0 0 1px rgba(54,59,62,.42), 0 3px 0 #9d9c96, 0 7px 0 #727477, 0 12px 14px rgba(0,0,0,.38);
+  }
+  .bx-build-panel[data-layout='evo75'] .bx-plate::after {
+    content: 'PP / FR4';
+    position: absolute;
+    right: 3%;
+    bottom: 4%;
+    color: rgba(255, 255, 255, .44);
+    font: 700 8px/1 var(--font-mono);
+    letter-spacing: .12em;
+  }
+  .bx-build-panel[data-layout='evo75'] .bx-pcb {
+    background-color: #244d3b;
+    background-image:
+      linear-gradient(24deg, transparent 18%, rgba(199, 172, 84, .22) 18% 18.5%, transparent 18.5% 61%, rgba(199, 172, 84, .18) 61% 61.5%, transparent 61.5%),
+      radial-gradient(rgba(221, 197, 111, .42) 1px, transparent 1px);
+    background-size: 86px 42px, 11px 11px;
+    box-shadow: inset 0 1px rgba(255,255,255,.24), inset 0 0 0 1px #173428, 0 3px 0 #1d3d30, 0 7px 0 #122a20, 0 12px 14px rgba(0,0,0,.38);
+  }
+  .bx-build-panel[data-layout='evo75'] .bx-switch {
+    border-color: rgba(93, 78, 55, .45);
+    background: linear-gradient(145deg, rgba(248,245,236,.94), rgba(210,205,193,.9) 58%, rgba(167,163,153,.92));
+    box-shadow: inset 0 1px rgba(255,255,255,.92), 0 2px 0 #c9c3b7, 0 5px 0 #9b958a, 0 8px 0 #716d66, 0 11px 8px rgba(0,0,0,.42);
+  }
+  .bx-build-panel[data-layout='evo75'] .bx-switch b {
+    border-color: rgba(111, 63, 22, .58);
+    background: linear-gradient(145deg, #efbf71, #c47c2e 58%, #95541e);
+    box-shadow: inset 0 1px rgba(255,255,255,.42), 0 2px 0 #a86124, 0 5px 0 #784217, 0 7px 5px rgba(0,0,0,.34);
+  }
+  .bx-mount { background: transparent; }
+  .bx-evo-leaf {
+    position: absolute;
+    width: 14%;
+    height: 9px;
+    border: 1px solid rgba(117, 28, 25, .78);
+    border-radius: 50% 50% 30% 30%;
+    background: linear-gradient(180deg, #ef6b61, #bd322d);
+    box-shadow: inset 0 1px rgba(255,255,255,.32), 0 3px 0 #7d211e, 0 5px 5px rgba(0,0,0,.3);
+  }
+  .bx-evo-leaf.is-1, .bx-evo-leaf.is-2,
+  .bx-evo-leaf.is-3, .bx-evo-leaf.is-4 { top: 4px; }
+  .bx-evo-leaf.is-5, .bx-evo-leaf.is-6,
+  .bx-evo-leaf.is-7, .bx-evo-leaf.is-8 { bottom: 4px; }
+  .bx-evo-leaf.is-1, .bx-evo-leaf.is-5 { left: 5%; }
+  .bx-evo-leaf.is-2, .bx-evo-leaf.is-6 { left: 29%; }
+  .bx-evo-leaf.is-3, .bx-evo-leaf.is-7 { right: 29%; }
+  .bx-evo-leaf.is-4, .bx-evo-leaf.is-8 { right: 5%; }
+  .bx-build-panel[data-layout='evo75'] .bx-dampening {
+    background: repeating-linear-gradient(120deg, #34383d 0 5px, #282c30 5px 10px);
+    box-shadow: inset 0 1px rgba(255,255,255,.08), 0 3px 0 #202327, 0 7px 0 #14171a, 0 11px 12px rgba(0,0,0,.38);
+  }
+  .bx-evo-silicone-core {
+    position: absolute;
+    inset: 6px;
+    border: 2px solid rgba(202, 75, 67, .48);
+    border-radius: 7px;
+    box-shadow: inset 0 0 0 2px rgba(226, 96, 86, .14);
+  }
+  .bx-battery { background: transparent; }
+  .bx-evo-cell {
+    position: absolute;
+    top: 24%;
+    width: 37%;
+    height: 52%;
+    border: 2px solid #3e444b;
+    border-radius: 8px;
+    background: linear-gradient(145deg, #68717b, #414850 62%, #30363d);
+    box-shadow: inset 0 1px rgba(255,255,255,.18), 0 4px 0 #262b30, 0 8px 10px rgba(0,0,0,.38);
+  }
+  .bx-evo-cell::before {
+    content: '4000mAh';
+    position: absolute;
+    left: 8%;
+    top: 42%;
+    color: rgba(255,255,255,.42);
+    font: 700 8px/1 var(--font-mono);
+    letter-spacing: .12em;
+  }
+  .bx-evo-cell.is-left { left: 10%; }
+  .bx-evo-cell.is-right { right: 10%; }
+  .bx-build-panel[data-layout='evo75'] .bx-weight {
+    background: transparent;
+    box-shadow: none;
+  }
+  .bx-build-panel[data-layout='evo75'] .bx-weight-strip {
+    inset: 28px 11%;
+    border: 2px solid rgba(246, 246, 244, .78);
+    border-radius: 14px;
+    background: linear-gradient(105deg, #aeb2b4, #f3f3f1 28%, #b7bbbd 51%, #f7f7f5 73%, #9ca1a4);
+    box-shadow: inset 0 0 0 2px rgba(70,75,78,.2), inset 0 6px 12px rgba(255,255,255,.52), 0 5px 0 #898e91, 0 10px 14px rgba(0,0,0,.4);
+  }
+  .bx-build-panel[data-layout='evo75'] .bx-weight-strip::after {
+    content: 'EVO75';
+    position: absolute;
+    right: 11%;
+    top: 40%;
+    color: rgba(56, 61, 64, .54);
+    font: 500 25px/1 var(--font-mono);
+    letter-spacing: .12em;
+    text-shadow: 0 1px rgba(255,255,255,.75);
+  }
+  .bx-evo-weight-vents {
+    position: absolute;
+    top: 22%;
+    width: 22px;
+    height: 56%;
+    background-image: radial-gradient(circle, rgba(75, 80, 83, .72) 0 1px, transparent 1.5px);
+    background-size: 6px 6px;
+  }
+  .bx-evo-weight-vents.is-left { left: 6%; }
+  .bx-evo-weight-vents.is-right { right: 6%; }
+  .bx-build-panel[data-layout='evo75'] .bx-model-key {
+    border-color: rgba(100, 102, 101, .38);
+    background: linear-gradient(155deg, #f2f1ed, #cfcec9);
+    box-shadow: 0 2px 0 #e0dfda, 0 4px 0 #c8c7c2, 0 7px 0 #b3b2ad, 0 10px 8px rgba(0,0,0,.38);
+  }
+  .bx-build-panel[data-layout='evo75'] .bx-model-key::before {
+    background: radial-gradient(circle at 28% 22%, rgba(255,255,255,.72), transparent 36%), linear-gradient(155deg, #fbfaf7, #e9e8e3 58%, #d6d5d0);
+    box-shadow: inset 0 1px #fff, inset 0 -2px 3px rgba(90,94,93,.14);
+  }
+  .bx-build-panel[data-layout='evo75'] .bx-model-key::after { background: linear-gradient(180deg, #d5d4cf, #bdbcb7); }
+  .bx-build-panel[data-layout='evo75'] .bx-model-key.is-evo-grey {
+    border-color: rgba(70, 73, 74, .48);
+    background: linear-gradient(155deg, #9fa2a2, #737777);
+    box-shadow: 0 2px 0 #8b8e8e, 0 4px 0 #6f7373, 0 7px 0 #555959, 0 10px 8px rgba(0,0,0,.4);
+  }
+  .bx-build-panel[data-layout='evo75'] .bx-model-key.is-evo-grey::before {
+    background: radial-gradient(circle at 28% 22%, rgba(255,255,255,.42), transparent 36%), linear-gradient(155deg, #b2b4b4, #959898 58%, #797d7d);
+  }
+  .bx-build-panel[data-layout='evo75'] .bx-model-key.is-evo-grey::after { background: linear-gradient(180deg, #777b7b, #5b5f5f); }
+  .bx-build-panel[data-layout='evo75'] .bx-model-key.is-evo-red {
+    border-color: rgba(99, 18, 17, .62);
+    background: linear-gradient(155deg, #d23b36, #9d201e);
+    box-shadow: 0 2px 0 #b52926, 0 4px 0 #8f1d1b, 0 7px 0 #681514, 0 10px 8px rgba(0,0,0,.43);
+  }
+  .bx-build-panel[data-layout='evo75'] .bx-model-key.is-evo-red::before {
+    background: radial-gradient(circle at 28% 22%, rgba(255,255,255,.36), transparent 36%), linear-gradient(155deg, #e34b45, #c42e2a 58%, #a51f1d);
+  }
+  .bx-build-panel[data-layout='evo75'] .bx-model-key.is-evo-red::after { background: linear-gradient(180deg, #9a211e, #701716); }
+  .bx-build-panel[data-layout='evo75'] .bx-model-key span {
+    color: #b21e1b;
+    font-size: 6px;
+    text-shadow: 0 1px rgba(255,255,255,.48);
+  }
+  .bx-build-panel[data-layout='evo75'] .bx-model-key.is-evo-red span { color: #fff3ed; text-shadow: 0 1px rgba(75, 8, 7, .6); }
+
+  /* ---------------- Corne Cherry V4 cableado ---------------- */
+  .bx-build-panel[data-layout='corne'] .bx-model {
+    width: 540px;
+    height: 220px;
+  }
+  .bx-build-panel[data-layout='corne'] .bx-layer {
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  .bx-corne-half {
+    position: absolute;
+    top: 3%;
+    width: 42%;
+    height: 91%;
+    clip-path: polygon(0 10%, 86% 10%, 100% 23%, 100% 70%, 83% 70%, 74% 100%, 28% 91%, 18% 76%, 0 76%);
+  }
+  .bx-corne-half.is-left { left: 0; }
+  .bx-corne-half.is-right {
+    right: 0;
+    transform: scaleX(-1);
+  }
+  .bx-corne-half.is-plate {
+    border: 1px solid rgba(117, 127, 136, .56);
+    background: linear-gradient(155deg, rgba(52, 60, 69, .9), rgba(14, 19, 25, .94));
+    box-shadow: inset 0 1px rgba(255,255,255,.2), 0 3px 0 #11171d, 0 7px 8px rgba(0,0,0,.42);
+  }
+  .bx-corne-half.is-pcb {
+    border: 1px solid #1b2834;
+    background-color: #263847;
+    background-image:
+      linear-gradient(27deg, transparent 19%, rgba(188, 150, 67, .26) 19% 19.5%, transparent 19.5% 58%, rgba(188, 150, 67, .2) 58% 58.5%, transparent 58.5%),
+      radial-gradient(rgba(196, 160, 79, .38) 1px, transparent 1px);
+    background-size: 68px 34px, 10px 10px;
+    box-shadow: inset 0 1px rgba(255,255,255,.18), 0 3px 0 #172631, 0 7px 8px rgba(0,0,0,.4);
+  }
+  .bx-corne-half.is-spacers {
+    border: 2px solid rgba(97, 106, 114, .48);
+    background: rgba(20, 26, 32, .12);
+    box-shadow: inset 0 0 0 2px rgba(8, 12, 16, .48);
+  }
+  .bx-corne-half.is-bottom-case {
+    border: 2px solid rgba(126, 137, 147, .5);
+    background: linear-gradient(155deg, rgba(42, 49, 57, .92), rgba(8, 12, 17, .96));
+    box-shadow: inset 0 1px rgba(255,255,255,.2), inset 0 0 0 3px rgba(4,7,10,.48), 0 4px 0 #0b1015, 0 9px 10px rgba(0,0,0,.48);
+  }
+  .bx-build-panel[data-layout='corne'] .bx-circuit { display: none; }
+  .bx-build-panel[data-layout='corne'] .bx-cutout {
+    border-color: #05080b;
+    background: rgba(2, 5, 8, .88);
+    box-shadow: inset 0 2px 3px #000, 0 1px rgba(255,255,255,.12);
+  }
+  .bx-build-panel[data-layout='corne'] .bx-socket {
+    border-color: #080b0e;
+    background: linear-gradient(145deg, #323941, #11171d);
+  }
+  .bx-build-panel[data-layout='corne'] .bx-switch {
+    border-color: rgba(88, 95, 102, .58);
+    background: linear-gradient(145deg, rgba(241,243,244,.92), rgba(188,194,199,.9) 60%, rgba(137,145,151,.92));
+    box-shadow: inset 0 1px rgba(255,255,255,.92), 0 2px 0 #b9c0c4, 0 5px 0 #858e94, 0 8px 0 #5d666c, 0 11px 8px rgba(0,0,0,.44);
+  }
+  .bx-build-panel[data-layout='corne'] .bx-switch b {
+    border-color: rgba(54, 60, 65, .58);
+    background: linear-gradient(145deg, #6d767d, #3b4349 60%, #252c31);
+    box-shadow: inset 0 1px rgba(255,255,255,.24), 0 2px 0 #363e44, 0 5px 0 #232a2f, 0 7px 5px rgba(0,0,0,.4);
+  }
+  .bx-corne-mcu {
+    position: absolute;
+    top: 18%;
+    width: 4.5%;
+    height: 14%;
+    border: 1px solid #090c10;
+    border-radius: 2px;
+    background: repeating-linear-gradient(90deg, #20262c 0 3px, #8d8061 3px 4px), linear-gradient(#303941, #141a20);
+    box-shadow: 0 2px 3px rgba(0,0,0,.5);
+  }
+  .bx-corne-mcu::after {
+    content: 'RP2040';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    color: rgba(255,255,255,.52);
+    font: 700 5px/1 var(--font-mono);
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+  .bx-corne-mcu.is-left { left: 35%; }
+  .bx-corne-mcu.is-right { right: 35%; }
+  .bx-corne-cable {
+    position: absolute;
+    left: 39%;
+    top: 3%;
+    width: 22%;
+    height: 46%;
+    border: 5px solid #59636d;
+    border-bottom: 0;
+    border-radius: 52% 52% 0 0;
+    box-shadow: inset 0 1px rgba(255,255,255,.28), 0 2px 0 #1b2025, 0 4px 5px rgba(0,0,0,.52);
+  }
+  .bx-corne-jack {
+    position: absolute;
+    top: 43%;
+    width: 4.6%;
+    height: 10%;
+    border: 1px solid #5a4626;
+    border-radius: 2px;
+    background: repeating-linear-gradient(90deg, #bc9955 0 3px, #6e522a 3px 5px);
+    box-shadow: 0 3px 4px rgba(0,0,0,.45);
+  }
+  .bx-corne-jack.is-left { left: 36.2%; transform: rotate(8deg); }
+  .bx-corne-jack.is-right { right: 36.2%; transform: rotate(-8deg); }
+  .bx-corne-standoff,
+  .bx-corne-foot {
+    position: absolute;
+    width: 12px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+  }
+  .bx-corne-standoff {
+    border: 2px solid #8f8a7e;
+    background: radial-gradient(circle, #252a2f 0 25%, #c0bbae 28% 62%, #6f6b63 66%);
+    box-shadow: 0 3px 3px rgba(0,0,0,.36);
+  }
+  .bx-corne-foot {
+    border: 1px solid #11151a;
+    background: radial-gradient(circle at 35% 30%, #626971, #252b31 58%, #11161b);
+    box-shadow: 0 3px 4px rgba(0,0,0,.5);
+  }
+  .bx-corne-standoff.is-1, .bx-corne-foot.is-1 { left: 2%; top: 14%; }
+  .bx-corne-standoff.is-2, .bx-corne-foot.is-2 { left: 35%; top: 14%; }
+  .bx-corne-standoff.is-3, .bx-corne-foot.is-3 { left: 3%; top: 68%; }
+  .bx-corne-standoff.is-4, .bx-corne-foot.is-4 { left: 31%; top: 82%; }
+  .bx-corne-standoff.is-5, .bx-corne-foot.is-5 { right: 35%; top: 14%; }
+  .bx-corne-standoff.is-6, .bx-corne-foot.is-6 { right: 2%; top: 14%; }
+  .bx-corne-standoff.is-7, .bx-corne-foot.is-7 { right: 31%; top: 82%; }
+  .bx-corne-standoff.is-8, .bx-corne-foot.is-8 { right: 3%; top: 68%; }
+  .bx-build-panel[data-layout='corne'] .bx-model-key {
+    border-color: rgba(104, 104, 99, .4);
+    border-radius: 5px;
+    background: linear-gradient(155deg, #f6f5f0, #d5d3cc);
+    box-shadow: 0 2px 0 #e6e4dd, 0 5px 0 #ceccc5, 0 8px 0 #b3b1aa, 0 11px 9px rgba(0,0,0,.4);
+  }
+  .bx-build-panel[data-layout='corne'] .bx-model-key::before {
+    background: radial-gradient(circle at 28% 22%, rgba(255,255,255,.82), transparent 36%), linear-gradient(155deg, #fffef9, #eeece5 58%, #d9d7cf);
+    box-shadow: inset 0 1px #fff, inset 0 -2px 3px rgba(90,94,93,.13);
+  }
+  .bx-build-panel[data-layout='corne'] .bx-model-key::after { background: linear-gradient(180deg, #d8d6cf, #bcbab3); }
 
   .bx-active-chip, .bx-view-readout { position: absolute; z-index: 5; border: 1px solid rgba(111, 227, 255, .25); border-radius: .4rem; background: rgba(6, 10, 18, .88); font-family: var(--font-mono); pointer-events: none; }
   .bx-active-chip { top: .15rem; left: .15rem; display: flex; align-items: center; gap: .55rem; max-width: calc(100% - .3rem); padding: .45rem .7rem; opacity: 0; transform: translateY(-4px); transition: opacity .2s ease, transform .2s ease; }
@@ -684,6 +1316,23 @@ const copy = {
   .bx-active-chip small { overflow: hidden; color: var(--fg-2); font-size: .6rem; text-overflow: ellipsis; white-space: nowrap; }
   .bx-view-readout { right: .15rem; bottom: .15rem; padding: .35rem .55rem; border-color: var(--line-soft); color: var(--fg-3); font-size: .56rem; opacity: 0; transition: opacity .2s ease; }
   .bx-stage.is-dragging .bx-view-readout, .bx-view-readout.is-visible { opacity: 1; }
+  .bx-prototype-note {
+    position: absolute;
+    left: 50%;
+    bottom: .15rem;
+    z-index: 5;
+    padding: .38rem .55rem;
+    border: 1px solid rgba(240, 189, 104, .38);
+    border-radius: .35rem;
+    background: rgba(6, 10, 18, .86);
+    color: #f0bd68;
+    font: 600 .52rem/1 var(--font-mono);
+    letter-spacing: .08em;
+    pointer-events: none;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+  .bx-build-panel.is-planning .bx-prototype-note { border-color: rgba(169, 149, 255, .4); color: #a995ff; }
 
   /* ---------------- Deslizador de separación ---------------- */
   .bx-scrub {
@@ -715,9 +1364,56 @@ const copy = {
   /* ---------------- Ficha lateral ---------------- */
   .bx-specs { min-width: 0; padding-top: .25rem; }
   .bx-specs h5 { margin-top: .35rem; color: var(--fg); font-size: 1.2rem; font-weight: 700; }
-  .bx-specs > p { margin-top: .25rem; }
+  .bx-specs > p { margin-top: .45rem; }
+  .bx-detail-status {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    margin-top: .45rem;
+    color: var(--cyan);
+    font: 600 .54rem/1 var(--font-mono);
+    letter-spacing: .09em;
+  }
+  .bx-detail-status i { width: .3rem; height: .3rem; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
+  .bx-build-panel.is-scaffold .bx-detail-status { color: #f0bd68; }
+  .bx-build-panel.is-in-progress .bx-detail-status { color: #f0bd68; }
+  .bx-build-panel.is-planning .bx-detail-status { color: #a995ff; }
   .bx-parts-head { margin-top: 1.15rem; padding: .8rem 0 .35rem; border-top: 1px solid var(--line-soft); color: var(--fg-3); font: 500 .56rem/1 var(--font-mono); letter-spacing: .11em; text-transform: uppercase; }
   .bx-parts { list-style: none; }
+  /*
+   * La fila selecciona la capa y el chip lleva a la tienda o a la reseña:
+   * son dos acciones distintas, así que van en dos controles y no en uno
+   * anidado en el otro. El chip cae debajo, alineado con el texto de la
+   * pieza, porque en la columna de la ficha no hay ancho para ponerlo al lado.
+   */
+  .bx-parts li { display: grid; }
+  .bx-source {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: .38rem;
+    margin: -.1rem 0 .45rem 2.9rem;
+    padding: .3rem .5rem;
+    border: 1px solid rgba(111, 227, 255, .28);
+    border-radius: .3rem;
+    background: linear-gradient(180deg, rgba(111, 227, 255, .07), rgba(111, 227, 255, .02));
+    color: var(--cyan);
+    font: 600 .56rem/1 var(--font-mono);
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    transition: border-color .28s ease, background .28s ease, box-shadow .28s ease, transform .28s cubic-bezier(.22, 1, .36, 1);
+  }
+  /* Punto vivo: el mismo indicador que usa el resto del panel. */
+  .bx-source i { width: .3rem; height: .3rem; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 6px var(--cyan); transition: box-shadow .28s ease; }
+  .bx-source svg { transition: transform .28s cubic-bezier(.22, 1, .36, 1); }
+  .bx-source:hover {
+    border-color: rgba(111, 227, 255, .75);
+    background: linear-gradient(180deg, rgba(111, 227, 255, .18), rgba(111, 227, 255, .07));
+    box-shadow: 0 0 0 3px rgba(111, 227, 255, .09), 0 10px 22px -14px var(--cyan);
+    transform: translateY(-1px);
+  }
+  .bx-source:hover i { box-shadow: 0 0 10px var(--cyan); }
+  .bx-source:hover svg { transform: translate(2px, -2px); }
   .bx-parts button { display: grid; grid-template-columns: 1.2rem .55rem 1fr; align-items: start; gap: .55rem; width: 100%; padding: .55rem .65rem; border: 0; border-radius: .35rem; background: transparent; color: inherit; text-align: left; cursor: pointer; transition: background .2s ease, box-shadow .2s ease; }
   .bx-parts button:hover, .bx-parts button[aria-pressed='true'] { background: rgba(111, 227, 255, .07); box-shadow: inset 2px 0 var(--cyan); }
   .bx-part-index { padding-top: .16rem; color: var(--fg-3); font: 400 .56rem/1 var(--font-mono); }
@@ -745,24 +1441,26 @@ const copy = {
   }
   @container (max-width: 34rem) {
     .kb-build-explorer { padding: .85rem; }
+    .bx-build-grid { grid-template-columns: 1fr; }
     .bx-header { align-items: flex-start; }
     .bx-status { font-size: .55rem; }
     .bx-workbench { padding: .5rem; }
     .bx-toolbar { align-items: flex-start; flex-direction: column; }
-    .bx-view-switch { width: 100%; grid-template-columns: repeat(3, 1fr); }
+    .bx-view-switch { width: 100%; grid-template-columns: repeat(2, 1fr); }
     .bx-stage { --stage-h: 17rem; --stage-grow: 6rem; }
-    .kb-build-explorer.is-photo-view .bx-stage { height: 15rem; }
-    .bx-photo-frame { width: calc(100% - 2.5rem); }
-    .bx-photo-nav { width: 1.75rem; }
     .bx-model { --fit-base: .47; }
     .bx-active-chip small, .bx-hint-wide, .bx-layer-tag { display: none; }
     .bx-hint-narrow { display: inline; }
     .bx-card-authentic { top: .55rem; right: .55rem; }
+    .bx-card-photo-meta > span { display: none; }
+    .bx-prototype-note { max-width: calc(100% - 5rem); overflow: hidden; text-overflow: ellipsis; }
     .bx-scrub { grid-template-columns: minmax(0, 1fr) 2.8rem; }
     .bx-scrub label { grid-column: 1 / -1; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .bx-build-card, .bx-layer, .bx-model, .bx-stage, .bx-active-chip, .bx-layer-tag { transition-duration: .01ms !important; }
+    .bx-build-card, .bx-card-pointer-light, .bx-card-pagination button, .bx-card-nav,
+    .bx-layer, .bx-model, .bx-stage, .bx-active-chip, .bx-layer-tag,
+    .bx-source, .bx-source i, .bx-source svg { transition-duration: .01ms !important; }
   }
 </style>

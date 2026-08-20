@@ -241,7 +241,12 @@ const keyboards = defineCollection({
       key: z.string().min(1),
       order: z.number().int(),
       name: z.string().min(1),
-      year: z.string().min(4),
+      status: z.enum(['complete', 'scaffold', 'planning']).default('complete'),
+      /** El montaje físico puede seguir en curso aunque el modelo ya esté documentado. */
+      buildInProgress: z.boolean().default(false),
+      layout: z.enum(['ansi65', 'hhkb', 'evo75', 'corne']).default('ansi65'),
+      /** Build del que toma las capas mientras se prepara su modelo definitivo. */
+      modelTemplate: z.string().min(1).optional(),
       /** Resumen de una línea: tamaño, montaje y conexión. */
       summary: z.object({ en: z.string().min(1), es: z.string().min(1) }),
       photos: z
@@ -250,20 +255,8 @@ const keyboards = defineCollection({
             image: image(),
             label: z.object({ en: z.string().min(1), es: z.string().min(1) }),
             alt: z.object({ en: z.string().min(10), es: z.string().min(10) }),
-            /**
-             * Encuadre plano sobre fondo uniforme: admite el tratamiento de
-             * render, que disuelve el fondo real contra el panel. Las tomas
-             * con contexto de escritorio se enmarcan sin recortar.
-             */
-            cutout: z.boolean().default(false),
-            /**
-             * Margen que ocupa el fondo en la toma, en % de la propia foto.
-             * Es lo que el desvanecido tiene que comerse: solo lo sabe quien
-             * encuadró la fotografía, así que viaja con ella.
-             */
-            fade: z
-              .object({ x: z.number().min(0).max(40), y: z.number().min(0).max(40) })
-              .default({ x: 4, y: 12 }),
+            /** Conserva detalle fino con una variante PNG lossless de alta densidad. */
+            preserve: z.boolean().default(false),
           }),
         )
         .min(1),
@@ -275,17 +268,23 @@ const keyboards = defineCollection({
             spec: z.object({ en: z.string().min(1), es: z.string().min(1) }),
             /** Muestra de color del listado y tinte de la capa en el modelo. */
             color: z.string().regex(/^#[0-9a-f]{6}$/i),
+            /**
+             * De dónde sale la pieza: tienda, ficha del fabricante o reseña.
+             * Sin él, la fila no muestra enlace. El rótulo es un nombre
+             * propio, así que no se traduce.
+             */
+            source: z.object({ label: z.string().min(1), href: z.string().url() }).optional(),
             z: z.number(),
             exploded: z.number(),
           }),
         )
-        .min(1),
+        .default([]),
       /** Ficha técnica del panel lateral. Pares etiqueta/valor, en orden. */
       specs: z
         .array(
           z.object({
             label: z.object({ en: z.string().min(1), es: z.string().min(1) }),
-            value: z.string().min(1),
+            value: z.object({ en: z.string().min(1), es: z.string().min(1) }),
           }),
         )
         .default([]),

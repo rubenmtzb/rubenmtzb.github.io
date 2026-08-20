@@ -58,7 +58,19 @@ export async function getStackByGroup() {
  * la resolución del idioma la hace el componente con `pick`.
  */
 export async function getKeyboards() {
-  return byOrder(await getCollection('keyboards')).map((e) => e.data)
+  const builds = byOrder(await getCollection('keyboards')).map((entry) => entry.data)
+  const byKey = new Map(builds.map((build) => [build.key, build]))
+
+  return builds.map((build) => {
+    if (build.parts.length > 0 || !build.modelTemplate) return build
+
+    const template = byKey.get(build.modelTemplate)
+    if (!template || template.parts.length === 0) {
+      throw new Error(`Keyboard "${build.key}" references an invalid model template: "${build.modelTemplate}"`)
+    }
+
+    return { ...build, parts: template.parts }
+  })
 }
 
 export async function getPage(key: string, lang: Lang) {
