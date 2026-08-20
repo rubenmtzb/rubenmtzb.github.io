@@ -1,4 +1,5 @@
 import { initAsciiPortrait } from './ascii-portrait'
+import { revealOnScroll } from './reveal'
 import { startGameMode } from './game-mode'
 
 /**
@@ -30,26 +31,6 @@ function onSwipe(el: HTMLElement, handler: (direction: 1 | -1) => void, threshol
     const dx = e.changedTouches[0].clientX - startX
     if (Math.abs(dx) > threshold) handler(dx < 0 ? 1 : -1)
   }, { passive: true })
-}
-
-/* ---------------- Revelado al hacer scroll ---------------- */
-function initReveal() {
-  const targets = document.querySelectorAll<HTMLElement>('.reveal')
-  if (reduce || !('IntersectionObserver' in window)) {
-    targets.forEach((el) => el.classList.add('is-in'))
-    return
-  }
-  const io = new IntersectionObserver(
-    (entries) => {
-      for (const e of entries) {
-        if (!e.isIntersecting) continue
-        e.target.classList.add('is-in')
-        io.unobserve(e.target)
-      }
-    },
-    { rootMargin: '0px 0px -6% 0px', threshold: 0.04 },
-  )
-  targets.forEach((el) => io.observe(el))
 }
 
 /* ---------------- Cabecera fija y navegación ---------------- */
@@ -1766,7 +1747,7 @@ function initGameMode() {
 }
 
 // Inicialización de todas las capas
-initReveal()
+revealOnScroll({ reduce, rootMargin: '0px 0px -6% 0px', threshold: 0.04 })
 initHeader()
 initTypewriter()
 initPortrait()

@@ -6,27 +6,9 @@
  * animación, no el contenido.
  */
 
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+import { revealOnScroll } from './reveal'
 
-/* ---------- Revelado al hacer scroll ---------- */
-function initReveal() {
-  const targets = document.querySelectorAll<HTMLElement>('.reveal')
-  if (reduceMotion || !('IntersectionObserver' in window)) {
-    targets.forEach((el) => el.classList.add('is-in'))
-    return
-  }
-  const io = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue
-        entry.target.classList.add('is-in')
-        io.unobserve(entry.target)
-      }
-    },
-    { rootMargin: '0px 0px -10% 0px', threshold: 0.05 },
-  )
-  targets.forEach((el) => io.observe(el))
-}
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 /* ---------- Menú móvil ----------
    El markup existe siempre. Aquí solo se oculta y se alterna, de modo que
@@ -161,7 +143,7 @@ function initScrollSpy() {
   schedule()
 }
 
-initReveal()
+revealOnScroll({ reduce: reduceMotion, rootMargin: '0px 0px -10% 0px', threshold: 0.05 })
 initMobileMenu()
 initScrollSpy()
 
