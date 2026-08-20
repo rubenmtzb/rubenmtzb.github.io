@@ -1,38 +1,22 @@
 ---
 import { Picture } from 'astro:assets'
+import { getKeyboards } from '../../lib/content'
 import type { Lang } from '../../i18n/ui'
-import neo65Front from '../../assets/keyboards/neo65-gallery/front-dark.webp'
-import neo65Angle from '../../assets/keyboards/neo65-gallery/angle.webp'
-import neo65Profile from '../../assets/keyboards/neo65-gallery/profile.webp'
-import neo65RearWeight from '../../assets/keyboards/neo65-gallery/rear-weight.webp'
 
 interface Props { lang: Lang }
 const { lang } = Astro.props
 
-const photos = [
-  {
-    src: neo65Front,
-    label: lang === 'es' ? 'FRONTAL' : 'FRONT',
-    alt: lang === 'es' ? 'Vista frontal oscura del teclado mecánico Neo65' : 'Dark front view of the Neo65 mechanical keyboard',
-  },
-  {
-    src: neo65Angle,
-    label: lang === 'es' ? 'ÁNGULO' : 'THREE-QUARTER',
-    alt: lang === 'es' ? 'Vista diagonal del Neo65 y sus keycaps PBTfans Frontier' : 'Three-quarter view of the Neo65 and its PBTfans Frontier keycaps',
-  },
-  {
-    src: neo65Profile,
-    label: lang === 'es' ? 'PERFIL' : 'LOW PROFILE',
-    alt: lang === 'es' ? 'Perfil bajo del chasis y las keycaps del Neo65' : 'Low profile of the Neo65 case and keycaps',
-  },
-  {
-    src: neo65RearWeight,
-    label: lang === 'es' ? 'CONTRAPESO' : 'REAR WEIGHT',
-    alt: lang === 'es' ? 'Reverso del Neo65 con contrapeso PVD iridiscente' : 'Underside of the Neo65 with iridescent PVD rear weight',
-  },
-]
+const builds = await getKeyboards()
 
-const keyRows: Array<Array<[number, string]>> = [
+/** Resuelve un par {en, es} al idioma del documento. */
+const pick = <T,>(pair: { en: T, es: T }) => (lang === 'es' ? pair.es : pair.en)
+
+/**
+ * Distribución 65 % del modelo: [unidades de ancho, glifo]. Solo alimenta la
+ * geometría del teclado dibujado, que es común a todos los builds de este
+ * tamaño; las fotos y la ficha técnica salen de la colección de contenido.
+ */
+const KEY_ROWS: Array<Array<[number, string]>> = [
   [[1, 'Esc'], [1, '1'], [1, '2'], [1, '3'], [1, '4'], [1, '5'], [1, '6'], [1, '7'], [1, '8'], [1, '9'], [1, '0'], [1, '-'], [1, '='], [2, 'Del'], [1, 'Pg']],
   [[1.5, 'Tab'], [1, 'Q'], [1, 'W'], [1, 'E'], [1, 'R'], [1, 'T'], [1, 'Y'], [1, 'U'], [1, 'I'], [1, 'O'], [1, 'P'], [1, '['], [1, ']'], [1.5, '\\'], [1, 'End']],
   [[1.75, 'Ctrl'], [1, 'A'], [1, 'S'], [1, 'D'], [1, 'F'], [1, 'G'], [1, 'H'], [1, 'J'], [1, 'K'], [1, 'L'], [1, ';'], [1, "'"], [2.25, 'Enter'], [1, 'Fn']],
@@ -40,8 +24,9 @@ const keyRows: Array<Array<[number, string]>> = [
   [[1.25, 'Alt'], [1.25, 'Cmd'], [1.25, 'Fn'], [6.25, ''], [1.5, 'Alt'], [1.5, 'Fn'], [1, 'Left'], [1, 'Down'], [1, 'Right']],
 ]
 
-const units = 16
-const keys = keyRows.flatMap((row, rowIndex) => {
+const UNITS = 16
+
+const keys = KEY_ROWS.flatMap((row, rowIndex) => {
   let x = 0
   return row.map(([width, label]) => {
     const key = { x, y: rowIndex, width, label }
@@ -50,18 +35,51 @@ const keys = keyRows.flatMap((row, rowIndex) => {
   })
 })
 
-const parts = [
-  { id: 'keycaps', label: lang === 'es' ? 'KEYCAPS' : 'KEYCAPS', spec: 'PBTfans Frontier · doubleshot PBT', color: '#73766d', z: 46, exploded: 300 },
-  { id: 'switches', label: lang === 'es' ? 'SWITCHES' : 'SWITCHES', spec: 'Gazzew Boba U4 · silent tactile', color: '#eef1f4', z: 28, exploded: 232 },
-  { id: 'plate', label: lang === 'es' ? 'PLACA' : 'PLATE', spec: lang === 'es' ? 'Polipropileno negro · 1,5 mm' : 'Black polypropylene · 1.5 mm', color: '#262a30', z: 19, exploded: 172 },
-  { id: 'pcb', label: 'PCB', spec: lang === 'es' ? 'Hotswap cableada · sin flex cuts' : 'Wired hotswap · non-flex cut', color: '#e6eaef', z: 11, exploded: 118 },
-  { id: 'foam', label: 'FOAM', spec: lang === 'es' ? 'Poron en case, placa y PCB' : 'Poron case, plate & PCB foam', color: '#1b1e23', z: 3, exploded: 66 },
-  { id: 'case', label: 'CASE', spec: lang === 'es' ? 'Aluminio CNC · anodizado azul marino' : 'CNC aluminium · navy anodised', color: '#34466f', z: 0, exploded: 0 },
-  { id: 'weight', label: lang === 'es' ? 'CONTRAPESO' : 'REAR WEIGHT', spec: lang === 'es' ? 'Acabado espejo · PVD iridiscente' : 'Mirror-polished · iridescent PVD', color: '#9d8a5e', z: -34, exploded: -150 },
-]
-
+/** Posición de una tecla en porcentaje del modelo: la comparten las 5 capas. */
 const keyStyle = (key: typeof keys[number]) =>
-  `--x:${(key.x / units) * 100}%;--y:${key.y * 20}%;--w:${(key.width / units) * 100}%`
+  `--x:${(key.x / UNITS) * 100}%;--y:${key.y * 20}%;--w:${(key.width / UNITS) * 100}%`
+
+/**
+ * El escalonado de la explosión sale del orden de montaje, no de un número
+ * escrito a mano por capa: la última pieza en montarse es la primera en
+ * separarse, y añadir una pieza recoloca la secuencia sola.
+ */
+const STAGGER_MS = 70
+
+/** El modelo dibuja las capas de abajo arriba; la ficha las lista al revés. */
+type Part = (typeof builds)[number]['parts'][number]
+const layerStyle = (part: Part, order: number) =>
+  `--z:${part.z}px;--ze:${part.exploded}px;--delay:${order * STAGGER_MS}ms`
+
+const copy = {
+  intro: lang === 'es'
+    ? 'Los teclados que he montado, pieza a pieza. Abre uno para verlo en fotos y para desmontarlo capa a capa en 3D.'
+    : 'The keyboards I have built, piece by piece. Open one to see the photos and to take it apart layer by layer in 3D.',
+  inspect: lang === 'es' ? 'Inspeccionar' : 'Inspect',
+  allBuilds: lang === 'es' ? 'Todos los builds' : 'All builds',
+  view: lang === 'es' ? 'Vista del teclado' : 'Keyboard view',
+  photo: lang === 'es' ? 'Foto' : 'Photo',
+  assembled: lang === 'es' ? 'Montado' : 'Assembled',
+  exploded: lang === 'es' ? 'Explotado' : 'Exploded',
+  separation: lang === 'es' ? 'Separación' : 'Separation',
+  model: lang === 'es' ? 'Modelo interactivo por capas' : 'Interactive layered model',
+  previous: lang === 'es' ? 'Foto anterior' : 'Previous photo',
+  next: lang === 'es' ? 'Foto siguiente' : 'Next photo',
+  goTo: lang === 'es' ? 'Ir a la foto' : 'Go to photo',
+  order: lang === 'es' ? 'Orden de montaje' : 'Assembly order',
+  pieces: lang === 'es' ? 'piezas' : 'parts',
+  sheet: lang === 'es' ? 'Ficha técnica' : 'Spec sheet',
+  realBuild: lang === 'es' ? 'BUILD REAL' : 'REAL BUILD',
+  photoHint: lang === 'es'
+    ? 'Fotografía original · flechas para recorrer los ángulos'
+    : 'Original photograph · arrow keys to move through the angles',
+  hintWide: lang === 'es'
+    ? 'Arrastra o usa las flechas para orbitar · rueda para ampliar · doble clic para restablecer'
+    : 'Drag or use the arrow keys to orbit · scroll to zoom · double-click to reset',
+  hintNarrow: lang === 'es'
+    ? 'Arrastra para orbitar · toca una pieza para aislarla'
+    : 'Drag to orbit · tap a part to isolate',
+}
 ---
 
 <div
@@ -70,175 +88,222 @@ const keyStyle = (key: typeof keys[number]) =>
   aria-labelledby="kb-tab-photos"
   class="kb-build-explorer hidden"
   data-kb-build-explorer
-  data-assembled={lang === 'es' ? 'Montado' : 'Assembled'}
-  data-exploded={lang === 'es' ? 'Explotado' : 'Exploded'}
+  data-assembled={copy.assembled}
+  data-exploded={copy.exploded}
 >
   <header class="bx-header">
     <div>
       <span class="bx-kicker">LABORATORY // BUILD ARCHIVE</span>
       <h4>{lang === 'es' ? 'Fotos de mis builds' : 'My build photos'}</h4>
     </div>
-    <span class="bx-status"><i></i><span data-bx-status>01 BUILD // ARCHIVED</span></span>
+    <span class="bx-status"><i></i><span data-bx-status>{String(builds.length).padStart(2, '0')} BUILD // ARCHIVED</span></span>
   </header>
 
   <div class="bx-gallery" data-bx-gallery>
-    <p class="bx-intro">
-      {lang === 'es'
-        ? 'Una vista de los teclados que he montado. Abre uno para inspeccionar cada pieza en el orden real de ensamblaje.'
-        : "A view into the keyboards I've built. Open one to inspect every part in its real assembly order."}
-    </p>
+    <p class="bx-intro">{copy.intro}</p>
 
-    <button class="bx-build-card" type="button" data-bx-open>
-      <span class="bx-card-visual">
-        <Picture
-          src={neo65Front}
-          formats={['avif', 'webp']}
-          widths={[720, 1100, 1600]}
-          sizes="(max-width: 1024px) 100vw, 760px"
-          alt={lang === 'es' ? 'Teclado mecánico Neo65 terminado con keycaps PBTfans Frontier' : 'Finished Neo65 mechanical keyboard with PBTfans Frontier keycaps'}
-          loading="lazy"
-          decoding="async"
-          class="bx-card-photo"
-        />
-        <span class="bx-card-index">BUILD 01</span>
-        <span class="bx-card-authentic"><i></i>{lang === 'es' ? 'BUILD REAL' : 'REAL BUILD'}</span>
-      </span>
-      <span class="bx-card-copy">
-        <span>
-          <strong>Neo65</strong>
-          <small>65% · Gasket mount · Wired hotswap</small>
-        </span>
-        <span class="bx-inspect">{lang === 'es' ? 'Inspeccionar' : 'Inspect'} <b aria-hidden="true">→</b></span>
-      </span>
-    </button>
+    <ul class="bx-build-grid">
+      {builds.map((item, index) => (
+        <li>
+          <button class="bx-build-card" type="button" data-bx-open={item.key}>
+            <span class="bx-card-visual">
+              <Picture
+                src={item.photos[0].image}
+                formats={['avif']}
+                fallbackFormat="webp"
+                widths={[520, 780, 1100]}
+                width={1100}
+                quality={76}
+                sizes="(max-width: 1024px) 92vw, 720px"
+                alt={pick(item.photos[0].alt)}
+                loading="lazy"
+                decoding="async"
+                class="bx-card-photo"
+              />
+              <span class="bx-card-index">BUILD {String(index + 1).padStart(2, '0')}</span>
+              <span class="bx-card-authentic"><i></i>{copy.realBuild}</span>
+            </span>
+            <span class="bx-card-copy">
+              <span class="bx-card-id">
+                <strong>{item.name}</strong>
+                <small>{pick(item.summary)}</small>
+              </span>
+              <span class="bx-card-meta">
+                <span class="bx-card-year">{item.year}</span>
+                <span class="bx-inspect">{copy.inspect} <b aria-hidden="true">→</b></span>
+              </span>
+            </span>
+          </button>
+        </li>
+      ))}
+    </ul>
   </div>
 
   <div class="bx-viewer" data-bx-viewer hidden>
     <div class="bx-toolbar">
       <button type="button" class="bx-back" data-bx-close>
-        <span aria-hidden="true">←</span> {lang === 'es' ? 'Todos los builds' : 'All builds'}
+        <span aria-hidden="true">←</span> {copy.allBuilds}
       </button>
-      <div class="bx-view-switch" role="group" aria-label={lang === 'es' ? 'Vista del teclado' : 'Keyboard view'}>
-        <button type="button" data-bx-photo-view aria-pressed="true">{lang === 'es' ? 'Foto' : 'Photo'}</button>
-        <button type="button" data-bx-assembled-view aria-pressed="false">{lang === 'es' ? 'Montado' : 'Assembled'}</button>
-        <button type="button" data-bx-explode aria-pressed="false">{lang === 'es' ? 'Explotado' : 'Exploded'}</button>
+      <div class="bx-view-switch" role="group" aria-label={copy.view}>
+        <button type="button" data-bx-photo-view aria-pressed="true">{copy.photo}</button>
+        <button type="button" data-bx-assembled-view aria-pressed="false">{copy.assembled}</button>
+        <button type="button" data-bx-explode aria-pressed="false">{copy.exploded}</button>
       </div>
     </div>
 
-    <div class="bx-workbench">
-      <div class="bx-stage-column">
-        <div
-          class="bx-stage"
-          data-bx-stage
-          tabindex="0"
-          role="group"
-          aria-label={lang === 'es' ? 'Modelo interactivo por capas del teclado Neo65' : 'Interactive layered model of the Neo65 keyboard'}
-        >
-          <div class="bx-photo-stage" data-bx-photo-stage>
-            <div class="bx-photo-frame">
-              <div class="bx-photo-slides" data-bx-photo-slides>
-                {photos.map((photo, index) => (
-                  <figure class="bx-photo-slide" data-bx-photo-slide={index} data-bx-photo-label={photo.label} hidden={index !== 0}>
-                    <Picture
-                      src={photo.src}
-                      formats={['avif', 'webp']}
-                      widths={[720, 1100, 1600]}
-                      sizes="(max-width: 900px) 100vw, 680px"
-                      alt={photo.alt}
-                      loading="lazy"
-                      decoding="async"
-                      draggable="false"
-                    />
-                  </figure>
+    {builds.map((build) => (
+      <div class="bx-build-panel" data-bx-build={build.key} hidden>
+        <div class="bx-workbench">
+          <div class="bx-stage-column">
+            <div
+              class="bx-stage"
+              data-bx-stage
+              tabindex="0"
+              role="group"
+              aria-label={`${copy.model} — ${build.name}`}
+            >
+              <div class="bx-photo-stage" data-bx-photo-stage>
+                <div class="bx-photo-frame">
+                  <div class="bx-photo-slides">
+                    {build.photos.map((photo, index) => (
+                      <figure
+                        class:list={['bx-photo-slide', photo.cutout && 'is-render']}
+                        data-bx-photo-slide={index}
+                        data-bx-photo-label={pick(photo.label)}
+                        style={`--ar:${photo.image.width} / ${photo.image.height};--fade-x:${photo.fade.x}%;--fade-y:${photo.fade.y}%`}
+                        hidden={index !== 0}
+                      >
+                        <Picture
+                          src={photo.image}
+                          formats={['avif']}
+                          fallbackFormat="webp"
+                          widths={[520, 780, 1100]}
+                          width={1100}
+                          quality={76}
+                          sizes="(max-width: 900px) 92vw, 660px"
+                          alt={pick(photo.alt)}
+                          loading="lazy"
+                          decoding="async"
+                          draggable="false"
+                        />
+                      </figure>
+                    ))}
+                  </div>
+                  <span class="bx-photo-meta">
+                    <span data-bx-photo-caption>{pick(build.photos[0].label)}</span>
+                    <b data-bx-photo-counter>01 / {String(build.photos.length).padStart(2, '0')}</b>
+                  </span>
+                </div>
+                <button class="bx-photo-nav bx-photo-prev" type="button" data-bx-photo-prev aria-label={copy.previous} title={copy.previous}>←</button>
+                <button class="bx-photo-nav bx-photo-next" type="button" data-bx-photo-next aria-label={copy.next} title={copy.next}>→</button>
+                <div class="bx-photo-dots">
+                  {build.photos.map((photo, index) => (
+                    <button
+                      type="button"
+                      data-bx-photo-dot={index}
+                      aria-label={`${copy.goTo} ${index + 1}: ${pick(photo.label)}`}
+                      aria-current={index === 0 ? 'true' : 'false'}
+                    ></button>
+                  ))}
+                </div>
+              </div>
+
+              <div class="bx-model" data-bx-model>
+                {[...build.parts].reverse().map((part, reverseIndex) => (
+                  <div
+                    class={`bx-layer bx-${part.id}`}
+                    data-bx-part={part.id}
+                    style={layerStyle(part, build.parts.length - 1 - reverseIndex)}
+                  >
+                    {part.id === 'weight' && <div class="bx-weight-strip"></div>}
+                    {part.id === 'case' && <div class="bx-case-well"></div>}
+                    {part.id === 'case' && <div class="bx-case-mark">{build.name.slice(0, 3).toUpperCase()}</div>}
+                    {part.id === 'foam' && keys.map((key) => <i class="bx-cutout" style={keyStyle(key)}></i>)}
+                    {part.id === 'pcb' && <div class="bx-circuit bx-circuit-a"></div>}
+                    {part.id === 'pcb' && <div class="bx-circuit bx-circuit-b"></div>}
+                    {part.id === 'pcb' && keys.map((key) => <i class="bx-socket" style={keyStyle(key)}></i>)}
+                    {part.id === 'plate' && keys.map((key) => <i class="bx-cutout" style={keyStyle(key)}></i>)}
+                    {part.id === 'switches' && keys.map((key) => <i class="bx-switch" style={keyStyle(key)}><b></b></i>)}
+                    {part.id === 'keycaps' && keys.map((key) => <i class="bx-model-key" style={keyStyle(key)}><span>{key.label}</span></i>)}
+                    <span class="bx-layer-tag" aria-hidden="true">{pick(part.label)}</span>
+                  </div>
                 ))}
               </div>
-              <span class="bx-photo-meta">
-                <span data-bx-photo-caption>{photos[0].label}</span>
-                <b data-bx-photo-counter>01 / {String(photos.length).padStart(2, '0')}</b>
+
+              <div class="bx-active-chip" data-bx-chip aria-live="polite">
+                <b data-bx-chip-index>01</b>
+                <span data-bx-chip-label>{pick(build.parts[0].label)}</span>
+                <i></i>
+                <small data-bx-chip-spec>{pick(build.parts[0].spec)}</small>
+              </div>
+              <span class="bx-view-readout" data-bx-readout>100% · 56° / -29°</span>
+            </div>
+
+            <div class="bx-scrub" data-bx-scrub hidden>
+              <label for={`bx-spread-${build.key}`}>{copy.separation}</label>
+              <input
+                id={`bx-spread-${build.key}`}
+                type="range"
+                min="0"
+                max="100"
+                value="0"
+                step="1"
+                data-bx-range
+              />
+              <output data-bx-range-out>0%</output>
+            </div>
+
+            <p class="bx-hint">
+              <span data-bx-photo-hint>{copy.photoHint}</span>
+              <span data-bx-model-hint hidden>
+                <span class="bx-hint-wide">{copy.hintWide}</span>
+                <span class="bx-hint-narrow">{copy.hintNarrow}</span>
               </span>
-            </div>
-            <button class="bx-photo-nav bx-photo-prev" type="button" data-bx-photo-prev aria-label={lang === 'es' ? 'Foto anterior' : 'Previous photo'} title={lang === 'es' ? 'Foto anterior' : 'Previous photo'}>←</button>
-            <button class="bx-photo-nav bx-photo-next" type="button" data-bx-photo-next aria-label={lang === 'es' ? 'Foto siguiente' : 'Next photo'} title={lang === 'es' ? 'Foto siguiente' : 'Next photo'}>→</button>
+            </p>
           </div>
 
-          <div class="bx-model" data-bx-model>
-            <div class="bx-floor"></div>
+          <aside class="bx-specs">
+            <span class="bx-kicker">{build.name.toUpperCase()} // ARCHIVE</span>
+            <h5>{build.name}</h5>
+            <p>{pick(build.summary)}</p>
 
-            <div class="bx-layer bx-weight" data-bx-part="weight" style="--z:-34px;--ze:-150px;--delay:0ms">
-              <div class="bx-weight-strip"></div>
+            <div class="bx-parts-head">
+              <span>{copy.order}</span>
+              <span>{build.parts.length} {copy.pieces}</span>
             </div>
+            <ol class="bx-parts">
+              {build.parts.map((part, index) => (
+                <li>
+                  <button type="button" data-bx-part-button={part.id} aria-pressed="false">
+                    <span class="bx-part-index">{String(index + 1).padStart(2, '0')}</span>
+                    <i style={`--swatch:${part.color}`}></i>
+                    <span><strong>{pick(part.label)}</strong><small>{pick(part.spec)}</small></span>
+                  </button>
+                </li>
+              ))}
+            </ol>
 
-            <div class="bx-layer bx-case" data-bx-part="case" style="--z:0px;--ze:0px;--delay:70ms">
-              <div class="bx-case-well"></div>
-              <div class="bx-case-mark">NEO</div>
-            </div>
-
-            <div class="bx-layer bx-foam" data-bx-part="foam" style="--z:3px;--ze:66px;--delay:140ms">
-              {keys.map((key) => <i class="bx-cutout" style={keyStyle(key)}></i>)}
-            </div>
-
-            <div class="bx-layer bx-pcb" data-bx-part="pcb" style="--z:11px;--ze:118px;--delay:210ms">
-              <div class="bx-circuit bx-circuit-a"></div>
-              <div class="bx-circuit bx-circuit-b"></div>
-              {keys.map((key) => <i class="bx-socket" style={keyStyle(key)}></i>)}
-            </div>
-
-            <div class="bx-layer bx-plate" data-bx-part="plate" style="--z:19px;--ze:172px;--delay:280ms">
-              {keys.map((key) => <i class="bx-cutout" style={keyStyle(key)}></i>)}
-            </div>
-
-            <div class="bx-layer bx-switches" data-bx-part="switches" style="--z:28px;--ze:232px;--delay:350ms">
-              {keys.map((key) => <i class="bx-switch" style={keyStyle(key)}><b></b></i>)}
-            </div>
-
-            <div class="bx-layer bx-keycaps" data-bx-part="keycaps" style="--z:46px;--ze:300px;--delay:420ms">
-              {keys.map((key) => <i class="bx-model-key" style={keyStyle(key)}><span>{key.label}</span></i>)}
-            </div>
-          </div>
-
-          <div class="bx-active-chip" data-bx-chip aria-live="polite">
-            <b data-bx-chip-index>01</b>
-            <span data-bx-chip-label>KEYCAPS</span>
-            <i></i>
-            <small data-bx-chip-spec>PBTfans Frontier · doubleshot PBT</small>
-          </div>
-          <span class="bx-view-readout" data-bx-readout>100% · 56° / -29°</span>
+            {build.specs.length > 0 && (
+              <div class="bx-parts-head"><span>{copy.sheet}</span><span>{build.year}</span></div>
+            )}
+            {build.specs.length > 0 && (
+              <dl class="bx-sheet">
+                {build.specs.map((spec) => (
+                  <div><dt>{pick(spec.label)}</dt><dd>{spec.value}</dd></div>
+                ))}
+              </dl>
+            )}
+          </aside>
         </div>
-        <p class="bx-hint">
-          <span data-bx-photo-hint>{lang === 'es' ? 'Neo65 terminado · PBTfans Frontier · fotografía original' : 'Finished Neo65 · PBTfans Frontier · original photograph'}</span>
-          <span data-bx-model-hint hidden>
-            <span class="bx-hint-wide">{lang === 'es' ? 'Arrastra para orbitar · rueda para ampliar · doble clic para restablecer' : 'Drag to orbit · scroll to zoom · double-click to reset'}</span>
-            <span class="bx-hint-narrow">{lang === 'es' ? 'Arrastra para orbitar · toca una pieza para aislarla' : 'Drag to orbit · tap a part to isolate'}</span>
-          </span>
-        </p>
       </div>
-
-      <aside class="bx-specs">
-        <span class="bx-kicker">BUILD 01 // ARCHIVE</span>
-        <h5>Neo65</h5>
-        <p>65% · Gasket mount · Wired hotswap</p>
-        <div class="bx-parts-head">
-          <span>{lang === 'es' ? 'Orden de montaje' : 'Assembly order'}</span>
-          <span>{parts.length} {lang === 'es' ? 'piezas' : 'parts'}</span>
-        </div>
-        <ol class="bx-parts">
-          {parts.map((part, index) => (
-            <li>
-              <button type="button" data-bx-part-button={part.id} aria-pressed="false">
-                <span class="bx-part-index">{String(index + 1).padStart(2, '0')}</span>
-                <i style={`--swatch:${part.color}`}></i>
-                <span><strong>{part.label}</strong><small>{part.spec}</small></span>
-              </button>
-            </li>
-          ))}
-        </ol>
-      </aside>
-    </div>
+    ))}
   </div>
 </div>
 
 <style>
   .kb-build-explorer {
+    /* 0 montado, 1 totalmente separado: lo gobierna el deslizador. */
+    --spread: 0;
     container-type: inline-size;
     border: 1px solid var(--line);
     border-radius: .75rem;
@@ -246,7 +311,8 @@ const keyStyle = (key: typeof keys[number]) =>
     padding: clamp(1rem, 2.2vw, 1.5rem);
     box-shadow: 0 20px 45px -28px rgba(0, 0, 0, .9);
   }
-  .kb-build-explorer[hidden], .bx-viewer[hidden], .bx-gallery[hidden] { display: none; }
+  .kb-build-explorer[hidden], .bx-viewer[hidden], .bx-gallery[hidden],
+  .bx-scrub[hidden], .bx-build-panel[hidden] { display: none; }
   .bx-header, .bx-toolbar, .bx-card-copy, .bx-parts-head {
     display: flex;
     align-items: center;
@@ -270,13 +336,28 @@ const keyStyle = (key: typeof keys[number]) =>
     letter-spacing: .06em;
     white-space: nowrap;
   }
-  .bx-status i { width: .35rem; height: .35rem; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 10px rgba(111, 227, 255, .55); }
+  .bx-status i, .bx-card-authentic i {
+    width: .35rem;
+    height: .35rem;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 10px rgba(111, 227, 255, .55);
+  }
+
+  /* ---------------- Galería de builds ---------------- */
   .bx-gallery { padding-top: 1rem; }
   .bx-intro { max-width: 60ch; color: var(--fg-2); font-size: .82rem; line-height: 1.65; }
+  .bx-build-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    gap: 1rem;
+    margin-top: 1.15rem;
+    list-style: none;
+  }
   .bx-build-card {
     display: block;
     width: 100%;
-    margin-top: 1.15rem;
+    height: 100%;
     overflow: hidden;
     border: 1px solid var(--line);
     border-radius: .6rem;
@@ -287,37 +368,61 @@ const keyStyle = (key: typeof keys[number]) =>
     transition: transform .35s cubic-bezier(.22, 1, .36, 1), border-color .3s ease, box-shadow .3s ease;
   }
   .bx-build-card:hover { transform: translateY(-3px); border-color: rgba(111, 227, 255, .45); box-shadow: 0 24px 48px -30px #000; }
-  .bx-build-card:focus-visible, .bx-back:focus-visible, .bx-view-switch button:focus-visible, .bx-photo-nav:focus-visible, .bx-parts button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+  .bx-build-card:focus-visible,
+  .bx-back:focus-visible,
+  .bx-view-switch button:focus-visible,
+  .bx-photo-nav:focus-visible,
+  .bx-photo-dots button:focus-visible,
+  .bx-parts button:focus-visible,
+  .bx-scrub input:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
   .bx-card-visual {
     position: relative;
     display: grid;
     place-items: center;
     aspect-ratio: 2.35 / 1;
     overflow: hidden;
-    background: var(--ink-950);
+    background: radial-gradient(120% 100% at 50% 18%, rgba(43, 107, 255, .16), transparent 62%), var(--ink-950);
   }
-  .bx-card-visual::after { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(5, 8, 15, .22), transparent 40%, rgba(5, 8, 15, .38)); pointer-events: none; }
-  .bx-card-visual :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform .7s cubic-bezier(.22, 1, .36, 1), filter .4s ease; }
+  .bx-card-visual::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(180deg, rgba(5, 8, 15, .22), transparent 40%, rgba(5, 8, 15, .38));
+    pointer-events: none;
+  }
+  .bx-card-visual :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .7s cubic-bezier(.22, 1, .36, 1), filter .4s ease;
+  }
   .bx-build-card:hover .bx-card-visual :global(img) { transform: scale(1.025); filter: brightness(1.06); }
   .bx-card-index, .bx-card-authentic { position: absolute; z-index: 2; top: .75rem; font: 600 .58rem/1 var(--font-mono); letter-spacing: .12em; }
   .bx-card-index { left: .8rem; color: var(--fg); text-shadow: 0 1px 8px rgba(0, 0, 0, .85); }
-  .bx-card-authentic { right: .8rem; display: inline-flex; align-items: center; gap: .4rem; padding: .38rem .5rem; border: 1px solid rgba(111, 227, 255, .35); border-radius: .3rem; background: rgba(5, 8, 15, .72); color: var(--cyan); backdrop-filter: blur(8px); }
-  .bx-card-authentic i, .bx-photo-stage > span i { width: .3rem; height: .3rem; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 8px rgba(111, 227, 255, .65); }
-  .bx-model-key, .bx-cutout, .bx-socket, .bx-switch {
-    position: absolute;
-    left: calc(var(--x) + .35%);
-    top: calc(var(--y) + 1.4%);
-    width: calc(var(--w) - .7%);
-    height: 17.2%;
+  .bx-card-authentic {
+    right: .8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .38rem .5rem;
+    border: 1px solid rgba(111, 227, 255, .35);
+    border-radius: .3rem;
+    background: rgba(5, 8, 15, .72);
+    color: var(--cyan);
+    backdrop-filter: blur(8px);
   }
-  .bx-preview-board i { border-radius: 2px; background: linear-gradient(155deg, #85887e, #595c55); box-shadow: inset 0 1px rgba(255, 255, 255, .22), 0 2px #41443d; }
   .bx-card-copy { padding: .8rem .9rem; border-top: 1px solid var(--line-soft); }
-  .bx-card-copy > span:first-child { display: grid; gap: .2rem; }
-  .bx-card-copy strong { color: var(--fg); font-size: .86rem; }
-  .bx-card-copy small, .bx-specs > p { color: var(--fg-3); font: 400 .63rem/1.35 var(--font-mono); }
+  .bx-card-id { display: grid; gap: .2rem; min-width: 0; }
+  .bx-card-id strong { color: var(--fg); font-size: .86rem; }
+  .bx-card-id small, .bx-specs > p { color: var(--fg-3); font: 400 .63rem/1.35 var(--font-mono); }
+  .bx-card-meta { display: grid; justify-items: end; gap: .3rem; }
+  .bx-card-year { color: var(--fg-3); font: 400 .58rem/1 var(--font-mono); letter-spacing: .12em; }
   .bx-inspect { color: var(--cyan); font: 600 .65rem/1 var(--font-mono); white-space: nowrap; }
   .bx-inspect b { display: inline-block; margin-left: .2rem; transition: transform .2s ease; }
   .bx-build-card:hover .bx-inspect b { transform: translateX(3px); }
+
+  /* ---------------- Visor ---------------- */
   .bx-viewer { padding-top: .9rem; }
   .bx-back { border: 0; background: transparent; color: var(--fg-3); font: 600 .68rem/1 var(--font-mono); cursor: pointer; }
   .bx-back:hover { color: var(--fg); }
@@ -331,15 +436,18 @@ const keyStyle = (key: typeof keys[number]) =>
     gap: clamp(1rem, 2.4vw, 1.7rem);
     margin-top: .85rem;
     padding: clamp(.75rem, 2vw, 1.25rem);
-    border: 1px solid transparent;
-    background: transparent;
   }
   .bx-stage-column { min-width: 0; }
+  /*
+   * El escenario crece con la separación en lugar de saltar entre dos
+   * alturas: el mando es continuo, así que el encuadre también lo es y la
+   * pila nunca se sale por arriba a mitad de recorrido.
+   */
   .bx-stage {
     position: relative;
     display: grid;
     place-items: center;
-    height: 24rem;
+    height: calc(var(--stage-h, 24rem) + var(--stage-grow, 8rem) * var(--spread));
     overflow: hidden;
     perspective: 1500px;
     perspective-origin: 50% 45%;
@@ -351,32 +459,121 @@ const keyStyle = (key: typeof keys[number]) =>
     transition: height .7s cubic-bezier(.22, 1, .36, 1);
   }
   .bx-stage *, .bx-stage :global(img) { user-select: none; -webkit-user-select: none; -webkit-user-drag: none; }
-  .bx-stage.is-dragging { cursor: grabbing; }
-  .bx-stage.is-dragging .bx-layer { cursor: grabbing; }
-  .bx-photo-stage { position: absolute; inset: .25rem; z-index: 4; display: grid; place-items: center; opacity: 0; visibility: hidden; transform: translateY(5px); transition: opacity .4s ease, transform .5s cubic-bezier(.22, 1, .36, 1), visibility .4s; }
-  .bx-photo-frame { position: absolute; inset: 0; display: grid; place-items: center; width: min(88%, 44rem); height: 100%; margin-inline: auto; }
-  .bx-photo-slides { align-self: start; width: 100%; height: calc(100% - 1.5rem); }
-  .bx-photo-slide { width: 100%; height: 100%; }
-  .bx-photo-slide { position: relative; margin: 0; overflow: hidden; }
+  .bx-stage.is-dragging, .bx-stage.is-dragging .bx-layer { cursor: grabbing; }
+
+  /* ---------------- Fotografía tratada como render de estudio ---------------- */
+  .bx-photo-stage {
+    position: absolute;
+    inset: .25rem;
+    z-index: 4;
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(5px);
+    transition: opacity .4s ease, transform .5s cubic-bezier(.22, 1, .36, 1), visibility .4s;
+  }
+  /*
+   * El marco reserva su pie con padding, así que la caja de las diapositivas
+   * tiene altura definida y `max-height` sobre la imagen puede resolverse.
+   * Con la altura en porcentaje sobre una caja automática, la foto vertical
+   * se desbordaba por encima del contador y de los puntos.
+   */
+  .bx-photo-frame { position: absolute; inset: 0; width: min(88%, 44rem); padding-bottom: 2.6rem; margin-inline: auto; }
+  /*
+   * Contenedor de tamaño: da a la imagen una referencia de alto (`cqh`) con
+   * la que calcular su propio ancho. Es lo que permite que la caja de la
+   * imagen sea exactamente la fotografía —como haría `object-fit: contain`,
+   * pero sin el hueco del letterbox— y por tanto que la máscara del borde
+   * caiga sobre la foto y no sobre aire.
+   */
+  .bx-photo-slides { position: relative; container-type: size; width: 100%; height: 100%; }
+  .bx-photo-slide { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; }
   .bx-photo-slide[hidden] { display: none; }
   .bx-photo-frame :global(picture) { display: contents; }
-  .bx-photo-stage :global(img) { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; }
-  .bx-photo-meta { position: absolute; right: 0; bottom: .25rem; display: inline-flex; align-items: center; gap: .55rem; color: var(--fg-2); font: 600 .54rem/1 var(--font-mono); letter-spacing: .08em; }
+  /*
+   * La imagen se dimensiona a sí misma en lugar de estirarse a la caja: así
+   * su caja coincide con la fotografía visible, que es la condición para
+   * poder desvanecer el borde real y no el hueco del letterbox.
+   */
+  .bx-photo-stage :global(img) {
+    position: relative;
+    z-index: 1;
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    /* `--ar` viene del tamaño real del fichero, así que no hay que medirlo. */
+    aspect-ratio: var(--ar);
+    width: min(100%, calc(var(--ar) * 100cqh));
+    height: auto;
+    border: 1px solid rgba(255, 255, 255, .06);
+    border-radius: 6px;
+    /*
+     * Nivelado común a las cuatro tomas: se hicieron con luz de casa y a
+     * distintas horas, así que un mismo grado de contraste y saturación las
+     * convierte en una serie coherente en vez de cuatro fotos sueltas.
+     */
+    filter: contrast(1.12) saturate(1.06) brightness(1.03);
+  }
+  /*
+   * "Recorte" de las tomas cenitales. No hay silueta recortada —eso exige
+   * retocar el original—, sino un desvanecido del borde: la moqueta se
+   * disuelve contra el panel y el teclado queda flotando, que es el efecto
+   * que se busca al pedir un render. Las dos rampas se cruzan, así que el
+   * resultado es un marco suave y no un óvalo que muerda la pieza.
+   */
+  .bx-photo-slide.is-render :global(img) {
+    border: 0;
+    border-radius: 0;
+    filter: contrast(1.2) saturate(1.04) brightness(1.02);
+    -webkit-mask-image:
+      linear-gradient(to bottom, transparent 0%, #000 var(--fade-y), #000 calc(100% - var(--fade-y)), transparent 100%),
+      linear-gradient(to right, transparent 0%, #000 var(--fade-x), #000 calc(100% - var(--fade-x)), transparent 100%);
+    mask-image:
+      linear-gradient(to bottom, transparent 0%, #000 var(--fade-y), #000 calc(100% - var(--fade-y)), transparent 100%),
+      linear-gradient(to right, transparent 0%, #000 var(--fade-x), #000 calc(100% - var(--fade-x)), transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+    /* Reflejo de plinto: mejora progresiva; quien no lo soporte no pierde nada. */
+    -webkit-box-reflect: below 2px linear-gradient(transparent 68%, rgba(255, 255, 255, .12));
+  }
+  /* Plinto: halo frío bajo la pieza, el gesto que lee como estudio de producto. */
+  .bx-photo-slide::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 6%;
+    z-index: 0;
+    width: 58%;
+    height: 15%;
+    background: radial-gradient(closest-side, rgba(43, 107, 255, .34), transparent 78%);
+    filter: blur(8px);
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+  .bx-photo-meta { position: absolute; right: 0; bottom: 1.4rem; display: inline-flex; align-items: center; gap: .55rem; color: var(--fg-2); font: 600 .54rem/1 var(--font-mono); letter-spacing: .08em; }
   .bx-photo-meta b { padding-left: .55rem; border-left: 1px solid var(--line); color: var(--cyan); font: inherit; }
   .bx-photo-nav { position: absolute; z-index: 2; top: 50%; display: grid; place-items: center; width: 2rem; aspect-ratio: 1; border: 1px solid var(--line); border-radius: 50%; background: rgba(6, 10, 18, .72); color: var(--fg); font: 600 .9rem/1 var(--font-mono); cursor: pointer; backdrop-filter: blur(8px); transform: translateY(-50%); transition: border-color .2s ease, color .2s ease, background .2s ease; }
   .bx-photo-nav:hover { border-color: rgba(111, 227, 255, .55); background: rgba(6, 10, 18, .92); color: var(--cyan); }
   .bx-photo-prev { left: 0; }
   .bx-photo-next { right: 0; }
+  .bx-photo-dots { position: absolute; left: 50%; bottom: .15rem; z-index: 2; display: flex; gap: .4rem; transform: translateX(-50%); }
+  .bx-photo-dots button { width: 1.5rem; height: .2rem; padding: 0; border: 0; border-radius: 99px; background: var(--line); cursor: pointer; transition: background .25s ease, width .25s ease; }
+  .bx-photo-dots button:hover { background: var(--fg-3); }
+  .bx-photo-dots button[aria-current='true'] { width: 2.4rem; background: var(--cyan); }
   .kb-build-explorer.is-photo-view .bx-photo-stage { opacity: 1; visibility: visible; transform: none; }
   .kb-build-explorer.is-photo-view .bx-model { opacity: 0; pointer-events: none; transform: translate(-50%, -50%) scale(.92) rotateX(var(--rx)) rotateZ(var(--rz)); }
   .kb-build-explorer.is-photo-view .bx-active-chip, .kb-build-explorer.is-photo-view .bx-view-readout { opacity: 0 !important; }
   .kb-build-explorer.is-photo-view .bx-stage { height: 22rem; cursor: default; }
+
+  /* ---------------- Modelo 3D por capas ---------------- */
   .bx-model {
     --rx: 56deg;
     --rz: -29deg;
-    --fit: .64;
+    /* El encuadre se abre y el modelo baja a medida que la pila se separa. */
+    --fit: calc(var(--fit-base, .64) - .06 * var(--spread));
     --zoom: 1;
-    --offset-y: 0px;
+    --offset-y: calc(42px * var(--spread));
     position: absolute;
     left: 50%;
     top: 50%;
@@ -387,33 +584,76 @@ const keyStyle = (key: typeof keys[number]) =>
     opacity: 1;
     transition: transform .5s cubic-bezier(.22, 1, .36, 1), opacity .35s ease;
   }
-  .bx-stage.is-dragging .bx-model { transition: none; }
-  .bx-floor { display: none; }
+  .bx-stage.is-dragging .bx-model, .kb-build-explorer.is-scrubbing .bx-model { transition: none; }
   .bx-layer {
     position: absolute;
     inset: 0;
     border-radius: 9px;
     transform-style: preserve-3d;
-    transform: translateZ(var(--z));
+    /* Una sola expresión interpola entre montado y explotado. */
+    transform: translateZ(calc(var(--z) + (var(--ze) - var(--z)) * var(--spread)));
     transition: transform .82s cubic-bezier(.32, 1.22, .4, 1), filter .25s ease, opacity .25s ease;
     transition-delay: var(--delay), 0ms, 0ms;
     cursor: pointer;
   }
-  .kb-build-explorer.is-exploded .bx-stage { height: 32rem; }
-  .kb-build-explorer.is-exploded .bx-model { --fit: .58; --offset-y: 42px; }
-  .kb-build-explorer.is-exploded .bx-layer { transform: translateZ(var(--ze)); }
-  .kb-build-explorer.is-exploded .bx-floor { transform: translateZ(-210px); }
+  /* Con el deslizador en la mano el movimiento sigue al dedo, sin rebote. */
+  .kb-build-explorer.is-scrubbing .bx-layer { transition: filter .25s ease, opacity .25s ease; transition-delay: 0ms; }
   .kb-build-explorer.has-active .bx-layer:not(.is-active) { filter: brightness(.52) saturate(.6); opacity: .64; }
   .kb-build-explorer .bx-layer.is-active { filter: brightness(1.18) saturate(1.08); }
-  .bx-weight { background: linear-gradient(155deg, #34436f, #172039); box-shadow: inset 0 1px rgba(255, 255, 255, .12), 0 7px 0 #101728, 0 14px 22px rgba(0, 0, 0, .58); }
+
+  /* Etiqueta flotante: aparece con la separación, como en un despiece técnico. */
+  .bx-layer-tag {
+    position: absolute;
+    left: calc(100% + 30px);
+    top: 50%;
+    padding: 3px 6px;
+    border: 1px solid rgba(111, 227, 255, .3);
+    border-radius: 3px;
+    background: rgba(6, 10, 18, .86);
+    color: var(--cyan);
+    font: 700 8px/1 var(--font-mono);
+    letter-spacing: .1em;
+    white-space: nowrap;
+    opacity: 0;
+    /*
+     * Se despega de su capa a medida que la pila se abre —si no, la capa de
+     * encima la tapa— y se contragira para quedar siempre de cara: deshace
+     * las dos rotaciones del modelo en orden inverso.
+     */
+    transform: translateY(-50%) translateZ(calc(30px * var(--spread))) rotateZ(calc(var(--rz) * -1)) rotateX(calc(var(--rx) * -1));
+    transition: opacity .3s ease;
+    pointer-events: none;
+  }
+  /* Línea guía hasta el borde de la pieza, como en un plano de despiece. */
+  .bx-layer-tag::before {
+    content: '';
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    width: 26px;
+    height: 1px;
+    background: linear-gradient(to left, rgba(111, 227, 255, .5), transparent);
+  }
+  .kb-build-explorer.is-spread .bx-layer-tag { opacity: .9; }
+  .kb-build-explorer.has-active .bx-layer.is-active .bx-layer-tag { opacity: 1; }
+
+  .bx-weight { background: linear-gradient(155deg, #2b3550, #141a2c); box-shadow: inset 0 1px rgba(255, 255, 255, .12), 0 7px 0 #0d1220, 0 14px 22px rgba(0, 0, 0, .58); }
   .bx-weight-strip { position: absolute; inset: 14px 18%; border: 1px solid rgba(255, 244, 205, .38); border-radius: 5px; background: linear-gradient(135deg, rgba(255,255,255,.25), transparent 25%), repeating-linear-gradient(112deg, rgba(255,255,255,.06) 0 1px, transparent 1px 4px), linear-gradient(135deg, #c9a24a, #756f87 42%, #3f6f83 76%, #6e9176); box-shadow: inset 0 0 12px rgba(255, 255, 255, .14), 0 3px 5px rgba(0, 0, 0, .35); }
-  .bx-case { border: 10px solid #2b3a5e; background: repeating-linear-gradient(105deg, rgba(255,255,255,.035) 0 1px, transparent 1px 5px), linear-gradient(155deg, #9ba8bc, #69768b); box-shadow: inset 0 1px rgba(255,255,255,.32), inset 0 0 0 1px rgba(8,13,24,.45), inset 0 0 24px rgba(0, 0, 0, .58), 0 5px 0 #283754, 0 11px 0 #1d2845, 0 21px 20px rgba(0, 0, 0, .5); }
+  .bx-case { border: 10px solid #161c28; background: repeating-linear-gradient(105deg, rgba(255,255,255,.03) 0 1px, transparent 1px 5px), linear-gradient(155deg, #4a5468, #2b3242); box-shadow: inset 0 1px rgba(255,255,255,.26), inset 0 0 0 1px rgba(8,13,24,.45), inset 0 0 24px rgba(0, 0, 0, .6), 0 5px 0 #151a25, 0 11px 0 #0e131c, 0 21px 20px rgba(0, 0, 0, .5); }
   .bx-case-well { position: absolute; inset: 9px; border: 2px solid rgba(13, 18, 31, .5); border-radius: 5px; }
   .bx-case-mark { position: absolute; right: 17px; bottom: 11px; color: rgba(255, 255, 255, .2); font: 700 10px/1 var(--font-mono); letter-spacing: .2em; }
   .bx-foam, .bx-pcb, .bx-plate { inset: 17px; }
   .bx-foam { background: radial-gradient(circle at 30% 25%, rgba(255,255,255,.055) 0 1px, transparent 1.5px), repeating-linear-gradient(125deg, #1d2026 0 4px, #14171c 4px 8px); background-size: 8px 8px, auto; box-shadow: inset 0 1px rgba(255,255,255,.06), 0 3px 0 #11141a, 0 7px 0 #090b0f, 0 11px 12px rgba(0,0,0,.4); }
   .bx-pcb { background-color: #e6eaef; background-image: linear-gradient(28deg, transparent 20%, rgba(113,132,151,.25) 20% 20.5%, transparent 20.5% 48%, rgba(113,132,151,.18) 48% 48.5%, transparent 48.5%), radial-gradient(#8d98a4 1px, transparent 1px); background-size: 72px 32px, 9px 9px; box-shadow: inset 0 1px rgba(255,255,255,.85), inset 0 0 0 1px rgba(68,79,91,.32), 0 3px 0 #c5cbd3, 0 6px 0 #9ea6b0, 0 10px 12px rgba(0,0,0,.35); }
   .bx-plate { background-color: #24282f; background-image: repeating-linear-gradient(115deg, rgba(255,255,255,.035) 0 1px, transparent 1px 5px), linear-gradient(150deg, rgba(255,255,255,.08), transparent 45%); box-shadow: inset 0 1px rgba(255,255,255,.16), inset 0 0 0 1px #343942, 0 3px 0 #191c22, 0 7px 0 #0e1116, 0 11px 14px rgba(0,0,0,.42); }
+
+  .bx-model-key, .bx-cutout, .bx-socket, .bx-switch {
+    position: absolute;
+    left: calc(var(--x) + .35%);
+    top: calc(var(--y) + 1.4%);
+    width: calc(var(--w) - .7%);
+    height: 17.2%;
+  }
   .bx-cutout { background: #070a10; border: 1px solid rgba(0,0,0,.82); border-radius: 1px; transform: scale(.58); box-shadow: inset 0 3px 3px #000, 0 1px rgba(255,255,255,.08); }
   .bx-socket { height: 12%; top: calc(var(--y) + 4%); background: linear-gradient(145deg, #30343b, #111318); border: 1px solid #080a0d; border-radius: 2px; transform: scale(.62); box-shadow: inset 0 1px rgba(255,255,255,.18), 0 2px 0 #080a0d, 0 4px 4px rgba(0,0,0,.28); }
   .bx-circuit { position: absolute; height: 1px; background: #a8b1ba; transform-origin: left; opacity: .7; }
@@ -426,10 +666,15 @@ const keyStyle = (key: typeof keys[number]) =>
   .bx-switch b::before, .bx-switch b::after { content: ''; position: absolute; background: rgba(20,55,91,.55); border-radius: 1px; }
   .bx-switch b::before { left: 22%; right: 22%; top: 43%; height: 14%; }
   .bx-switch b::after { top: 22%; bottom: 22%; left: 43%; width: 14%; }
-  .bx-model-key { display: grid; place-items: center; transform-style: preserve-3d; border: 1px solid rgba(46,49,45,.7); border-radius: 4px; background: linear-gradient(155deg, #64675f, #454840); box-shadow: 0 2px 0 #5a5d55, 0 5px 0 #4d5048, 0 8px 0 #3e413b, 0 11px 9px rgba(0, 0, 0, .58); }
-  .bx-model-key::before { content: ''; position: absolute; inset: 1px 1px 3px; z-index: 0; border-radius: 3px; background: radial-gradient(circle at 28% 22%, rgba(255,255,255,.18), transparent 34%), repeating-linear-gradient(110deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px), linear-gradient(155deg, #898b81, #74776e 54%, #62655d); box-shadow: inset 0 1px rgba(255,255,255,.34), inset 0 -2px 3px rgba(0,0,0,.25); }
-  .bx-model-key::after { content: ''; position: absolute; left: 9%; right: 9%; bottom: -3px; height: 4px; z-index: -1; border-radius: 0 0 3px 3px; background: linear-gradient(180deg, #53564e, #3c3f38); }
+  /*
+   * Keycaps del build real: PBT oscuro con leyendas amarillas. Los tonos
+   * salen de las fotografías del propio teclado, no de un set genérico.
+   */
+  .bx-model-key { display: grid; place-items: center; transform-style: preserve-3d; border: 1px solid rgba(26,27,25,.75); border-radius: 4px; background: linear-gradient(155deg, #34352f, #1f201c); box-shadow: 0 2px 0 #2c2d28, 0 5px 0 #242520, 0 8px 0 #1b1c18, 0 11px 9px rgba(0, 0, 0, .58); }
+  .bx-model-key::before { content: ''; position: absolute; inset: 1px 1px 3px; z-index: 0; border-radius: 3px; background: radial-gradient(circle at 28% 22%, rgba(255,255,255,.14), transparent 34%), repeating-linear-gradient(110deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px), linear-gradient(155deg, #46473f, #383930 54%, #2b2c26); box-shadow: inset 0 1px rgba(255,255,255,.22), inset 0 -2px 3px rgba(0,0,0,.3); }
+  .bx-model-key::after { content: ''; position: absolute; left: 9%; right: 9%; bottom: -3px; height: 4px; z-index: -1; border-radius: 0 0 3px 3px; background: linear-gradient(180deg, #2a2b25, #1c1d19); }
   .bx-model-key span { position: relative; z-index: 1; overflow: hidden; color: #e4cb4b; font: 600 8px/1 var(--font-mono); text-shadow: 0 1px rgba(0,0,0,.65), 0 0 4px rgba(228,203,75,.12); text-overflow: clip; }
+
   .bx-active-chip, .bx-view-readout { position: absolute; z-index: 5; border: 1px solid rgba(111, 227, 255, .25); border-radius: .4rem; background: rgba(6, 10, 18, .88); font-family: var(--font-mono); pointer-events: none; }
   .bx-active-chip { top: .15rem; left: .15rem; display: flex; align-items: center; gap: .55rem; max-width: calc(100% - .3rem); padding: .45rem .7rem; opacity: 0; transform: translateY(-4px); transition: opacity .2s ease, transform .2s ease; }
   .kb-build-explorer.has-active .bx-active-chip { opacity: 1; transform: none; }
@@ -439,8 +684,35 @@ const keyStyle = (key: typeof keys[number]) =>
   .bx-active-chip small { overflow: hidden; color: var(--fg-2); font-size: .6rem; text-overflow: ellipsis; white-space: nowrap; }
   .bx-view-readout { right: .15rem; bottom: .15rem; padding: .35rem .55rem; border-color: var(--line-soft); color: var(--fg-3); font-size: .56rem; opacity: 0; transition: opacity .2s ease; }
   .bx-stage.is-dragging .bx-view-readout, .bx-view-readout.is-visible { opacity: 1; }
+
+  /* ---------------- Deslizador de separación ---------------- */
+  .bx-scrub {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) 2.8rem;
+    align-items: center;
+    gap: .7rem;
+    margin-top: .75rem;
+    padding: .5rem .7rem;
+    border: 1px solid var(--line-soft);
+    border-radius: .45rem;
+    background: var(--ink-950);
+    color: var(--fg-3);
+    font: 500 .58rem/1 var(--font-mono);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+  .bx-scrub output { color: var(--cyan); font-variant-numeric: tabular-nums; text-align: right; }
+  .bx-scrub input { width: 100%; height: 1.1rem; appearance: none; background: transparent; cursor: ew-resize; }
+  .bx-scrub input::-webkit-slider-runnable-track { height: 3px; border-radius: 99px; background: linear-gradient(90deg, var(--cyan) var(--fill, 0%), var(--line) var(--fill, 0%)); }
+  .bx-scrub input::-moz-range-track { height: 3px; border-radius: 99px; background: var(--line); }
+  .bx-scrub input::-moz-range-progress { height: 3px; border-radius: 99px; background: var(--cyan); }
+  .bx-scrub input::-webkit-slider-thumb { appearance: none; width: .75rem; height: .75rem; margin-top: -.28rem; border: 0; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 0 3px rgba(111, 227, 255, .18); }
+  .bx-scrub input::-moz-range-thumb { width: .75rem; height: .75rem; border: 0; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 0 3px rgba(111, 227, 255, .18); }
+
   .bx-hint { margin-top: .5rem; color: var(--fg-3); font: 400 .57rem/1.4 var(--font-mono); letter-spacing: .04em; text-align: center; }
   .bx-hint-narrow { display: none; }
+
+  /* ---------------- Ficha lateral ---------------- */
   .bx-specs { min-width: 0; padding-top: .25rem; }
   .bx-specs h5 { margin-top: .35rem; color: var(--fg); font-size: 1.2rem; font-weight: 700; }
   .bx-specs > p { margin-top: .25rem; }
@@ -454,39 +726,43 @@ const keyStyle = (key: typeof keys[number]) =>
   .bx-parts strong { color: var(--fg); font: 600 .67rem/1.2 var(--font-mono); letter-spacing: .05em; }
   .bx-parts small { color: var(--fg-3); font-size: .66rem; line-height: 1.25; }
   .bx-parts button[aria-pressed='true'] strong, .bx-parts button:hover strong { color: var(--cyan); }
-  @container (max-width: 48rem) {
+  .bx-sheet { margin-top: .35rem; }
+  .bx-sheet > div { display: flex; align-items: baseline; justify-content: space-between; gap: .8rem; padding: .28rem 0; border-bottom: 1px dashed var(--line-soft); }
+  .bx-sheet > div:last-child { border-bottom: 0; }
+  .bx-sheet dt { color: var(--fg-3); font: 400 .6rem/1.4 var(--font-mono); }
+  .bx-sheet dd { color: var(--fg-2); font: 600 .6rem/1.4 var(--font-mono); text-align: right; }
+
+  /*
+   * Un único juego de puntos de ruptura, y por ancho del propio componente:
+   * el explorador vive en una columna de rejilla, así que su ancho y el de
+   * la ventana no coinciden. Antes había dos bloques idénticos, uno por
+   * contenedor y otro por viewport, que había que mantener a la vez.
+   */
+  @container (max-width: 56rem) {
     .bx-workbench { grid-template-columns: 1fr; }
-    .bx-stage { height: 22rem; }
-    .kb-build-explorer.is-exploded .bx-stage { height: 29rem; }
-    .bx-model { --fit: .72; }
-    .kb-build-explorer.is-exploded .bx-model { --fit: .68; --offset-y: 38px; }
+    .bx-stage { --stage-h: 22rem; --stage-grow: 7rem; }
+    .bx-model { --fit-base: .72; }
   }
-  @media (max-width: 900px) {
-    .bx-workbench { grid-template-columns: 1fr; }
-    .bx-stage { height: 22rem; }
-    .kb-build-explorer.is-exploded .bx-stage { height: 29rem; }
-    .bx-model { --fit: .72; }
-    .kb-build-explorer.is-exploded .bx-model { --fit: .68; --offset-y: 38px; }
-  }
-  @media (max-width: 600px) {
+  @container (max-width: 34rem) {
     .kb-build-explorer { padding: .85rem; }
     .bx-header { align-items: flex-start; }
     .bx-status { font-size: .55rem; }
     .bx-workbench { padding: .5rem; }
     .bx-toolbar { align-items: flex-start; flex-direction: column; }
     .bx-view-switch { width: 100%; grid-template-columns: repeat(3, 1fr); }
-    .bx-stage { height: 17rem; }
+    .bx-stage { --stage-h: 17rem; --stage-grow: 6rem; }
     .kb-build-explorer.is-photo-view .bx-stage { height: 15rem; }
     .bx-photo-frame { width: calc(100% - 2.5rem); }
     .bx-photo-nav { width: 1.75rem; }
-    .kb-build-explorer.is-exploded .bx-stage { height: 23rem; }
-    .bx-model { --fit: .47; }
-    .kb-build-explorer.is-exploded .bx-model { --fit: .43; --offset-y: 28px; }
-    .bx-active-chip small, .bx-hint-wide { display: none; }
+    .bx-model { --fit-base: .47; }
+    .bx-active-chip small, .bx-hint-wide, .bx-layer-tag { display: none; }
     .bx-hint-narrow { display: inline; }
     .bx-card-authentic { top: .55rem; right: .55rem; }
+    .bx-scrub { grid-template-columns: minmax(0, 1fr) 2.8rem; }
+    .bx-scrub label { grid-column: 1 / -1; }
   }
+
   @media (prefers-reduced-motion: reduce) {
-    .bx-build-card, .bx-layer, .bx-model, .bx-stage, .bx-floor, .bx-active-chip { transition-duration: .01ms !important; }
+    .bx-build-card, .bx-layer, .bx-model, .bx-stage, .bx-active-chip, .bx-layer-tag { transition-duration: .01ms !important; }
   }
 </style>

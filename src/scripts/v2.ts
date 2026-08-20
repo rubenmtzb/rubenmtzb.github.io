@@ -1039,59 +1039,81 @@ function createFreeSandbox({ onEveryTenKeys, announce }: {
 
 /* ---------------- Archivo interactivo de builds ---------------- */
 
-function initKeyboardBuildExplorer() {
-  const root = document.querySelector<HTMLElement>('[data-kb-build-explorer]')
-  if (!root) return
+/** Límites de la órbita: fuera de ellos el modelo deja de leerse como teclado. */
+const BX_TILT = { min: 24, max: 78, home: 56 }
+const BX_SPIN = { min: -84, max: 24, home: -29 }
+const BX_ZOOM = { min: .68, max: 1.65 }
 
-  const gallery = root.querySelector<HTMLElement>('[data-bx-gallery]')
-  const viewer = root.querySelector<HTMLElement>('[data-bx-viewer]')
-  const openButton = root.querySelector<HTMLButtonElement>('[data-bx-open]')
-  const closeButton = root.querySelector<HTMLButtonElement>('[data-bx-close]')
-  const photoButton = root.querySelector<HTMLButtonElement>('[data-bx-photo-view]')
-  const assembledButton = root.querySelector<HTMLButtonElement>('[data-bx-assembled-view]')
-  const explodeButton = root.querySelector<HTMLButtonElement>('[data-bx-explode]')
-  const status = root.querySelector<HTMLElement>('[data-bx-status]')
-  const stage = root.querySelector<HTMLElement>('[data-bx-stage]')
-  const model = root.querySelector<HTMLElement>('[data-bx-model]')
-  const readout = root.querySelector<HTMLElement>('[data-bx-readout]')
-  const photoHint = root.querySelector<HTMLElement>('[data-bx-photo-hint]')
-  const modelHint = root.querySelector<HTMLElement>('[data-bx-model-hint]')
-  const photoSlides = [...root.querySelectorAll<HTMLElement>('[data-bx-photo-slide]')]
-  const photoPrevious = root.querySelector<HTMLButtonElement>('[data-bx-photo-prev]')
-  const photoNext = root.querySelector<HTMLButtonElement>('[data-bx-photo-next]')
-  const photoCounter = root.querySelector<HTMLElement>('[data-bx-photo-counter]')
-  const photoCaption = root.querySelector<HTMLElement>('[data-bx-photo-caption]')
-  const chipIndex = root.querySelector<HTMLElement>('[data-bx-chip-index]')
-  const chipLabel = root.querySelector<HTMLElement>('[data-bx-chip-label]')
-  const chipSpec = root.querySelector<HTMLElement>('[data-bx-chip-spec]')
-  const partButtons = [...root.querySelectorAll<HTMLButtonElement>('[data-bx-part-button]')]
-  const partLayers = [...root.querySelectorAll<HTMLElement>('[data-bx-part]')]
+/** Un build abierto: sus elementos y el estado de su cámara y su despiece. */
+type BuildPanel = ReturnType<typeof createBuildPanel>
 
-  let exploded = false
-  let viewMode: 'photo' | 'assembled' | 'exploded' = 'photo'
-  let pinnedPart: string | null = null
-  let rotX = 56
-  let rotZ = -29
-  let zoom = 1
-  let photoIndex = 0
-  let drag: { x: number, y: number, rotX: number, rotZ: number, moved: boolean, partId: string | null } | null = null
-  let suppressPartClick = false
+function createBuildPanel(panel: HTMLElement, root: HTMLElement) {
+  const q = <T extends HTMLElement>(selector: string) => panel.querySelector<T>(selector)
+  const all = <T extends HTMLElement>(selector: string) => [...panel.querySelectorAll<T>(selector)]
 
+  const stage = q('[data-bx-stage]')
+  const model = q('[data-bx-model]')
+  const readout = q('[data-bx-readout]')
+  const photoHint = q('[data-bx-photo-hint]')
+  const modelHint = q('[data-bx-model-hint]')
+  const photoSlides = all('[data-bx-photo-slide]')
+  const photoDots = all<HTMLButtonElement>('[data-bx-photo-dot]')
+  const photoCounter = q('[data-bx-photo-counter]')
+  const photoCaption = q('[data-bx-photo-caption]')
+  const chipIndex = q('[data-bx-chip-index]')
+  const chipLabel = q('[data-bx-chip-label]')
+  const chipSpec = q('[data-bx-chip-spec]')
+  const scrub = q('[data-bx-scrub]')
+  const range = q<HTMLInputElement>('[data-bx-range]')
+  const rangeOut = q('[data-bx-range-out]')
+  const partButtons = all<HTMLButtonElement>('[data-bx-part-button]')
+  const partLayers = all('[data-bx-part]')
+  const photoImages = all<HTMLImageElement>('[data-bx-photo-slide] img')
+
+  /** Ficha de cada pieza, leída del propio listado: el texto vive en el HTML. */
   const partDetails = new Map(partButtons.map((button, index) => [
     button.dataset.bxPartButton ?? '',
     {
-      button,
-      index: String(index + 1).padStart(2, '0'),
+      index: pad(index + 1),
       label: button.querySelector('strong')?.textContent ?? '',
       spec: button.querySelector('small')?.textContent ?? '',
     },
   ]))
 
-  const renderView = () => {
-    model?.style.setProperty('--rx', `${rotX}deg`)
-    model?.style.setProperty('--rz', `${rotZ}deg`)
+  let tilt = BX_TILT.home
+  let spin = BX_SPIN.home
+  let zoom = 1
+  /** 0 montado, 1 totalmente separado. Es el único origen de la explosión. */
+  let spread = 0
+  let photoIndex = 0
+  let pinnedPart: string | null = null
+
+  const renderCamera = () => {
+    model?.style.setProperty('--rx', `${tilt}deg`)
+    model?.style.setProperty('--rz', `${spin}deg`)
     model?.style.setProperty('--zoom', String(zoom))
-    if (readout) readout.textContent = `${Math.round(zoom * 100)}% · ${Math.round(rotX)}° / ${Math.round(rotZ)}°`
+    if (readout) readout.textContent = `${Math.round(zoom * 100)}% · ${Math.round(tilt)}° / ${Math.round(spin)}°`
+  }
+
+  const renderSpread = () => {
+    const percent = Math.round(spread * 100)
+    // Vive en la raíz: el alto del escenario y el encuadre del modelo lo leen.
+    root.style.setProperty('--spread', String(spread))
+    root.classList.toggle('is-exploded', spread > 0)
+    root.classList.toggle('is-spread', spread > .12)
+    if (range) {
+      range.value = String(percent)
+      range.style.setProperty('--fill', `${percent}%`)
+    }
+    if (rangeOut) rangeOut.textContent = `${percent}%`
+  }
+
+  const renderPhoto = () => {
+    photoSlides.forEach((slide, index) => { slide.hidden = index !== photoIndex })
+    photoDots.forEach((dot, index) => dot.setAttribute('aria-current', String(index === photoIndex)))
+    const active = photoSlides[photoIndex]
+    if (photoCaption) photoCaption.textContent = active?.dataset.bxPhotoLabel ?? ''
+    if (photoCounter) photoCounter.textContent = `${pad(photoIndex + 1)} / ${pad(photoSlides.length)}`
   }
 
   const setActivePart = (partId: string | null) => {
@@ -1106,153 +1128,392 @@ function initKeyboardBuildExplorer() {
     if (chipSpec) chipSpec.textContent = detail.spec
   }
 
-  const resetView = () => {
-    rotX = 56
-    rotZ = -29
-    zoom = 1
-    renderView()
-    readout?.classList.remove('is-visible')
-  }
+  return {
+    element: panel,
+    stage,
+    model,
+    readout,
+    scrub,
+    range,
+    partButtons,
+    partLayers,
+    photoCount: photoSlides.length,
 
-  const renderPhoto = () => {
-    for (const [index, slide] of photoSlides.entries()) slide.hidden = index !== photoIndex
-    const activeSlide = photoSlides[photoIndex]
-    if (photoCaption) photoCaption.textContent = activeSlide?.dataset.bxPhotoLabel ?? ''
-    if (photoCounter) photoCounter.textContent = `${String(photoIndex + 1).padStart(2, '0')} / ${String(photoSlides.length).padStart(2, '0')}`
-  }
+    get spread() { return spread },
+    get pinnedPart() { return pinnedPart },
 
-  const stepPhoto = (direction: number) => {
-    if (!photoSlides.length) return
-    photoIndex = (photoIndex + direction + photoSlides.length) % photoSlides.length
-    renderPhoto()
+    setSpread(next: number) {
+      spread = Math.max(0, Math.min(1, next))
+      renderSpread()
+    },
+    orbit(deltaTilt: number, deltaSpin: number) {
+      tilt = Math.max(BX_TILT.min, Math.min(BX_TILT.max, tilt + deltaTilt))
+      spin = Math.max(BX_SPIN.min, Math.min(BX_SPIN.max, spin + deltaSpin))
+      renderCamera()
+    },
+    orbitFrom(baseTilt: number, baseSpin: number, deltaTilt: number, deltaSpin: number) {
+      tilt = Math.max(BX_TILT.min, Math.min(BX_TILT.max, baseTilt + deltaTilt))
+      spin = Math.max(BX_SPIN.min, Math.min(BX_SPIN.max, baseSpin + deltaSpin))
+      renderCamera()
+    },
+    zoomBy(factor: number) {
+      zoom = Math.max(BX_ZOOM.min, Math.min(BX_ZOOM.max, zoom * factor))
+      renderCamera()
+    },
+    get camera() { return { tilt, spin } },
+    resetCamera() {
+      tilt = BX_TILT.home
+      spin = BX_SPIN.home
+      zoom = 1
+      renderCamera()
+      readout?.classList.remove('is-visible')
+    },
+    stepPhoto(direction: number) {
+      if (photoSlides.length === 0) return
+      photoIndex = (photoIndex + direction + photoSlides.length) % photoSlides.length
+      renderPhoto()
+    },
+    goToPhoto(index: number) {
+      if (index < 0 || index >= photoSlides.length) return
+      photoIndex = index
+      renderPhoto()
+    },
+    resetPhoto() {
+      photoIndex = 0
+      renderPhoto()
+    },
+    /*
+     * Las diapositivas nacen perezosas para no descargar cuatro fotos que
+     * quizá nadie abra. En cuanto se entra en el build dejan de serlo: si no,
+     * la primera pulsación de "siguiente" enseñaba un hueco vacío mientras
+     * el navegador iba a buscar la imagen.
+     */
+    warmPhotos() {
+      for (const image of photoImages) image.loading = 'eager'
+    },
+    previewPart(partId: string | null) {
+      setActivePart(partId ?? pinnedPart)
+    },
+    togglePart(partId: string) {
+      pinnedPart = pinnedPart === partId ? null : partId
+      setActivePart(pinnedPart)
+    },
+    clearPart() {
+      pinnedPart = null
+      setActivePart(null)
+    },
+    partSpec(partId: string) { return partDetails.get(partId) },
+    showModelHints(showModel: boolean) {
+      if (photoHint) photoHint.hidden = showModel
+      if (modelHint) modelHint.hidden = !showModel
+    },
   }
+}
+
+/**
+ * Explorador de builds: galería, visor fotográfico y modelo 3D por capas.
+ *
+ * El componente renderiza un panel por build, así que aquí no hay nada
+ * atado al Neo65: al abrir una tarjeta se engancha el panel correspondiente
+ * y todo el estado —cámara, despiece, pieza fijada— vive dentro de él.
+ */
+function initKeyboardBuildExplorer() {
+  const root = document.querySelector<HTMLElement>('[data-kb-build-explorer]')
+  if (!root) return
+
+  const gallery = root.querySelector<HTMLElement>('[data-bx-gallery]')
+  const viewer = root.querySelector<HTMLElement>('[data-bx-viewer]')
+  const closeButton = root.querySelector<HTMLButtonElement>('[data-bx-close]')
+  const photoButton = root.querySelector<HTMLButtonElement>('[data-bx-photo-view]')
+  const assembledButton = root.querySelector<HTMLButtonElement>('[data-bx-assembled-view]')
+  const explodeButton = root.querySelector<HTMLButtonElement>('[data-bx-explode]')
+  const status = root.querySelector<HTMLElement>('[data-bx-status]')
+  const openButtons = [...root.querySelectorAll<HTMLButtonElement>('[data-bx-open]')]
+
+  const panels = new Map<string, BuildPanel>()
+  for (const element of root.querySelectorAll<HTMLElement>('[data-bx-build]')) {
+    const key = element.dataset.bxBuild
+    if (key) panels.set(key, createBuildPanel(element, root))
+  }
+  if (panels.size === 0) return
+
+  const archivedLabel = status?.textContent ?? ''
+  let active: BuildPanel | null = null
+  let activeKey = ''
+  let viewMode: 'photo' | 'assembled' | 'exploded' = 'photo'
+  let drag: { x: number, y: number, tilt: number, spin: number, moved: boolean, partId: string | null } | null = null
+  let suppressPartClick = false
 
   const setViewMode = (mode: typeof viewMode) => {
     viewMode = mode
-    exploded = mode === 'exploded'
+    const exploded = mode === 'exploded'
     root.classList.toggle('is-photo-view', mode === 'photo')
-    root.classList.toggle('is-exploded', exploded)
     photoButton?.setAttribute('aria-pressed', String(mode === 'photo'))
     assembledButton?.setAttribute('aria-pressed', String(mode === 'assembled'))
     explodeButton?.setAttribute('aria-pressed', String(exploded))
-    if (photoHint) photoHint.hidden = mode !== 'photo'
-    if (modelHint) modelHint.hidden = mode === 'photo'
 
-    const modeLabel = mode === 'photo'
-      ? say('Foto original', 'Original photo')
-      : mode === 'exploded' ? root.dataset.exploded : root.dataset.assembled
-    if (status) status.textContent = `01 // NEO65 · ${modeLabel}`
-    if (mode === 'photo') renderPhoto()
+    if (active) {
+      active.showModelHints(mode !== 'photo')
+      if (active.scrub) active.scrub.hidden = mode === 'photo'
+      // Los dos presets son posiciones del mismo mando continuo.
+      if (mode !== 'photo') active.setSpread(exploded ? 1 : 0)
+      if (mode === 'photo') active.resetPhoto()
+    }
+
+    syncStatus()
+  }
+
+  /** El rótulo describe siempre lo que se está viendo, presets incluidos. */
+  const syncStatus = () => {
+    if (!status) return
+    if (viewMode === 'photo') {
+      status.textContent = `${activeKey.toUpperCase()} // ${say('Foto original', 'Original photo')}`
+      return
+    }
+    const percent = Math.round((active?.spread ?? 0) * 100)
+    const label = percent === 0 ? root.dataset.assembled
+      : percent === 100 ? root.dataset.exploded
+        : `${root.dataset.exploded} ${percent}%`
+    status.textContent = `${activeKey.toUpperCase()} // ${label}`
   }
 
   const showGallery = () => {
     if (gallery) gallery.hidden = false
     if (viewer) viewer.hidden = true
-    if (status) status.textContent = '01 BUILD // ARCHIVED'
-    pinnedPart = null
-    photoIndex = 0
-    setViewMode('photo')
-    setActivePart(null)
-    resetView()
-    openButton?.focus()
+    if (active) {
+      active.element.hidden = true
+      active.clearPart()
+      active.setSpread(0)
+      active.resetCamera()
+      active.resetPhoto()
+    }
+    root.classList.remove('is-exploded', 'is-spread', 'has-active', 'is-scrubbing')
+    if (status) status.textContent = archivedLabel
+    const opener = openButtons.find((button) => button.dataset.bxOpen === activeKey) ?? openButtons[0]
+    active = null
+    activeKey = ''
+    opener?.focus()
   }
 
-  openButton?.addEventListener('click', () => {
+  const openBuild = (key: string) => {
+    const panel = panels.get(key)
+    if (!panel) return
+    if (active && active !== panel) active.element.hidden = true
+    active = panel
+    activeKey = key
+    panel.element.hidden = false
     if (gallery) gallery.hidden = true
     if (viewer) viewer.hidden = false
+    panel.clearPart()
+    panel.setSpread(0)
+    panel.resetCamera()
+    panel.warmPhotos()
     setViewMode('photo')
-    resetView()
     closeButton?.focus()
-  })
-  closeButton?.addEventListener('click', showGallery)
+  }
 
+  for (const button of openButtons) {
+    button.addEventListener('click', () => openBuild(button.dataset.bxOpen ?? ''))
+  }
+  closeButton?.addEventListener('click', showGallery)
   photoButton?.addEventListener('click', () => setViewMode('photo'))
   assembledButton?.addEventListener('click', () => setViewMode('assembled'))
   explodeButton?.addEventListener('click', () => setViewMode('exploded'))
-  photoPrevious?.addEventListener('click', () => stepPhoto(-1))
-  photoNext?.addEventListener('click', () => stepPhoto(1))
-  stage?.addEventListener('keydown', (event) => {
-    if (viewMode !== 'photo' || !['ArrowLeft', 'ArrowRight'].includes(event.key)) return
+
+  /*
+   * Escape cierra el visor: es el gesto que espera cualquiera que haya
+   * entrado en una vista de detalle, y sin él el teclado solo podía salir
+   * tabulando hasta el botón de volver.
+   */
+  root.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || !active) return
     event.preventDefault()
-    stepPhoto(event.key === 'ArrowLeft' ? -1 : 1)
+    showGallery()
   })
 
-  const previewPart = (partId: string | null) => {
-    if (viewMode === 'photo') return setActivePart(null)
-    setActivePart(partId ?? pinnedPart)
-  }
-  for (const button of partButtons) {
-    const partId = button.dataset.bxPartButton ?? ''
-    button.addEventListener('mouseenter', () => previewPart(partId))
-    button.addEventListener('mouseleave', () => previewPart(null))
-    button.addEventListener('focus', () => previewPart(partId))
-    button.addEventListener('blur', () => previewPart(null))
-    button.addEventListener('click', () => {
+  /*
+   * Delegación: la galería, las flechas de foto, los puntos y el listado de
+   * piezas son listas que crecen con cada build nuevo, así que se escuchan
+   * desde la raíz en lugar de enganchar un listener por elemento.
+   */
+  root.addEventListener('click', (event) => {
+    const target = event.target as HTMLElement
+    if (!active) return
+
+    if (target.closest('[data-bx-photo-prev]')) return active.stepPhoto(-1)
+    if (target.closest('[data-bx-photo-next]')) return active.stepPhoto(1)
+
+    const dot = target.closest<HTMLElement>('[data-bx-photo-dot]')
+    if (dot) return active.goToPhoto(Number(dot.dataset.bxPhotoDot))
+
+    const partButton = target.closest<HTMLElement>('[data-bx-part-button]')
+    if (partButton) {
       if (viewMode === 'photo') setViewMode('assembled')
-      pinnedPart = pinnedPart === partId ? null : partId
-      setActivePart(pinnedPart)
-    })
-  }
-  for (const layer of partLayers) {
-    const partId = layer.dataset.bxPart ?? ''
-    layer.addEventListener('mouseenter', () => previewPart(partId))
-    layer.addEventListener('mouseleave', () => previewPart(null))
-    layer.addEventListener('click', (event) => {
-      if (suppressPartClick) {
-        event.preventDefault()
-        event.stopPropagation()
-        return
-      }
-      pinnedPart = pinnedPart === partId ? null : partId
-      setActivePart(pinnedPart)
-    })
+      active.togglePart(partButton.dataset.bxPartButton ?? '')
+    }
+  })
+
+  root.addEventListener('pointerover', (event) => {
+    if (!active || viewMode === 'photo') return
+    const holder = (event.target as HTMLElement).closest<HTMLElement>('[data-bx-part-button], [data-bx-part]')
+    if (!holder) return
+    active.previewPart(holder.dataset.bxPartButton ?? holder.dataset.bxPart ?? null)
+  })
+  root.addEventListener('pointerout', (event) => {
+    if (!active || viewMode === 'photo') return
+    if (!(event.target as HTMLElement).closest('[data-bx-part-button], [data-bx-part]')) return
+    active.previewPart(null)
+  })
+  root.addEventListener('focusin', (event) => {
+    if (!active || viewMode === 'photo') return
+    const button = (event.target as HTMLElement).closest<HTMLElement>('[data-bx-part-button]')
+    active.previewPart(button?.dataset.bxPartButton ?? null)
+  })
+
+  /* ---------- Deslizador de separación ---------- */
+  root.addEventListener('input', (event) => {
+    const input = event.target as HTMLInputElement
+    if (!active || !input.matches('[data-bx-range]')) return
+    root.classList.add('is-scrubbing')
+    active.setSpread(Number(input.value) / 100)
+    // Los presets siguen al mando: el estado accesible nunca miente.
+    const exploded = active.spread > .999
+    const assembled = active.spread < .001
+    viewMode = exploded ? 'exploded' : 'assembled'
+    assembledButton?.setAttribute('aria-pressed', String(assembled))
+    explodeButton?.setAttribute('aria-pressed', String(exploded))
+    syncStatus()
+  })
+  const endScrub = () => root.classList.remove('is-scrubbing')
+  root.addEventListener('pointerup', endScrub)
+  root.addEventListener('pointercancel', endScrub)
+  root.addEventListener('change', endScrub)
+
+  /* ---------- Órbita ---------- */
+  const stopDragging = (cancelled = false) => {
+    if (drag?.partId) {
+      suppressPartClick = true
+      window.setTimeout(() => { suppressPartClick = false }, 0)
+      if (!drag.moved && !cancelled && active) active.togglePart(drag.partId)
+    }
+    drag = null
+    active?.stage?.classList.remove('is-dragging')
   }
 
-  stage?.addEventListener('pointerdown', (event) => {
-    if (viewMode === 'photo' || (event.pointerType === 'mouse' && event.button !== 0)) return
+  root.addEventListener('pointerdown', (event) => {
+    const stage = (event.target as HTMLElement).closest<HTMLElement>('[data-bx-stage]')
+    if (!active || !stage || viewMode === 'photo') return
+    if (event.pointerType === 'mouse' && event.button !== 0) return
     event.preventDefault()
     stage.focus({ preventScroll: true })
     const partId = (event.target as HTMLElement).closest<HTMLElement>('[data-bx-part]')?.dataset.bxPart ?? null
-    drag = { x: event.clientX, y: event.clientY, rotX, rotZ, moved: false, partId }
+    const { tilt, spin } = active.camera
+    drag = { x: event.clientX, y: event.clientY, tilt, spin, moved: false, partId }
     stage.classList.add('is-dragging')
-    try { stage.setPointerCapture(event.pointerId) } catch { /* Pointer capture is an enhancement. */ }
+    try { stage.setPointerCapture(event.pointerId) } catch { /* La captura es una mejora, no un requisito. */ }
   })
-  stage?.addEventListener('pointermove', (event) => {
-    if (!drag) return
+  root.addEventListener('pointermove', (event) => {
+    if (!drag || !active) return
     event.preventDefault()
     const dx = event.clientX - drag.x
     const dy = event.clientY - drag.y
     if (!drag.moved && Math.hypot(dx, dy) < 3) return
     drag.moved = true
-    rotX = Math.max(24, Math.min(78, drag.rotX + dy * .2))
-    rotZ = Math.max(-84, Math.min(24, drag.rotZ + dx * .24))
-    renderView()
+    active.orbitFrom(drag.tilt, drag.spin, dy * .2, dx * .24)
   })
-  const stopDragging = (cancelled = false) => {
-    if (drag?.partId) {
-      suppressPartClick = true
-      window.setTimeout(() => { suppressPartClick = false }, 0)
-    }
-    if (drag?.partId && !drag.moved && !cancelled) {
-      pinnedPart = pinnedPart === drag.partId ? null : drag.partId
-      setActivePart(pinnedPart)
-    }
-    drag = null
-    stage?.classList.remove('is-dragging')
-  }
-  stage?.addEventListener('pointerup', () => stopDragging())
-  stage?.addEventListener('pointercancel', () => stopDragging(true))
-  stage?.addEventListener('lostpointercapture', () => stopDragging(true))
-  stage?.addEventListener('selectstart', (event) => event.preventDefault())
-  stage?.addEventListener('dragstart', (event) => event.preventDefault())
-  stage?.addEventListener('wheel', (event) => {
-    if (viewMode === 'photo') return
+  root.addEventListener('pointerup', () => stopDragging())
+  root.addEventListener('pointercancel', () => stopDragging(true))
+  root.addEventListener('lostpointercapture', () => stopDragging(true))
+  root.addEventListener('selectstart', (event) => {
+    if ((event.target as HTMLElement).closest('[data-bx-stage]')) event.preventDefault()
+  })
+  root.addEventListener('dragstart', (event) => {
+    if ((event.target as HTMLElement).closest('[data-bx-stage]')) event.preventDefault()
+  })
+  root.addEventListener('click', (event) => {
+    if (!suppressPartClick) return
+    const layer = (event.target as HTMLElement).closest('[data-bx-part]')
+    if (!layer) return
     event.preventDefault()
-    zoom = Math.max(.68, Math.min(1.65, zoom * (event.deltaY > 0 ? .9 : 1.1)))
-    renderView()
-    readout?.classList.add('is-visible')
+    event.stopPropagation()
+  }, true)
+  root.addEventListener('dblclick', (event) => {
+    if ((event.target as HTMLElement).closest('[data-bx-stage]')) active?.resetCamera()
+  })
+
+  /* ---------- Teclado sobre el escenario ---------- */
+  const ORBIT_STEP = 6
+  const SPREAD_STEP = .12
+  root.addEventListener('keydown', (event) => {
+    const stage = (event.target as HTMLElement).closest('[data-bx-stage]')
+    if (!active || !stage) return
+
+    if (viewMode === 'photo') {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
+      event.preventDefault()
+      return active.stepPhoto(event.key === 'ArrowLeft' ? -1 : 1)
+    }
+
+    /*
+     * Orbitar y separar con el teclado: el modelo dejaba de existir para
+     * quien no puede arrastrar, aunque el contenedor ya fuese enfocable.
+     */
+    const orbits: Record<string, [number, number]> = {
+      ArrowUp: [-ORBIT_STEP, 0],
+      ArrowDown: [ORBIT_STEP, 0],
+      ArrowLeft: [0, -ORBIT_STEP],
+      ArrowRight: [0, ORBIT_STEP],
+    }
+    const orbit = orbits[event.key]
+    if (orbit) {
+      event.preventDefault()
+      return active.orbit(orbit[0], orbit[1])
+    }
+    if (event.key === '+' || event.key === '=') {
+      event.preventDefault()
+      active.zoomBy(1.1)
+      active.readout?.classList.add('is-visible')
+      return
+    }
+    if (event.key === '-') {
+      event.preventDefault()
+      active.zoomBy(.9)
+      active.readout?.classList.add('is-visible')
+      return
+    }
+    if (event.key === 'PageUp' || event.key === 'PageDown') {
+      event.preventDefault()
+      active.setSpread(active.spread + (event.key === 'PageUp' ? SPREAD_STEP : -SPREAD_STEP))
+      syncStatus()
+      return
+    }
+    if (event.key === 'Home') {
+      event.preventDefault()
+      active.resetCamera()
+    }
+  })
+
+  /* ---------- Zoom con rueda ---------- */
+  root.addEventListener('wheel', (event) => {
+    const stage = (event.target as HTMLElement).closest<HTMLElement>('[data-bx-stage]')
+    if (!active || !stage || viewMode === 'photo') return
+    /*
+     * El zoom solo se apropia de la rueda cuando el escenario tiene el foco.
+     * Pasar el cursor por encima mientras se lee la página no debe bloquear
+     * el scroll: hay que entrar en el modelo a propósito.
+     */
+    if (!stage.contains(document.activeElement)) return
+    event.preventDefault()
+    active.zoomBy(event.deltaY > 0 ? .9 : 1.1)
+    active.readout?.classList.add('is-visible')
   }, { passive: false })
-  stage?.addEventListener('dblclick', resetView)
+
+  /* ---------- Deslizamiento táctil entre fotos ---------- */
+  for (const panel of panels.values()) {
+    if (panel.stage) onSwipe(panel.stage, (direction) => {
+      if (viewMode === 'photo') panel.stepPhoto(direction)
+    })
+  }
 }
 
 /* ---------------- Teclado mecánico dinámico con MonkeyType Killua Speed Trial ---------------- */
