@@ -1,4 +1,5 @@
 ---
+import { Picture } from 'astro:assets'
 import Icon from '../Icon.astro'
 import TechChip from './TechChip.astro'
 import { casePath, formatDuration, formatPeriod, getExperience, getProjects } from '../../lib/content'
@@ -139,14 +140,24 @@ const badgeLabel = (badge: 'live' | 'private' | 'coming-soon') =>
             aria-label={`${i + 1} / ${projects.length}: ${p.title}`}
             aria-hidden={i === 0 ? 'false' : 'true'}
           >
-            <!-- PNG original sin recodificar: preserva líneas y texto fino. -->
+            <!--
+              Las portadas son capturas de 2000 px y el carrusel nunca pasa
+              de ~1100 px, así que se sirven redimensionadas y en AVIF/WebP.
+              El PNG original sigue siendo el respaldo, con calidad alta para
+              que las líneas finas y el texto de la captura no se ensucien.
+            -->
             {p.image ? (
-              <img
-                src={p.image.src}
-                width={p.image.width}
-                height={p.image.height}
+              <Picture
+                src={p.image}
+                formats={['avif', 'webp']}
+                fallbackFormat="png"
+                quality={90}
+                widths={[640, 1104, 1600]}
+                width={1600}
+                sizes="(max-width: 1216px) 100vw, 1104px"
                 alt={p.imageAlt || `${p.title} — cover`}
                 loading={i === 0 ? 'eager' : 'lazy'}
+                fetchpriority={i === 0 ? 'high' : 'auto'}
                 decoding="async"
                 class="project-cover absolute inset-0 h-full w-full object-cover"
               />

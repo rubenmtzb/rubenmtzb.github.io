@@ -92,10 +92,19 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
               <div class="moment-card-inner">
                 <!-- Cara frontal: Fotografía limpia con bordes redondeados -->
                 <div class="moment-card-face moment-card-front flex items-center justify-center bg-[color:var(--ink-950)]">
+                  <!--
+                    La carta mide 210-260 px: los originales son retratos de
+                    1600 px, así que basta con tres cortes que cubran hasta
+                    pantallas de densidad 2,5x. Servir 750 px a una carta de
+                    260 px costaba cientos de kB por foto sin ganar un pixel.
+                  -->
                   <Picture
                     src={photo.image}
-                    formats={['avif', 'webp']}
-                    widths={[400, 750]}
+                    formats={['avif']}
+                    fallbackFormat="webp"
+                    widths={[260, 420, 640]}
+                    width={640}
+                    quality={72}
                     sizes="(max-width: 768px) 210px, 260px"
                     alt={photo.alt[lang]}
                     loading="lazy"
