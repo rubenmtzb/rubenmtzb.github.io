@@ -22,7 +22,12 @@ export const GET = async () => {
     start_url: '/',
     display: 'standalone',
     background_color: '#030712',
-    theme_color: '#00ff88',
+    /*
+     * El mismo color que la meta `theme-color` del <head>. Estaba en el
+     * verde de la V1, así que la barra del navegador en modo aplicación no
+     * coincidía con la del sitio instalado desde la misma página.
+     */
+    theme_color: '#030712',
     icons: [
       { src: '/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
       { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
