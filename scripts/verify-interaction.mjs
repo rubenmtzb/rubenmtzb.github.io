@@ -265,11 +265,26 @@ function suite(page, dom) {
   const buildRoot = document.querySelector('[data-kb-build-explorer]')
   const buildOpen = document.querySelector('[data-bx-open]')
   const buildClose = document.querySelector('[data-bx-close]')
-  const buildPhoto = document.querySelector('[data-bx-photo-view]')
-  const buildPhotoPrevious = document.querySelector('[data-bx-photo-prev]')
-  const buildPhotoNext = document.querySelector('[data-bx-photo-next]')
-  const buildPhotoCounter = document.querySelector('[data-bx-photo-counter]')
-  const buildPhotoSlides = [...document.querySelectorAll('[data-bx-photo-slide]')]
+  const buildCards = [...document.querySelectorAll('.bx-build-card')]
+  const firstBuildCarousel = document.querySelector('[data-bx-card-carousel]')
+  const buildCardPrevious = firstBuildCarousel.querySelector('[data-bx-card-prev]')
+  const buildCardNext = firstBuildCarousel.querySelector('[data-bx-card-next]')
+  const buildCardCounter = firstBuildCarousel.querySelector('[data-bx-card-counter]')
+  const buildCardSlides = [...firstBuildCarousel.querySelectorAll('[data-bx-card-slide]')]
+  const buildCardDots = [...firstBuildCarousel.querySelectorAll('[data-bx-card-dot]')]
+  const hhkbBuildOpen = document.querySelector('[data-bx-open="hhkb-professional-hybrid-type-s"]')
+  const hhkbCarousel = hhkbBuildOpen.closest('.bx-build-card').querySelector('[data-bx-card-carousel]')
+  const evoBuildOpen = document.querySelector('[data-bx-open="evo75"]')
+  const evoCarousel = evoBuildOpen.closest('.bx-build-card').querySelector('[data-bx-card-carousel]')
+  const evoSlides = [...evoCarousel.querySelectorAll('[data-bx-card-slide]')]
+  const evoImages = [...evoCarousel.querySelectorAll('img')]
+  const evoNext = evoCarousel.querySelector('[data-bx-card-next]')
+  const evoPrevious = evoCarousel.querySelector('[data-bx-card-prev]')
+  const evoCounter = evoCarousel.querySelector('[data-bx-card-counter]')
+  const evoDots = [...evoCarousel.querySelectorAll('[data-bx-card-dot]')]
+  const corneBuildOpen = document.querySelector('[data-bx-open="corne-v4"]')
+  const corneCard = corneBuildOpen.closest('.bx-build-card')
+  const corneCarousel = corneBuildOpen.closest('.bx-build-card').querySelector('[data-bx-card-carousel]')
   const buildAssembled = document.querySelector('[data-bx-assembled-view]')
   const buildExplode = document.querySelector('[data-bx-explode]')
   const firstBuildPart = document.querySelector('[data-bx-part-button]')
@@ -278,19 +293,58 @@ function suite(page, dom) {
   const buildModel = document.querySelector('[data-bx-model]')
 
   check(buildOpen && buildViewer?.hidden === true, 'la galería contiene el Neo65 y el visor comienza cerrado')
+  check(buildCards.length === 4
+    && buildCards.filter((card) => card.classList.contains('is-complete')).length === 3
+    && buildCards.filter((card) => card.classList.contains('is-in-progress')).length === 1
+    && buildCards.filter((card) => card.classList.contains('is-scaffold')).length === 0
+    && buildCards.filter((card) => card.classList.contains('is-planning')).length === 0,
+  'el archivo presenta tres builds terminados y el Corne V4 en construcción')
+  check(buildRoot.querySelector('[data-bx-status]').textContent.includes('04 BUILDS')
+    && buildRoot.querySelector('[data-bx-status]').textContent.includes('03 COMPLETE'),
+  'la cabecera distingue el total de builds de los ya terminados')
+  check(corneCard.classList.contains('is-in-progress')
+    && corneCard.textContent.includes(page.lang === 'es' ? 'EN CONSTRUCCIÓN' : 'BUILD IN PROGRESS')
+    && !corneCard.textContent.includes(page.lang === 'es' ? 'BUILD REAL' : 'REAL BUILD'),
+  'la tarjeta Corne comunica que el montaje físico sigue en construcción')
+  check(hhkbCarousel.querySelectorAll('[data-bx-card-slide]').length === 1
+    && hhkbCarousel.querySelector('[data-bx-card-prev]') === null
+    && hhkbCarousel.querySelector('[data-bx-card-next]') === null
+    && hhkbCarousel.querySelector('[data-bx-card-dot]') === null,
+  'el HHKB usa su única foto real sin controles de carrusel redundantes')
+  check(evoSlides.length === 2
+    && evoImages.length === 2
+    && evoImages.every((image) => image.getAttribute('src').includes('.png') && !image.getAttribute('src').includes('neo'))
+    && evoImages.every((image) => image.getAttribute('alt').includes('EVO75')),
+  'el EVO75 sustituye los placeholders del Neo65 por sus dos PNG reales')
+  fire(evoNext, 'click')
+  check(evoSlides[0].hidden && !evoSlides[1].hidden
+    && evoCounter.textContent === '02 / 02'
+    && evoDots[1].getAttribute('aria-current') === 'true'
+    && evoCarousel.textContent.includes(page.lang === 'es' ? 'PESO TRASERO' : 'REAR WEIGHT'),
+  'el carrusel EVO75 recorre la vista montada y el peso trasero')
+  fire(evoPrevious, 'click')
+  check(!evoSlides[0].hidden && evoCounter.textContent === '01 / 02',
+    'el EVO75 vuelve a su fotografía montada sin ampliar la imagen')
+  check(corneCarousel.querySelectorAll('[data-bx-card-slide]').length === 1
+    && corneCarousel.querySelectorAll('img').length === 1
+    && corneCarousel.querySelector('img').getAttribute('src').includes('.png')
+    && corneCarousel.querySelector('img').getAttribute('alt').includes('Corne V4')
+    && corneCarousel.querySelector('[data-bx-card-prev]') === null
+    && corneCarousel.querySelector('[data-bx-card-next]') === null,
+  'el Corne V4 usa su única fotografía PNG real sin controles redundantes')
+  fire(buildCardNext, 'click')
+  check(buildCardSlides.length === 2 && buildCardSlides[0].hidden && !buildCardSlides[1].hidden
+    && buildCardCounter.textContent === '02 / 02' && buildCardDots[1].getAttribute('aria-current') === 'true',
+  'la portada recorre las dos fotografías nuevas y actualiza su estado accesible')
+  fire(buildCardPrevious, 'click')
+  check(!buildCardSlides[0].hidden && buildCardCounter.textContent === '01 / 02',
+    'la flecha anterior vuelve a la imagen principal del Neo65')
+  check(document.querySelector('[data-bx-photo-view]') === null,
+    'el detalle no duplica las fotografías en un tercer modo')
   fire(buildOpen, 'click')
   check(buildGallery.hidden === true && buildViewer.hidden === false, 'abrir el Neo65 entra en el visor')
-  check(buildRoot.classList.contains('is-photo-view') && buildPhoto.getAttribute('aria-pressed') === 'true',
-    'la fotografía original es la vista principal del build')
-  fire(buildPhotoNext, 'click')
-  check(buildPhotoSlides[0].hidden && !buildPhotoSlides[1].hidden && buildPhotoCounter.textContent === '02 / 04',
-    'la flecha siguiente recorre los ángulos y actualiza el contador')
-  fire(buildPhotoPrevious, 'click')
-  check(!buildPhotoSlides[0].hidden && buildPhotoCounter.textContent === '01 / 04',
-    'la flecha anterior vuelve a la portada oscura')
-  fire(buildAssembled, 'click')
-  check(!buildRoot.classList.contains('is-photo-view') && buildAssembled.getAttribute('aria-pressed') === 'true',
-    'la vista montada revela el modelo técnico sin perder la fotografía')
+  check(buildAssembled.getAttribute('aria-pressed') === 'true' && buildRoot.style.getPropertyValue('--spread') === '0',
+    'el build entra directamente en la vista montada')
   fire(buildExplode, 'click')
   check(buildRoot.classList.contains('is-exploded') && buildExplode.getAttribute('aria-pressed') === 'true',
     'el control de explosión separa las capas y actualiza su estado accesible')
@@ -324,13 +378,6 @@ function suite(page, dom) {
   check(el('kb-panel-photos').querySelector('[data-bx-status]').textContent.includes('40%'),
     'el rótulo de estado dice en qué punto está la separación')
 
-  const buildDots = [...document.querySelectorAll('[data-bx-photo-dot]')]
-  fire(buildPhoto, 'click')
-  fire(buildDots[2], 'click')
-  check(buildDots[2].getAttribute('aria-current') === 'true' && buildDots[0].getAttribute('aria-current') === 'false'
-    && buildPhotoCounter.textContent === '03 / 04',
-    'los puntos saltan directamente a una toma concreta')
-
   fire(buildAssembled, 'click')
   const beforeOrbit = buildModel.getAttribute('style')
   fire(buildStage, 'keydown', { key: 'ArrowRight' })
@@ -347,6 +394,77 @@ function suite(page, dom) {
     'volver a la galería restablece el visor')
   check(buildRoot.style.getPropertyValue('--spread') === '0' && !buildRoot.classList.contains('has-active'),
     'y deja el despiece y el aislamiento a cero')
+
+  fire(hhkbBuildOpen, 'click')
+  const hhkbPanel = document.querySelector('[data-bx-build="hhkb-professional-hybrid-type-s"]')
+  const hhkbPartIds = [...hhkbPanel.querySelectorAll('[data-bx-part]')]
+    .map((part) => part.getAttribute('data-bx-part'))
+  check(hhkbPanel.hidden === false
+    && hhkbPanel.getAttribute('data-layout') === 'hhkb'
+    && hhkbPartIds.length === 7
+    && ['keycaps', 'sliders', 'housing', 'domes', 'springs', 'pcb', 'case'].every((id) => hhkbPartIds.includes(id)),
+  'el HHKB utiliza las siete capas reales de su arquitectura Topre')
+  check(hhkbPanel.querySelectorAll('.bx-model-key').length === 60
+    && hhkbPanel.querySelectorAll('.bx-topre-slider').length === 60
+    && hhkbPanel.querySelectorAll('.bx-topre-dome').length === 60
+    && hhkbPanel.querySelectorAll('.bx-topre-spring').length === 60
+    && hhkbPanel.querySelectorAll('.bx-cap-pad').length === 60,
+  'el modelo HHKB representa sus 60 teclas, sliders, domos, muelles y pads capacitivos')
+  check(hhkbPanel.querySelector('.bx-prototype-note') === null
+    && hhkbPanel.querySelector('.bx-detail-status')
+    && hhkbPanel.querySelectorAll('.bx-model-key.is-wasabi').length > 0
+    && (hhkbPanel.textContent.includes('hand-lubed') || hhkbPanel.textContent.includes('lubricadas a mano')),
+  'el detalle presenta el build terminado, la mezcla Snow/Wasabi y el lubricado manual')
+  fire(buildClose, 'click')
+
+  fire(evoBuildOpen, 'click')
+  const evoPanel = document.querySelector('[data-bx-build="evo75"]')
+  const evoPartIds = [...evoPanel.querySelectorAll('[data-bx-part]')]
+    .map((part) => part.getAttribute('data-bx-part'))
+  check(evoPanel.hidden === false
+    && evoPanel.getAttribute('data-layout') === 'evo75'
+    && evoPartIds.length === 10
+    && ['keycaps', 'top-case', 'switches', 'plate', 'mount', 'pcb', 'dampening', 'battery', 'bottom-case', 'weight']
+      .every((id) => evoPartIds.includes(id)),
+  'el EVO75 utiliza diez capas propias de su arquitectura stock')
+  check(evoPanel.querySelectorAll('.bx-model-key').length === 80
+    && evoPanel.querySelectorAll('.bx-switch').length === 80
+    && evoPanel.querySelectorAll('.bx-socket').length === 80
+    && evoPanel.querySelectorAll('.bx-evo-leaf').length === 8
+    && evoPanel.querySelectorAll('.bx-evo-cell').length === 2,
+  'el modelo EVO75 representa 80 teclas, switches y sockets, ocho apoyos y dos baterías')
+  check(evoPanel.querySelector('.bx-prototype-note') === null
+    && evoPanel.querySelectorAll('.bx-model-key.is-evo-red').length === 3
+    && evoPanel.querySelectorAll('.bx-evo-grille').length === 2
+    && (evoPanel.textContent.includes('factory preassembled') || evoPanel.textContent.includes('premontado de fábrica'))
+    && (evoPanel.textContent.includes('option unrecorded') || evoPanel.textContent.includes('opción no registrada')),
+  'el detalle EVO75 conserva el colorway real, declara el estado de fábrica y no inventa la variante interna')
+  fire(buildClose, 'click')
+
+  fire(corneBuildOpen, 'click')
+  const cornePanel = document.querySelector('[data-bx-build="corne-v4"]')
+  const cornePartIds = [...cornePanel.querySelectorAll('[data-bx-part]')]
+    .map((part) => part.getAttribute('data-bx-part'))
+  check(cornePanel.hidden === false
+    && cornePanel.getAttribute('data-layout') === 'corne'
+    && cornePartIds.length === 8
+    && ['keycaps', 'switches', 'plate', 'pcb', 'interconnect', 'spacers', 'bottom-case', 'feet']
+      .every((id) => cornePartIds.includes(id)),
+  'el Corne V4 utiliza las ocho piezas propias de su arquitectura split cableada')
+  check(cornePanel.querySelectorAll('.bx-model-key').length === 42
+    && cornePanel.querySelectorAll('.bx-switch').length === 42
+    && cornePanel.querySelectorAll('.bx-socket').length === 42
+    && cornePanel.querySelectorAll('.bx-corne-mcu').length === 2
+    && cornePanel.querySelectorAll('.bx-corne-standoff').length === 8
+    && cornePanel.querySelectorAll('.bx-corne-foot').length === 8,
+  'el modelo Corne representa 42 teclas, dos RP2040, ocho separadores y ocho apoyos')
+  check(cornePanel.querySelector('.bx-prototype-note') === null
+    && cornePanel.querySelector('.bx-corne-cable')
+    && cornePanel.textContent.includes(page.lang === 'es' ? 'EN CONSTRUCCIÓN' : 'BUILD IN PROGRESS')
+    && (cornePanel.textContent.includes('no batteries') || cornePanel.textContent.includes('no lleva baterías'))
+    && (cornePanel.textContent.includes('Direct GPIO') || cornePanel.textContent.includes('GPIO directo')),
+  'el detalle Corne documenta TRRS, matriz directa y ausencia de inalámbrico nativo')
+  fire(buildClose, 'click')
 
   console.log('\n· Contacto')
   check(el('copy-mail').hidden === false, 'el botón de copiar email lo revela el JS')
