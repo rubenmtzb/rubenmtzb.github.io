@@ -1,5 +1,6 @@
 ---
 import Seo from '../components/Seo.astro'
+import FontPreload from '../components/FontPreload.astro'
 import CaseStudy from '../components/CaseStudy.astro'
 import Footer from '../components/v2/Footer.astro'
 import Icon from '../components/Icon.astro'
@@ -17,6 +18,7 @@ const homePath = lang === 'es' ? '/es/' : '/'
 <html lang={lang}>
   <head>
     <Seo pageKey={pageKey} lang={lang} pageType="WebPage" />
+    <FontPreload />
     <script is:inline>document.documentElement.classList.add('js')</script>
   </head>
   <body>

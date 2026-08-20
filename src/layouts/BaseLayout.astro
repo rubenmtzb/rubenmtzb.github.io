@@ -1,5 +1,6 @@
 ---
 import Seo from '../components/Seo.astro'
+import FontPreload from '../components/FontPreload.astro'
 import { t, type Lang } from '../i18n/ui'
 import '../styles/global.css'
 
@@ -17,6 +18,7 @@ const { pageKey, lang, pageType = 'WebPage', bodyClass = '' } = Astro.props
 <html lang={lang}>
   <head>
     <Seo pageKey={pageKey} lang={lang} pageType={pageType} />
+    <FontPreload display={false} />
     <!--
       Marca JS antes del primer paint. El revelado solo se activa si esta
       clase existe, de modo que sin JavaScript el contenido queda visible
