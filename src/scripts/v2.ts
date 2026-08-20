@@ -1,6 +1,5 @@
 import { initAsciiPortrait } from './ascii-portrait'
 import { revealOnScroll } from './reveal'
-import { startGameMode } from './game-mode'
 
 /**
  * Mejora progresiva de la V2.
@@ -1791,24 +1790,36 @@ function initContactSignal() {
 }
 
 /* ---------------- Easter Egg: Killua Mini-Game Platformer ---------------- */
+
+/**
+ * El platformer es la pieza más pesada del sitio y solo la ve quien la
+ * busca, así que viaja en su propio chunk y se descarga con el primer
+ * intento de abrirlo. El resto de la página no paga su peso.
+ */
 function initGameMode() {
   let gameRunning = false
 
-  const launch = () => {
+  const launch = async () => {
     if (gameRunning) return
     gameRunning = true
-    startGameMode(() => { gameRunning = false })
+    try {
+      const { startGameMode } = await import('./game-mode')
+      startGameMode(() => { gameRunning = false })
+    } catch {
+      // Si el chunk no llega, el portfolio sigue intacto: solo falta el juego.
+      gameRunning = false
+    }
   }
 
   for (const id of ['gm-trigger', 'nav-game-btn']) {
-    document.getElementById(id)?.addEventListener('click', launch)
+    document.getElementById(id)?.addEventListener('click', () => void launch())
   }
 
   window.addEventListener('keydown', (e) => {
     // Permite atajo Alt+G, Ctrl+G o Cmd+G
     if ((e.altKey || e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'g' && !gameRunning) {
       e.preventDefault()
-      launch()
+      void launch()
     }
   })
 }
