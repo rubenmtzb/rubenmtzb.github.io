@@ -312,9 +312,41 @@ function suite(page, dom) {
   fire(firstBuildPart, 'click')
   check(buildRoot.classList.contains('has-active') && firstBuildPart.getAttribute('aria-pressed') === 'true',
     'seleccionar una pieza la aísla y mantiene pulsado su control')
+
+  const buildRange = document.querySelector('[data-bx-range]')
+  const buildRangeOut = document.querySelector('[data-bx-range-out]')
+  buildRange.value = '40'
+  fire(buildRange, 'input')
+  check(buildRoot.style.getPropertyValue('--spread') === '0.4' && buildRangeOut.textContent === '40%',
+    'el deslizador separa las capas de forma continua')
+  check(buildExplode.getAttribute('aria-pressed') === 'false' && buildAssembled.getAttribute('aria-pressed') === 'false',
+    'a media separación ningún preset se declara activo')
+  check(el('kb-panel-photos').querySelector('[data-bx-status]').textContent.includes('40%'),
+    'el rótulo de estado dice en qué punto está la separación')
+
+  const buildDots = [...document.querySelectorAll('[data-bx-photo-dot]')]
+  fire(buildPhoto, 'click')
+  fire(buildDots[2], 'click')
+  check(buildDots[2].getAttribute('aria-current') === 'true' && buildDots[0].getAttribute('aria-current') === 'false'
+    && buildPhotoCounter.textContent === '03 / 04',
+    'los puntos saltan directamente a una toma concreta')
+
+  fire(buildAssembled, 'click')
+  const beforeOrbit = buildModel.getAttribute('style')
+  fire(buildStage, 'keydown', { key: 'ArrowRight' })
+  check(buildModel.getAttribute('style') !== beforeOrbit, 'las flechas orbitan el modelo sin ratón')
+  fire(buildStage, 'keydown', { key: 'PageUp' })
+  check(Number(buildRoot.style.getPropertyValue('--spread')) > 0, 'avanzar página separa las capas desde el teclado')
+
+  fire(buildRoot, 'keydown', { key: 'Escape' })
+  check(buildGallery.hidden === false && buildViewer.hidden === true, 'Escape sale del visor')
+
+  fire(buildOpen, 'click')
   fire(buildClose, 'click')
   check(buildGallery.hidden === false && buildViewer.hidden === true && !buildRoot.classList.contains('is-exploded'),
     'volver a la galería restablece el visor')
+  check(buildRoot.style.getPropertyValue('--spread') === '0' && !buildRoot.classList.contains('has-active'),
+    'y deja el despiece y el aislamiento a cero')
 
   console.log('\n· Contacto')
   check(el('copy-mail').hidden === false, 'el botón de copiar email lo revela el JS')
