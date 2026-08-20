@@ -160,9 +160,9 @@ rubenmtzb.github.io/
 │   │   └── tech.ts           # Technology registry: colour, logo, official link
 │   ├── pages/                # URL grammar + sitemap.xml + manifest.json
 │   ├── scripts/              # Client-side progressive enhancement
-│   └── styles/               # global.css (V1) and v2.css (V2)
-├── astro.config.mjs
-└── content.config.ts         # Zod schemas for every collection
+│   ├── styles/               # global.css (V1) and v2.css (V2)
+│   └── content.config.ts     # Zod schemas for every collection
+└── astro.config.mjs
 ```
 
 ---
