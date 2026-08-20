@@ -220,7 +220,7 @@ const BRAND_METAS: Record<string, { logo: string; bg: string; text: string; bord
             >
               {ICONS_MAP[head.key] ? (
                 <span class="inline-grid h-4 w-4 shrink-0 place-items-center rounded bg-[color:var(--fg)] p-0.5">
-                  <img src={ICONS_MAP[head.key]} alt="" width="16" height="16" class="h-full w-full object-contain" />
+                  <img src={ICONS_MAP[head.key]} alt="" width="16" height="16" loading="lazy" decoding="async" class="h-full w-full object-contain" />
                 </span>
               ) : (
                 <Icon name="graduation" class="h-3.5 w-3.5 text-[color:var(--blue-bright)]" />
@@ -258,7 +258,7 @@ const BRAND_METAS: Record<string, { logo: string; bg: string; text: string; bord
                   <div class="flex items-center gap-2.5">
                     {ICONS_MAP[head.key] ? (
                       <span class="inline-grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-[color:var(--fg)] p-1.5 shadow-sm">
-                        <img src={ICONS_MAP[head.key]} alt="" width="36" height="36" class="h-full w-full object-contain" />
+                        <img src={ICONS_MAP[head.key]} alt="" width="36" height="36" loading="lazy" decoding="async" class="h-full w-full object-contain" />
                       </span>
                     ) : (
                       <Icon name="graduation" class="h-7 w-7 shrink-0 text-[color:var(--blue-bright)]" />
@@ -350,7 +350,7 @@ const BRAND_METAS: Record<string, { logo: string; bg: string; text: string; bord
             >
               {meta.logo.startsWith('/') ? (
                 <span class="inline-grid h-4 w-4 shrink-0 place-items-center rounded bg-[color:var(--fg)] p-0.5">
-                  <img src={meta.logo} alt="" width="16" height="16" class="h-full w-full object-contain" />
+                  <img src={meta.logo} alt="" width="16" height="16" loading="lazy" decoding="async" class="h-full w-full object-contain" />
                 </span>
               ) : (
                 <span>{meta.logo}</span>
@@ -377,7 +377,7 @@ const BRAND_METAS: Record<string, { logo: string; bg: string; text: string; bord
                   <div class="flex items-center gap-3">
                     {meta.logo.startsWith('/') ? (
                       <span class="inline-grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-[color:var(--fg)] p-1.5 shadow-sm">
-                        <img src={meta.logo} alt="" width="36" height="36" class="h-full w-full object-contain" />
+                        <img src={meta.logo} alt="" width="36" height="36" loading="lazy" decoding="async" class="h-full w-full object-contain" />
                       </span>
                     ) : (
                       <span class="text-3xl">{meta.logo}</span>
