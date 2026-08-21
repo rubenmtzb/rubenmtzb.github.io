@@ -279,6 +279,52 @@ const keyboards = defineCollection({
           }),
         )
         .default([]),
+      /**
+       * Muestra de sonido del build.
+       *
+       * Las tres tomas se cortan igual: los mismos tres chasquidos de dedos
+       * al principio, normalizados al mismo pico de referencia, y a partir
+       * de ahí el tecleo. Lo que cambia entre una muestra y otra es el
+       * teclado, así que los niveles se pueden comparar entre sí.
+       *
+       * Sin este bloque el build sale en el banco como pendiente de grabar.
+       */
+      sound: z
+        .object({
+          /** Nombre del fichero en /keyboards/sound/, sin extensión. */
+          clip: z.string().min(1),
+          duration: z.number().positive(),
+          /** Segundo en el que entra el tecleo: antes solo va la referencia. */
+          typingFrom: z.number().nonnegative(),
+          /** RMS del tecleo en dBFS, medido después de los chasquidos. */
+          level: z.number().negative(),
+          /** Cómo suena, en una línea. */
+          character: z.object({ en: z.string().min(1), es: z.string().min(1) }),
+          /**
+           * Apuntes de la mascota sobre por qué este build suena así.
+           *
+           * Solo lo llevan los teclados montados buscando el silencio, que son
+           * los que tienen algo que contar al respecto. Sin este bloque la
+           * ficha no asoma a nadie: el adorno depende del contenido, no al
+           * revés. Las dos listas han de tener el mismo número de apuntes.
+           */
+          quips: z
+            .object({
+              en: z.array(z.string().min(1)).min(2),
+              es: z.array(z.string().min(1)).min(2),
+            })
+            .refine((q) => q.en.length === q.es.length, {
+              message: 'quips: cada apunte necesita sus dos idiomas',
+            })
+            .optional(),
+          /**
+           * Envolvente ya calculada en build: una altura 0–100 por barra, en
+           * escala de decibelios y con el mismo suelo para las tres muestras.
+           * Se dibuja tal cual, así que el cliente no decodifica nada.
+           */
+          peaks: z.array(z.number().int().min(0).max(100)).length(160),
+        })
+        .optional(),
       /** Ficha técnica del panel lateral. Pares etiqueta/valor, en orden. */
       specs: z
         .array(

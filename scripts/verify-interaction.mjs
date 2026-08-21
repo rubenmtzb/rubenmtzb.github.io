@@ -75,6 +75,21 @@ async function run(page, runIndex) {
   })
   for (const canvas of document.querySelectorAll('canvas')) canvas.getContext = () => null
 
+  /* linkedom no reproduce nada. Se le pone la salida mínima que el banco de
+     sonido necesita —play, pause y un cabezal— para poder comprobar aquí que
+     solo suena una muestra a la vez y que el arrastre mueve la posición. La
+     duración sale del marcado, que es de donde la lee el propio reproductor
+     mientras el fichero no se ha descargado. */
+  for (const audio of document.querySelectorAll('audio')) {
+    let head = 0
+    Object.defineProperties(audio, {
+      duration: { get: () => Number(audio.closest('[data-duration]')?.dataset.duration ?? 0) },
+      currentTime: { get: () => head, set: (value) => { head = value } },
+    })
+    audio.play = () => { audio.dispatchEvent(new window.Event('play')) }
+    audio.pause = () => { audio.dispatchEvent(new window.Event('pause')) }
+  }
+
   /* linkedom fija event.target al objeto del despacho y no deja
      sobrescribirlo, pero en un navegador un keydown apunta al elemento con
      foco. Se capturan los listeners de window y se invocan con un evento
@@ -465,6 +480,122 @@ function suite(page, dom) {
     && (cornePanel.textContent.includes('Direct GPIO') || cornePanel.textContent.includes('GPIO directo')),
   'el detalle Corne documenta TRRS, matriz directa y ausencia de inalámbrico nativo')
   fire(buildClose, 'click')
+
+  console.log('\n· Muestras de sonido')
+  const clipRow = (clip) => document.querySelector(`[data-bx-clip="${clip}"]`)
+  const clipPart = (clip, sel) => clipRow(clip).querySelector(sel)
+  const played = (clip) => clipRow(clip).style.getPropertyValue('--played')
+  const neoToggle = clipPart('neo65', '[data-bx-clip-toggle]')
+  const hhkbToggle = clipPart('hhkb', '[data-bx-clip-toggle]')
+  const neoSeek = clipPart('neo65', '[data-bx-clip-seek]')
+  const neoAudio = clipPart('neo65', '[data-bx-clip-audio]')
+  const neoNow = clipPart('neo65', '[data-bx-clip-now]')
+
+  check(document.querySelectorAll('[data-bx-clip]').length === 3
+    && [...document.querySelectorAll('[data-bx-clip]')].every((c) => c.closest('[data-bx-build]'))
+    && played('neo65') === '0.00%' && neoNow.textContent === '0:00',
+    'cada build lleva su muestra dentro de su ficha, y arranca a cero')
+
+  fire(neoToggle, 'click')
+  check(clipRow('neo65').classList.contains('is-playing')
+    && neoToggle.getAttribute('aria-label') === neoToggle.dataset.pause,
+    'pulsar reproduce la muestra y el botón pasa a ofrecer la pausa')
+
+  fire(hhkbToggle, 'click')
+  check(clipRow('hhkb').classList.contains('is-playing')
+    && !clipRow('neo65').classList.contains('is-playing')
+    && neoToggle.getAttribute('aria-label') === neoToggle.dataset.play,
+    'arrancar otra muestra detiene la anterior: se comparan de una en una')
+
+  fire(hhkbToggle, 'click')
+  check(!clipRow('hhkb').classList.contains('is-playing'),
+    'volver a pulsar pausa la muestra que sonaba')
+
+  neoSeek.value = '500'
+  fire(neoSeek, 'input')
+  check(played('neo65') === '50.00%'
+    && neoNow.textContent === '0:05'
+    && Math.abs(neoAudio.currentTime - 5.385) < 0.01
+    && neoSeek.getAttribute('aria-valuetext') === '0:05',
+    'arrastrar el cabezal mueve la reproducción, la onda y la hora a la vez')
+
+  fire(neoToggle, 'click')
+  fire(neoAudio, 'ended')
+  check(!clipRow('neo65').classList.contains('is-playing')
+    && played('neo65') === '0.00%'
+    && neoAudio.currentTime === 0,
+    'al terminar la muestra la fila se apaga y vuelve al principio')
+
+  check(clipPart('neo65', 'source').getAttribute('type') === 'audio/mp4'
+    && clipRow('neo65').querySelectorAll('source').length === 2,
+    'cada muestra ofrece AAC primero y MP3 de respaldo')
+
+  fire(neoToggle, 'click')
+  fire(buildClose, 'click')
+  check(!clipRow('neo65').classList.contains('is-playing'),
+    'salir del build calla su muestra: no sigue sonando un teclado que ya no se mira')
+
+  fire(neoToggle, 'click')
+  fire(evoBuildOpen, 'click')
+  check(!clipRow('neo65').classList.contains('is-playing'),
+    'cambiar de build también la calla')
+  fire(buildClose, 'click')
+
+  console.log('\n· Apunte de la mascota')
+  const quipRow = clipRow('neo65').closest('[data-bx-build]')
+  const quip = quipRow.querySelector('[data-bx-quip]')
+  const quipPoke = quip.querySelector('[data-bx-quip-next]')
+  const quipText = quip.querySelector('[data-bx-quip-text]')
+  const quipLines = JSON.parse(quipPoke.dataset.quips)
+
+  check(quipLines.length >= 2 && quipLines.includes(quipText.textContent),
+    'la mascota arranca diciendo uno de sus apuntes')
+
+  const saidFirst = quipText.textContent
+  fire(quipPoke, 'click')
+  check(quipText.textContent !== saidFirst && quipLines.includes(quipText.textContent),
+    'pulsarla pasa al siguiente apunte, y sigue siendo suyo')
+
+  const quipAudio = quipRow.querySelector('[data-bx-clip-audio]')
+  fire(quipAudio, 'play')
+  check(quip.classList.contains('is-listening')
+    && quipText.textContent === quipPoke.dataset.listen,
+    'al sonar la muestra se calla y se pone a escuchar')
+
+  fire(quipAudio, 'pause')
+  check(!quip.classList.contains('is-listening') && quipLines.includes(quipText.textContent),
+    'al parar vuelve a su apunte')
+
+  /* El Corne no tiene toma ni apuntes: es el control de que el adorno depende
+     del contenido y no aparece porque sí. */
+  check(document.querySelector('[data-bx-build="corne-v4"] [data-bx-quip]') === null
+    && document.querySelectorAll('[data-bx-quip]').length === 3,
+    'la mascota asoma en los tres builds grabados y en ninguno más')
+
+  console.log('\n· Tarjeta como objetivo')
+  const neoCard = document.querySelector('[data-bx-open="neo65"].bx-build-card')
+  const neoCardPhoto = neoCard.querySelector('.bx-card-photo, .bx-card-slide')
+  const neoCardTitle = neoCard.querySelector('.bx-card-id strong')
+
+  fire(neoCardPhoto, 'click')
+  check(buildViewer.hidden === false && document.querySelector('[data-bx-build="neo65"]').hidden === false,
+    'pulsar la fotografía abre el build, sin pasar por el botón')
+  fire(buildClose, 'click')
+
+  fire(neoCardTitle, 'click')
+  check(buildViewer.hidden === false && document.querySelector('[data-bx-build="neo65"]').hidden === false,
+    'pulsar el título también entra')
+  fire(buildClose, 'click')
+
+  /* Los mandos del carrusel siguen siendo suyos: mueven la foto y no abren nada. */
+  const evoCardNext = evoCarousel.querySelector('[data-bx-card-next]')
+  fire(evoCardNext, 'click')
+  check(buildViewer.hidden === true && evoCounter.textContent.trim() === '02 / 02',
+    'la flecha del carrusel pasa de foto sin abrir el build')
+
+  fire(evoCarousel.querySelector('[data-bx-card-dot="0"]'), 'click')
+  check(buildViewer.hidden === true && evoCounter.textContent.trim() === '01 / 02',
+    'los puntos del carrusel tampoco abren el build')
 
   console.log('\n· Contacto')
   check(el('copy-mail').hidden === false, 'el botón de copiar email lo revela el JS')

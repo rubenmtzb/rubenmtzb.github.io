@@ -34,3 +34,7 @@ dist-ssr
 *.MOV
 *.mp4
 *.heic
+# Tomas de sonido sin cortar, en la raíz del proyecto. Los cortes servidos
+# viven en public/keyboards/sound/ y sí se versionan.
+/*.m4a
+/*.wav

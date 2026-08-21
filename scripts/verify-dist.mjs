@@ -328,6 +328,116 @@ const css = existsSync(cssDir)
 assert(/\.reveal\{[^}]*opacity:1/.test(css.replace(/\s/g, '')), '.reveal por defecto es opacity:1')
 assert(css.includes('prefers-reduced-motion'), 'prefers-reduced-motion contemplado')
 
+/* ---------- Muestras de sonido ---------- */
+/*
+ * Cada muestra vive dentro de la ficha de su build, no en un banco aparte:
+ * quien entra en un teclado tiene ahí el orden de montaje y el sonido. Se
+ * comprueba justamente eso —que el corte cuelgue del panel correcto— además
+ * de que los dos formatos existan de verdad en dist. Un corte que se renombra
+ * en el JSON y no se sustituye en public/ solo se nota al pulsar play, que es
+ * justo lo que no ve nadie al desplegar.
+ */
+console.log('\n· Muestras de sonido')
+const soundBuilds = JSON.parse(readFileSync('src/content/keyboards.json', 'utf8'))
+const withSound = soundBuilds.filter((b) => b.sound)
+
+for (const page of EXPECTED.filter((p) => p.kind === 'v2')) {
+  const { document } = parseHTML(read(page.file))
+  assert(
+    document.querySelectorAll('[data-bx-clip]').length === withSound.length,
+    `${page.path} publica ${withSound.length} muestra(s), una por build grabado`,
+  )
+  /* Ninguna muestra puede quedarse suelta en la galería: todas dentro de su ficha. */
+  assert(
+    [...document.querySelectorAll('[data-bx-clip]')].every((clip) => clip.closest('[data-bx-build]')),
+    `${page.path} sirve cada muestra dentro del panel de su build`,
+  )
+
+  for (const build of soundBuilds) {
+    const panel = document.querySelector(`[data-bx-build="${build.key}"]`)
+    const row = panel?.querySelector('[data-bx-clip]')
+
+    if (!build.sound) {
+      assert(
+        !row && Boolean(panel?.querySelector('.bx-clip-note')),
+        `${build.name}: sin toma grabada, su ficha lo dice en lugar de callarse`,
+      )
+      continue
+    }
+
+    assert(
+      row?.dataset.bxClip === build.sound.clip,
+      `${build.name}: su ficha sirve su propio corte (${build.sound.clip})`,
+    )
+    const sources = [...(row?.querySelectorAll('source') ?? [])].map((el) => el.getAttribute('src'))
+    assert(
+      sources.length === 2 && sources.every((src) => existsSync(join(DIST, src))),
+      `${build.name}: los dos formatos del corte existen en dist (${sources.join(', ')})`,
+    )
+    assert(
+      Number(row?.dataset.duration) === build.sound.duration,
+      `${build.name}: la duración del marcado coincide con la del contenido`,
+    )
+    /* La onda se dibuja de una vez: una barra por altura declarada. */
+    const segments = row?.querySelector('.bx-clip-wave path')?.getAttribute('d')?.match(/M/g)?.length ?? 0
+    assert(
+      segments === build.sound.peaks.length,
+      `${build.name}: la onda dibuja las ${build.sound.peaks.length} barras del contenido`,
+    )
+    /* El tramo de referencia va antes del tecleo, nunca más allá. */
+    const ref = Number((row?.getAttribute('style') ?? '').match(/--ref:([\d.]+)%/)?.[1])
+    assert(
+      ref > 0 && ref < 100 && Math.abs(ref - (build.sound.typingFrom / build.sound.duration) * 100) < 0.02,
+      `${build.name}: el tramo de referencia marca los chasquidos (${ref}%)`,
+    )
+  }
+
+  /* Con `preload="none"` la portada no se lleva ni un byte de audio hasta que
+     alguien pulsa: es lo que permite servir las muestras ya en el HTML. */
+  const players = [...document.querySelectorAll('audio')]
+  assert(
+    players.length === withSound.length && players.every((el) => el.getAttribute('preload') === 'none'),
+    `${page.path} no precarga ninguna muestra`,
+  )
+
+  /*
+   * La mascota solo asoma donde el contenido lo dice. Es un adorno, pero uno
+   * que afirma algo —por qué ese build suena así— y no puede aparecer en un
+   * teclado que no lo haya declarado.
+   */
+  const quipBuilds = soundBuilds.filter((b) => b.sound?.quips)
+  assert(
+    document.querySelectorAll('[data-bx-quip]').length === quipBuilds.length,
+    `${page.path} asoma la mascota en ${quipBuilds.length} build(s), los montados para el silencio`,
+  )
+  for (const build of soundBuilds) {
+    const panel = document.querySelector(`[data-bx-build="${build.key}"]`)
+    const quip = panel?.querySelector('[data-bx-quip]')
+    if (!build.sound?.quips) {
+      assert(!quip, `${build.name}: sin apuntes declarados, no asoma nadie`)
+      continue
+    }
+    const lines = build.sound.quips[page.lang]
+    const shipped = JSON.parse(quip?.querySelector('[data-bx-quip-next]')?.dataset.quips ?? '[]')
+    assert(
+      shipped.length === lines.length && shipped.every((line, i) => line === lines[i]),
+      `${build.name}: viajan sus ${lines.length} apuntes en ${page.lang}`,
+    )
+    assert(
+      quip?.querySelector('[data-bx-quip-text]')?.textContent?.trim() === lines[0],
+      `${build.name}: el bocadillo se sirve escrito, no en blanco`,
+    )
+  }
+
+  /* La tarjeta entera abre el build; el botón sigue siendo el objetivo del teclado. */
+  const cards = [...document.querySelectorAll('.bx-build-card')]
+  assert(
+    cards.length > 0 && cards.every((card) => card.dataset.bxOpen
+      && card.querySelector(`button[data-bx-open="${card.dataset.bxOpen}"]`)),
+    `${page.path} deja la tarjeta entera abriendo el build, con su botón dentro`,
+  )
+}
+
 /* ---------- Resultado ---------- */
 console.log(`\n${'─'.repeat(52)}`)
 if (failures === 0) {
