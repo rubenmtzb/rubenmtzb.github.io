@@ -510,8 +510,12 @@ function suite(page, dom) {
     && evoPanel.querySelectorAll('.bx-model-key.is-evo-red').length === 3
     && evoPanel.querySelectorAll('.bx-evo-grille').length === 2
     && (evoPanel.textContent.includes('factory preassembled') || evoPanel.textContent.includes('premontado de fábrica'))
-    && (evoPanel.textContent.includes('option unrecorded') || evoPanel.textContent.includes('opción no registrada')),
-  'el detalle EVO75 conserva el colorway real, declara el estado de fábrica y no inventa la variante interna')
+    /* La pareja interna dejó de ser una incógnita: se nombra la montada y ya
+       no se ofrece la alternativa como si siguiera sin saberse. */
+    && evoPanel.textContent.includes('Neo Rye')
+    && (evoPanel.textContent.includes('polypropylene') || evoPanel.textContent.includes('polipropileno'))
+    && !/unrecorded|no registrad|Amber/i.test(evoPanel.textContent),
+  'el detalle EVO75 conserva el colorway real, declara el estado de fábrica y nombra la pareja montada')
   fire(buildClose, 'click')
 
   fire(corneBuildOpen, 'click')

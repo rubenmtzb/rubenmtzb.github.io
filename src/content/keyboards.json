@@ -602,15 +602,15 @@
           "es": "SWITCHES LINEALES"
         },
         "spec": {
-          "en": "Stock pair: Amber with FR4 or Rye with PP · fitted option not recorded",
-          "es": "Pareja stock: Amber con FR4 o Rye con PP · variante montada no registrada"
+          "en": "Keygeek Neo Rye · 36g linear, factory lubed",
+          "es": "Keygeek Neo Rye · lineales de 36g, lubricados de fábrica"
         },
-        "color": "#d18a38",
+        "color": "#a89684",
         "z": 30,
         "exploded": 265,
         "source": {
-          "label": "EvoWorks",
-          "href": "https://lumekeebs.com/products/evoworks-evo75-keyboard"
+          "label": "Keygeek Rye",
+          "href": "https://divinikey.com/products/keygeek-x-evoworks-rye-linear-switches"
         }
       },
       {
@@ -620,8 +620,8 @@
           "es": "PLACA FLEX"
         },
         "spec": {
-          "en": "Stock option: FR4 or polypropylene · paired to the switches",
-          "es": "Opción stock: FR4 o polipropileno · emparejada con los switches"
+          "en": "Polypropylene · softer bottom-out, paired to the Rye",
+          "es": "Polipropileno · fondo más blando, emparejada con los Rye"
         },
         "color": "#d2d0c7",
         "z": 20,
@@ -773,12 +773,12 @@
       },
       {
         "label": {
-          "en": "Stock pairing",
-          "es": "Pareja stock"
+          "en": "Switches / plate",
+          "es": "Switches / placa"
         },
         "value": {
-          "en": "PP + Rye / FR4 + Amber · option unrecorded",
-          "es": "PP + Rye / FR4 + Amber · opción no registrada"
+          "en": "Keygeek Neo Rye 36g + polypropylene",
+          "es": "Keygeek Neo Rye 36g + polipropileno"
         }
       },
       {
