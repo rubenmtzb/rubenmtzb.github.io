@@ -266,6 +266,47 @@ for (const asset of [
   assert(existsSync(join(DIST, asset)), `/${asset} preservado`)
 }
 
+/* ---------- Presupuesto de peso ---------- */
+/*
+ * Dos techos, y los dos existen porque se rebasaron de verdad.
+ *
+ * El primero: una foto del archivo llegó a servirse como PNG sin pérdida de
+ * un megabyte para una tarjeta de 340 px. Ningún corte tiene por qué pesar
+ * medio mega; si vuelve a pasar, no se despliega.
+ *
+ * El segundo: los modelos 3D escribían la posición de cada tecla en un
+ * atributo `style`, repetida en cada capa, y eran 213 kB de HTML. El límite
+ * no mide el tamaño de la página —el contenido puede crecer— sino cuánta
+ * presentación viaja repetida en el marcado en lugar de vivir en una hoja
+ * de estilo.
+ */
+console.log('\n· Presupuesto')
+const MAX_IMAGE_BYTES = 500 * 1024
+const MAX_INLINE_STYLE_BYTES = 32 * 1024
+
+const assetDir = join(DIST, '_astro')
+const oversized = existsSync(assetDir)
+  ? readdirSync(assetDir)
+    .filter((f) => /\.(png|jpe?g|webp|avif|gif)$/i.test(f))
+    .map((f) => ({ f, size: statSync(join(assetDir, f)).size }))
+    .filter((entry) => entry.size > MAX_IMAGE_BYTES)
+  : []
+assert(
+  oversized.length === 0,
+  `ningún corte de imagen supera ${MAX_IMAGE_BYTES / 1024} kB${
+    oversized.length ? ` — se pasan: ${oversized.map((e) => `${e.f} (${Math.round(e.size / 1024)} kB)`).join(', ')}` : ''
+  }`,
+)
+
+for (const page of EXPECTED) {
+  const inline = [...read(page.file).matchAll(/\sstyle="([^"]*)"/g)]
+    .reduce((total, match) => total + match[1].length, 0)
+  assert(
+    inline <= MAX_INLINE_STYLE_BYTES,
+    `${page.path} lleva ${Math.round(inline / 1024)} kB de estilo en línea (máximo ${MAX_INLINE_STYLE_BYTES / 1024} kB)`,
+  )
+}
+
 /* ---------- CSS: el estado por defecto del revelado es visible ---------- */
 console.log('\n· Revelado')
 const cssDir = join(DIST, '_astro')
