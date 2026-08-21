@@ -2073,7 +2073,7 @@ function initContactSignal() {
   if (!target) return
 
   const message = target.dataset.contactMessage ?? target.textContent ?? ''
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+  if (reduce) return
 
   let hasPlayed = false
   const play = () => {
