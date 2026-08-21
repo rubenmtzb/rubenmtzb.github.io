@@ -1,6 +1,7 @@
 ---
 import Seo from '../components/Seo.astro'
 import FontPreload from '../components/FontPreload.astro'
+import Enhancement from '../components/Enhancement.astro'
 import Nav from '../components/v2/Nav.astro'
 import Identity from '../components/v2/Identity.astro'
 import Work from '../components/v2/Work.astro'
@@ -21,7 +22,7 @@ const cvPath = lang === 'es' ? '/es/cv/' : '/cv/'
   <head>
     <Seo pageKey={pageKey} lang={lang} pageType="ProfilePage" />
     <FontPreload />
-    <script is:inline>document.documentElement.classList.add('js')</script>
+    <Enhancement />
   </head>
   <body>
     <a class="skip-link" href="#main">{t(lang, 'nav.skip')}</a>

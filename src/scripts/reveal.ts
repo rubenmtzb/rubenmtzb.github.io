@@ -14,6 +14,12 @@ export function revealOnScroll({ reduce, rootMargin, threshold }: {
   rootMargin: string
   threshold: number
 }) {
+  /*
+   * Señal para la red de seguridad del <head>: a partir de aquí el revelado
+   * tiene quien lo active, así que no hace falta que se revele solo.
+   */
+  document.documentElement.classList.add('enhanced')
+
   const targets = document.querySelectorAll<HTMLElement>('.reveal')
 
   if (reduce || !('IntersectionObserver' in window)) {

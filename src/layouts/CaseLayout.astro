@@ -1,6 +1,7 @@
 ---
 import Seo from '../components/Seo.astro'
 import FontPreload from '../components/FontPreload.astro'
+import Enhancement from '../components/Enhancement.astro'
 import CaseStudy from '../components/CaseStudy.astro'
 import Footer from '../components/v2/Footer.astro'
 import Icon from '../components/Icon.astro'
@@ -19,7 +20,7 @@ const homePath = lang === 'es' ? '/es/' : '/'
   <head>
     <Seo pageKey={pageKey} lang={lang} pageType="WebPage" />
     <FontPreload />
-    <script is:inline>document.documentElement.classList.add('js')</script>
+    <Enhancement />
   </head>
   <body>
     <a class="skip-link" href="#main">{t(lang, 'nav.skip')}</a>

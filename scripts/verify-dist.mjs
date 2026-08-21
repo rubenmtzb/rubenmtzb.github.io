@@ -222,6 +222,18 @@ for (const page of EXPECTED) {
   }
   const langLink = [...noJs.querySelectorAll('a[rel=alternate][hreflang]')]
   assert(langLink.length >= 1, 'selector de idioma es un enlace real')
+
+  /*
+   * 13. La marca `js` es la que oculta el revelado hasta que hay JavaScript
+   * para devolverlo. Ninguna página puede declararla sin traer también la red
+   * que lo revela si el bundle no llega a ejecutarse: sin ella, un fichero
+   * perdido deja la portada en blanco.
+   */
+  const marksJs = html.includes("classList.add('js')")
+  assert(
+    !marksJs || html.includes("classList.contains('enhanced')"),
+    'la marca js viaja con su red de seguridad para el revelado',
+  )
 }
 
 /* ---------- 6. Sitemap ---------- */
