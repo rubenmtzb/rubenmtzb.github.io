@@ -38,7 +38,7 @@ const memoryCache: Record<number, ParticleRaw[]> = {}
 /** Cuerpo del glifo según el lado del retrato. Lo usan el muestreo y el pintado. */
 const fontFor = (size: number) => (size <= 230 ? 4.8 : size <= 280 ? 5.4 : size <= 320 ? 6.2 : 7.2)
 
-export const sizeFor = (w: number) => {
+const sizeFor = (w: number) => {
   if (w <= 400) return Math.min(210, Math.round(w - 56))
   if (w <= 520) return 230
   if (w <= 768) return 260

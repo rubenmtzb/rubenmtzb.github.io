@@ -174,7 +174,7 @@ type Period = { start: string; end: string | null }
  * Genérico: sirve para la antigüedad en un puesto, para la trayectoria
  * completa o para cualquier subconjunto que se le pase.
  */
-export function coveredMonths(periods: Period[]): number {
+function coveredMonths(periods: Period[]): number {
   if (periods.length === 0) return 0
   const idx = (d: Date) => d.getFullYear() * 12 + d.getMonth()
   const now = idx(new Date())
@@ -227,8 +227,8 @@ export const withYears = (text: string, phrase: string) => text.replaceAll('{yea
 /* JSON-LD — generado, nunca escrito a mano                            */
 /* ------------------------------------------------------------------ */
 
-export const PERSON_ID = `${SITE}/#person`
-export const WEBSITE_ID = `${SITE}/#website`
+const PERSON_ID = `${SITE}/#person`
+const WEBSITE_ID = `${SITE}/#website`
 
 type JsonLdArgs = {
   lang: Lang

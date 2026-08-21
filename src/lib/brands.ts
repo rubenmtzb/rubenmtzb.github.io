@@ -18,7 +18,7 @@ export interface CertBrand {
 }
 
 /** Aspecto de una marca todavía sin identidad propia en el registro. */
-export const NEUTRAL_BRAND: CertBrand = {
+const NEUTRAL_BRAND: CertBrand = {
   bg: 'rgba(91, 155, 255, 0.12)',
   text: '#5b9bff',
   border: 'rgba(91, 155, 255, 0.35)',
