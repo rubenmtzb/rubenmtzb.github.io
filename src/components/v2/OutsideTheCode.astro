@@ -172,8 +172,13 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
                 role="tab"
                 aria-selected="true"
                 aria-controls="kb-panel-interactive"
-                class="kb-mode-pill active flex flex-col items-center justify-center py-2 px-1 rounded-lg font-mono text-[0.72rem] transition-all"
+                class="kb-mode-pill is-speed active flex flex-col items-center justify-center py-2 px-1 rounded-lg font-mono text-[0.72rem] transition-all"
               >
+                <i class="kb-pill-fx" aria-hidden="true">
+                  <svg class="kb-bolt" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M14.615 1.595a.75.75 0 0 1 .359.852L12.982 9.75h7.268a.75.75 0 0 1 .548 1.262l-10.5 11.25a.75.75 0 0 1-1.272-.71l1.992-7.302H3.75a.75.75 0 0 1-.548-1.262l10.5-11.25a.75.75 0 0 1 .913-.143Z"></path>
+                  </svg>
+                </i>
                 <span class="text-sm mb-0.5">⚡</span>
                 <span class="font-semibold">{lang === 'es' ? 'Speed Trial' : 'Speed Trial'}</span>
               </button>
@@ -184,8 +189,11 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
                 aria-selected="false"
                 aria-controls="kb-panel-interactive"
                 tabindex="-1"
-                class="kb-mode-pill flex flex-col items-center justify-center py-2 px-1 rounded-lg font-mono text-[0.72rem] transition-all"
+                class="kb-mode-pill is-sim flex flex-col items-center justify-center py-2 px-1 rounded-lg font-mono text-[0.72rem] transition-all"
               >
+                <i class="kb-pill-fx" aria-hidden="true">
+                  <b></b><b></b><b></b><b></b><b></b>
+                </i>
                 <span class="text-sm mb-0.5">⌨️</span>
                 <span>{lang === 'es' ? 'Simulador' : 'Free Sim'}</span>
               </button>
@@ -196,8 +204,11 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
                 aria-selected="false"
                 aria-controls="kb-panel-photos"
                 tabindex="-1"
-                class="kb-mode-pill flex flex-col items-center justify-center py-2 px-1 rounded-lg font-mono text-[0.72rem] transition-all"
+                class="kb-mode-pill is-photos flex flex-col items-center justify-center py-2 px-1 rounded-lg font-mono text-[0.72rem] transition-all"
               >
+                <i class="kb-pill-fx" aria-hidden="true">
+                  <b></b><b></b><b></b><b></b>
+                </i>
                 <span class="text-sm mb-0.5">📸</span>
                 <span>{lang === 'es' ? 'Fotos Build' : 'Build Photos'}</span>
               </button>

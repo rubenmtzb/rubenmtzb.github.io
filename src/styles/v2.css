@@ -992,6 +992,8 @@ html:not(.js) .moment-card {
   box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.7);
 }
 .kb-mode-pill {
+  position: relative;
+  overflow: hidden;
   color: var(--fg-3);
   background: transparent;
   border: 1px solid transparent;
@@ -1006,6 +1008,251 @@ html:not(.js) .moment-card {
   background: var(--ink-800) !important;
   border-color: rgba(111, 227, 255, 0.4) !important;
   box-shadow: 0 0 12px rgba(111, 227, 255, 0.25) !important;
+}
+
+/*
+ * Los tres modos comparten la reacción —el borde se enciende, la pastilla se
+ * levanta un pelo— y se separan en el gesto: cada uno anima aquello que hace.
+ * El adorno vive en una capa propia bajo el texto, sin puntero y oculto a la
+ * lectura asistida: la pastilla sigue siendo un `tab` y nada más.
+ */
+.kb-mode-pill {
+  transition: color 0.25s ease, background 0.25s ease, border-color 0.25s ease,
+    box-shadow 0.25s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.kb-mode-pill:hover,
+.kb-mode-pill:focus-visible {
+  border-color: rgba(111, 227, 255, 0.45);
+  box-shadow: 0 0 16px -4px rgba(111, 227, 255, 0.5);
+  transform: translateY(-1px);
+}
+.kb-mode-pill > span {
+  position: relative;
+  z-index: 1;
+}
+/* El rótulo se enciende sin ocupar más: el ancho de la pastilla no se mueve. */
+.kb-mode-pill > span:last-child {
+  transition: color 0.25s ease, text-shadow 0.25s ease;
+}
+.kb-mode-pill:hover > span:last-child,
+.kb-mode-pill:focus-visible > span:last-child {
+  color: var(--cyan);
+  text-shadow: 0 0 10px rgba(111, 227, 255, 0.55);
+}
+.kb-pill-fx {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* ---- Speed Trial: la descarga ---- */
+.kb-bolt {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2rem;
+  height: 2rem;
+  color: var(--cyan);
+  opacity: 0;
+  filter: drop-shadow(0 0 7px var(--cyan));
+  transform: translate(-50%, -50%) rotate(-9deg) scale(0.8);
+}
+/* Golpea, parpadea como un arco y descansa antes de volver a caer. */
+@keyframes kb-strike {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(-9deg) scale(0.8);
+  }
+  6% {
+    opacity: 0.38;
+    transform: translate(-50%, -50%) rotate(-9deg) scale(1.1);
+  }
+  10% {
+    opacity: 0.12;
+  }
+  16% {
+    opacity: 0.3;
+    transform: translate(-50%, -50%) rotate(-9deg) scale(1);
+  }
+  30% {
+    opacity: 0.2;
+  }
+  46% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(-9deg) scale(1.05);
+  }
+}
+/* El destello que deja la descarga en la pastilla. */
+@keyframes kb-flash {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translateX(-120%) skewX(-18deg);
+  }
+  8% {
+    opacity: 0.85;
+  }
+  34% {
+    opacity: 0;
+    transform: translateX(120%) skewX(-18deg);
+  }
+}
+.kb-mode-pill.is-speed .kb-pill-fx::before {
+  content: '';
+  position: absolute;
+  inset: 0 -30%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(111, 227, 255, 0.28),
+    rgba(190, 240, 255, 0.5),
+    rgba(111, 227, 255, 0.28),
+    transparent
+  );
+  opacity: 0;
+}
+.kb-mode-pill.is-speed:hover .kb-bolt,
+.kb-mode-pill.is-speed:focus-visible .kb-bolt {
+  animation: kb-strike 1.9s cubic-bezier(0.3, 0, 0.2, 1) infinite;
+}
+.kb-mode-pill.is-speed:hover .kb-pill-fx::before,
+.kb-mode-pill.is-speed:focus-visible .kb-pill-fx::before {
+  animation: kb-flash 1.9s cubic-bezier(0.3, 0, 0.2, 1) infinite;
+}
+
+/* ---- Free Sim: la fila que se teclea ---- */
+.kb-mode-pill.is-sim .kb-pill-fx b {
+  position: absolute;
+  bottom: 0.32rem;
+  width: 0.34rem;
+  height: 0.34rem;
+  border-radius: 1.5px;
+  background: var(--cyan);
+  opacity: 0.16;
+  transform-origin: bottom center;
+}
+.kb-mode-pill.is-sim .kb-pill-fx b:nth-child(1) { left: calc(50% - 1.05rem); }
+.kb-mode-pill.is-sim .kb-pill-fx b:nth-child(2) { left: calc(50% - 0.53rem); }
+.kb-mode-pill.is-sim .kb-pill-fx b:nth-child(3) { left: calc(50% - 0.17rem); }
+.kb-mode-pill.is-sim .kb-pill-fx b:nth-child(4) { left: calc(50% + 0.35rem); }
+.kb-mode-pill.is-sim .kb-pill-fx b:nth-child(5) { left: calc(50% + 0.87rem); }
+/* Cada tecla baja y se enciende; el desfase hace la onda de izquierda a derecha. */
+@keyframes kb-keypress {
+  0%,
+  62%,
+  100% {
+    opacity: 0.16;
+    transform: translateY(0) scaleY(1);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(2px) scaleY(0.6);
+    box-shadow: 0 0 8px var(--cyan);
+  }
+  30% {
+    opacity: 0.42;
+    transform: translateY(0) scaleY(1);
+  }
+}
+.kb-mode-pill.is-sim:hover .kb-pill-fx b,
+.kb-mode-pill.is-sim:focus-visible .kb-pill-fx b {
+  animation: kb-keypress 1.5s ease-out infinite;
+}
+.kb-mode-pill.is-sim:hover .kb-pill-fx b:nth-child(2),
+.kb-mode-pill.is-sim:focus-visible .kb-pill-fx b:nth-child(2) { animation-delay: 0.09s; }
+.kb-mode-pill.is-sim:hover .kb-pill-fx b:nth-child(3),
+.kb-mode-pill.is-sim:focus-visible .kb-pill-fx b:nth-child(3) { animation-delay: 0.18s; }
+.kb-mode-pill.is-sim:hover .kb-pill-fx b:nth-child(4),
+.kb-mode-pill.is-sim:focus-visible .kb-pill-fx b:nth-child(4) { animation-delay: 0.27s; }
+.kb-mode-pill.is-sim:hover .kb-pill-fx b:nth-child(5),
+.kb-mode-pill.is-sim:focus-visible .kb-pill-fx b:nth-child(5) { animation-delay: 0.36s; }
+
+/* ---- Build Photos: el visor que encuadra y dispara ---- */
+.kb-mode-pill.is-photos .kb-pill-fx b {
+  position: absolute;
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 1px solid var(--cyan);
+  opacity: 0;
+}
+.kb-mode-pill.is-photos .kb-pill-fx b:nth-child(1) { top: 0.3rem; left: 0.3rem; border-width: 1px 0 0 1px; }
+.kb-mode-pill.is-photos .kb-pill-fx b:nth-child(2) { top: 0.3rem; right: 0.3rem; border-width: 1px 1px 0 0; }
+.kb-mode-pill.is-photos .kb-pill-fx b:nth-child(3) { bottom: 0.3rem; left: 0.3rem; border-width: 0 0 1px 1px; }
+.kb-mode-pill.is-photos .kb-pill-fx b:nth-child(4) { bottom: 0.3rem; right: 0.3rem; border-width: 0 1px 1px 0; }
+/* Las esquinas entran desde fuera y se quedan: el encuadre queda hecho. */
+@keyframes kb-frame {
+  0% {
+    opacity: 0;
+    transform: translate(var(--kb-fx), var(--kb-fy)) scale(0.7);
+  }
+  100% {
+    opacity: 0.85;
+    transform: translate(0, 0) scale(1);
+  }
+}
+/* Un disparo de flash, una sola vez por acercamiento. */
+@keyframes kb-shutter {
+  0% { opacity: 0; }
+  22% { opacity: 0.5; }
+  100% { opacity: 0; }
+}
+.kb-mode-pill.is-photos .kb-pill-fx::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 90% at 50% 50%, rgba(214, 244, 255, 0.55), transparent 62%);
+  opacity: 0;
+}
+.kb-mode-pill.is-photos:hover .kb-pill-fx b,
+.kb-mode-pill.is-photos:focus-visible .kb-pill-fx b {
+  animation: kb-frame 0.34s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.kb-mode-pill.is-photos .kb-pill-fx b:nth-child(1) { --kb-fx: -5px; --kb-fy: -5px; }
+.kb-mode-pill.is-photos .kb-pill-fx b:nth-child(2) { --kb-fx: 5px; --kb-fy: -5px; }
+.kb-mode-pill.is-photos .kb-pill-fx b:nth-child(3) { --kb-fx: -5px; --kb-fy: 5px; }
+.kb-mode-pill.is-photos .kb-pill-fx b:nth-child(4) { --kb-fx: 5px; --kb-fy: 5px; }
+.kb-mode-pill.is-photos:hover .kb-pill-fx b:nth-child(2),
+.kb-mode-pill.is-photos:focus-visible .kb-pill-fx b:nth-child(2) { animation-delay: 0.04s; }
+.kb-mode-pill.is-photos:hover .kb-pill-fx b:nth-child(3),
+.kb-mode-pill.is-photos:focus-visible .kb-pill-fx b:nth-child(3) { animation-delay: 0.08s; }
+.kb-mode-pill.is-photos:hover .kb-pill-fx b:nth-child(4),
+.kb-mode-pill.is-photos:focus-visible .kb-pill-fx b:nth-child(4) { animation-delay: 0.12s; }
+.kb-mode-pill.is-photos:hover .kb-pill-fx::before,
+.kb-mode-pill.is-photos:focus-visible .kb-pill-fx::before {
+  animation: kb-shutter 0.5s ease-out 0.16s 1;
+}
+
+/* El icono acompaña al gesto sin robarle protagonismo. */
+.kb-mode-pill > span:first-of-type {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.kb-mode-pill.is-speed:hover > span:first-of-type,
+.kb-mode-pill.is-speed:focus-visible > span:first-of-type { transform: scale(1.18); }
+.kb-mode-pill.is-sim:hover > span:first-of-type,
+.kb-mode-pill.is-sim:focus-visible > span:first-of-type { transform: translateY(-1px) scale(1.1); }
+.kb-mode-pill.is-photos:hover > span:first-of-type,
+.kb-mode-pill.is-photos:focus-visible > span:first-of-type { transform: scale(1.12) rotate(-4deg); }
+
+/*
+ * Con movimiento reducido se queda el cambio de estado —borde, color, brillo—
+ * y desaparece el gesto: la información no dependía de la animación.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .kb-mode-pill,
+  .kb-mode-pill > span,
+  .kb-mode-pill .kb-pill-fx b,
+  .kb-mode-pill .kb-pill-fx::before,
+  .kb-bolt {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+    transform: none !important;
+  }
+  .kb-mode-pill.is-photos:hover .kb-pill-fx b,
+  .kb-mode-pill.is-photos:focus-visible .kb-pill-fx b { opacity: 0.85; }
 }
 /* ---------------- TECLADO MECÁNICO DINÁMICO & MONKEYTYPE SPEED TRIAL ---------------- */
 #monkey-words {
