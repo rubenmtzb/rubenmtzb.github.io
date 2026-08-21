@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config'
 import tailwindcss from '@tailwindcss/vite'
+import pruneUnusedAssets from './src/integrations/prune-unused-assets'
 
 /**
  * Gramática de URLs: /[experiencia]/[idioma]/[ruta]/
@@ -22,6 +23,7 @@ export default defineConfig({
     locales: ['en', 'es'],
     routing: { prefixDefaultLocale: false },
   },
+  integrations: [pruneUnusedAssets()],
   // Tailwind es CSS puro: cero runtime de framework en el cliente.
   vite: { plugins: [tailwindcss()] },
 })
