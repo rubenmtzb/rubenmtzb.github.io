@@ -3,6 +3,7 @@ import Icon from '../Icon.astro'
 import EduProgram from './EduProgram.astro'
 import TechChip from './TechChip.astro'
 import { getProfile, getEducation, getCerts } from '../../lib/content'
+import { certBrand, institutionLogo } from '../../lib/brands'
 import { V2_ANCHOR_ALIASES, t, type Lang } from '../../i18n/ui'
 
 interface Props { lang: Lang }
@@ -37,48 +38,6 @@ const groupPeriod = (items: EduEntry[]) => {
   return `${startYear} - ${endYear}`
 }
 
-/** Instituciones sin logotipo propio verificable: se usa el icono genérico 'graduation'. */
-const ICONS_MAP: Record<string, string | undefined> = {
-  uoc: '/icons/uoc.svg',
-  'inesem-devops': '/icons/inesem.svg',
-  daw: undefined,
-  smx: undefined,
-}
-
-const BRAND_METAS: Record<string, { logo: string; bg: string; text: string; border: string; glow: string; summary: string }> = {
-  'claude-code': {
-    logo: '/icons/anthropic.svg',
-    bg: 'rgba(217, 119, 6, 0.14)',
-    text: '#fbbf24',
-    border: 'rgba(217, 119, 6, 0.4)',
-    glow: 'rgba(251, 191, 36, 0.3)',
-    summary: lang === 'es' ? 'Ingeniería de prompts avanzada, flujos agénticos y automatización de código con LLMs de Anthropic.' : 'Advanced prompt engineering, agentic workflows, and code automation with Anthropic LLMs.'
-  },
-  'python-master': {
-    logo: '/icons/udemy.svg',
-    bg: 'rgba(56, 189, 248, 0.14)',
-    text: '#38bdf8',
-    border: 'rgba(56, 189, 248, 0.4)',
-    glow: 'rgba(56, 189, 248, 0.3)',
-    summary: lang === 'es' ? 'Programación orientada a objetos, scripting de automatización, análisis de datos y control de versiones con Git.' : 'Object-oriented programming, automation scripting, data analysis, and Git workflows.'
-  },
-  'javascript-master': {
-    logo: '/icons/udemy.svg',
-    bg: 'rgba(250, 204, 21, 0.14)',
-    text: '#facc15',
-    border: 'rgba(250, 204, 21, 0.4)',
-    glow: 'rgba(250, 204, 21, 0.3)',
-    summary: lang === 'es' ? 'JavaScript moderno (ES6+), programación asíncrona, promesas, manipulación del DOM y arquitectura SPA.' : 'Modern JavaScript (ES6+), asynchronous programming, promises, DOM manipulation, and SPA architecture.'
-  },
-  'java-junior': {
-    logo: '/icons/esplai.png',
-    bg: 'rgba(249, 115, 22, 0.14)',
-    text: '#fb923c',
-    border: 'rgba(249, 115, 22, 0.4)',
-    glow: 'rgba(249, 115, 22, 0.3)',
-    summary: lang === 'es' ? 'Fundamentos de Java empresarial, POO, estructuras de datos y desarrollo backend con control de versiones.' : 'Enterprise Java foundations, OOP, data structures, and backend development with version control.'
-  },
-}
 ---
 
 <section id="about" class="band border-t border-[color:var(--line-soft)]">
@@ -218,9 +177,9 @@ const BRAND_METAS: Record<string, { logo: string; bg: string; text: string; bord
               role="tab"
               aria-selected={idx === 0 ? 'true' : 'false'}
             >
-              {ICONS_MAP[head.key] ? (
+              {institutionLogo(head.key) ? (
                 <span class="inline-grid h-4 w-4 shrink-0 place-items-center rounded bg-[color:var(--fg)] p-0.5">
-                  <img src={ICONS_MAP[head.key]} alt="" width="16" height="16" loading="lazy" decoding="async" class="h-full w-full object-contain" />
+                  <img src={institutionLogo(head.key)} alt="" width="16" height="16" loading="lazy" decoding="async" class="h-full w-full object-contain" />
                 </span>
               ) : (
                 <Icon name="graduation" class="h-3.5 w-3.5 text-[color:var(--blue-bright)]" />
@@ -256,9 +215,9 @@ const BRAND_METAS: Record<string, { logo: string; bg: string; text: string; bord
               <div>
                 <div class="flex flex-wrap items-start justify-between gap-3 mb-4">
                   <div class="flex items-center gap-2.5">
-                    {ICONS_MAP[head.key] ? (
+                    {institutionLogo(head.key) ? (
                       <span class="inline-grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-[color:var(--fg)] p-1.5 shadow-sm">
-                        <img src={ICONS_MAP[head.key]} alt="" width="36" height="36" loading="lazy" decoding="async" class="h-full w-full object-contain" />
+                        <img src={institutionLogo(head.key)} alt="" width="36" height="36" loading="lazy" decoding="async" class="h-full w-full object-contain" />
                       </span>
                     ) : (
                       <Icon name="graduation" class="h-7 w-7 shrink-0 text-[color:var(--blue-bright)]" />
@@ -339,7 +298,7 @@ const BRAND_METAS: Record<string, { logo: string; bg: string; text: string; bord
       <!-- Selector de Certificados en Pills -->
       <div class="mb-5 flex flex-wrap gap-2" role="tablist" aria-label={t(lang, 'a11y.certTabs')}>
         {certs.map((cert, idx) => {
-          const meta = BRAND_METAS[cert.key] || { logo: '●', bg: 'transparent', text: 'var(--cyan)', border: 'var(--line)', glow: 'none', summary: '' }
+          const brand = certBrand(cert.key)
           return (
             <button
               type="button"
@@ -348,12 +307,12 @@ const BRAND_METAS: Record<string, { logo: string; bg: string; text: string; bord
               role="tab"
               aria-selected={idx === 0 ? 'true' : 'false'}
             >
-              {meta.logo.startsWith('/') ? (
+              {brand.logo ? (
                 <span class="inline-grid h-4 w-4 shrink-0 place-items-center rounded bg-[color:var(--fg)] p-0.5">
-                  <img src={meta.logo} alt="" width="16" height="16" loading="lazy" decoding="async" class="h-full w-full object-contain" />
+                  <img src={brand.logo} alt="" width="16" height="16" loading="lazy" decoding="async" class="h-full w-full object-contain" />
                 </span>
               ) : (
-                <span>{meta.logo}</span>
+                <span>●</span>
               )}
               <span class="font-bold">{cert.issuer}</span>
               <span class="text-[0.68rem] text-[color:var(--fg-3)]">· {cert.title.split(' ')[0]}</span>
@@ -365,7 +324,7 @@ const BRAND_METAS: Record<string, { logo: string; bg: string; text: string; bord
       <!-- Escenario del Slider de Certificaciones -->
       <div id="certs-stage" class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-6 sm:p-8 shadow-2xl min-h-[300px]">
         {certs.map((cert, idx) => {
-          const meta = BRAND_METAS[cert.key] || { logo: '●', bg: 'rgba(91, 155, 255, 0.12)', text: '#5b9bff', border: 'rgba(91, 155, 255, 0.35)', glow: 'rgba(91, 155, 255, 0.2)', summary: '' }
+          const brand = certBrand(cert.key)
           return (
             <div
               class={`cert-slide flex flex-col justify-between ${idx === 0 ? 'is-active' : ''}`}
@@ -375,17 +334,17 @@ const BRAND_METAS: Record<string, { logo: string; bg: string; text: string; bord
                 <!-- Brand Badge & Date -->
                 <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                   <div class="flex items-center gap-3">
-                    {meta.logo.startsWith('/') ? (
+                    {brand.logo ? (
                       <span class="inline-grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-[color:var(--fg)] p-1.5 shadow-sm">
-                        <img src={meta.logo} alt="" width="36" height="36" loading="lazy" decoding="async" class="h-full w-full object-contain" />
+                        <img src={brand.logo} alt="" width="36" height="36" loading="lazy" decoding="async" class="h-full w-full object-contain" />
                       </span>
                     ) : (
-                      <span class="text-3xl">{meta.logo}</span>
+                      <span class="text-3xl">●</span>
                     )}
                     <div>
                       <span
                         class="inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 text-xs font-mono font-bold"
-                        style={`background: ${meta.bg}; color: ${meta.text}; border: 1px solid ${meta.border}; box-shadow: 0 0 12px ${meta.glow};`}
+                        style={`background: ${brand.bg}; color: ${brand.text}; border: 1px solid ${brand.border}; box-shadow: 0 0 12px ${brand.glow};`}
                       >
                         <span>●</span>
                         <span>{cert.issuer}</span>
@@ -408,7 +367,7 @@ const BRAND_METAS: Record<string, { logo: string; bg: string; text: string; bord
                 </h4>
 
                 <p class="text-sm sm:text-base text-[color:var(--fg-2)] leading-relaxed mb-6 max-w-3xl">
-                  {meta.summary}
+                  {cert.summary}
                 </p>
               </div>
 

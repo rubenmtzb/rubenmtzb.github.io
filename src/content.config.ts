@@ -171,6 +171,8 @@ const certs = defineCollection({
     order: z.number().int(),
     title: z.string().min(1),
     issuer: z.string().min(1),
+    /** Qué acredita, en una frase. Vivía escrito dentro de About.astro. */
+    summary: z.string().min(1),
     date: yearMonth,
     credentialId: z.string().optional(),
     grade: z.string().optional(),
