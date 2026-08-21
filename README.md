@@ -116,7 +116,7 @@ npm run dev       # dev server
 npm run build     # production build into dist/
 npm run check     # astro check — types across .astro and .ts
 npm run verify    # assertions over the generated HTML in dist/
-npm test          # build + verify, exactly what CI runs
+npm test          # check + build + verify, exactly what CI runs
 ```
 
 ---
@@ -127,7 +127,7 @@ npm test          # build + verify, exactly what CI runs
 |------|---------|
 | **Workflow** | `.github/workflows/deploy.yml` |
 | **Trigger** | Pushes to `main` |
-| **Gate** | `npm run verify` — the deploy stops if the build breaks the contract |
+| **Gate** | `npm run check` + `npm run verify` — the deploy stops if the types or the build contract break |
 | **Output** | `dist/` |
 | **Custom domain** | `public/CNAME` |
 
