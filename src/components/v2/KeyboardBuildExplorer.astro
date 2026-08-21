@@ -341,7 +341,14 @@ const copy = {
               role="group"
               aria-label={`${copy.model} — ${build.name}`}
             >
-              <div class="bx-model" data-bx-model>
+              <!--
+                El modelo es el reflejo visual del listado de piezas, no una
+                segunda fuente: son más de mil elementos decorativos sin texto
+                —huecos, sockets, muelles, teclas— que un lector de pantalla
+                tendría que atravesar para llegar a la información, y esa
+                información ya está escrita al lado, en la lista numerada.
+              -->
+              <div class="bx-model" data-bx-model aria-hidden="true">
                 {[...build.parts].reverse().map((part, reverseIndex) => (
                   <div
                     class={`bx-layer bx-${part.id}`}
