@@ -292,7 +292,8 @@ function initProjectDeck() {
     const gap = Number.parseFloat(getComputedStyle(track).gap) || 0
     visibleCount = Math.max(1, Math.round((viewport.clientWidth + gap) / (cardWidth + gap)))
     const maxIndex = Math.max(0, cards.length - visibleCount)
-    startIndex = Math.min(startIndex, maxIndex)
+    // El índice se acota por los dos lados: nada puede dejarlo en negativo.
+    startIndex = Math.max(0, Math.min(startIndex, maxIndex))
     track.style.transform = `translateX(-${startIndex * (cardWidth + gap)}px)`
     if (counter) {
       const end = Math.min(cards.length, startIndex + visibleCount)
