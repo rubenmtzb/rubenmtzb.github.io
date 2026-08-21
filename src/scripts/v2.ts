@@ -543,6 +543,13 @@ function initMomentCards() {
   const resetBtn = document.getElementById('moments-reset-btn')
   let highestZ = 20
 
+  /*
+   * Safari y Chromium pueden iniciar el arrastre nativo de una fotografía
+   * antes de que la tarjeta supere su umbral. Ese gesto compite con Pointer
+   * Events y deja moviéndose la imagen fantasma en vez de la carta completa.
+   */
+  stage.addEventListener('dragstart', (event) => event.preventDefault())
+
   const cardStates = cards.map((card) => {
     const ox = Number.parseFloat(card.dataset.originX || '0')
     const oy = Number.parseFloat(card.dataset.originY || '0')
@@ -664,7 +671,7 @@ function initMomentCards() {
       pointerHistory = [{ x: e.clientX, y: e.clientY, time: performance.now() }]
 
       card.classList.remove('is-flying')
-      card.setPointerCapture(e.pointerId)
+      try { card.setPointerCapture(e.pointerId) } catch { /* La captura mejora el gesto, pero no debe abortarlo. */ }
     })
 
     card.addEventListener('pointermove', (e) => {

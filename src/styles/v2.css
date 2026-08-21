@@ -904,6 +904,9 @@ html:not(.js) #proj-next {
   inset: -1px;
   display: block;
   line-height: 0;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .moment-img {
@@ -911,6 +914,9 @@ html:not(.js) #proj-next {
   height: 100%;
   object-fit: cover;
   display: block;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
 }
 
 @media only screen and (max-width: 768px) {

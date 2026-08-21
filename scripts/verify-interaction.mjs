@@ -192,6 +192,42 @@ function suite(page, dom) {
     check(activeIndex() === 0, `${c.name}: da la vuelta al llegar al final`)
   }
 
+  console.log('\n· Fotos personales arrastrables')
+  const momentCard = document.querySelector('.moment-card')
+  const momentImage = momentCard?.querySelector('.moment-img')
+  const momentReset = el('moments-reset-btn')
+  const momentOrigin = momentCard?.style.transform
+  check(momentCard && momentImage?.getAttribute('draggable') === 'false',
+    'las fotografías desactivan explícitamente el arrastre nativo')
+  const nativeDrag = fire(momentImage, 'dragstart')
+  check(nativeDrag.defaultPrevented, 'el mazo cancela cualquier dragstart nativo que alcance una imagen')
+  fire(momentImage, 'pointerdown', {
+    pointerId: 7,
+    pointerType: 'mouse',
+    button: 0,
+    clientX: 100,
+    clientY: 100,
+  })
+  fire(momentCard, 'pointermove', {
+    pointerId: 7,
+    pointerType: 'mouse',
+    clientX: 112,
+    clientY: 108,
+  })
+  check(momentCard.classList.contains('is-dragging') && momentCard.style.transform !== momentOrigin,
+    'arrastrar desde la propia foto mueve la tarjeta completa')
+  fire(momentCard, 'pointerup', {
+    pointerId: 7,
+    pointerType: 'mouse',
+    clientX: 112,
+    clientY: 108,
+  })
+  check(!momentCard.classList.contains('is-dragging'), 'soltar termina el gesto sin dejar la tarjeta capturada')
+  fire(momentReset, 'click')
+  check(momentCard.style.transform === momentOrigin
+    && !momentCard.classList.contains('is-dragging', 'is-flying'),
+  'reorganizar conserva el reset original después de arrastrar una foto')
+
   console.log('\n· Pestañas de experiencia')
   const jobTabs = all('.job-tab')
   const jobPanels = all('.job-panel')
