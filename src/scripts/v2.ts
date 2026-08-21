@@ -20,6 +20,33 @@ const pad = (n: number) => String(n).padStart(2, '0')
 const clamp = (value: number, limit: number) => Math.max(-limit, Math.min(limit, value))
 
 /**
+ * Luz que sigue al puntero, compartida por el carrusel de proyectos y por
+ * las portadas del archivo de builds.
+ *
+ * `pointermove` se dispara muchas más veces de las que el navegador llega a
+ * pintar —un ratón de 1.000 Hz son diecisiete eventos por fotograma— y cada
+ * uno medía la caja del elemento, que obliga a recalcular el diseño. Aquí se
+ * agrupa en un fotograma: el efecto es el mismo y la medición pasa a ser una.
+ */
+function trackPointer(el: HTMLElement, prefix: string) {
+  let latest: PointerEvent | null = null
+  let frame: number | null = null
+
+  const paint = () => {
+    frame = null
+    if (!latest) return
+    const rect = el.getBoundingClientRect()
+    el.style.setProperty(`${prefix}-x`, `${latest.clientX - rect.left}px`)
+    el.style.setProperty(`${prefix}-y`, `${latest.clientY - rect.top}px`)
+  }
+
+  el.addEventListener('pointermove', (event) => {
+    latest = event
+    if (frame === null) frame = requestAnimationFrame(paint)
+  }, { passive: true })
+}
+
+/**
  * Gesto de deslizamiento horizontal. Lo comparten los tres carruseles,
  * así que el umbral y la dirección se definen en un único sitio.
  */
@@ -37,19 +64,34 @@ function initHeader() {
   const header = document.getElementById('site-header')
   const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-nav]'))
   const mobileNav = document.getElementById('mobile-nav') as HTMLDetailsElement | null
-  const ids = links.map((l) => l.dataset.nav).filter((id): id is string => Boolean(id))
+
+  /*
+   * Las secciones se resuelven una vez. El bucle de scroll solo mide: buscar
+   * cada `id` en el documento en cada fotograma era trabajo repetido sobre
+   * un conjunto que no cambia mientras la página está abierta.
+   */
+  const sections = [...new Set(links.map((l) => l.dataset.nav).filter((id): id is string => Boolean(id)))]
+    .map((id) => ({ id, el: document.getElementById(id) }))
+    .filter((section): section is { id: string, el: HTMLElement } => section.el !== null)
+
   let active = ''
   let frame: number | null = null
 
   const sync = () => {
     frame = null
-    header?.classList.toggle('is-scrolled', window.scrollY > 32)
+
+    /*
+     * Primero se mide y después se escribe. Al revés, el cambio de clase de
+     * la cabecera invalidaba el estilo y la primera medición tenía que
+     * recalcular el diseño entero antes de responder.
+     */
     const line = window.innerHeight * 0.34
     let next = ''
-    for (const id of ids) {
-      const el = document.getElementById(id)
-      if (el && el.getBoundingClientRect().top <= line) next = id
+    for (const section of sections) {
+      if (section.el.getBoundingClientRect().top <= line) next = section.id
     }
+
+    header?.classList.toggle('is-scrolled', window.scrollY > 32)
     if (next === active) return
     active = next
     for (const l of links) {
@@ -214,10 +256,17 @@ function initJobList() {
     })
   })
 
+  /* Recolocar el indicador mide la pestaña activa, así que un
+     redimensionado continuo costaba un recálculo de diseño por evento. */
+  let indicatorFrame: number | null = null
   window.addEventListener('resize', () => {
-    const currentTab = tabs[activeIndex]
-    if (currentTab) moveIndicator(currentTab)
-  })
+    if (indicatorFrame !== null) return
+    indicatorFrame = requestAnimationFrame(() => {
+      indicatorFrame = null
+      const currentTab = tabs[activeIndex]
+      if (currentTab) moveIndicator(currentTab)
+    })
+  }, { passive: true })
 
   selectTab(0)
 }
@@ -419,13 +468,7 @@ function initProjectCarousel() {
   const slides = Array.from(carousel.querySelectorAll<HTMLElement>('.project-slide'))
 
   /* La luz que sigue al puntero es decorativa y no forma parte del carrusel. */
-  for (const slide of slides) {
-    slide.addEventListener('pointermove', (e) => {
-      const rect = slide.getBoundingClientRect()
-      slide.style.setProperty('--project-pointer-x', `${e.clientX - rect.left}px`)
-      slide.style.setProperty('--project-pointer-y', `${e.clientY - rect.top}px`)
-    })
-  }
+  for (const slide of slides) trackPointer(slide, '--project-pointer')
 
   createCarousel({
     slides,
@@ -519,27 +562,49 @@ function initMomentCards() {
   })
 
   const maxOriginX = Math.max(1, ...cardStates.map((state) => Math.abs(state.origX)))
-  const boundsFor = (card: HTMLElement, rotation: number) => {
+
+  /**
+   * Caja de una carta y del escenario que la contiene.
+   *
+   * Ni una ni otra cambian mientras dura un gesto —girar y desplazar no
+   * alteran el flujo—, así que se miden una vez al empezar y el resto del
+   * arrastre y del lanzamiento trabaja sobre esos números. Medir dentro del
+   * bucle obligaba a recalcular el diseño en cada fotograma y por cada carta.
+   */
+  type CardBox = { width: number, height: number, stageWidth: number, stageHeight: number }
+  const measure = (card: HTMLElement): CardBox => ({
+    width: card.offsetWidth,
+    height: card.offsetHeight,
+    stageWidth: stage.clientWidth,
+    stageHeight: stage.clientHeight,
+  })
+
+  /** Mitad del hueco libre alrededor de la carta ya girada. */
+  const boundsIn = (box: CardBox, rotation: number) => {
     const radians = Math.abs(rotation % 180) * Math.PI / 180
     const cos = Math.abs(Math.cos(radians))
     const sin = Math.abs(Math.sin(radians))
-    const paintedWidth = card.offsetWidth * cos + card.offsetHeight * sin
-    const paintedHeight = card.offsetWidth * sin + card.offsetHeight * cos
+    const paintedWidth = box.width * cos + box.height * sin
+    const paintedHeight = box.width * sin + box.height * cos
     return {
-      x: Math.max(0, (stage.clientWidth - paintedWidth) / 2 - 8),
-      y: Math.max(0, (stage.clientHeight - paintedHeight) / 2 - 8),
+      x: Math.max(0, (box.stageWidth - paintedWidth) / 2 - 8),
+      y: Math.max(0, (box.stageHeight - paintedHeight) / 2 - 8),
     }
   }
 
   // Aplicar posición inicial adaptativa según ancho de pantalla
   const applyLayout = () => {
     const isMobile = window.innerWidth <= 768
-    const mobileBounds = cards[0] ? boundsFor(cards[0], 0) : { x: 0, y: 0 }
+
+    /* Se mide todo primero y se escribe después: intercalar lectura y
+       escritura forzaba un recálculo de diseño por carta. */
+    const boxes = cardStates.map((st) => measure(st.el))
+    const mobileBounds = boxes[0] ? boundsIn(boxes[0], 0) : { x: 0, y: 0 }
     const scaleFactor = isMobile ? Math.min(MOBILE_SCALE, mobileBounds.x / maxOriginX) : 1
 
-    cardStates.forEach((st) => {
+    cardStates.forEach((st, index) => {
       if (st.animId) cancelAnimationFrame(st.animId)
-      const bounds = boundsFor(st.el, st.origRot)
+      const bounds = boundsIn(boxes[index], st.origRot)
       st.x = isMobile ? Math.max(-bounds.x, Math.min(bounds.x, st.origX * scaleFactor)) : st.origX
       st.y = isMobile ? Math.max(-bounds.y, Math.min(bounds.y, st.origY * scaleFactor)) : st.origY
       st.rot = st.origRot
@@ -577,6 +642,8 @@ function initMomentCards() {
     /** Rotación al empezar el gesto: la de trabajo se deriva de ella, nunca de sí misma. */
     let startCardRot = 0
     let hasMoved = false
+    /** Medida del gesto en curso: se toma al apoyar el puntero y no se repite. */
+    let box: CardBox = measure(card)
 
     type PosSample = { x: number; y: number; time: number }
     let pointerHistory: PosSample[] = []
@@ -587,6 +654,7 @@ function initMomentCards() {
 
       isDragging = true
       hasMoved = false
+      box = measure(card)
       startPointerX = e.clientX
       startPointerY = e.clientY
       startCardX = st.x
@@ -621,7 +689,7 @@ function initMomentCards() {
         st.rot = isNarrow
           ? clamp(startCardRot + dx * 0.1, 16)
           : startCardRot + clamp(dx * 0.1, 16)
-        const bounds = boundsFor(card, st.rot)
+        const bounds = boundsIn(box, st.rot)
         st.x = isNarrow
           ? Math.max(-bounds.x, Math.min(bounds.x, startCardX + dx))
           : startCardX + dx
@@ -666,11 +734,16 @@ function initMomentCards() {
         st.vy = clamp(vy * THROW_BOOST, MAX_THROW_SPEED)
         st.rotVel = clamp(st.vx * 0.18, MAX_SPIN)
 
+        /* El vuelo entero se resuelve con la medida del gesto: dentro del
+           bucle no se vuelve a tocar el diseño, solo el transform. */
+        const isNarrow = window.innerWidth <= 768
+        const stageHalfW = (box.stageWidth || 900) / 2
+
         const animateThrow = () => {
           st.x += st.vx
           st.y += st.vy
           st.rot += st.rotVel
-          if (window.innerWidth <= 768) st.rot = clamp(st.rot, 16)
+          if (isNarrow) st.rot = clamp(st.rot, 16)
 
           // Fricción y desaceleración fluida
           st.vx *= FRICTION
@@ -678,10 +751,9 @@ function initMomentCards() {
           st.rotVel *= SPIN_FRICTION
 
           // Rebote suave en los límites del escenario
-          const stageHalfW = (stage.clientWidth || 900) / 2
-          const mobileBounds = boundsFor(card, st.rot)
-          const boundX = window.innerWidth <= 768 ? mobileBounds.x : Math.max(200, stageHalfW - 90)
-          const boundY = window.innerWidth <= 768 ? mobileBounds.y : 160
+          const mobileBounds = boundsIn(box, st.rot)
+          const boundX = isNarrow ? mobileBounds.x : Math.max(200, stageHalfW - 90)
+          const boundY = isNarrow ? mobileBounds.y : 160
 
           if (st.x > boundX) {
             st.x = boundX
@@ -1208,11 +1280,7 @@ function initKeyboardBuildExplorer() {
       event.preventDefault()
       show(index + (event.key === 'ArrowLeft' ? -1 : 1))
     })
-    carousel.addEventListener('pointermove', (event) => {
-      const rect = carousel.getBoundingClientRect()
-      carousel.style.setProperty('--bx-pointer-x', `${event.clientX - rect.left}px`)
-      carousel.style.setProperty('--bx-pointer-y', `${event.clientY - rect.top}px`)
-    })
+    trackPointer(carousel, '--bx-pointer')
     onSwipe(carousel, (direction) => show(index + direction))
     show(0)
   }

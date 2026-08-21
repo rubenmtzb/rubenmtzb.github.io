@@ -57,7 +57,11 @@ function initScrollSpy() {
   const mobileLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-nav-mobile]'))
   if (links.length === 0) return
 
-  const ids = links.map((l) => l.dataset.nav).filter((id): id is string => Boolean(id))
+  /* Las secciones se resuelven una vez: el bucle de scroll solo mide. */
+  const sections = [...new Set(links.map((l) => l.dataset.nav).filter((id): id is string => Boolean(id)))]
+    .map((id) => ({ id, el: document.getElementById(id) }))
+    .filter((section): section is { id: string, el: HTMLElement } => section.el !== null)
+
   let activeId = ''
   let navigating = false
   let frame: number | null = null
@@ -96,6 +100,19 @@ function initScrollSpy() {
 
   const sync = () => {
     frame = null
+
+    /* Se mide antes de escribir: cambiar la clase de la barra invalidaba el
+       estilo y la primera medición tenía que recalcular el diseño entero. */
+    let next = sections[0]?.id ?? ''
+    if (!navigating) {
+      const line = window.innerHeight * 0.25
+      for (const section of sections) {
+        if (section.el.getBoundingClientRect().top <= line) next = section.id
+      }
+      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 100
+      if (window.scrollY > 100 && atBottom) next = sections[sections.length - 1]?.id ?? next
+    }
+
     if (nav) {
       const scrolled = window.scrollY > 24
       nav.classList.toggle('bg-black/70', scrolled)
@@ -105,15 +122,6 @@ function initScrollSpy() {
       nav.classList.toggle('bg-black/20', !scrolled)
     }
     if (navigating) return
-
-    const line = window.innerHeight * 0.25
-    let next = ids[0]
-    for (const id of ids) {
-      const el = document.getElementById(id)
-      if (el && el.getBoundingClientRect().top <= line) next = id
-    }
-    const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 100
-    if (window.scrollY > 100 && atBottom) next = ids[ids.length - 1]
     setActive(next)
   }
 
