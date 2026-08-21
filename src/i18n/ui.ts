@@ -51,6 +51,22 @@ export const ui = {
     'nav.langNext': 'ES',
     'nav.skip': 'Skip to content',
 
+    /*
+     * Etiquetas que solo existen para la tecnología asistiva. Estaban
+     * escritas en castellano dentro del componente, así que un lector de
+     * pantalla anunciaba "Historial de empresas" en mitad de una página
+     * declarada en inglés.
+     */
+    'a11y.mainNav': 'Main',
+    'a11y.brandHome': 'Home',
+    'a11y.jobTabs': 'Employment history',
+    'a11y.eduTabs': 'Academic stages',
+    'a11y.certTabs': 'Official certifications',
+    'a11y.keyboardTabs': 'Mechanical keyboard and game',
+    'a11y.mascot': 'Killua, the pixel-art mascot of this section',
+    'a11y.repo': 'GitHub repository',
+    'a11y.paper': 'Scientific paper',
+
     'hero.viewWork': 'View my work',
     'hero.scroll': 'Scroll to about section',
 
@@ -175,6 +191,16 @@ export const ui = {
     'nav.langSwitch': 'View in English',
     'nav.langNext': 'EN',
     'nav.skip': 'Saltar al contenido',
+
+    'a11y.mainNav': 'Principal',
+    'a11y.brandHome': 'Inicio',
+    'a11y.jobTabs': 'Historial de empresas',
+    'a11y.eduTabs': 'Etapas académicas',
+    'a11y.certTabs': 'Certificaciones oficiales',
+    'a11y.keyboardTabs': 'Teclado mecánico y juego',
+    'a11y.mascot': 'Killua, la mascota en pixel art de esta sección',
+    'a11y.repo': 'Repositorio de GitHub',
+    'a11y.paper': 'Publicación científica',
 
     'hero.viewWork': 'Ver mi trabajo',
     'hero.scroll': 'Ir a la sección sobre mí',

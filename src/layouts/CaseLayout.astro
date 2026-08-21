@@ -24,7 +24,7 @@ const homePath = lang === 'es' ? '/es/' : '/'
   <body>
     <a class="skip-link" href="#main">{t(lang, 'nav.skip')}</a>
     <header class="fixed inset-x-0 top-0 z-50">
-      <nav aria-label="Principal" class="mx-auto flex w-full max-w-3xl items-center justify-between px-5 py-4 sm:px-8">
+      <nav aria-label={t(lang, 'a11y.mainNav')} class="mx-auto flex w-full max-w-3xl items-center justify-between px-5 py-4 sm:px-8">
         <a href={homePath} class="text-sm font-bold tracking-[0.3em] text-[color:var(--fg)]">RMB</a>
         <a href={other.path} hreflang={other.lang} rel="alternate"
            class="inline-flex items-center gap-1.5 text-sm text-[color:var(--fg-3)] transition hover:text-[color:var(--fg)]"

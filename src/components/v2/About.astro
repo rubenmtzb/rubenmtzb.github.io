@@ -3,7 +3,7 @@ import Icon from '../Icon.astro'
 import EduProgram from './EduProgram.astro'
 import TechChip from './TechChip.astro'
 import { getProfile, getEducation, getCerts } from '../../lib/content'
-import { V2_ANCHOR_ALIASES, type Lang } from '../../i18n/ui'
+import { V2_ANCHOR_ALIASES, t, type Lang } from '../../i18n/ui'
 
 interface Props { lang: Lang }
 const { lang } = Astro.props
@@ -207,7 +207,7 @@ const BRAND_METAS: Record<string, { logo: string; bg: string; text: string; bord
       </div>
 
       <!-- Selector de Centros / Píldoras de Progreso -->
-      <div class="mb-5 flex flex-wrap gap-2" role="tablist" aria-label="Etapas académicas">
+      <div class="mb-5 flex flex-wrap gap-2" role="tablist" aria-label={t(lang, 'a11y.eduTabs')}>
         {eduGroups.map((group, idx) => {
           const head = group.items[0]
           return (
@@ -337,7 +337,7 @@ const BRAND_METAS: Record<string, { logo: string; bg: string; text: string; bord
       </div>
 
       <!-- Selector de Certificados en Pills -->
-      <div class="mb-5 flex flex-wrap gap-2" role="tablist" aria-label="Certificaciones oficiales">
+      <div class="mb-5 flex flex-wrap gap-2" role="tablist" aria-label={t(lang, 'a11y.certTabs')}>
         {certs.map((cert, idx) => {
           const meta = BRAND_METAS[cert.key] || { logo: '●', bg: 'transparent', text: 'var(--cyan)', border: 'var(--line)', glow: 'none', summary: '' }
           return (

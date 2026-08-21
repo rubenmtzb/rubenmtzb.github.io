@@ -31,7 +31,7 @@ const badgeLabel = (badge: 'live' | 'private' | 'coming-soon') =>
         <!-- Columna Izquierda: Lista de Pestañas / Empresas -->
         <div class="lg:col-span-4">
           <p class="t-meta text-[color:var(--fg-3)] mb-4">{t(lang, 'v2.work.timeline')}</p>
-          <div id="job-tabs" class="job-tabs relative flex flex-row lg:flex-col overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 rounded-xl bg-[color:var(--ink-800)]/60 border border-[color:var(--line-soft)] p-1.5" role="tablist" aria-label="Historial de empresas">
+          <div id="job-tabs" class="job-tabs relative flex flex-row lg:flex-col overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 rounded-xl bg-[color:var(--ink-800)]/60 border border-[color:var(--line-soft)] p-1.5" role="tablist" aria-label={t(lang, 'a11y.jobTabs')}>
             <span id="job-indicator" class="job-indicator" aria-hidden="true" />
             {experience.map((item, i) => (
               <button
@@ -209,7 +209,7 @@ const badgeLabel = (badge: 'live' | 'private' | 'coming-soon') =>
                       target="_blank"
                       rel="noopener noreferrer"
                       class="flex h-11 w-11 sm:h-9 sm:w-9 items-center justify-center rounded-lg border border-white/15 bg-black/30 text-[color:var(--fg-2)] backdrop-blur-sm transition hover:border-[color:var(--cyan)] hover:text-[color:var(--cyan)] hover:-translate-y-0.5"
-                      aria-label="GitHub Repository"
+                      aria-label={t(lang, 'a11y.repo')}
                       title="GitHub"
                     >
                       <Icon name="github" class="h-4 w-4" />
@@ -243,7 +243,7 @@ const badgeLabel = (badge: 'live' | 'private' | 'coming-soon') =>
                       target="_blank"
                       rel="noopener noreferrer"
                       class="flex h-11 w-11 sm:h-9 sm:w-9 items-center justify-center rounded-lg border border-white/15 bg-black/30 text-[color:var(--fg-2)] backdrop-blur-sm transition hover:border-[color:var(--cyan)] hover:text-[color:var(--cyan)] hover:-translate-y-0.5"
-                      aria-label="Scientific Paper"
+                      aria-label={t(lang, 'a11y.paper')}
                       title="Paper"
                     >
                       <Icon name="book" class="h-4 w-4" />
