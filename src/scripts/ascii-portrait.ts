@@ -59,6 +59,24 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
   let ready = false
   const pointer = { x: OFFSCREEN, y: OFFSCREEN, tx: OFFSCREEN, ty: OFFSCREEN, active: false }
 
+  /*
+   * El puntero se anota en coordenadas de ventana y se traduce a coordenadas
+   * del retrato dentro del bucle. Medir la caja del canvas en cada
+   * `pointermove` obligaba a recalcular el diseño muchas más veces de las que
+   * el navegador llega a pintar; ahora se mide una vez por fotograma, que es
+   * la única frecuencia a la que el resultado se puede ver.
+   */
+  let pending: { x: number, y: number } | null = null
+
+  const resolvePointer = () => {
+    if (!pending) return
+    const rect = canvas.getBoundingClientRect()
+    pointer.tx = ((pending.x - rect.left) / rect.width) * size
+    pointer.ty = ((pending.y - rect.top) / rect.height) * size
+    pointer.active = true
+    pending = null
+  }
+
   const createParticlesFromRaw = (raw: ParticleRaw[]) => {
     return raw.map((p) => ({
       x: p.x + (Math.random() - 0.5) * (size * 0.7),
@@ -150,6 +168,7 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
 
+    resolvePointer()
     pointer.x += (pointer.tx - pointer.x) * 0.18
     pointer.y += (pointer.ty - pointer.y) * 0.18
 
@@ -238,25 +257,22 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
   }
 
   /* ---------- Entradas de ratón y táctil ---------- */
-  const toLocal = (clientX: number, clientY: number) => {
-    const r = canvas.getBoundingClientRect()
-    pointer.tx = ((clientX - r.left) / r.width) * size
-    pointer.ty = ((clientY - r.top) / r.height) * size
-    pointer.active = true
-  }
 
   const releasePointer = () => {
+    pending = null
     pointer.active = false
     pointer.tx = OFFSCREEN
     pointer.ty = OFFSCREEN
   }
 
-  canvas.addEventListener('pointermove', (e) => toLocal(e.clientX, e.clientY))
-  canvas.addEventListener('pointerleave', releasePointer)
+  const trackAt = (x: number, y: number) => { pending = { x, y } }
+
+  canvas.addEventListener('pointermove', (e) => trackAt(e.clientX, e.clientY), { passive: true })
+  canvas.addEventListener('pointerleave', releasePointer, { passive: true })
   canvas.addEventListener('touchmove', (e) => {
-    if (e.touches.length > 0) toLocal(e.touches[0].clientX, e.touches[0].clientY)
+    if (e.touches.length > 0) trackAt(e.touches[0].clientX, e.touches[0].clientY)
   }, { passive: true })
-  canvas.addEventListener('touchend', releasePointer)
+  canvas.addEventListener('touchend', releasePointer, { passive: true })
 
   const img = new Image()
   img.decoding = 'async'
