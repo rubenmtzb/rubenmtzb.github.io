@@ -84,12 +84,47 @@ const modelKeys = ({ rows }: typeof MODEL_LAYOUTS[keyof typeof MODEL_LAYOUTS]) =
     })
   })
 
-/** Posición de una tecla compartida por todas las capas de su propio modelo. */
-type ModelKey = ReturnType<typeof modelKeys>[number]
-const keyStyle = (key: ModelKey, layout: typeof MODEL_LAYOUTS[keyof typeof MODEL_LAYOUTS]) => {
+/**
+ * Geometría de las teclas, emitida como hoja de estilo y no como atributo
+ * `style` por elemento.
+ *
+ * Cada modelo dibuja las mismas teclas en todas sus capas —el hueco de la
+ * espuma, el socket de la PCB, el switch, la tecla—, así que la posición de
+ * la tecla 12 del EVO75 se repetía idéntica una decena de veces por panel y
+ * con toda su precisión en coma flotante. Eran 1.486 atributos y 213 kB de
+ * HTML para decir tres números por tecla. Aquí cada posición se escribe una
+ * vez por modelo y el elemento se limita a nombrarla.
+ *
+ * Solo viajan los tres valores que distinguen una tecla de otra. La altura
+ * de fila es constante dentro de un modelo, así que vive en el panel, y todo
+ * lo que se derivaba de ella —altura de tecla, de switch, de socket— lo
+ * calcula el CSS a partir de ella en lugar de recibirlo ya multiplicado.
+ */
+
+/** Cuatro decimales: sobre un modelo de 502 px son cinco milésimas de píxel. */
+const percent = (value: number) => `${Number(value.toFixed(4))}%`
+
+/** Nombre estable de la posición: lo comparten todas las capas del modelo. */
+const keyClass = (index: number) => `bx-k${index}`
+
+type Layout = typeof MODEL_LAYOUTS[keyof typeof MODEL_LAYOUTS]
+
+const layoutGeometry = (name: string, layout: Layout) => {
+  const scope = `.bx-build-panel[data-layout='${name}']`
   const rowHeight = 100 / layout.rows.length
-  return `--x:${(key.x / layout.units) * 100}%;--cx:${((key.x + key.width / 2) / layout.units) * 100}%;--y:${key.y * rowHeight}%;--cy:${(key.y + .5) * rowHeight}%;--w:${(key.width / layout.units) * 100}%;--kh:${rowHeight - 2.8}%;--sh:${rowHeight * .8}%;--sy:${rowHeight * .1}%;--soh:${rowHeight * .6}%;--soy:${rowHeight * .2}%;--kr:${key.rotation}deg`
+  const positions = modelKeys(layout).map((key, index) => {
+    const rotation = key.rotation === 0 ? '' : `;--kr:${key.rotation}deg`
+    return `${scope} .${keyClass(index)}{--x:${percent((key.x / layout.units) * 100)};`
+      + `--y:${percent(key.y * rowHeight)};`
+      + `--w:${percent((key.width / layout.units) * 100)}${rotation}}`
+  })
+  return `${scope}{--row-h:${percent(rowHeight)}}${positions.join('')}`
 }
+
+/** Solo los modelos que algún build usa de verdad: nunca hay reglas de más. */
+const KEY_GEOMETRY = [...new Set(builds.map((build) => build.layout))]
+  .map((name) => layoutGeometry(name, MODEL_LAYOUTS[name]))
+  .join('')
 
 /**
  * El escalonado de la explosión sale del orden de montaje, no de un número
@@ -177,6 +212,8 @@ const copy = {
   data-assembled={copy.assembled}
   data-exploded={copy.exploded}
 >
+  <style is:inline set:html={KEY_GEOMETRY}></style>
+
   <header class="bx-header">
     <div>
       <span class="bx-kicker">LABORATORY // BUILD ARCHIVE</span>
@@ -324,7 +361,7 @@ const copy = {
                     {part.id === 'top-case' && <i class="bx-evo-grille is-left"></i>}
                     {part.id === 'top-case' && <i class="bx-evo-grille is-right"></i>}
                     {part.id === 'mount' && Array.from({ length: 8 }, (_, index) => <i class={`bx-evo-leaf is-${index + 1}`}></i>)}
-                    {(part.id.includes('foam') || part.id === 'dampening') && keys.map((key) => <i class="bx-cutout" style={keyStyle(key, layout)}></i>)}
+                    {(part.id.includes('foam') || part.id === 'dampening') && keys.map((_key, index) => <i class={`bx-cutout ${keyClass(index)}`}></i>)}
                     {part.id === 'dampening' && <div class="bx-evo-silicone-core"></div>}
                     {part.id === 'battery' && <i class="bx-evo-cell is-left"></i>}
                     {part.id === 'battery' && <i class="bx-evo-cell is-right"></i>}
@@ -339,19 +376,16 @@ const copy = {
                     {part.id === 'feet' && Array.from({ length: 8 }, (_, index) => <i class={`bx-corne-foot is-${index + 1}`}></i>)}
                     {part.id === 'pcb' && <div class="bx-circuit bx-circuit-a"></div>}
                     {part.id === 'pcb' && <div class="bx-circuit bx-circuit-b"></div>}
-                    {part.id === 'pcb' && build.layout !== 'hhkb' && keys.map((key) => <i class="bx-socket" style={keyStyle(key, layout)}></i>)}
-                    {part.id === 'pcb' && build.layout === 'hhkb' && keys.map((key) => <i class="bx-cap-pad" style={keyStyle(key, layout)}></i>)}
-                    {part.id === 'plate' && keys.map((key) => <i class="bx-cutout" style={keyStyle(key, layout)}></i>)}
-                    {part.id === 'switches' && keys.map((key) => <i class="bx-switch" style={keyStyle(key, layout)}><b></b></i>)}
-                    {part.id === 'sliders' && keys.map((key) => <i class="bx-topre-slider" style={keyStyle(key, layout)}><b></b></i>)}
-                    {part.id === 'housing' && keys.map((key) => <i class="bx-housing-bore" style={keyStyle(key, layout)}></i>)}
-                    {part.id === 'domes' && keys.map((key) => <i class="bx-topre-dome" style={keyStyle(key, layout)}></i>)}
-                    {part.id === 'springs' && keys.map((key) => <i class="bx-topre-spring" style={keyStyle(key, layout)}></i>)}
-                    {part.id === 'keycaps' && keys.map((key) => (
-                      <i
-                        class:list={['bx-model-key', key.variant && `is-${key.variant}`]}
-                        style={keyStyle(key, layout)}
-                      >
+                    {part.id === 'pcb' && build.layout !== 'hhkb' && keys.map((_key, index) => <i class={`bx-socket ${keyClass(index)}`}></i>)}
+                    {part.id === 'pcb' && build.layout === 'hhkb' && keys.map((_key, index) => <i class={`bx-cap-pad ${keyClass(index)}`}></i>)}
+                    {part.id === 'plate' && keys.map((_key, index) => <i class={`bx-cutout ${keyClass(index)}`}></i>)}
+                    {part.id === 'switches' && keys.map((_key, index) => <i class={`bx-switch ${keyClass(index)}`}><b></b></i>)}
+                    {part.id === 'sliders' && keys.map((_key, index) => <i class={`bx-topre-slider ${keyClass(index)}`}><b></b></i>)}
+                    {part.id === 'housing' && keys.map((_key, index) => <i class={`bx-housing-bore ${keyClass(index)}`}></i>)}
+                    {part.id === 'domes' && keys.map((_key, index) => <i class={`bx-topre-dome ${keyClass(index)}`}></i>)}
+                    {part.id === 'springs' && keys.map((_key, index) => <i class={`bx-topre-spring ${keyClass(index)}`}></i>)}
+                    {part.id === 'keycaps' && keys.map((key, index) => (
+                      <i class:list={['bx-model-key', keyClass(index), key.variant && `is-${key.variant}`]}>
                         <span>{key.label}</span>
                       </i>
                     ))}
@@ -785,20 +819,25 @@ const copy = {
   .bx-pcb { background-color: #e6eaef; background-image: linear-gradient(28deg, transparent 20%, rgba(113,132,151,.25) 20% 20.5%, transparent 20.5% 48%, rgba(113,132,151,.18) 48% 48.5%, transparent 48.5%), radial-gradient(#8d98a4 1px, transparent 1px); background-size: 72px 32px, 9px 9px; box-shadow: inset 0 1px rgba(255,255,255,.85), inset 0 0 0 1px rgba(68,79,91,.32), 0 3px 0 #c5cbd3, 0 6px 0 #9ea6b0, 0 10px 12px rgba(0,0,0,.35); }
   .bx-plate { background-color: #24282f; background-image: repeating-linear-gradient(115deg, rgba(255,255,255,.035) 0 1px, transparent 1px 5px), linear-gradient(150deg, rgba(255,255,255,.08), transparent 45%); box-shadow: inset 0 1px rgba(255,255,255,.16), inset 0 0 0 1px #343942, 0 3px 0 #191c22, 0 7px 0 #0e1116, 0 11px 14px rgba(0,0,0,.42); }
 
+  /*
+   * `--x`, `--y`, `--w` y, cuando la hay, `--kr` los pone la hoja de
+   * geometría del modelo; `--row-h` la pone su panel. Todo lo demás sale de
+   * ahí: una tecla no necesita recibir cinco alturas ya multiplicadas.
+   */
   .bx-model-key, .bx-cutout, .bx-socket, .bx-switch {
     position: absolute;
     left: calc(var(--x) + .35%);
     top: calc(var(--y) + 1.4%);
     width: calc(var(--w) - .7%);
-    height: var(--kh);
+    height: calc(var(--row-h) - 2.8%);
     rotate: var(--kr, 0deg);
   }
   .bx-cutout { background: #070a10; border: 1px solid rgba(0,0,0,.82); border-radius: 1px; transform: scale(.58); box-shadow: inset 0 3px 3px #000, 0 1px rgba(255,255,255,.08); }
-  .bx-socket { height: var(--soh); top: calc(var(--y) + var(--soy)); background: linear-gradient(145deg, #30343b, #111318); border: 1px solid #080a0d; border-radius: 2px; transform: scale(.62); box-shadow: inset 0 1px rgba(255,255,255,.18), 0 2px 0 #080a0d, 0 4px 4px rgba(0,0,0,.28); }
+  .bx-socket { height: calc(var(--row-h) * .6); top: calc(var(--y) + var(--row-h) * .2); background: linear-gradient(145deg, #30343b, #111318); border: 1px solid #080a0d; border-radius: 2px; transform: scale(.62); box-shadow: inset 0 1px rgba(255,255,255,.18), 0 2px 0 #080a0d, 0 4px 4px rgba(0,0,0,.28); }
   .bx-circuit { position: absolute; height: 1px; background: #a8b1ba; transform-origin: left; opacity: .7; }
   .bx-circuit-a { width: 58%; left: 20%; top: 40%; transform: rotate(18deg); }
   .bx-circuit-b { width: 42%; left: 35%; top: 63%; transform: rotate(-14deg); }
-  .bx-switch { display: grid; place-items: center; height: var(--sh); top: calc(var(--y) + var(--sy)); transform: scale(.56); transform-style: preserve-3d; border: 1px solid rgba(87,94,104,.55); border-radius: 2px; background: linear-gradient(145deg, #fbfcfd, #d5d9df 58%, #b8bec7); box-shadow: inset 0 1px rgba(255,255,255,.95), inset 0 -2px rgba(111,119,130,.18), 0 2px 0 #c8cdd4, 0 5px 0 #9ca3ad, 0 8px 0 #777f8a, 0 12px 9px rgba(0, 0, 0, .5); }
+  .bx-switch { display: grid; place-items: center; height: calc(var(--row-h) * .8); top: calc(var(--y) + var(--row-h) * .1); transform: scale(.56); transform-style: preserve-3d; border: 1px solid rgba(87,94,104,.55); border-radius: 2px; background: linear-gradient(145deg, #fbfcfd, #d5d9df 58%, #b8bec7); box-shadow: inset 0 1px rgba(255,255,255,.95), inset 0 -2px rgba(111,119,130,.18), 0 2px 0 #c8cdd4, 0 5px 0 #9ca3ad, 0 8px 0 #777f8a, 0 12px 9px rgba(0, 0, 0, .5); }
   .bx-switch::before { content: ''; position: absolute; inset: 18%; border: 1px solid rgba(75,84,96,.35); border-radius: 1px; background: linear-gradient(145deg, rgba(255,255,255,.82), rgba(194,201,210,.6)); box-shadow: inset 0 1px rgba(255,255,255,.85), 0 2px 2px rgba(0,0,0,.18); }
   .bx-switch::after { content: ''; position: absolute; left: 13%; right: 13%; bottom: -22%; height: 24%; border-radius: 0 0 2px 2px; background: linear-gradient(180deg, #9ca4ae, #747d88); box-shadow: 0 2px 3px rgba(0,0,0,.35); }
   .bx-switch b { position: relative; z-index: 2; width: 42%; aspect-ratio: 1; border: 1px solid rgba(31,68,106,.55); border-radius: 1px; background: linear-gradient(145deg, #7db8e9, #467fbe 56%, #315f96); box-shadow: inset 0 1px rgba(255,255,255,.42), 0 2px 0 #356aa4, 0 5px 0 #244d7b, 0 7px 5px rgba(0,0,0,.38); }
@@ -857,8 +896,9 @@ const copy = {
   .bx-topre-spring,
   .bx-cap-pad {
     position: absolute;
-    left: var(--cx);
-    top: var(--cy);
+    /* El centro de la tecla, derivado de su caja: nunca se transmite aparte. */
+    left: calc(var(--x) + var(--w) / 2);
+    top: calc(var(--y) + var(--row-h) / 2);
     transform: translate(-50%, -50%);
   }
   .bx-housing-bore {

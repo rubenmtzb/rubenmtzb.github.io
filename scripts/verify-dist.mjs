@@ -199,9 +199,11 @@ for (const page of EXPECTED) {
     assert(navMissing.length === 0, `áreas presentes${navMissing.length ? ` — faltan: ${navMissing.join(', ')}` : ''}`)
   }
 
-  // 12. Sin JavaScript: se elimina todo <script> y el contenido debe seguir ahí
+  // 12. Sin JavaScript: se elimina todo <script> y el contenido debe seguir ahí.
+  // También las hojas de estilo: el CSS nunca fue contenido, y contarlo
+  // dejaría que una regla larga hiciera pasar una página vacía.
   const { document: noJs } = parseHTML(html)
-  noJs.querySelectorAll('script').forEach((s) => s.remove())
+  noJs.querySelectorAll('script, style').forEach((s) => s.remove())
   const text = noJs.body.textContent.replace(/\s+/g, ' ').trim()
   // Umbral por tipo: una ficha de proyecto es legítimamente más corta
   // que la portada, pero ninguna puede quedarse en un esqueleto vacío.
