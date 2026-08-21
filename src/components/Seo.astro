@@ -31,6 +31,13 @@ const jsonLd = await buildJsonLd({
 })
 
 const ogLocale = lang === 'es' ? 'es_ES' : 'en_US'
+
+/*
+ * `profile` describe a una persona, así que solo lo son las páginas que van
+ * sobre Rubén. La ficha de proyecto y el CV declaraban lo mismo que la
+ * portada, y una ficha de proyecto no es el perfil de nadie.
+ */
+const ogType = pageType === 'ProfilePage' ? 'profile' : 'website'
 ---
 
 <meta charset="utf-8" />
@@ -56,7 +63,7 @@ const ogLocale = lang === 'es' ? 'es_ES' : 'en_US'
   )
 }
 
-<meta property="og:type" content="profile" />
+<meta property="og:type" content={ogType} />
 <meta property="og:site_name" content="rubenitx.me" />
 <meta property="og:locale" content={ogLocale} />
 <meta property="og:url" content={canonical} />
@@ -72,8 +79,15 @@ const ogLocale = lang === 'es' ? 'es_ES' : 'en_US'
 <meta name="twitter:image" content={abs(page.ogImage)} />
 <meta name="twitter:image:alt" content={page.ogImageAlt} />
 
-<link rel="icon" type="image/png" href="/avatar.png" />
-<link rel="apple-touch-icon" href="/avatar.png" />
+<!--
+  El icono vectorial pesa 883 bytes y sirve para cualquier tamaño; el PNG
+  queda como respaldo para los navegadores que no aceptan SVG en la pestaña.
+  Antes las dos ranuras apuntaban al retrato completo: 24 kB en cada página
+  para pintar dieciséis píxeles cuadrados.
+-->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+<link rel="apple-touch-icon" href="/icon-192.png" />
 <link rel="manifest" href="/manifest.json" />
 <meta name="theme-color" content="#030712" />
 
