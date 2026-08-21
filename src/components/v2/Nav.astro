@@ -14,8 +14,8 @@ const other = await getAlternate(pageKey, lang)
   un details nativo para no comprimir textos ni controles en una sola fila.
 -->
 <header id="site-header" class="site-header">
-  <nav aria-label={t(lang, 'a11y.mainNav')} class="shell flex items-center justify-between py-4 sm:py-5">
-    <a href="#identity" id="header-brand-link" class="relative flex items-center gap-2.5 font-mono group text-[color:var(--fg)] hover:text-[color:var(--cyan)] transition-colors" aria-label={t(lang, 'a11y.brandHome')}>
+  <nav aria-label={t(lang, 'a11y.mainNav')} class="shell flex items-center justify-between gap-4 py-4 sm:py-5">
+    <a href="#identity" id="header-brand-link" class="relative flex shrink-0 items-center gap-2.5 font-mono group text-[color:var(--fg)] hover:text-[color:var(--cyan)] transition-colors" aria-label={t(lang, 'a11y.brandHome')}>
       <!-- Personaje Pixel Art de Killua asomándose por detrás del avatar -->
       <div class="relative shrink-0 flex items-center justify-center">
         <div class="header-killua-peeker absolute pointer-events-none" aria-hidden="true">
