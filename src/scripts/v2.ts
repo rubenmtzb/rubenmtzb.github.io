@@ -2048,8 +2048,22 @@ function initClock() {
     if (offset) offset.textContent = zoneNameFrom(utcOffset, now).replace('GMT', 'UTC')
   }
 
-  update()
-  window.setInterval(update, 1000)
+  /*
+   * Un reloj que nadie mira no tiene por qué despertar la pestaña cada
+   * segundo: se detiene al ocultarla y se pone en hora al volver, así que
+   * lo que se ve es siempre correcto y en segundo plano no cuesta nada.
+   */
+  let timer: number | null = null
+  const stop = () => {
+    if (timer !== null) window.clearInterval(timer)
+    timer = null
+  }
+  const start = () => {
+    update()
+    if (timer === null) timer = window.setInterval(update, 1000)
+  }
+  document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()))
+  start()
 }
 
 /* ---------------- Contacto: señal escrita al entrar en pantalla ---------------- */
