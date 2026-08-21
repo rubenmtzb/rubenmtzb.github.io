@@ -98,13 +98,28 @@ const keyStyle = (key: ModelKey, layout: typeof MODEL_LAYOUTS[keyof typeof MODEL
  */
 const STAGGER_MS = 70
 
-/** Nunca pide al pipeline un corte mayor que el original de cada fotografía. */
-const photoWidths = (width: number) =>
-  [...new Set([640, 960, 1280, 1600, 2048].filter((candidate) => candidate < width).concat(width))]
+/**
+ * Cortes de la portada fotográfica.
+ *
+ * La tarjeta nunca pasa de ~500 px de ancho —dos columnas dentro del panel,
+ * una sola por debajo de 34rem— así que la escalera cubre hasta densidad 3x
+ * y ahí se detiene: pedir el original de 1490 px para una tarjeta de 340 px
+ * era gastar un megabyte en píxeles que la pantalla no puede enseñar.
+ */
+const PHOTO_WIDTHS = [420, 680, 1020, 1360]
 
-/** PNG lossless con al menos 3x los píxeles que ocupa la tarjeta en escritorio. */
-const preservedPhotoWidths = (width: number) =>
-  [...new Set([960, 1280].filter((candidate) => candidate < width).concat(width))]
+/** Nunca pide al pipeline un corte mayor que el original de cada fotografía. */
+const photoWidths = (intrinsic: number) => {
+  const fitting = PHOTO_WIDTHS.filter((width) => width <= intrinsic)
+  return fitting.length > 0 ? fitting : [intrinsic]
+}
+
+/**
+ * El corte mayor que se llega a servir, que es también el `src` de respaldo.
+ * Declarar aquí el original obligaba al pipeline a generar un corte extra a
+ * tamaño completo que ninguna pantalla pedía: mismo aspecto, un fichero menos.
+ */
+const photoWidth = (intrinsic: number) => photoWidths(intrinsic).at(-1) ?? intrinsic
 
 /** El modelo dibuja las capas de abajo arriba; la ficha las lista al revés. */
 type Part = (typeof builds)[number]['parts'][number]
@@ -200,13 +215,11 @@ const copy = {
                 >
                   <Picture
                     src={photo.image}
-                    formats={photo.preserve ? ['png'] : ['avif', 'webp']}
-                    fallbackFormat="png"
-                    widths={photo.preserve
-                      ? preservedPhotoWidths(photo.image.width)
-                      : photoWidths(photo.image.width)}
-                    width={photo.image.width}
-                    quality={photo.preserve ? 100 : 94}
+                    formats={['avif']}
+                    fallbackFormat="webp"
+                    widths={photoWidths(photo.image.width)}
+                    width={photoWidth(photo.image.width)}
+                    quality={82}
                     sizes="(max-width: 544px) calc(100vw - 4rem), (max-width: 1024px) 44vw, 340px"
                     alt={pick(photo.alt)}
                     loading="lazy"

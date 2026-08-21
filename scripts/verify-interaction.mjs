@@ -313,9 +313,9 @@ function suite(page, dom) {
   'el HHKB usa su única foto real sin controles de carrusel redundantes')
   check(evoSlides.length === 2
     && evoImages.length === 2
-    && evoImages.every((image) => image.getAttribute('src').includes('.png') && !image.getAttribute('src').includes('neo'))
+    && evoImages.every((image, index) => image.getAttribute('src').includes(`evo${index + 1}.`))
     && evoImages.every((image) => image.getAttribute('alt').includes('EVO75')),
-  'el EVO75 sustituye los placeholders del Neo65 por sus dos PNG reales')
+  'el EVO75 sustituye los placeholders del Neo65 por sus dos fotografías reales')
   fire(evoNext, 'click')
   check(evoSlides[0].hidden && !evoSlides[1].hidden
     && evoCounter.textContent === '02 / 02'
@@ -327,11 +327,11 @@ function suite(page, dom) {
     'el EVO75 vuelve a su fotografía montada sin ampliar la imagen')
   check(corneCarousel.querySelectorAll('[data-bx-card-slide]').length === 1
     && corneCarousel.querySelectorAll('img').length === 1
-    && corneCarousel.querySelector('img').getAttribute('src').includes('.png')
+    && corneCarousel.querySelector('img').getAttribute('src').includes('corne.')
     && corneCarousel.querySelector('img').getAttribute('alt').includes('Corne V4')
     && corneCarousel.querySelector('[data-bx-card-prev]') === null
     && corneCarousel.querySelector('[data-bx-card-next]') === null,
-  'el Corne V4 usa su única fotografía PNG real sin controles redundantes')
+  'el Corne V4 usa su única fotografía real sin controles redundantes')
   fire(buildCardNext, 'click')
   check(buildCardSlides.length === 2 && buildCardSlides[0].hidden && !buildCardSlides[1].hidden
     && buildCardCounter.textContent === '02 / 02' && buildCardDots[1].getAttribute('aria-current') === 'true',

@@ -255,8 +255,6 @@ const keyboards = defineCollection({
             image: image(),
             label: z.object({ en: z.string().min(1), es: z.string().min(1) }),
             alt: z.object({ en: z.string().min(10), es: z.string().min(10) }),
-            /** Conserva detalle fino con una variante PNG lossless de alta densidad. */
-            preserve: z.boolean().default(false),
           }),
         )
         .min(1),

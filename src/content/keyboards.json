@@ -19,8 +19,7 @@
         "alt": {
           "en": "Three-quarter view of the assembled Neo65 with a navy case, dark keycaps, yellow legends and blue novelty icons.",
           "es": "Vista en tres cuartos del Neo65 montado, con chasis azul marino, keycaps oscuras, leyendas amarillas e iconos novelty azules."
-        },
-        "preserve": true
+        }
       },
       {
         "image": "./../assets/keyboards/neo65-gallery/neo2.png",
@@ -31,8 +30,7 @@
         "alt": {
           "en": "Underside of the Neo65 with its mirror-polished iridescent PVD weight, engraved neo and LXV.",
           "es": "Reverso del Neo65 con su contrapeso PVD iridiscente pulido a espejo, grabado neo y LXV."
-        },
-        "preserve": true
+        }
       }
     ],
     "parts": [
@@ -261,8 +259,7 @@
         "alt": {
           "en": "Three-quarter view of the assembled white HHKB Professional Hybrid Type-S with mint and white keycaps on a dark textured surface.",
           "es": "Vista en tres cuartos del HHKB Professional Hybrid Type-S blanco montado, con keycaps verde menta y blancas sobre una superficie oscura texturizada."
-        },
-        "preserve": true
+        }
       }
     ],
     "parts": [
@@ -497,8 +494,7 @@
         "alt": {
           "en": "Three-quarter view of the assembled white EVO75 with white, grey and red keycaps on a black textured surface.",
           "es": "Vista en tres cuartos del EVO75 blanco montado, con keycaps blancas, grises y rojas sobre una superficie negra texturizada."
-        },
-        "preserve": true
+        }
       },
       {
         "image": "./../assets/keyboards/evo75-gallery/evo2.png",
@@ -509,8 +505,7 @@
         "alt": {
           "en": "Bottom view of the white EVO75 showing its polished silver rear weight, engraved logo and four feet.",
           "es": "Vista inferior del EVO75 blanco mostrando su peso trasero plateado pulido, el logotipo grabado y las cuatro patas."
-        },
-        "preserve": true
+        }
       }
     ],
     "parts": [
@@ -830,8 +825,7 @@
         "alt": {
           "en": "Top view of a wired Corne V4 split keyboard with two black low-profile halves, 42 blank white keycaps and a central TRRS cable.",
           "es": "Vista superior de un Corne V4 split cableado con dos mitades negras de perfil bajo, 42 keycaps blancas sin leyendas y cable TRRS central."
-        },
-        "preserve": true
+        }
       }
     ],
     "parts": [
