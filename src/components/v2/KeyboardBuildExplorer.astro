@@ -14,7 +14,21 @@ const completeBuilds = builds.filter((build) => buildDisplayStatus(build) === 'c
 /** Resuelve un par {en, es} al idioma del documento. */
 const pick = <T,>(pair: { en: T, es: T }) => (lang === 'es' ? pair.es : pair.en)
 
-type KeyVariant = 'snow' | 'wasabi' | 'evo-white' | 'evo-grey' | 'evo-red' | 'corne-white'
+type KeyVariant =
+  | 'neo-blue'
+  | 'neo-red'
+  | 'snow'
+  | 'wasabi'
+  | 'evo-white'
+  | 'evo-grey'
+  | 'evo-red'
+  | 'corne-white'
+type KeyArtwork = 'spade' | 'planet' | 'rocket' | 'comet' | 'constellation' | 'eclipse'
+type KeyDetail = {
+  secondary?: string
+  functionLegend?: string
+  artwork?: KeyArtwork
+}
 type KeyDefinition = [
   width: number,
   label: string,
@@ -22,27 +36,101 @@ type KeyDefinition = [
   gapBefore?: number,
   yOffset?: number,
   rotation?: number,
+  detail?: KeyDetail,
 ]
 type KeyRow = { offset?: number, keys: KeyDefinition[] }
 
+const neoLegend = (label: string, secondary: string): KeyDefinition =>
+  [1, label, undefined, undefined, undefined, undefined, { secondary }]
+
+const neoNovelty = (
+  width: number,
+  variant: Extract<KeyVariant, 'neo-blue' | 'neo-red'>,
+  artwork: KeyArtwork,
+  gapBefore?: number,
+): KeyDefinition =>
+  [width, '', variant, gapBefore, undefined, undefined, { artwork }]
+
+const hhkbLegend = (
+  label: string,
+  secondary: string,
+  functionLegend: string,
+): KeyDefinition =>
+  [1, label, 'snow', undefined, undefined, undefined, { secondary, functionLegend }]
+
 const ANSI65_ROWS: KeyRow[] = [
-  { keys: [[1, 'Esc'], [1, '1'], [1, '2'], [1, '3'], [1, '4'], [1, '5'], [1, '6'], [1, '7'], [1, '8'], [1, '9'], [1, '0'], [1, '-'], [1, '='], [2, 'Del'], [1, 'Pg']] },
-  { keys: [[1.5, 'Tab'], [1, 'Q'], [1, 'W'], [1, 'E'], [1, 'R'], [1, 'T'], [1, 'Y'], [1, 'U'], [1, 'I'], [1, 'O'], [1, 'P'], [1, '['], [1, ']'], [1.5, '\\'], [1, 'End']] },
-  { keys: [[1.75, 'Ctrl'], [1, 'A'], [1, 'S'], [1, 'D'], [1, 'F'], [1, 'G'], [1, 'H'], [1, 'J'], [1, 'K'], [1, 'L'], [1, ';'], [1, "'"], [2.25, 'Enter'], [1, 'Fn']] },
-  { keys: [[2.25, 'Shift'], [1, 'Z'], [1, 'X'], [1, 'C'], [1, 'V'], [1, 'B'], [1, 'N'], [1, 'M'], [1, ','], [1, '.'], [1, '/'], [1.75, 'Shift'], [1, 'Up'], [1, 'Fn']] },
-  { keys: [[1.25, 'Alt'], [1.25, 'Cmd'], [1.25, 'Fn'], [6.25, ''], [1.5, 'Alt'], [1.5, 'Fn'], [1, 'Left'], [1, 'Down'], [1, 'Right']] },
+  { keys: [
+    neoNovelty(1, 'neo-red', 'spade'),
+    neoLegend('1', '!'), neoLegend('2', '@'), neoLegend('3', '#'),
+    neoLegend('4', '$'), neoLegend('5', '%'), neoLegend('6', '^'),
+    neoLegend('7', '&'), neoLegend('8', '*'), neoLegend('9', '('),
+    neoLegend('0', ')'), neoLegend('-', '_'), neoLegend('=', '+'),
+    neoNovelty(2, 'neo-blue', 'planet'),
+    neoNovelty(1, 'neo-red', 'eclipse'),
+  ] },
+  { keys: [
+    neoNovelty(1.5, 'neo-blue', 'rocket'),
+    [1, 'Q'], [1, 'W'], [1, 'E'], [1, 'R'], [1, 'T'], [1, 'Y'],
+    [1, 'U'], [1, 'I'], [1, 'O'], [1, 'P'], [1, '['], [1, ']'],
+    neoNovelty(1.5, 'neo-red', 'planet'),
+    neoNovelty(1, 'neo-blue', 'comet'),
+  ] },
+  { keys: [
+    neoNovelty(1.75, 'neo-blue', 'planet'),
+    [1, 'A'], [1, 'S'], [1, 'D'], [1, 'F'], [1, 'G'], [1, 'H'],
+    [1, 'J'], [1, 'K'], [1, 'L'], [1, ';'], [1, "'"],
+    neoNovelty(2.25, 'neo-blue', 'rocket'),
+    neoNovelty(1, 'neo-blue', 'constellation'),
+  ] },
+  { keys: [
+    [2.25, '⇧', 'neo-blue'],
+    [1, 'Z'], [1, 'X'], [1, 'C'], [1, 'V'], [1, 'B'], [1, 'N'],
+    [1, 'M'], [1, ','], [1, '.'], [1, '/'],
+    neoNovelty(1.75, 'neo-blue', 'comet'),
+    [1, '↑', 'neo-blue'],
+    [1, '→', 'neo-blue'],
+  ] },
+  { keys: [
+    neoNovelty(1.25, 'neo-blue', 'constellation'),
+    [1.25, '⌘', 'neo-blue'],
+    [1.25, '≡', 'neo-blue'],
+    [6.25, ''],
+    neoNovelty(1.25, 'neo-blue', 'rocket'),
+    neoNovelty(1.25, 'neo-blue', 'comet'),
+    [1, '←', 'neo-blue', .5],
+    [1, '↓', 'neo-blue'],
+    [1, '→', 'neo-blue'],
+  ] },
 ]
 
 /**
  * Distribución HHKB US de 60 teclas. La mezcla reproduce la unidad real:
  * alfas y espacio Wasabi; fila numérica y modificadores principalmente Snow.
+ * El set es blank salvo por las doce teclas numéricas, que llevan símbolo,
+ * carácter principal y la función F1–F12 impresa en el frente.
  */
 const HHKB_ROWS: KeyRow[] = [
-  { keys: [[1, 'Esc', 'wasabi'], [1, '1', 'snow'], [1, '2', 'snow'], [1, '3', 'snow'], [1, '4', 'snow'], [1, '5', 'snow'], [1, '6', 'snow'], [1, '7', 'snow'], [1, '8', 'snow'], [1, '9', 'snow'], [1, '0', 'snow'], [1, '-', 'snow'], [1, '=', 'snow'], [1, '\\', 'wasabi'], [1, '`', 'wasabi']] },
-  { keys: [[1.5, 'Tab', 'snow'], [1, 'Q', 'wasabi'], [1, 'W', 'wasabi'], [1, 'E', 'wasabi'], [1, 'R', 'wasabi'], [1, 'T', 'wasabi'], [1, 'Y', 'wasabi'], [1, 'U', 'wasabi'], [1, 'I', 'wasabi'], [1, 'O', 'wasabi'], [1, 'P', 'wasabi'], [1, '[', 'wasabi'], [1, ']', 'wasabi'], [1.5, 'Del', 'snow']] },
-  { keys: [[1.75, 'Ctrl', 'snow'], [1, 'A', 'wasabi'], [1, 'S', 'wasabi'], [1, 'D', 'wasabi'], [1, 'F', 'wasabi'], [1, 'G', 'wasabi'], [1, 'H', 'wasabi'], [1, 'J', 'wasabi'], [1, 'K', 'wasabi'], [1, 'L', 'wasabi'], [1, ';', 'wasabi'], [1, "'", 'wasabi'], [2.25, 'Return', 'snow']] },
-  { keys: [[2.25, 'Shift', 'snow'], [1, 'Z', 'wasabi'], [1, 'X', 'wasabi'], [1, 'C', 'wasabi'], [1, 'V', 'wasabi'], [1, 'B', 'wasabi'], [1, 'N', 'wasabi'], [1, 'M', 'wasabi'], [1, ',', 'wasabi'], [1, '.', 'wasabi'], [1, '/', 'wasabi'], [1.75, 'Shift', 'wasabi'], [1, 'Fn', 'snow']] },
-  { offset: 1.5, keys: [[1.5, 'Alt', 'snow'], [1.5, 'Cmd', 'snow'], [6, '', 'wasabi'], [1.5, 'Cmd', 'snow'], [1.5, 'Alt', 'snow']] },
+  { keys: [
+    [1, '', 'wasabi'],
+    hhkbLegend('1', '!', 'F1'),
+    hhkbLegend('2', '@', 'F2'),
+    hhkbLegend('3', '#', 'F3'),
+    hhkbLegend('4', '$', 'F4'),
+    hhkbLegend('5', '%', 'F5'),
+    hhkbLegend('6', '^', 'F6'),
+    hhkbLegend('7', '&', 'F7'),
+    hhkbLegend('8', '*', 'F8'),
+    hhkbLegend('9', '(', 'F9'),
+    hhkbLegend('0', ')', 'F10'),
+    hhkbLegend('-', '_', 'F11'),
+    hhkbLegend('=', '+', 'F12'),
+    [1, '', 'wasabi'],
+    [1, '', 'wasabi'],
+  ] },
+  { keys: [[1.5, '', 'snow'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1.5, '', 'snow']] },
+  { keys: [[1.75, '', 'snow'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [2.25, '', 'snow']] },
+  { keys: [[2.25, '', 'snow'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1, '', 'wasabi'], [1.75, '', 'wasabi'], [1, '', 'snow']] },
+  { offset: 1.5, keys: [[1.5, '', 'snow'], [1.5, '', 'snow'], [6, '', 'wasabi'], [1.5, '', 'snow'], [1.5, '', 'snow']] },
 ]
 
 /**
@@ -76,9 +164,9 @@ const MODEL_LAYOUTS = {
 const modelKeys = ({ rows }: typeof MODEL_LAYOUTS[keyof typeof MODEL_LAYOUTS]) =>
   rows.flatMap((row, rowIndex) => {
     let x = row.offset ?? 0
-    return row.keys.map(([width, label, variant, gapBefore = 0, yOffset = 0, rotation = 0]) => {
+    return row.keys.map(([width, label, variant, gapBefore = 0, yOffset = 0, rotation = 0, detail]) => {
       x += gapBefore
-      const key = { x, y: rowIndex + yOffset, width, label, variant, rotation }
+      const key = { x, y: rowIndex + yOffset, width, label, variant, rotation, ...detail }
       x += width
       return key
     })
@@ -466,7 +554,57 @@ const copy = {
                       {part.id === 'springs' && keys.map((_key, index) => <i class={`bx-topre-spring ${keyClass(index)}`}></i>)}
                       {part.id === 'keycaps' && keys.map((key, index) => (
                         <i class:list={['bx-model-key', keyClass(index), key.variant && `is-${key.variant}`]}>
-                          <span>{key.label}</span>
+                          {key.artwork && (
+                            <svg class="bx-key-art" viewBox="0 0 32 20" aria-hidden="true">
+                              {key.artwork === 'spade' && (
+                                <path class="is-fill" d="M16 1.5C13.7 5.4 7.2 7.8 7.2 12.7c0 2.9 2.2 4.8 4.8 4.8 1.3 0 2.4-.4 3.1-1.2-.2 1.2-.8 2-2.2 2.7h6.2c-1.4-.7-2-1.5-2.2-2.7.7.8 1.8 1.2 3.1 1.2 2.6 0 4.8-1.9 4.8-4.8 0-4.9-6.5-7.3-8.8-11.2Z" />
+                              )}
+                              {key.artwork === 'planet' && (
+                                <>
+                                  <circle class="is-fill" cx="16" cy="10" r="5.2" />
+                                  <ellipse cx="16" cy="10" rx="12.5" ry="4.2" transform="rotate(-13 16 10)" />
+                                  <circle class="is-cutout" cx="14.2" cy="8.3" r="1.1" />
+                                </>
+                              )}
+                              {key.artwork === 'rocket' && (
+                                <>
+                                  <path d="M6 15.8c4.8-1 8-3.4 10.2-8.1 1.2-2.5 3.6-4.4 7.7-5.5-.8 4.2-2.4 6.8-4.7 8.2-4.3 2.7-7.4 3.1-13.2 5.4Z" />
+                                  <path d="m11 13-3.8-.8 2.7-2.1M16.9 8.5l2.5 3.1-3.3.7" />
+                                  <circle class="is-fill" cx="19.7" cy="6.1" r="1.25" />
+                                  <path d="m8.8 15.1-3 2.2m5.7-3-2.3 3.2" />
+                                </>
+                              )}
+                              {key.artwork === 'comet' && (
+                                <>
+                                  <path d="M3 16.4C9.5 16 13.2 13.6 17 8.2M5.4 18c6.1-1.2 10.2-3.4 13.4-7.8" />
+                                  <path class="is-fill" d="m21.6 2.1 1.5 3 3.4.5-2.5 2.3.6 3.3-3-1.6-3 1.6.6-3.3-2.5-2.3 3.4-.5 1.5-3Z" />
+                                </>
+                              )}
+                              {key.artwork === 'constellation' && (
+                                <>
+                                  <path d="m5 14 7-8 6 5 8-7M12 6l2 10 4-5" />
+                                  <circle class="is-fill" cx="5" cy="14" r="1.7" />
+                                  <circle class="is-fill" cx="12" cy="6" r="1.5" />
+                                  <circle class="is-fill" cx="14" cy="16" r="1.3" />
+                                  <circle class="is-fill" cx="18" cy="11" r="1.6" />
+                                  <circle class="is-fill" cx="26" cy="4" r="1.8" />
+                                </>
+                              )}
+                              {key.artwork === 'eclipse' && (
+                                <>
+                                  <path class="is-fill" d="M18.4 3.1a7 7 0 1 0 0 13.8A5.7 5.7 0 1 1 18.4 3Z" />
+                                  <path d="m23.7 3.2.7 1.5 1.7.2-1.2 1.2.3 1.7-1.5-.8-1.6.8.3-1.7-1.2-1.2 1.6-.2.8-1.5Z" />
+                                </>
+                              )}
+                            </svg>
+                          )}
+                          {!key.artwork && key.label && (
+                            <span>
+                              {key.label}
+                              {key.secondary && <small>{key.secondary}</small>}
+                              {key.functionLegend && <em class="bx-key-function">{key.functionLegend}</em>}
+                            </span>
+                          )}
                         </i>
                       ))}
                     </div>
@@ -1459,26 +1597,159 @@ const copy = {
   .bx-model-key::after { content: ''; position: absolute; left: 9%; right: 9%; bottom: -3px; height: 4px; z-index: -1; border-radius: 0 0 3px 3px; background: linear-gradient(180deg, #2a2b25, #1c1d19); }
   .bx-model-key span { position: relative; z-index: 1; overflow: hidden; color: #e4cb4b; font: 600 8px/1 var(--font-mono); text-shadow: 0 1px rgba(0,0,0,.65), 0 0 4px rgba(228,203,75,.12); text-overflow: clip; }
 
+  /*
+   * Set del Neo65 fotografiado: PBT negro, leyendas amarillas y novelties
+   * espaciales azules/rojas. Todo queda limitado al ANSI65 para no cambiar la
+   * piel de los otros teclados que reutilizan la geometría base.
+   */
+  .bx-build-panel[data-layout='ansi65'] .bx-model-key {
+    border-color: rgba(8, 10, 12, .92);
+    border-radius: 4px 4px 5px 5px;
+    background: linear-gradient(155deg, #2b2e32, #15171a 72%);
+    box-shadow:
+      0 2px 0 #24272b,
+      0 5px 0 #1b1e21,
+      0 8px 0 #111316,
+      0 11px 9px rgba(0, 0, 0, .62);
+  }
+  .bx-build-panel[data-layout='ansi65'] .bx-model-key::before {
+    inset: 2px 2px 4px;
+    border-radius: 3px;
+    background:
+      radial-gradient(circle at 28% 20%, rgba(255,255,255,.12), transparent 32%),
+      repeating-linear-gradient(112deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px),
+      linear-gradient(155deg, #373a3e, #292c30 58%, #202327);
+    box-shadow:
+      inset 0 1px rgba(255,255,255,.18),
+      inset 1px 0 rgba(255,255,255,.045),
+      inset 0 -2px 3px rgba(0,0,0,.44);
+  }
+  .bx-build-panel[data-layout='ansi65'] .bx-model-key::after {
+    background: linear-gradient(180deg, #202327, #111316);
+  }
+  .bx-build-panel[data-layout='ansi65'] .bx-model-key > span {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    overflow: visible;
+    color: #f1d65b;
+    font-size: 8.5px;
+    font-weight: 650;
+    text-shadow: 0 1px #050607, 0 0 5px rgba(241, 214, 91, .13);
+  }
+  .bx-build-panel[data-layout='ansi65'] .bx-model-key > span small {
+    position: absolute;
+    top: 20%;
+    right: 19%;
+    color: inherit;
+    font: 600 4.5px/1 var(--font-mono);
+    opacity: .92;
+  }
+  .bx-build-panel[data-layout='ansi65'] .bx-model-key.is-neo-blue > span,
+  .bx-build-panel[data-layout='ansi65'] .bx-model-key.is-neo-blue .bx-key-art {
+    color: #3fa2ff;
+  }
+  .bx-build-panel[data-layout='ansi65'] .bx-model-key.is-neo-red > span,
+  .bx-build-panel[data-layout='ansi65'] .bx-model-key.is-neo-red .bx-key-art {
+    color: #ff5049;
+  }
+  .bx-build-panel[data-layout='ansi65'] .bx-model-key.is-neo-blue > span,
+  .bx-build-panel[data-layout='ansi65'] .bx-model-key.is-neo-red > span {
+    font-size: 11px;
+    text-shadow: 0 1px #050607, 0 0 5px currentColor;
+  }
+  .bx-key-art {
+    position: relative;
+    z-index: 2;
+    width: min(58%, 34px);
+    height: 62%;
+    overflow: visible;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.45;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 1px #050607) drop-shadow(0 0 2px currentColor);
+  }
+  .bx-key-art .is-fill { fill: currentColor; stroke: none; }
+  .bx-key-art .is-cutout { fill: #272a2e; stroke: none; }
+
   .bx-build-panel[data-layout='hhkb'] .bx-model-key {
-    border-color: rgba(101, 105, 104, .4);
-    background: linear-gradient(155deg, #f2f1ec, #cfcec8);
-    box-shadow: 0 2px 0 #e0dfd9, 0 5px 0 #c9c8c2, 0 8px 0 #b4b3ad, 0 11px 9px rgba(0, 0, 0, .38);
+    border-color: rgba(101, 105, 104, .48);
+    border-radius: 4px 4px 5px 5px;
+    background: linear-gradient(155deg, #eeeeea, #c8c9c5 72%);
+    box-shadow:
+      0 2px 0 #e2e2de,
+      0 5px 0 #c9cac6,
+      0 8px 0 #afb1ad,
+      0 11px 9px rgba(0, 0, 0, .4);
   }
   .bx-build-panel[data-layout='hhkb'] .bx-model-key::before {
-    background: radial-gradient(circle at 28% 22%, rgba(255,255,255,.7), transparent 36%), linear-gradient(155deg, #f8f7f3, #e8e7e1 58%, #d5d4ce);
-    box-shadow: inset 0 1px #fff, inset 0 -2px 3px rgba(90, 94, 93, .16);
+    inset: 2px 2px 4px;
+    background:
+      radial-gradient(circle at 27% 20%, rgba(255,255,255,.82), transparent 34%),
+      repeating-linear-gradient(112deg, rgba(40,45,42,.018) 0 1px, transparent 1px 3px),
+      linear-gradient(155deg, #fffefa, #f1f1ed 58%, #dedfdb);
+    box-shadow:
+      inset 0 1px #fff,
+      inset 1px 0 rgba(255,255,255,.45),
+      inset 0 -2px 3px rgba(90, 94, 93, .16);
   }
-  .bx-build-panel[data-layout='hhkb'] .bx-model-key::after { background: linear-gradient(180deg, #d7d6d0, #bdbcb6); }
+  .bx-build-panel[data-layout='hhkb'] .bx-model-key::after {
+    background: linear-gradient(180deg, #d5d6d2, #b8bab6);
+  }
   .bx-build-panel[data-layout='hhkb'] .bx-model-key.is-wasabi {
-    border-color: rgba(83, 119, 94, .48);
-    background: linear-gradient(155deg, #b9dbbf, #8fbd9b);
-    box-shadow: 0 2px 0 #a5cfae, 0 5px 0 #8db799, 0 8px 0 #759e82, 0 11px 9px rgba(0, 0, 0, .38);
+    border-color: rgba(78, 113, 89, .5);
+    background: linear-gradient(155deg, #b8dcc0, #86b291 72%);
+    box-shadow:
+      0 2px 0 #b2d8bb,
+      0 5px 0 #94bd9e,
+      0 8px 0 #789c82,
+      0 11px 9px rgba(0, 0, 0, .4);
   }
   .bx-build-panel[data-layout='hhkb'] .bx-model-key.is-wasabi::before {
-    background: radial-gradient(circle at 28% 22%, rgba(255,255,255,.55), transparent 36%), linear-gradient(155deg, #c7e5cc, #acd4b5 58%, #94c2a0);
+    background:
+      radial-gradient(circle at 27% 20%, rgba(255,255,255,.62), transparent 34%),
+      repeating-linear-gradient(112deg, rgba(33,74,46,.018) 0 1px, transparent 1px 3px),
+      linear-gradient(155deg, #d5f0dc, #bde3c6 58%, #a4ceaf);
+    box-shadow:
+      inset 0 1px rgba(255,255,255,.78),
+      inset 1px 0 rgba(255,255,255,.2),
+      inset 0 -2px 3px rgba(50, 94, 62, .2);
   }
-  .bx-build-panel[data-layout='hhkb'] .bx-model-key.is-wasabi::after { background: linear-gradient(180deg, #8db899, #749b80); }
-  .bx-build-panel[data-layout='hhkb'] .bx-model-key span { color: #2a302c; font-size: 7px; text-shadow: 0 1px rgba(255,255,255,.5); }
+  .bx-build-panel[data-layout='hhkb'] .bx-model-key.is-wasabi::after {
+    background: linear-gradient(180deg, #91ba9a, #73947b);
+  }
+  .bx-build-panel[data-layout='hhkb'] .bx-model-key > span {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    overflow: visible;
+    color: #262b29;
+    font-size: 7.5px;
+    font-weight: 560;
+    text-shadow: 0 1px rgba(255,255,255,.65);
+  }
+  .bx-build-panel[data-layout='hhkb'] .bx-model-key > span small {
+    position: absolute;
+    top: 17%;
+    left: 50%;
+    color: inherit;
+    font: 500 4.5px/1 var(--font-mono);
+    transform: translateX(-50%);
+  }
+  .bx-key-function {
+    position: absolute;
+    left: 50%;
+    bottom: 13%;
+    color: #404744;
+    font: 500 4px/1 var(--font-mono);
+    font-style: normal;
+    letter-spacing: -.04em;
+    transform: translateX(-50%);
+  }
 
   /* ---------------- Arquitectura stock del EvoWorks EVO75 ---------------- */
   .bx-build-panel[data-layout='evo75'] .bx-model {

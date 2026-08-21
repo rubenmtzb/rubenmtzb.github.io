@@ -342,8 +342,17 @@ function suite(page, dom) {
   const firstBuildLayer = document.querySelector('[data-bx-part="keycaps"]')
   const buildStage = document.querySelector('[data-bx-stage]')
   const buildModel = document.querySelector('[data-bx-model]')
+  const neoPanel = document.querySelector('[data-bx-build="neo65"]')
+  const otherBuildPanels = [...document.querySelectorAll('[data-bx-build]:not([data-bx-build="neo65"])')]
 
   check(buildOpen && buildViewer?.hidden === true, 'la galería contiene el Neo65 y el visor comienza cerrado')
+  check(neoPanel.querySelectorAll('.bx-model-key').length === 67
+    && neoPanel.querySelectorAll('.bx-key-art').length === 13
+    && neoPanel.querySelectorAll('.bx-model-key small').length === 12,
+  'el Neo65 reproduce sus 67 keycaps, novelties y leyendas dobles')
+  check(otherBuildPanels.every((panel) =>
+    panel.querySelector('.bx-key-art, .is-neo-blue, .is-neo-red') === null),
+  'el colorway y las novelties del Neo65 no se filtran a los otros modelos')
   check(buildCards.length === 4
     && buildCards.filter((card) => card.classList.contains('is-complete')).length === 3
     && buildCards.filter((card) => card.classList.contains('is-in-progress')).length === 1
@@ -461,6 +470,19 @@ function suite(page, dom) {
     && hhkbPanel.querySelectorAll('.bx-topre-spring').length === 60
     && hhkbPanel.querySelectorAll('.bx-cap-pad').length === 60,
   'el modelo HHKB representa sus 60 teclas, sliders, domos, muelles y pads capacitivos')
+  const hhkbLegends = [...hhkbPanel.querySelectorAll('.bx-model-key > span')]
+  check(hhkbPanel.querySelectorAll('.bx-model-key.is-wasabi').length === 38
+    && hhkbPanel.querySelectorAll('.bx-model-key.is-snow').length === 22
+    && hhkbLegends.length === 12
+    && hhkbLegends.every((legend) => legend.parentElement.classList.contains('is-snow')),
+  'el HHKB conserva 38 keycaps Wasabi, 22 Snow y deja blank todo salvo la fila numérica')
+  check(hhkbPanel.querySelectorAll('.bx-model-key small').length === 12
+    && hhkbPanel.querySelectorAll('.bx-key-function').length === 12
+    && hhkbPanel.querySelector('.bx-key-function').textContent === 'F1'
+    && [...hhkbPanel.querySelectorAll('.bx-key-function')].at(-1).textContent === 'F12'
+    && [...document.querySelectorAll('[data-bx-build]:not([data-layout="hhkb"])')]
+      .every((panel) => panel.querySelector('.bx-key-function') === null),
+  'las doce teclas marcadas llevan símbolo y función F1–F12 solo en el HHKB')
   check(hhkbPanel.querySelector('.bx-prototype-note') === null
     && hhkbPanel.querySelector('.bx-detail-status')
     && hhkbPanel.querySelectorAll('.bx-model-key.is-wasabi').length > 0
