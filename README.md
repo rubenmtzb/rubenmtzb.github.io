@@ -55,6 +55,17 @@ both gate the deploy:
 - `verify-interaction.mjs` does the reverse — it runs the real bundle against that same
   HTML in a minimal DOM and asserts the carousels, tabs and typing test behave.
 
+**Weight is a contract too.** `verify-dist.mjs` also holds two budgets, both written after
+they were breached: no emitted image slice may exceed 500 kB, and no page may carry more
+than 32 kB of inline `style` attributes — presentation that repeats per element belongs in
+a stylesheet, not in the markup. A build that breaks either one does not deploy.
+
+**Nothing ships that nothing asks for.** Bundling emits the original of every image in
+`src/assets/` alongside the slices `astro:assets` actually generates. The
+`prune-unused-assets` integration walks the finished output, collects every filename the
+HTML, CSS, JS, sitemap and manifest reference, and deletes the images none of them do —
+20 MB of untouched originals on the last full build.
+
 ---
 
 ## 🗺️ URL grammar
@@ -100,6 +111,7 @@ without JavaScript each carousel falls back to a plain stacked list.
 | **Content** | Astro Content Collections + Zod | Typed, validated single source of truth |
 | **Typography** | Archivo + JetBrains Mono | Self-hosted via Fontsource, no third-party request |
 | **Icons** | Inline SVG (`src/components/Icon.astro`) | No icon library ships to the browser |
+| **Images** | `astro:assets` | AVIF with a WebP fallback, sized to the layout |
 | **Verification** | `linkedom` | Assertions over the real build output |
 | **Deployment** | GitHub Pages + GitHub Actions | `rubenitx.me` |
 
@@ -154,10 +166,12 @@ rubenmtzb.github.io/
 │   │   └── cv/               # CV document
 │   ├── content/              # JSON collections — the single source of truth
 │   ├── i18n/ui.ts            # UI strings and anchor aliases
+│   ├── integrations/         # Build-time hooks (unused-asset pruning)
 │   ├── layouts/              # Base, V1, V2 and case-study shells
 │   ├── lib/
 │   │   ├── content.ts        # Collection access, date maths, JSON-LD
-│   │   └── tech.ts           # Technology registry: colour, logo, official link
+│   │   ├── tech.ts           # Technology registry: colour, logo, official link
+│   │   └── brands.ts         # Issuer and institution registry: logo, brand colour
 │   ├── pages/                # URL grammar + sitemap.xml + manifest.json
 │   ├── scripts/              # Client-side progressive enhancement
 │   ├── styles/               # global.css (V1) and v2.css (V2)
