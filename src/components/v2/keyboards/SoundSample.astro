@@ -9,6 +9,18 @@
  * La envolvente llega ya calculada desde el contenido y aquí solo se convierte
  * en geometría: el navegador no decodifica audio ni mide nada, pinta un trazo
  * y desplaza un recorte por encima conforme avanza la reproducción.
+ *
+ * El fichero va con `preload="none"`: entrar en la ficha no descarga nada
+ * hasta que alguien pulsa. Se declaran dos fuentes porque el AAC es más limpio
+ * a este bitrate y el MP3 no lo rechaza ningún navegador.
+ *
+ * El cabezal es un `input[type=range]` con la pista invisible: salen gratis el
+ * arrastre, las flechas y el anuncio del avance.
+ *
+ * Solo asoma la mascota en los builds montados buscando el silencio, que son
+ * los únicos que tienen algo que contar sobre por qué suenan así. El adorno
+ * sale del contenido —si no hay apuntes, no hay nadie asomado— y nunca al
+ * revés.
  */
 import { clock, dbfs } from '../../../lib/keyboard-sound'
 import { localizer, type KeyboardBuild } from '../../../lib/content'
@@ -30,12 +42,6 @@ const copy = keyboardCopy(lang)
   <span>{copy.soundTitle}</span>
   <span>{build.sound ? clock(build.sound.duration) : copy.soundPending}</span>
 </div>
-<!--
-  Solo asoman los builds montados buscando el silencio: son los
-  únicos que tienen algo que contar sobre por qué suenan así. El
-  adorno sale del contenido —si no hay apuntes, no hay nadie
-  asomado— y nunca al revés.
--->
 {build.sound?.quips && (
   <div class="bx-quip" data-bx-quip>
     <div class="bx-quip-bubble">
@@ -70,11 +76,6 @@ const copy = keyboardCopy(lang)
     data-duration={build.sound.duration}
     style={`--ref:${((build.sound.typingFrom / build.sound.duration) * 100).toFixed(2)}%`}
   >
-    <!--
-      `preload="none"`: entrar en la ficha no descarga nada hasta
-      que alguien pulsa. Dos fuentes porque el AAC es más limpio a
-      este bitrate y el MP3 no lo rechaza ningún navegador.
-    -->
     <audio preload="none" data-bx-clip-audio>
       <source src={`/keyboards/sound/${build.sound.clip}.m4a`} type="audio/mp4" />
       <source src={`/keyboards/sound/${build.sound.clip}.mp3`} type="audio/mpeg" />
@@ -110,10 +111,6 @@ const copy = keyboardCopy(lang)
         <path d={wave.path(build.sound.peaks)} vector-effect="non-scaling-stroke"></path>
       </svg>
       <i class="bx-clip-ref" aria-hidden="true"><span>REF</span></i>
-      <!--
-        El cabezal es un control nativo con la pista invisible: sale
-        gratis el arrastre, las flechas y el anuncio del avance.
-      -->
       <input
         type="range"
         min="0"

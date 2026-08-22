@@ -28,6 +28,15 @@ const ROWS: Array<Array<[string, string, number?, string?]>> = [
   [['ctrl','ControlLeft',1.25],['opt','AltLeft',1.25],['cmd','MetaLeft',1.5],['','Space',6.5],['cmd','MetaRight',1.5],['opt','AltRight',1.25],['ctrl','ControlRight',1.25]],
 ]
 
+/*
+ * Cortes de las cartas del mazo.
+ *
+ * La carta mide 210-260 px y los originales son retratos de 1600 px, así que
+ * basta con tres cortes que cubran hasta pantallas de densidad 2,5x. Servir
+ * 750 px a una carta de 260 px costaba cientos de kB por foto sin ganar un
+ * pixel de nitidez.
+ */
+
 const ROTATIONS = [-9, -5.5, -2, 2, 5.5, 9]
 const OFFSETS_X = [-440, -264, -88, 88, 264, 440]
 const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
@@ -92,12 +101,6 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
               <div class="moment-card-inner">
                 <!-- Cara frontal: Fotografía limpia con bordes redondeados -->
                 <div class="moment-card-face moment-card-front flex items-center justify-center bg-[color:var(--ink-950)]">
-                  <!--
-                    La carta mide 210-260 px: los originales son retratos de
-                    1600 px, así que basta con tres cortes que cubran hasta
-                    pantallas de densidad 2,5x. Servir 750 px a una carta de
-                    260 px costaba cientos de kB por foto sin ganar un pixel.
-                  -->
                   <Picture
                     src={photo.image}
                     formats={['avif']}
