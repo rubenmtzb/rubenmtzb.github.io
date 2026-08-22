@@ -607,7 +607,7 @@ export function startGameMode(onExit: () => void) {
           class="gm-hud-super ${isGodspeedActive ? 'is-active' : godspeedReady ? 'is-ready' : 'opacity-60'}"
           title="${isSpanish ? 'Modo Godspeed (Aura Eléctrica)' : 'Godspeed Mode (Electric Aura)'}"
         >
-          <span>⚡ ${isGodspeedActive ? (isSpanish ? `AURA (${remainingActive}s)` : `AURA (${remainingActive}s)`) : 'GODSPEED'}</span>
+          <span>⚡ ${isGodspeedActive ? `AURA (${remainingActive}s)` : 'GODSPEED'}</span>
           <span class="text-[0.62rem] opacity-80">${isGodspeedActive ? '⚡' : godspeedReady ? '[Q / F]' : `(${remainingCd}s)`}</span>
         </button>
 

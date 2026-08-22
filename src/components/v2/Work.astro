@@ -1,32 +1,41 @@
 ---
-import { Picture } from 'astro:assets'
-import Icon from '../Icon.astro'
-import TechChip from './TechChip.astro'
-import { casePath, formatDuration, formatPeriod, getExperience, getProjects } from '../../lib/content'
-import { V2_ANCHOR_ALIASES, t, type Lang } from '../../i18n/ui'
-
-interface Props { lang: Lang }
-const { lang } = Astro.props
-
-/*
- * Portadas del carrusel.
+/**
+ * Área de trayectoria: la línea temporal de puestos y el carrusel de proyectos.
  *
- * Son capturas de 2000 px y el carrusel nunca pasa de ~1100 px, así que se
- * sirven redimensionadas y en AVIF/WebP. El PNG original sigue siendo el
- * respaldo, con calidad alta para que las líneas finas y el texto de la
- * captura no se ensucien.
+ * Las portadas del carrusel son capturas de 2000 px y el visor nunca pasa de
+ * ~1100 px, así que se sirven redimensionadas y en AVIF/WebP. El PNG original
+ * sigue siendo el respaldo, con calidad alta para que las líneas finas y el
+ * texto de la captura no se ensucien.
  *
  * Se descargan todas, no solo la primera: pulsar la flecha obligaba a esperar
  * a que arrancara la descarga de la siguiente, y esa espera se ve. Las que no
  * están a la vista bajan con prioridad mínima, así que llegan sin disputarle
  * el ancho de banda a la portada que sí se está mirando.
  */
+import { Picture } from 'astro:assets'
+import Icon from '../Icon.astro'
+import TechChip from './TechChip.astro'
+import { casePath, formatDuration, formatPeriod, getExperience, getProjects } from '../../lib/content'
+import { V2_ANCHOR_ALIASES, t, type Lang, type UiKey } from '../../i18n/ui'
+
+interface Props { lang: Lang }
+const { lang } = Astro.props
 
 const experience = await getExperience(lang)
 const projects = await getProjects(lang)
 
-const badgeLabel = (badge: 'live' | 'private' | 'coming-soon') =>
-  badge === 'live' ? t(lang, 'work.badge.live') : badge === 'private' ? t(lang, 'work.badge.private') : t(lang, 'work.comingSoon')
+/**
+ * Rótulo del estado de un proyecto. Como mapa y no como cadena de ternarios:
+ * si mañana el esquema admite un estado más, el índice deja de compilar en
+ * lugar de caer en la última rama sin que nadie se entere.
+ */
+const BADGE_LABELS: Record<'live' | 'private' | 'coming-soon', UiKey> = {
+  live: 'work.badge.live',
+  private: 'work.badge.private',
+  'coming-soon': 'work.comingSoon',
+}
+
+const badgeLabel = (badge: keyof typeof BADGE_LABELS) => t(lang, BADGE_LABELS[badge])
 ---
 
 <section id="work" class="band">
