@@ -60,6 +60,14 @@ they were breached: no emitted image slice may exceed 500 kB, and no page may ca
 than 32 kB of inline `style` attributes — presentation that repeats per element belongs in
 a stylesheet, not in the markup. A build that breaks either one does not deploy.
 
+**One shape per concern.** Nothing in `src/` is a container for unrelated things.
+The client layer is one module per feature and a boot file that is nothing but the
+order they run in; the keyboard archive is a component per part — card, panel, model,
+sound sample — with its key tables as data in `src/lib/` and its copy in `src/i18n/`.
+Every page is the same document shell. Where two files had to agree on a fact — the
+domain, the locale list, the stack groups — the fact moved to `src/site.config.ts` and
+both import it.
+
 **Nothing ships that nothing asks for.** Bundling emits the original of every image in
 `src/assets/` alongside the slices `astro:assets` actually generates. The
 `prune-unused-assets` integration walks the finished output, collects every filename the
@@ -150,32 +158,51 @@ npm test          # check + build + verify, exactly what CI runs
 ```text
 rubenmtzb.github.io/
 ├── public/
-│   ├── cv/                   # EN/ES PDF downloads
-│   ├── icons/                # Brand and technology logos
-│   ├── CNAME                 # Custom domain
-│   └── avatar.png            # Source image for the ASCII portrait
+│   ├── cv/                        # EN/ES PDF downloads
+│   ├── icons/                     # Brand and technology logos
+│   ├── keyboards/sound/           # Build sound samples (AAC + MP3)
+│   ├── CNAME                      # Custom domain
+│   └── avatar.png                 # Source image for the ASCII portrait
 ├── scripts/
-│   ├── verify-dist.mjs        # Assertions over the generated HTML (no JS)
-│   ├── verify-interaction.mjs # Runs the real bundle against that HTML
-│   └── generate-sprites.mjs   # One-off sprite generation for Game Mode
+│   ├── verify-dist.mjs            # Assertions over the generated HTML (no JS)
+│   ├── verify-interaction.mjs     # Runs the real bundle against that HTML
+│   └── generate-sprites.mjs       # One-off sprite generation for Game Mode
 ├── src/
-│   ├── assets/               # Images processed by astro:assets
+│   ├── site.config.ts             # Domain, locales and closed vocabulary
+│   ├── content.config.ts          # Zod schemas for every collection
+│   ├── content/                   # JSON collections — the single source of truth
+│   ├── assets/                    # Images processed by astro:assets
+│   ├── layouts/
+│   │   ├── BaseLayout.astro       # The one document shell
+│   │   └── V1/V2/Case/Cv          # One per surface, all built on it
 │   ├── components/
-│   │   ├── v1/               # Previous version, served at /v1/
-│   │   ├── v2/               # Current portfolio
-│   │   └── cv/               # CV document
-│   ├── content/              # JSON collections — the single source of truth
-│   ├── i18n/ui.ts            # UI strings and anchor aliases
-│   ├── integrations/         # Build-time hooks (unused-asset pruning)
-│   ├── layouts/              # Base, V1, V2 and case-study shells
+│   │   ├── v1/                    # Previous version, served at /v1/
+│   │   ├── v2/                    # Current portfolio
+│   │   │   └── keyboards/         # Build explorer: card, panel, model, sound
+│   │   └── cv/                    # CV document
+│   ├── i18n/
+│   │   ├── ui.ts                  # UI strings and anchor aliases
+│   │   └── keyboards.ts           # Copy for the build explorer
 │   ├── lib/
-│   │   ├── content.ts        # Collection access, date maths, JSON-LD
-│   │   ├── tech.ts           # Technology registry: colour, logo, official link
-│   │   └── brands.ts         # Issuer and institution registry: logo, brand colour
-│   ├── pages/                # URL grammar + sitemap.xml + manifest.json
-│   ├── scripts/              # Client-side progressive enhancement
-│   ├── styles/               # global.css (V1) and v2.css (V2)
-│   └── content.config.ts     # Zod schemas for every collection
+│   │   ├── content.ts             # Collection access, routes, date maths, JSON-LD
+│   │   ├── keyboard-layouts.ts    # Key tables and model geometry
+│   │   ├── keyboard-sound.ts      # Waveform geometry for the sound samples
+│   │   ├── tech.ts                # Technology registry: colour, logo, official link
+│   │   └── brands.ts              # Issuer and institution registry
+│   ├── integrations/              # Build-time hooks (unused-asset pruning)
+│   ├── pages/                     # URL grammar + sitemap.xml + manifest.json
+│   ├── scripts/
+│   │   ├── v2.ts                  # Boot order only — one line per layer
+│   │   ├── v2/                    # One module per feature
+│   │   │   ├── keyboard/          # Mascot, switch audio, speed trial, sandbox
+│   │   │   └── build-explorer/    # Panel state, sound rack, orbit and explode
+│   │   ├── game-mode.ts           # Split into its own chunk, loaded on demand
+│   │   └── ascii-portrait.ts      # Canvas particle portrait
+│   └── styles/
+│       ├── global.css             # V1
+│       ├── v2.css                 # V2 — index of partials; the order is the cascade
+│       ├── v2/                    # One file per block: tokens, header, keyboard, …
+│       └── keyboard-explorer.css  # Build archive
 └── astro.config.mjs
 ```
 
