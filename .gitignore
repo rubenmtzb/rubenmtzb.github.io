@@ -26,6 +26,13 @@ dist-ssr
 # Astro
 .astro/
 
+# Copias que deja iCloud Drive al sincronizar la carpeta del proyecto: duplica
+# el fichero añadiéndole un número —"index 2", "types.d 2.ts"— y llegó a crear
+# ocho copias del índice de git. Ninguna es del proyecto y ninguna debe
+# versionarse jamás.
+* [0-9]
+* [0-9].*
+
 # Material personal original: nunca entra al repositorio.
 # Las versiones WebP optimizadas de src/assets/personal-web/ sí se versionan
 # para que el build estático sea reproducible fuera del equipo local.
