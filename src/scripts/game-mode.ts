@@ -868,6 +868,158 @@ export function startGameMode(onExit: () => void) {
   let previousFrame = performance.now()
   let appliedScrollY = Math.round(cameraY)
 
+  /**
+   * Pinta el fotograma.
+   *
+   * Nada de lo que hay aquí cambia el estado del juego: la simulación ya ha
+   * terminado cuando se llama, así que este bloque solo lee. Separarlo permite
+   * leer el fotograma como lo que es —primero se calcula, después se dibuja—
+   * en lugar de como cuatrocientas líneas donde ambas cosas se alternan.
+   */
+  const paintFrame = (now: number, frameScale: number, isGodspeed: boolean) => {
+  // Usar cameraY redondeada para sincronía perfecta 1:1 en pantalla
+  const sy = Math.round(cameraY)
+
+  // Dibujar plataformas fijas
+  customLedges.forEach((ledge) => {
+    const ly = ledge.y - sy
+    if (ly > -20 && ly < h + 20) drawLedge(ledge.x, ly, ledge.w, ledge.alpha)
+  })
+
+  // Dibujar plataformas móviles
+  movingLedges.forEach((ml) => {
+    const ly = ml.y - sy
+    if (ly > -20 && ly < h + 20) drawLedge(ml.x, ly, ml.w, 1, true)
+  })
+
+  // Dibujar ondas de choque
+  for (let i = shockwaves.length - 1; i >= 0; i--) {
+    const sw = shockwaves[i]
+    sw.r += 3.5 * frameScale
+    sw.a -= 0.05 * frameScale
+    if (sw.a <= 0 || sw.r >= sw.maxR) { shockwaves.splice(i, 1); continue }
+    ctx.save()
+    ctx.strokeStyle = sw.color === '#00d4ff'
+      ? `rgba(0, 212, 255, ${sw.a.toFixed(3)})`
+      : `rgba(111, 227, 255, ${sw.a.toFixed(3)})`
+    ctx.lineWidth = 2.5
+    ctx.beginPath()
+    ctx.arc(sw.x, sw.y - sy, sw.r, 0, Math.PI * 2)
+    ctx.stroke()
+    ctx.restore()
+  }
+
+  // Dibujar estela de movimiento
+  for (let i = trail.length - 1; i >= 0; i--) {
+    const tr = trail[i]
+    tr.a -= (tr.isGodspeed ? 0.04 : 0.06) * frameScale
+    if (tr.a <= 0) { trail.splice(i, 1); continue }
+    const ty = tr.y - sy
+    if (ty < -40 || ty > h + 40) continue
+    ctx.fillStyle = tr.isGodspeed
+      ? `rgba(0, 212, 255, ${tr.a.toFixed(3)})`
+      : `rgba(111, 227, 255, ${tr.a.toFixed(3)})`
+    ctx.fillRect(tr.x - 2, ty - 2, 4, 4)
+  }
+
+  // Dibujar chispas
+  for (let i = sparks.length - 1; i >= 0; i--) {
+    const sp = sparks[i]
+    sp.x += sp.vx * frameScale
+    sp.y += sp.vy * frameScale
+    sp.vy += 0.12 * frameScale
+    sp.life -= 0.04 * frameScale
+    if (sp.life <= 0) { sparks.splice(i, 1); continue }
+    ctx.fillStyle = sp.color || `rgba(111, 227, 255, ${sp.life.toFixed(3)})`
+    ctx.fillRect(sp.x, sp.y - sy, 2.5, 2.5)
+  }
+
+  // Dibujar y recolectar rayos
+  const t = now * 0.003
+  const activeOrb = orbs.find((orb) => !orb.taken)
+  orbs.forEach((orb, i) => {
+    if (orb.taken || orb !== activeOrb) return
+
+    if (isGodspeed && status === 'playing') {
+      const kx = me.x + W / 2
+      const ky = me.y + H / 2
+      const dist = Math.hypot(orb.x - kx, orb.y - ky)
+      if (dist < 240) {
+        const magnetEase = 1 - Math.pow(0.93, frameScale)
+        orb.x += (kx - orb.x) * magnetEase
+        orb.y += (ky - orb.y) * magnetEase
+      }
+    }
+
+    const oy = orb.y - sy
+    if (oy >= -60 && oy <= h + 60) {
+      drawBolt(orb, sy, t, i)
+    } else {
+      drawRadarBeacon(orb, sy, i, now)
+    }
+
+    if (status === 'playing' && Math.abs(me.x + W / 2 - orb.x) < 40 && Math.abs(me.y + H / 2 - orb.y) < 44) {
+      orb.taken = true
+      got++
+      playBoltSound()
+      updateProgressHud()
+
+      const remaining = totalOrbsInLevel - got
+      if (remaining === 1) {
+        say(isSpanish ? '¡Solo queda un rayo más! ⚡' : 'Only one bolt left! ⚡', 2400, 'alert')
+      } else if (remaining > 1) {
+        say(isSpanish ? `¡Rayo capturado! (${got}/${totalOrbsInLevel}) ⚡` : `Bolt captured! (${got}/${totalOrbsInLevel}) ⚡`, 1800, 'success')
+      }
+
+      for (let s = 0; s < 12; s++) {
+        sparks.push({
+          x: orb.x,
+          y: orb.y,
+          vx: (Math.random() - 0.5) * 8,
+          vy: (Math.random() - 0.5) * 8,
+          life: 1,
+          color: '#00d4ff',
+        })
+      }
+
+      if (got === totalOrbsInLevel) {
+        keys.clear()
+        if (currentLevelIdx < LEVELS.length - 1) {
+          status = 'level_clear'
+          say(isSpanish ? '¡Nivel completado! ¡Pan comido! ⚡' : 'Level cleared! Piece of cake! ⚡', 3500, 'success')
+        } else {
+          status = 'won'
+          say(isSpanish ? '¡Maestría Godspeed alcanzada! ⚡' : 'Godspeed Master Achieved! ⚡', 4000, 'godspeed')
+        }
+        renderUI()
+      }
+    }
+  })
+
+  // Rastro guía eléctrico hacia el próximo orbe
+  const nextTargetOrb = orbs.find((o) => !o.taken)
+  if (nextTargetOrb && Math.random() < 0.08 * frameScale) {
+    const kx = me.x + W / 2
+    const ky = me.y + H / 2
+    const angle = Math.atan2(nextTargetOrb.y - ky, nextTargetOrb.x - kx)
+    sparks.push({
+      x: kx + (Math.random() - 0.5) * 8,
+      y: ky + (Math.random() - 0.5) * 8,
+      vx: Math.cos(angle) * (2.5 + Math.random() * 2),
+      vy: Math.sin(angle) * (2.5 + Math.random() * 2),
+      life: 0.7,
+      color: 'rgba(0, 212, 255, 0.95)',
+    })
+  }
+
+  // Dibujar Killua y Bocadillo de Cómic
+  const py = me.y - sy
+  if (py > -H && py < h + H) {
+    drawKillua(me.x, py, now)
+    drawSpeechBubble(me.x, py, now)
+  }
+  }
+
   const loop = (frameNow: number) => {
     if (!alive) return
     const elapsed = frameNow - previousFrame
@@ -1112,147 +1264,7 @@ export function startGameMode(onExit: () => void) {
       }
     }
 
-    // Usar cameraY redondeada para sincronía perfecta 1:1 en pantalla
-    const sy = Math.round(cameraY)
-
-    // Dibujar plataformas fijas
-    customLedges.forEach((ledge) => {
-      const ly = ledge.y - sy
-      if (ly > -20 && ly < h + 20) drawLedge(ledge.x, ly, ledge.w, ledge.alpha)
-    })
-
-    // Dibujar plataformas móviles
-    movingLedges.forEach((ml) => {
-      const ly = ml.y - sy
-      if (ly > -20 && ly < h + 20) drawLedge(ml.x, ly, ml.w, 1, true)
-    })
-
-    // Dibujar ondas de choque
-    for (let i = shockwaves.length - 1; i >= 0; i--) {
-      const sw = shockwaves[i]
-      sw.r += 3.5 * frameScale
-      sw.a -= 0.05 * frameScale
-      if (sw.a <= 0 || sw.r >= sw.maxR) { shockwaves.splice(i, 1); continue }
-      ctx.save()
-      ctx.strokeStyle = sw.color === '#00d4ff'
-        ? `rgba(0, 212, 255, ${sw.a.toFixed(3)})`
-        : `rgba(111, 227, 255, ${sw.a.toFixed(3)})`
-      ctx.lineWidth = 2.5
-      ctx.beginPath()
-      ctx.arc(sw.x, sw.y - sy, sw.r, 0, Math.PI * 2)
-      ctx.stroke()
-      ctx.restore()
-    }
-
-    // Dibujar estela de movimiento
-    for (let i = trail.length - 1; i >= 0; i--) {
-      const tr = trail[i]
-      tr.a -= (tr.isGodspeed ? 0.04 : 0.06) * frameScale
-      if (tr.a <= 0) { trail.splice(i, 1); continue }
-      const ty = tr.y - sy
-      if (ty < -40 || ty > h + 40) continue
-      ctx.fillStyle = tr.isGodspeed
-        ? `rgba(0, 212, 255, ${tr.a.toFixed(3)})`
-        : `rgba(111, 227, 255, ${tr.a.toFixed(3)})`
-      ctx.fillRect(tr.x - 2, ty - 2, 4, 4)
-    }
-
-    // Dibujar chispas
-    for (let i = sparks.length - 1; i >= 0; i--) {
-      const sp = sparks[i]
-      sp.x += sp.vx * frameScale
-      sp.y += sp.vy * frameScale
-      sp.vy += 0.12 * frameScale
-      sp.life -= 0.04 * frameScale
-      if (sp.life <= 0) { sparks.splice(i, 1); continue }
-      ctx.fillStyle = sp.color || `rgba(111, 227, 255, ${sp.life.toFixed(3)})`
-      ctx.fillRect(sp.x, sp.y - sy, 2.5, 2.5)
-    }
-
-    // Dibujar y recolectar rayos
-    const t = now * 0.003
-    const activeOrb = orbs.find((orb) => !orb.taken)
-    orbs.forEach((orb, i) => {
-      if (orb.taken || orb !== activeOrb) return
-
-      if (isGodspeed && status === 'playing') {
-        const kx = me.x + W / 2
-        const ky = me.y + H / 2
-        const dist = Math.hypot(orb.x - kx, orb.y - ky)
-        if (dist < 240) {
-          const magnetEase = 1 - Math.pow(0.93, frameScale)
-          orb.x += (kx - orb.x) * magnetEase
-          orb.y += (ky - orb.y) * magnetEase
-        }
-      }
-
-      const oy = orb.y - sy
-      if (oy >= -60 && oy <= h + 60) {
-        drawBolt(orb, sy, t, i)
-      } else {
-        drawRadarBeacon(orb, sy, i, now)
-      }
-
-      if (status === 'playing' && Math.abs(me.x + W / 2 - orb.x) < 40 && Math.abs(me.y + H / 2 - orb.y) < 44) {
-        orb.taken = true
-        got++
-        playBoltSound()
-        updateProgressHud()
-
-        const remaining = totalOrbsInLevel - got
-        if (remaining === 1) {
-          say(isSpanish ? '¡Solo queda un rayo más! ⚡' : 'Only one bolt left! ⚡', 2400, 'alert')
-        } else if (remaining > 1) {
-          say(isSpanish ? `¡Rayo capturado! (${got}/${totalOrbsInLevel}) ⚡` : `Bolt captured! (${got}/${totalOrbsInLevel}) ⚡`, 1800, 'success')
-        }
-
-        for (let s = 0; s < 12; s++) {
-          sparks.push({
-            x: orb.x,
-            y: orb.y,
-            vx: (Math.random() - 0.5) * 8,
-            vy: (Math.random() - 0.5) * 8,
-            life: 1,
-            color: '#00d4ff',
-          })
-        }
-
-        if (got === totalOrbsInLevel) {
-          keys.clear()
-          if (currentLevelIdx < LEVELS.length - 1) {
-            status = 'level_clear'
-            say(isSpanish ? '¡Nivel completado! ¡Pan comido! ⚡' : 'Level cleared! Piece of cake! ⚡', 3500, 'success')
-          } else {
-            status = 'won'
-            say(isSpanish ? '¡Maestría Godspeed alcanzada! ⚡' : 'Godspeed Master Achieved! ⚡', 4000, 'godspeed')
-          }
-          renderUI()
-        }
-      }
-    })
-
-    // Rastro guía eléctrico hacia el próximo orbe
-    const nextTargetOrb = orbs.find((o) => !o.taken)
-    if (nextTargetOrb && Math.random() < 0.08 * frameScale) {
-      const kx = me.x + W / 2
-      const ky = me.y + H / 2
-      const angle = Math.atan2(nextTargetOrb.y - ky, nextTargetOrb.x - kx)
-      sparks.push({
-        x: kx + (Math.random() - 0.5) * 8,
-        y: ky + (Math.random() - 0.5) * 8,
-        vx: Math.cos(angle) * (2.5 + Math.random() * 2),
-        vy: Math.sin(angle) * (2.5 + Math.random() * 2),
-        life: 0.7,
-        color: 'rgba(0, 212, 255, 0.95)',
-      })
-    }
-
-    // Dibujar Killua y Bocadillo de Cómic
-    const py = me.y - sy
-    if (py > -H && py < h + H) {
-      drawKillua(me.x, py, now)
-      drawSpeechBubble(me.x, py, now)
-    }
+    paintFrame(now, frameScale, isGodspeed)
 
     if (sparks.length > MAX_SPARKS) sparks.splice(0, sparks.length - MAX_SPARKS)
     if (shockwaves.length > MAX_SHOCKWAVES) shockwaves.splice(0, shockwaves.length - MAX_SHOCKWAVES)
