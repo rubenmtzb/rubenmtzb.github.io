@@ -327,7 +327,7 @@ for (const page of EXPECTED) {
     `${page.path} lleva ${Math.round(inline / 1024)} kB de estilo en línea (máximo ${MAX_INLINE_STYLE_BYTES / 1024} kB)`,
   )
 
-  const scoped = [...html.matchAll(/\sdata-astro-cid-[a-z0-9]+/g)].length
+  const scoped = [...html.matchAll(/\sdata-astro-cid-[\w-]+/g)].length
   assert(
     scoped <= MAX_SCOPE_ATTRIBUTES,
     `${page.path} marca ${scoped} elementos con el atributo de ámbito (máximo ${MAX_SCOPE_ATTRIBUTES})`,

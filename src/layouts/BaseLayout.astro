@@ -32,6 +32,16 @@ interface Props {
 }
 
 const { lang, pageKey, pageType = 'WebPage', displayFont = true, bodyClass } = Astro.props
+
+/*
+ * O la página tiene metadata en la colección, o la trae ella por el slot. Sin
+ * ninguna de las dos saldría un documento sin charset, sin título y sin
+ * canonical, y eso no lo ve nadie hasta que ya está publicado: aquí para el
+ * build, que es cuando todavía se puede arreglar.
+ */
+if (!pageKey && !Astro.slots.has('head')) {
+  throw new Error('BaseLayout: la página necesita `pageKey` o contenido en el slot `head`')
+}
 ---
 
 <!doctype html>

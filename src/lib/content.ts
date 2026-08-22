@@ -58,7 +58,16 @@ export async function getKeyboards() {
   const byKey = new Map(builds.map((build) => [build.key, build]))
 
   return builds.map((build) => {
-    if (build.parts.length > 0 || !build.modelTemplate) return build
+    if (build.parts.length > 0) return build
+
+    /*
+     * Sin piezas y sin plantilla el modelo no se puede dibujar, y la vista
+     * accede a `parts[0]` sin preguntar. Que falle aquí, con el nombre del
+     * build delante, en lugar de con un "undefined" a mitad del renderizado.
+     */
+    if (!build.modelTemplate) {
+      throw new Error(`Keyboard "${build.key}" has no parts and no model template to borrow them from`)
+    }
 
     const template = byKey.get(build.modelTemplate)
     if (!template || template.parts.length === 0) {
