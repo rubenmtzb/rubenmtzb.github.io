@@ -9,7 +9,7 @@
 import BuildModel from './BuildModel.astro'
 import SoundSample from './SoundSample.astro'
 import type { Waveform } from '../../../lib/keyboard-sound'
-import { buildDisplayStatus, localizer, type KeyboardBuild } from '../../../lib/content'
+import { buildDisplayStatus, localizer, twoDigits, type KeyboardBuild } from '../../../lib/content'
 import { keyboardCopy } from '../../../i18n/keyboards'
 import type { Lang } from '../../../i18n/ui'
 
@@ -89,7 +89,7 @@ const copy = keyboardCopy(lang)
         {build.parts.map((part, index) => (
           <li>
             <button type="button" data-bx-part-button={part.id} aria-pressed="false">
-              <span class="bx-part-index">{String(index + 1).padStart(2, '0')}</span>
+              <span class="bx-part-index">{twoDigits(index + 1)}</span>
               <i style={`--swatch:${part.color}`}></i>
               <span>
                 <strong>{pick(part.label)}</strong>

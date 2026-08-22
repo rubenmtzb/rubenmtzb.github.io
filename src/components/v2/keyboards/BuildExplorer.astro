@@ -12,7 +12,7 @@
  */
 import BuildCard from './BuildCard.astro'
 import BuildPanel from './BuildPanel.astro'
-import { getKeyboards, buildDisplayStatus } from '../../../lib/content'
+import { getKeyboards, buildDisplayStatus, twoDigits } from '../../../lib/content'
 import { keyGeometry } from '../../../lib/keyboard-layouts'
 import { createWaveform } from '../../../lib/keyboard-sound'
 import { keyboardCopy } from '../../../i18n/keyboards'
@@ -36,7 +36,6 @@ const KEY_GEOMETRY = keyGeometry(builds.map((build) => build.layout))
  */
 const wave = createWaveform(builds.map((build) => build.sound?.peaks ?? []))
 
-const twoDigits = (value: number) => String(value).padStart(2, '0')
 ---
 
 <div

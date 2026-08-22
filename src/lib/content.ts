@@ -183,6 +183,13 @@ const toDate = (ym: string) => {
   return new Date(y, m - 1, 1)
 }
 
+/**
+ * Numeración de dos dígitos: "01 / 04". La comparten los contadores de los
+ * carruseles y los índices del archivo de teclados, que la escribían cada uno
+ * por su cuenta.
+ */
+export const twoDigits = (value: number) => String(value).padStart(2, '0')
+
 export function formatMonthYear(ym: string, lang: Lang) {
   const d = toDate(ym)
   const s = new Intl.DateTimeFormat(lang === 'es' ? 'es-ES' : 'en-GB', {

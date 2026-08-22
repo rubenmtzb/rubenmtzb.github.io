@@ -2,7 +2,7 @@
 import Icon from '../Icon.astro'
 import EduProgram from './EduProgram.astro'
 import TechChip from './TechChip.astro'
-import { getProfile, getEducation, getCerts } from '../../lib/content'
+import { getProfile, getEducation, getCerts, twoDigits } from '../../lib/content'
 import { certBrand, institutionLogo } from '../../lib/brands'
 import { V2_ANCHOR_ALIASES, t, type Lang } from '../../i18n/ui'
 
@@ -269,7 +269,7 @@ const groupPeriod = (items: EduEntry[]) => {
       <div class="slider-footer">
         <button type="button" id="edu-prev" class="slider-nav-arrow" aria-label={lang === 'es' ? 'Etapa anterior' : 'Previous stage'}>‹</button>
         <div class="flex items-center gap-3">
-          <span id="edu-counter" class="font-mono text-xs text-[color:var(--fg-3)]">01 / {String(eduGroups.length).padStart(2, '0')}</span>
+          <span id="edu-counter" class="font-mono text-xs text-[color:var(--fg-3)]">01 / {twoDigits(eduGroups.length)}</span>
           <div id="edu-dots" class="flex items-center gap-2">
             {eduGroups.map((_, i) => (
               <button
@@ -401,7 +401,7 @@ const groupPeriod = (items: EduEntry[]) => {
       <div class="slider-footer">
         <button type="button" id="certs-prev" class="slider-nav-arrow" aria-label={lang === 'es' ? 'Certificación anterior' : 'Previous certification'}>‹</button>
         <div class="flex items-center gap-3">
-          <span id="certs-counter" class="font-mono text-xs text-[color:var(--fg-3)]">01 / {String(certs.length).padStart(2, '0')}</span>
+          <span id="certs-counter" class="font-mono text-xs text-[color:var(--fg-3)]">01 / {twoDigits(certs.length)}</span>
           <div id="certs-dots" class="flex items-center gap-2">
             {certs.map((_, i) => (
               <button
