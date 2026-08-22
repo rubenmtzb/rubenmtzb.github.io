@@ -21,6 +21,13 @@ export type Lang = (typeof LANGS)[number]
 export const DEFAULT_LANG: Lang = LANGS[0]
 
 /**
+ * Etiqueta BCP 47 de cada idioma, que es lo que piden Open Graph y compañía.
+ * No es texto traducible sino el código del idioma, así que vive con el resto
+ * del vocabulario y no en el diccionario de la interfaz.
+ */
+export const LOCALE_TAGS: Record<Lang, string> = { en: 'en_US', es: 'es_ES' }
+
+/**
  * Agrupación funcional del stack. El orden es el orden en que se pintan los
  * grupos, tanto en la V1 como en el CV.
  */

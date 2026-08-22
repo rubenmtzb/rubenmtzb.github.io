@@ -1,6 +1,6 @@
 ---
 import TechChip from './TechChip.astro'
-import type { Lang } from '../../i18n/ui'
+import { t, type Lang } from '../../i18n/ui'
 
 /**
  * Una titulación dentro de un bloque de centro. Existe porque un mismo centro
@@ -34,7 +34,7 @@ const hasFooter = tags.length > 0 || Boolean(item.credential?.verifyUrl)
       {item.inProgress ? (
         <span class="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[0.68rem] font-mono text-emerald-400">
           <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>{lang === 'es' ? 'En curso' : 'In progress'}</span>
+          <span>{t(lang, 'background.inProgress')}</span>
         </span>
       ) : item.grade ? (
         <span class="inline-flex items-center gap-1 rounded-full border border-[color:var(--cyan)]/40 bg-[color:var(--cyan)]/10 px-2.5 py-0.5 text-[0.68rem] font-mono text-[color:var(--cyan)]">
@@ -63,7 +63,7 @@ const hasFooter = tags.length > 0 || Boolean(item.credential?.verifyUrl)
     <div class={`mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-[color:var(--line-soft)] ${isCard ? 'pt-3' : 'pt-4'}`}>
       {tags.length > 0 && (
         <ul class="flex flex-wrap items-center gap-1.5">
-          <li class="mr-1 font-mono text-[0.68rem] text-[color:var(--fg-3)]">{lang === 'es' ? 'Competencias clave:' : 'Key competencies:'}</li>
+          <li class="mr-1 font-mono text-[0.68rem] text-[color:var(--fg-3)]">{t(lang, 'v2.edu.competencies')}</li>
           {tags.map((tag) => (
             <li><TechChip tag={tag} lang={lang} /></li>
           ))}
@@ -77,7 +77,7 @@ const hasFooter = tags.length > 0 || Boolean(item.credential?.verifyUrl)
           rel="noopener noreferrer"
           class="inline-flex items-center gap-2 rounded-lg border border-[color:var(--cyan)]/40 bg-[color:var(--cyan)]/10 px-3.5 py-1.5 text-xs font-mono text-[color:var(--cyan)] hover:bg-[color:var(--cyan)]/20 transition shadow-[0_0_12px_rgba(111,227,255,0.15)]"
         >
-          <span>{lang === 'es' ? 'Verificar título oficial' : 'Verify credential'}</span>
+          <span>{t(lang, 'v2.edu.verify')}</span>
           <span>↗</span>
         </a>
       )}

@@ -1,7 +1,7 @@
 ---
 import { TECH } from '../../lib/tech'
 import { homePath } from '../../lib/content'
-import type { Lang } from '../../i18n/ui'
+import { t, type Lang } from '../../i18n/ui'
 import { canonicalTerm, localizedTerm } from '../../i18n/terms'
 
 /**
@@ -29,8 +29,8 @@ const href = meta?.anchor ? `${home}#${meta.anchor}` : meta?.url
 const isInternal = Boolean(meta?.anchor)
 
 const label = isInternal
-  ? `${displayTag} — ${lang === 'es' ? 'ver estudios' : 'view education'}`
-  : `${displayTag} — ${lang === 'es' ? 'sitio oficial' : 'official site'}`
+  ? `${displayTag} — ${t(lang, 'v2.chip.viewEducation')}`
+  : `${displayTag} — ${t(lang, 'v2.chip.officialSite')}`
 ---
 
 {meta && href ? (

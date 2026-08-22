@@ -54,15 +54,15 @@ const other = await getAlternate(pageKey, lang)
           type="button"
           id="nav-game-btn"
           class="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--blue-bright)]/40 bg-[color:var(--ink-800)] px-2.5 sm:px-3 py-1 text-xs font-mono text-[color:var(--cyan)] transition hover:border-[color:var(--cyan)] hover:bg-[color:var(--cyan)]/10 hover:shadow-[0_0_15px_rgba(111,227,255,0.35)]"
-          title={lang === 'es' ? 'Activar Modo Juego Killua' : 'Activate Killua Game Mode'}
-          aria-label={lang === 'es' ? 'Activar Modo Juego Killua' : 'Activate Killua Game Mode'}
+          title={t(lang, 'v2.game.activate')}
+          aria-label={t(lang, 'v2.game.activate')}
         >
           <span class="relative flex h-2 w-2">
             <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--cyan)] opacity-75"></span>
             <span class="relative inline-flex h-2 w-2 rounded-full bg-[color:var(--cyan)]"></span>
           </span>
           <Icon name="gamepad" class="h-3.5 w-3.5" />
-          <span class="hidden sm:inline">{lang === 'es' ? 'Modo Juego' : 'Game Mode'}</span>
+          <span class="hidden sm:inline">{t(lang, 'v2.game.mode')}</span>
         </button>
 
         <!-- Badge (i) de Información con Tooltip al pasar el mouse por encima -->
@@ -70,8 +70,8 @@ const other = await getAlternate(pageKey, lang)
           <button
             type="button"
             class="flex h-6 w-6 items-center justify-center rounded-full border border-[color:var(--blue-bright)]/40 bg-[color:var(--ink-800)] text-xs font-mono font-bold text-[color:var(--cyan)] transition hover:border-[color:var(--cyan)] hover:bg-[color:var(--cyan)]/15 hover:shadow-[0_0_10px_rgba(111,227,255,0.3)]"
-            aria-label={lang === 'es' ? 'Información y controles del juego' : 'Game info and controls'}
-            title={lang === 'es' ? 'Información del minijuego' : 'Mini-game information'}
+            aria-label={t(lang, 'v2.game.infoLabel')}
+            title={t(lang, 'v2.game.infoTitle')}
           >
             i
           </button>
@@ -83,23 +83,21 @@ const other = await getAlternate(pageKey, lang)
                 ⚡ KILLUA GODSPEED
               </span>
               <span class="font-mono text-[0.62rem] text-[color:var(--fg-3)] bg-[color:var(--ink-700)] px-1.5 py-0.5 rounded border border-[color:var(--line)]">
-                3 {lang === 'es' ? 'Niveles' : 'Levels'}
+                3 {t(lang, 'v2.game.levels')}
               </span>
             </div>
             <p class="text-[0.72rem] text-[color:var(--fg-2)] leading-relaxed mb-2.5">
-              {lang === 'es'
-                ? 'Minijuego interactivo: guía a Killua saltando sobre los elementos del currículum, recoge los orbes de cada sección y desata el Modo Kanmuru eléctrico.'
-                : 'Interactive mini-game: guide Killua across resume milestones, collect section orbs, and unleash electric Kanmuru Godspeed.'}
+              {t(lang, 'v2.game.blurb')}
             </p>
             <div class="space-y-1 font-mono text-[0.68rem] text-[color:var(--fg-3)] border-t border-[color:var(--line-soft)] pt-2">
-              <div class="flex justify-between"><span>A / D · ◀ ▶</span> <span class="text-[color:var(--fg)]">{lang === 'es' ? 'Mover personaje' : 'Move character'}</span></div>
-              <div class="flex justify-between"><span>{lang === 'es' ? 'Espacio' : 'Space'} / W · ▲</span> <span class="text-[color:var(--fg)]">{lang === 'es' ? 'Salto / Doble Salto' : 'Jump / Double Jump'}</span></div>
-              <div class="flex justify-between"><span>Q / F · ⚡</span> <span class="text-[color:var(--cyan)] font-bold">{lang === 'es' ? 'Modo Godspeed ⚡' : 'Godspeed Aura ⚡'}</span></div>
-              <div class="flex justify-between"><span>S / ▼</span> <span class="text-[color:var(--fg)]">{lang === 'es' ? 'Atravesar plataforma' : 'Drop Down'}</span></div>
-              <div class="flex justify-between"><span>Esc</span> <span class="text-[color:var(--fg)]">{lang === 'es' ? 'Salir' : 'Exit'}</span></div>
+              <div class="flex justify-between"><span>A / D · ◀ ▶</span> <span class="text-[color:var(--fg)]">{t(lang, 'v2.game.move')}</span></div>
+              <div class="flex justify-between"><span>{t(lang, 'v2.game.space')} / W · ▲</span> <span class="text-[color:var(--fg)]">{t(lang, 'v2.game.jump')}</span></div>
+              <div class="flex justify-between"><span>Q / F · ⚡</span> <span class="text-[color:var(--cyan)] font-bold">{t(lang, 'v2.game.aura')}</span></div>
+              <div class="flex justify-between"><span>S / ▼</span> <span class="text-[color:var(--fg)]">{t(lang, 'v2.game.drop')}</span></div>
+              <div class="flex justify-between"><span>Esc</span> <span class="text-[color:var(--fg)]">{t(lang, 'v2.game.exit')}</span></div>
             </div>
             <div class="mt-2.5 text-center border-t border-[color:var(--line-soft)]/60 pt-2 text-[0.68rem] font-mono text-[color:var(--cyan)] font-semibold flex items-center justify-center gap-1">
-              ⚡ {lang === 'es' ? 'Haz clic en Modo Juego para jugar' : 'Click Game Mode to play'}
+              ⚡ {t(lang, 'v2.game.hint')}
             </div>
           </div>
         </div>
@@ -108,9 +106,9 @@ const other = await getAlternate(pageKey, lang)
       <!-- En móvil, las cuatro áreas pasan a una superficie compacta sin
            duplicar acciones ni alterar la composición de escritorio. -->
       <details id="mobile-nav" class="mobile-nav sm:hidden">
-        <summary class="mobile-nav-trigger" aria-label={lang === 'es' ? 'Abrir navegación' : 'Open navigation'}>
+        <summary class="mobile-nav-trigger" aria-label={t(lang, 'v2.nav.open')}>
           <Icon name="menu" class="h-4 w-4" />
-          <span>{lang === 'es' ? 'Menú' : 'Menu'}</span>
+          <span>{t(lang, 'v2.nav.menu')}</span>
         </summary>
         <div class="mobile-nav-panel">
           {V2_NAV.map((item) => (

@@ -29,11 +29,11 @@ const year = new Date().getFullYear()
         </button>
       </div>
       <p class="mt-2 font-mono text-[0.6rem] uppercase tracking-[0.18em] text-[color:var(--fg-3)]">
-        {profile.locality} // {lang === 'es' ? 'España' : 'Spain'} · {lang === 'es' ? 'sistemas con intención' : 'systems with intent'}
+        {profile.locality} // {t(lang, 'v2.contact.country')} · {t(lang, 'v2.footer.intent')}
       </p>
     </div>
 
-    <nav class="flex flex-wrap items-center gap-x-4 gap-y-2 lg:justify-center" aria-label={lang === 'es' ? 'Perfiles profesionales' : 'Professional profiles'}>
+    <nav class="flex flex-wrap items-center gap-x-4 gap-y-2 lg:justify-center" aria-label={t(lang, 'v2.footer.profiles')}>
       {profile.socials.map((social) => (
         <a
           href={social.href}
@@ -47,13 +47,13 @@ const year = new Date().getFullYear()
       ))}
       <a href={`mailto:${profile.email}`} class="group inline-flex items-center gap-1.5 font-mono text-[0.65rem] uppercase tracking-[0.14em] text-[color:var(--fg-3)] transition hover:text-emerald-300">
         <span class="h-1 w-1 rounded-full bg-[color:var(--line)] transition group-hover:bg-emerald-300" aria-hidden="true"></span>
-        {lang === 'es' ? 'Correo' : 'Email'}
+        {t(lang, 'v2.footer.email')}
       </a>
     </nav>
 
     <div class="flex flex-wrap items-center gap-x-4 gap-y-2 lg:justify-self-end">
       <p class="t-meta normal-case tracking-[0.12em] text-[color:var(--fg-3)]">
-        <span class="text-[color:var(--cyan)]">Astro</span> · {lang === 'es' ? 'HTML estático' : 'static HTML'}
+        <span class="text-[color:var(--cyan)]">Astro</span> · {t(lang, 'v2.footer.staticHtml')}
       </p>
       <a href={`#${topId}`} class="group t-meta inline-flex items-center gap-1.5 normal-case tracking-[0.12em] transition hover:text-[color:var(--blue-bright)]">
         {t(lang, 'footer.top')}

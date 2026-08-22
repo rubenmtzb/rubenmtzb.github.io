@@ -21,11 +21,11 @@ const photos = (await getCollection('personal'))
  * antes: el test de mecanografía, el sonido y el click-to-type no cambian.
  */
 const ROWS: Array<Array<[string, string, number?, string?]>> = [
-  [['`','Backquote',1,'esc'],['1','Digit1'],['2','Digit2'],['3','Digit3'],['4','Digit4'],['5','Digit5'],['6','Digit6'],['7','Digit7'],['8','Digit8'],['9','Digit9'],['0','Digit0'],['-','Minus'],['=','Equal'],['⌫','Backspace',1.6,lang === 'es' ? 'supr' : 'delete']],
+  [['`','Backquote',1,'esc'],['1','Digit1'],['2','Digit2'],['3','Digit3'],['4','Digit4'],['5','Digit5'],['6','Digit6'],['7','Digit7'],['8','Digit8'],['9','Digit9'],['0','Digit0'],['-','Minus'],['=','Equal'],['⌫','Backspace',1.6,t(lang, 'kbd.delete')]],
   [['⇥','Tab',1.5,'tab'],['Q','KeyQ'],['W','KeyW'],['E','KeyE'],['R','KeyR'],['T','KeyT'],['Y','KeyY'],['U','KeyU'],['I','KeyI'],['O','KeyO'],['P','KeyP'],['[','BracketLeft'],[']','BracketRight'],['\\','Backslash',1.5]],
-  [['⇪','CapsLock',1.6,'control'],['A','KeyA'],['S','KeyS'],['D','KeyD'],['F','KeyF'],['G','KeyG'],['H','KeyH'],['J','KeyJ'],['K','KeyK'],['L','KeyL'],[';','Semicolon'],["'",'Quote'],['⏎','Enter',1.9,lang === 'es' ? 'intro' : 'return']],
-  [['⇧','ShiftLeft',2.1,lang === 'es' ? 'mayús' : 'shift'],['Z','KeyZ'],['X','KeyX'],['C','KeyC'],['V','KeyV'],['B','KeyB'],['N','KeyN'],['M','KeyM'],[',','Comma'],['.','Period'],['/','Slash'],['⇧','ShiftRight',2.5,lang === 'es' ? 'mayús' : 'shift']],
-  [['ctrl','ControlLeft',1.25],[lang === 'es' ? 'opc' : 'opt','AltLeft',1.25],['cmd','MetaLeft',1.5],['','Space',6.5],['cmd','MetaRight',1.5],[lang === 'es' ? 'opc' : 'opt','AltRight',1.25],['ctrl','ControlRight',1.25]],
+  [['⇪','CapsLock',1.6,'control'],['A','KeyA'],['S','KeyS'],['D','KeyD'],['F','KeyF'],['G','KeyG'],['H','KeyH'],['J','KeyJ'],['K','KeyK'],['L','KeyL'],[';','Semicolon'],["'",'Quote'],['⏎','Enter',1.9,t(lang, 'kbd.return')]],
+  [['⇧','ShiftLeft',2.1,t(lang, 'kbd.shift')],['Z','KeyZ'],['X','KeyX'],['C','KeyC'],['V','KeyV'],['B','KeyB'],['N','KeyN'],['M','KeyM'],[',','Comma'],['.','Period'],['/','Slash'],['⇧','ShiftRight',2.5,t(lang, 'kbd.shift')]],
+  [['ctrl','ControlLeft',1.25],[t(lang, 'kbd.opt'),'AltLeft',1.25],['cmd','MetaLeft',1.5],['','Space',6.5],['cmd','MetaRight',1.5],[t(lang, 'kbd.opt'),'AltRight',1.25],['ctrl','ControlRight',1.25]],
 ]
 
 /*
@@ -67,8 +67,8 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
           <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--cyan)] opacity-75"></span>
           <span class="relative inline-flex h-2 w-2 rounded-full bg-[color:var(--cyan)]"></span>
         </span>
-        <span class="hidden sm:inline">{lang === 'es' ? 'Pasa el ratón para voltear en 3D · Arrastra libremente' : 'Hover to flip in 3D · Drag & toss freely'}</span>
-        <span class="sm:hidden">{lang === 'es' ? 'Toca para voltear · Arrastra para ordenar' : 'Tap to flip · Drag to arrange'}</span>
+        <span class="hidden sm:inline">{t(lang, 'otc.hoverFlip')}</span>
+        <span class="sm:hidden">{t(lang, 'otc.tapFlip')}</span>
       </div>
       <button
         type="button"
@@ -76,7 +76,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
         class="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--line)] bg-[color:var(--ink-800)] px-3.5 py-1.5 text-[0.72rem] font-mono text-[color:var(--fg-2)] transition hover:border-[color:var(--blue-bright)] hover:text-[color:var(--cyan)] shadow-sm"
       >
         <span>↺</span>
-        <span>{lang === 'es' ? 'Reorganizar fotos' : 'Reset Deck'}</span>
+        <span>{t(lang, 'otc.resetDeck')}</span>
       </button>
     </div>
 
@@ -267,9 +267,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
               <div class="comic-bubble-tail" aria-hidden="true"></div>
               <div class="flex items-center justify-between gap-3 w-full">
                 <p id="killua-typing-speech" class="text-xs sm:text-sm font-semibold tracking-wide text-[color:var(--fg)] leading-relaxed">
-                  {lang === 'es'
-                    ? '"¿Crees que puedes teclear más rápido que mi Godspeed? ¡A ver cuánto WPM alcanzas!"'
-                    : '"You think you can type faster than my Godspeed lightning? Let\'s see your WPM!"'}
+                  {t(lang, 'otc.killuaIntro')}
                 </p>
                 <button type="button" id="monkey-restart-btn" class="shrink-0 inline-flex items-center gap-1 rounded-full border border-[color:var(--line)] bg-[color:var(--ink-800)] px-2.5 py-1 text-[0.68rem] font-mono text-[color:var(--cyan)] hover:border-[color:var(--cyan)] transition shadow-sm" title={t(lang, 'otc.restartTrial')}>
                   <span>↺</span>

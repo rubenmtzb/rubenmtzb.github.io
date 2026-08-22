@@ -64,7 +64,7 @@ const ICONS = { LinkedIn: 'linkedin', GitHub: 'github' } as const
         </h1>
 
         <p class="reveal mt-2 text-base sm:text-lg font-medium text-[color:var(--fg-2)]" style="--i:1">
-          {profile.jobTitle} — {profile.locality}, {lang === 'es' ? 'España' : 'Spain'}
+          {profile.jobTitle} — {profile.locality}, {t(lang, 'v2.contact.country')}
         </p>
 
         <p class="reveal mt-3 text-sm leading-relaxed text-[color:var(--fg-3)] max-w-md" style="--i:2">
@@ -81,7 +81,7 @@ const ICONS = { LinkedIn: 'linkedin', GitHub: 'github' } as const
                 rel="noopener noreferrer"
                 class="hero-tech-chip"
                 style={`--chip-color: ${tech.color}; --chip-glow: ${tech.glow};`}
-                aria-label={`${tech.name} — ${lang === 'es' ? 'sitio oficial' : 'official site'}`}
+                aria-label={`${tech.name} — ${t(lang, 'v2.chip.officialSite')}`}
               >
                 <img
                   src={tech.icon}
@@ -101,7 +101,7 @@ const ICONS = { LinkedIn: 'linkedin', GitHub: 'github' } as const
         <div class="reveal mt-6 flex flex-wrap justify-center md:justify-start items-center gap-3" style="--i:4">
           <a href={`mailto:${profile.email}`} class="btn btn-primary text-xs sm:text-sm !py-2 !px-4">
             <Icon name="mail" class="h-3.5 w-3.5" />
-            {lang === 'es' ? '¡Escríbeme!' : 'Say hi!'}
+            {t(lang, 'v2.hero.sayHi')}
           </a>
           <a href={cvPath} class="btn btn-ghost text-xs sm:text-sm !py-2 !px-4">
             {t(lang, 'v2.hero.cv')}

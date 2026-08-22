@@ -70,11 +70,11 @@ const profile = await getProfile(lang)
                   hidden
                   class="inline-flex items-center gap-2 rounded-xl border border-[color:var(--line)] bg-[color:var(--ink-900)] px-4 py-2.5 text-xs font-mono tracking-wider text-[color:var(--fg-2)] transition hover:border-[color:var(--cyan)] hover:text-[color:var(--cyan)] hover:shadow-[0_0_15px_rgba(111,227,255,0.2)]"
                   data-mail={profile.email}
-                  data-label={lang === 'es' ? 'Copiar correo' : 'Copy email'}
-                  data-done={lang === 'es' ? '¡Copiado! ✓' : 'Copied! ✓'}
+                  data-label={t(lang, 'v2.contact.copyEmail')}
+                  data-done={t(lang, 'v2.contact.copied')}
                 >
                   <span>📋</span>
-                  <span>{lang === 'es' ? 'Copiar correo' : 'Copy email'}</span>
+                  <span>{t(lang, 'v2.contact.copyEmail')}</span>
                 </button>
                 <a href={`mailto:${profile.email}`} class="btn btn-primary text-xs !py-2.5 !px-5">
                   <span>{t(lang, 'v2.contact.write')}</span>

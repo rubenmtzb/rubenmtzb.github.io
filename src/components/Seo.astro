@@ -1,5 +1,6 @@
 ---
 import { abs, buildJsonLd, getCluster, getPage } from '../lib/content'
+import { LOCALE_TAGS } from '../site.config'
 import type { Lang } from '../i18n/ui'
 
 interface Props {
@@ -30,7 +31,7 @@ const jsonLd = await buildJsonLd({
   pageDescription: page.description,
 })
 
-const ogLocale = lang === 'es' ? 'es_ES' : 'en_US'
+const ogLocale = LOCALE_TAGS[lang]
 
 /*
  * `profile` describe a una persona, así que solo lo son las páginas que van
