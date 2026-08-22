@@ -1,0 +1,27 @@
+---
+/**
+ * Client marker and the reveal's safety net.
+ *
+ * The `js` class is what lets the content leave the build visible and only get
+ * hidden once there is JavaScript around to show it again. The risk in that
+ * bargain is asymmetric: if the bundle never runs — a file that goes missing, an
+ * error in an import — everything marked `.reveal` stays at zero opacity for
+ * good and the page comes up blank. The content would then depend on JavaScript
+ * working, which is exactly what this site promises not to do.
+ *
+ * `DOMContentLoaded` does not fire until the deferred modules have run or
+ * failed, so it is the precise moment to check: if nobody has marked the
+ * document as enhanced, everything is revealed at once. On the normal path this
+ * check does nothing.
+ */
+---
+
+<script is:inline>
+  document.documentElement.classList.add('js')
+  document.addEventListener('DOMContentLoaded', function () {
+    if (document.documentElement.classList.contains('enhanced')) return
+    document.querySelectorAll('.reveal').forEach(function (el) {
+      el.classList.add('is-in')
+    })
+  })
+</script>

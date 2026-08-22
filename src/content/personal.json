@@ -18,7 +18,10 @@
     "category": "life",
     "featured": true,
     "image": "./../assets/personal-web/01-palencia-atardecer.webp",
-    "location": "Los Balbases, Burgos",
+    "location": {
+      "en": "Los Balbases, Burgos",
+      "es": "Los Balbases, Burgos"
+    },
     "alt": {
       "en": "Sitting on a stone wall at dusk, looking out over Los Balbases (Burgos) with its church on the hill and wind turbines along the horizon.",
       "es": "Sentado en un muro de piedra al atardecer, mirando Los Balbases (Burgos) con su iglesia en lo alto y molinos de viento en el horizonte."
@@ -35,7 +38,10 @@
     "category": "travel",
     "featured": false,
     "image": "./../assets/personal-web/02-londres-tower-bridge.webp",
-    "location": "Londres, Reino Unido",
+    "location": {
+      "en": "London, United Kingdom",
+      "es": "Londres, Reino Unido"
+    },
     "alt": {
       "en": "Standing by the Thames on a grey winter day, with Tower Bridge behind me.",
       "es": "De pie junto al Támesis en un día gris de invierno, con el Tower Bridge detrás."
@@ -52,7 +58,10 @@
     "category": "travel",
     "featured": false,
     "image": "./../assets/personal-web/08-roma.webp",
-    "location": "Roma, Italia",
+    "location": {
+      "en": "Rome, Italy",
+      "es": "Roma, Italia"
+    },
     "alt": {
       "en": "Leaning against a stone wall inside the Colosseum, looking away from the camera under a heavy sky.",
       "es": "Apoyado en un muro de piedra dentro del Coliseo, mirando fuera de cámara bajo un cielo cargado."
@@ -69,7 +78,10 @@
     "category": "style",
     "featured": false,
     "image": "./../assets/personal-web/03-mallorca.webp",
-    "location": "Mallorca, España",
+    "location": {
+      "en": "Mallorca, Spain",
+      "es": "Mallorca, España"
+    },
     "alt": {
       "en": "Walking down a palm-lined avenue in the late afternoon light, seen from behind.",
       "es": "Caminando por una avenida de palmeras con la luz de la tarde, visto de espaldas."
@@ -86,7 +98,10 @@
     "category": "sport",
     "featured": false,
     "image": "./../assets/personal-web/09-escalada.webp",
-    "location": "Barcelona, España",
+    "location": {
+      "en": "Barcelona, Spain",
+      "es": "Barcelona, España"
+    },
     "alt": {
       "en": "Climbing an indoor bouldering wall mid-route, roped in and reaching up for a hold, seen from behind and below.",
       "es": "Escalando en un rocódromo cubierto a media vía, asegurado con cuerda y alcanzando una presa, visto de espaldas y desde abajo."
@@ -103,7 +118,10 @@
     "category": "travel",
     "featured": false,
     "image": "./../assets/personal-web/10-granada.webp",
-    "location": "Granada, España",
+    "location": {
+      "en": "Granada, Spain",
+      "es": "Granada, España"
+    },
     "alt": {
       "en": "Standing on a fortress rampart above Granada, arms spread wide, overlooking the city and the mountains beyond under a bright blue sky.",
       "es": "De pie sobre la muralla de una fortaleza en Granada, con los brazos extendidos, mirando la ciudad y las montañas al fondo bajo un cielo azul despejado."

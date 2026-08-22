@@ -1,0 +1,180 @@
+/* ---------------- Build gallery ---------------- */
+.bx-gallery { padding-top: 1rem; }
+.bx-intro { max-width: 60ch; color: var(--fg-2); font-size: .82rem; line-height: 1.65; }
+.bx-build-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .8rem;
+  margin-top: 1.15rem;
+  list-style: none;
+}
+.bx-build-card {
+  --bx-status: var(--cyan);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: .6rem;
+  background: var(--ink-950);
+  color: inherit;
+  text-align: left;
+  transition: border-color .3s ease, box-shadow .3s ease;
+}
+.bx-build-card.is-scaffold { --bx-status: #f0bd68; }
+.bx-build-card.is-in-progress { --bx-status: #f0bd68; }
+.bx-build-card.is-planning { --bx-status: #a995ff; }
+/*
+ * The whole card is the target, so the whole card responds: the border lights
+ * up, the title takes the action colour and the arrow steps forward. The button
+ * is still inside because it is what takes focus and what gets announced; what
+ * changes is where you have to aim with mouse or finger.
+ */
+.bx-build-card { cursor: pointer; }
+.bx-build-card:hover { border-color: rgba(111, 227, 255, .45); box-shadow: 0 24px 48px -30px #000; }
+.bx-build-card:hover .bx-card-id strong { color: var(--cyan); }
+.bx-build-card:hover .bx-inspect b { transform: translateX(3px); }
+.bx-card-id strong { transition: color .25s ease; }
+.bx-card-visual:focus-visible,
+.bx-back:focus-visible,
+.bx-view-switch button:focus-visible,
+.bx-card-nav:focus-visible,
+.bx-card-pagination button:focus-visible,
+.bx-inspect:focus-visible,
+.bx-parts button:focus-visible,
+.bx-source:focus-visible,
+.bx-clip-play:focus-visible,
+.bx-clip-wave input:focus-visible,
+.bx-scrub input:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+.bx-card-visual {
+  --bx-pointer-x: 50%;
+  --bx-pointer-y: 50%;
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: radial-gradient(120% 100% at 50% 18%, rgba(43, 107, 255, .16), transparent 62%), var(--ink-950);
+  isolation: isolate;
+}
+.bx-card-visual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(5, 8, 15, .22), transparent 40%, rgba(5, 8, 15, .38));
+  pointer-events: none;
+}
+.bx-card-slide {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  margin: 0;
+  background: var(--ink-950);
+}
+.bx-card-slide[hidden] { display: none; }
+.bx-card-slide picture { display: contents; }
+.bx-card-slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.bx-card-pointer-light {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: radial-gradient(
+    circle 7rem at var(--bx-pointer-x) var(--bx-pointer-y),
+    rgba(111, 227, 255, .16),
+    transparent 66%
+  );
+  opacity: 0;
+  transition: opacity .3s ease;
+  pointer-events: none;
+}
+.bx-card-visual:hover .bx-card-pointer-light,
+.bx-card-visual:focus-within .bx-card-pointer-light { opacity: 1; }
+.bx-card-index, .bx-card-authentic { position: absolute; z-index: 3; top: .55rem; font: 600 .5rem/1 var(--font-mono); letter-spacing: .1em; }
+.bx-card-index { left: .6rem; color: var(--fg); text-shadow: 0 1px 8px rgba(0, 0, 0, .85); }
+.bx-card-authentic {
+  right: .6rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .32rem;
+  padding: .32rem .4rem;
+  border: 1px solid currentColor;
+  border-radius: .3rem;
+  background: rgba(5, 8, 15, .72);
+  color: var(--bx-status);
+  backdrop-filter: blur(8px);
+}
+.bx-card-authentic i { width: .3rem; height: .3rem; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
+.bx-card-nav {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 1.7rem;
+  aspect-ratio: 1;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 50%;
+  background: rgba(5, 8, 15, .7);
+  color: var(--fg);
+  font: 500 .85rem/1 var(--font-mono);
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transform: translateY(-50%);
+  transition: border-color .2s ease, background .2s ease, color .2s ease;
+}
+.bx-card-nav:hover { border-color: rgba(111, 227, 255, .65); background: rgba(5, 8, 15, .9); color: var(--cyan); }
+.bx-card-prev { left: .45rem; }
+.bx-card-next { right: .45rem; }
+.bx-card-photo-meta {
+  position: absolute;
+  right: .6rem;
+  bottom: .55rem;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  color: var(--fg-2);
+  font: 600 .46rem/1 var(--font-mono);
+  letter-spacing: .09em;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, .9);
+}
+.bx-card-photo-meta b { padding-left: .5rem; border-left: 1px solid rgba(255, 255, 255, .25); color: var(--cyan); font: inherit; }
+.bx-card-pagination {
+  position: absolute;
+  left: 50%;
+  bottom: .6rem;
+  z-index: 4;
+  display: flex;
+  gap: .35rem;
+  transform: translateX(-50%);
+}
+.bx-card-pagination button {
+  width: 1.15rem;
+  height: 2px;
+  padding: 0;
+  border: 0;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, .24);
+  cursor: pointer;
+  transition: width .25s ease, background .25s ease, box-shadow .25s ease;
+}
+.bx-card-pagination button[aria-current='true'] { width: 1.7rem; background: var(--cyan); box-shadow: 0 0 8px rgba(111, 227, 255, .7); }
+.bx-card-copy { flex: 1; min-height: 4.2rem; padding: .65rem .7rem; border-top: 1px solid var(--line-soft); }
+.bx-card-id { display: grid; gap: .2rem; min-width: 0; }
+.bx-card-id strong { color: var(--fg); font-size: .78rem; line-height: 1.2; }
+
+.bx-card-id small, .bx-specs > p { color: var(--fg-3); font: 400 .56rem/1.35 var(--font-mono); }
+.bx-card-meta { display: grid; justify-items: end; gap: .3rem; }
+.bx-inspect { padding: .3rem 0 .3rem .4rem; border: 0; background: transparent; color: var(--cyan); font: 600 .55rem/1 var(--font-mono); white-space: nowrap; cursor: pointer; }
+.bx-inspect b { display: inline-block; margin-left: .2rem; transition: transform .2s ease; }
+.bx-inspect:hover b { transform: translateX(3px); }

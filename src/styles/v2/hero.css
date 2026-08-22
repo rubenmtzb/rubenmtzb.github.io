@@ -1,0 +1,90 @@
+/* ---------------- HERO TECH BADGES (ANIMATED & GLOW) ---------------- */
+.hero-tech-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 9999px;
+  background: rgba(10, 16, 32, 0.88);
+  border: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--fg-2);
+  backdrop-filter: blur(8px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.hero-tech-chip::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 50% 0%, var(--chip-color, var(--cyan)), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.hero-tech-chip:hover {
+  transform: translateY(-2px) scale(1.04);
+  border-color: var(--chip-color, var(--cyan));
+  color: var(--fg);
+  box-shadow: 0 4px 18px var(--chip-glow, rgba(111, 227, 255, 0.25));
+}
+
+.hero-tech-chip:hover::before {
+  opacity: 0.18;
+}
+
+.hero-tech-chip img {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  transition: transform 0.25s ease;
+}
+
+.hero-tech-chip:hover img {
+  transform: scale(1.2) rotate(6deg);
+}
+
+/* Compact showcase chips: they share the hero's colour, glow and link. */
+.project-tech-chip {
+  min-height: 1.55rem;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+}
+.project-tech-chip img {
+  flex: 0 0 0.75rem;
+  width: 12px;
+  height: 12px;
+}
+.project-tech-label {
+  cursor: default;
+  color: var(--fg-2);
+}
+.project-tech-label:hover {
+  transform: none;
+  border-color: var(--line);
+  color: var(--fg-2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.project-tech-label:hover::before {
+  opacity: 0;
+}
+.project-tech-marker {
+  width: 0.42rem;
+  height: 0.42rem;
+  flex: 0 0 auto;
+  transform: rotate(45deg);
+  border: 1px solid var(--cyan);
+  background: rgba(111, 227, 255, 0.12);
+  box-shadow: 0 0 0.45rem rgba(111, 227, 255, 0.28);
+}

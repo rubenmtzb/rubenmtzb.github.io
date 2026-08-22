@@ -1,0 +1,198 @@
+/* ---------------- The EvoWorks EVO75's stock architecture ---------------- */
+.bx-build-panel[data-layout='evo75'] .bx-model {
+  width: 520px;
+  height: 230px;
+}
+.bx-build-panel[data-layout='evo75'] .bx-skin { border-radius: 12px; }
+.bx-build-panel[data-layout='evo75'] .bx-pcb,
+.bx-build-panel[data-layout='evo75'] .bx-plate,
+.bx-build-panel[data-layout='evo75'] .bx-dampening { inset: 10px; }
+.bx-build-panel[data-layout='evo75'] .bx-bottom-case {
+  border: 10px solid #dad9d5;
+  background: linear-gradient(155deg, #f8f7f3, #e5e4df 62%, #cfcec9);
+  box-shadow: inset 0 1px #fff, inset 0 0 0 1px rgba(79, 82, 84, .15), 0 5px 0 #d1d0cb, 0 11px 0 #bab9b4, 0 21px 22px rgba(0, 0, 0, .45);
+}
+.bx-build-panel[data-layout='evo75'] .bx-case-well {
+  inset: 11px;
+  border-color: rgba(76, 80, 82, .18);
+  border-radius: 8px;
+}
+.bx-build-panel[data-layout='evo75'] .bx-case-mark {
+  color: rgba(30, 34, 36, .24);
+  letter-spacing: .25em;
+}
+.bx-build-panel[data-layout='evo75'] .bx-top-case {
+  border: 12px solid #e5e4df;
+  background: transparent;
+  box-shadow: inset 0 1px #fff, inset 0 0 0 1px rgba(66, 70, 72, .14), 0 4px 0 #d1d0cb, 0 9px 0 #bebdb8, 0 15px 17px rgba(0, 0, 0, .36);
+}
+.bx-evo-case-opening {
+  position: absolute;
+  inset: 5px;
+  border: 1px solid rgba(101, 104, 105, .22);
+  border-radius: 7px;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, .16), 0 1px rgba(255, 255, 255, .8);
+}
+.bx-evo-grille {
+  position: absolute;
+  top: 2.1%;
+  width: 3.8%;
+  height: 13.2%;
+  border: 1px solid #a92422;
+  border-radius: 3px;
+  background-color: #ba302c;
+  background-image: radial-gradient(circle, #33100f 0 1px, transparent 1.5px);
+  background-size: 4px 4px;
+  box-shadow: inset 0 1px rgba(255,255,255,.25), 0 2px 0 #7b1b1a, 0 4px 4px rgba(0,0,0,.3);
+}
+.bx-evo-grille.is-left { left: 7.7%; }
+.bx-evo-grille.is-right { right: 7.4%; }
+.bx-build-panel[data-layout='evo75'] .bx-plate {
+  background:
+    linear-gradient(90deg, rgba(239, 238, 231, .96) 0 50%, rgba(59, 65, 68, .92) 50%),
+    linear-gradient(155deg, #eceae4, #3d4246);
+  box-shadow: inset 0 1px rgba(255,255,255,.65), inset 0 0 0 1px rgba(54,59,62,.42), 0 3px 0 #9d9c96, 0 7px 0 #727477, 0 12px 14px rgba(0,0,0,.38);
+}
+.bx-build-panel[data-layout='evo75'] .bx-plate::after {
+  content: 'PP / FR4';
+  position: absolute;
+  right: 3%;
+  bottom: 4%;
+  color: rgba(255, 255, 255, .44);
+  font: 700 8px/1 var(--font-mono);
+  letter-spacing: .12em;
+}
+.bx-build-panel[data-layout='evo75'] .bx-pcb {
+  background-color: #244d3b;
+  background-image:
+    linear-gradient(24deg, transparent 18%, rgba(199, 172, 84, .22) 18% 18.5%, transparent 18.5% 61%, rgba(199, 172, 84, .18) 61% 61.5%, transparent 61.5%),
+    radial-gradient(rgba(221, 197, 111, .42) 1px, transparent 1px);
+  background-size: 86px 42px, 11px 11px;
+  box-shadow: inset 0 1px rgba(255,255,255,.24), inset 0 0 0 1px #173428, 0 3px 0 #1d3d30, 0 7px 0 #122a20, 0 12px 14px rgba(0,0,0,.38);
+}
+.bx-build-panel[data-layout='evo75'] .bx-switch {
+  border-color: rgba(93, 78, 55, .45);
+  background: linear-gradient(145deg, rgba(248,245,236,.94), rgba(210,205,193,.9) 58%, rgba(167,163,153,.92));
+  box-shadow: inset 0 1px rgba(255,255,255,.92), 0 2px 0 #c9c3b7, 0 5px 0 #9b958a, 0 8px 0 #716d66, 0 11px 8px rgba(0,0,0,.42);
+}
+.bx-build-panel[data-layout='evo75'] .bx-switch b {
+  border-color: rgba(97, 82, 65, .58);
+  background: linear-gradient(145deg, #c8b7a5, #9e8c7a 58%, #7c6c5c);
+  box-shadow: inset 0 1px rgba(255,255,255,.38), 0 2px 0 #8b7967, 0 5px 0 #6a5b4c, 0 7px 5px rgba(0,0,0,.34);
+}
+.bx-mount { background: transparent; }
+.bx-evo-leaf {
+  position: absolute;
+  width: 14%;
+  height: 9px;
+  border: 1px solid rgba(117, 28, 25, .78);
+  border-radius: 50% 50% 30% 30%;
+  background: linear-gradient(180deg, #ef6b61, #bd322d);
+  box-shadow: inset 0 1px rgba(255,255,255,.32), 0 3px 0 #7d211e, 0 5px 5px rgba(0,0,0,.3);
+}
+.bx-evo-leaf.is-1, .bx-evo-leaf.is-2,
+.bx-evo-leaf.is-3, .bx-evo-leaf.is-4 { top: 4px; }
+.bx-evo-leaf.is-5, .bx-evo-leaf.is-6,
+.bx-evo-leaf.is-7, .bx-evo-leaf.is-8 { bottom: 4px; }
+.bx-evo-leaf.is-1, .bx-evo-leaf.is-5 { left: 5%; }
+.bx-evo-leaf.is-2, .bx-evo-leaf.is-6 { left: 29%; }
+.bx-evo-leaf.is-3, .bx-evo-leaf.is-7 { right: 29%; }
+.bx-evo-leaf.is-4, .bx-evo-leaf.is-8 { right: 5%; }
+.bx-build-panel[data-layout='evo75'] .bx-dampening {
+  background: repeating-linear-gradient(120deg, #34383d 0 5px, #282c30 5px 10px);
+  box-shadow: inset 0 1px rgba(255,255,255,.08), 0 3px 0 #202327, 0 7px 0 #14171a, 0 11px 12px rgba(0,0,0,.38);
+}
+.bx-evo-silicone-core {
+  position: absolute;
+  inset: 6px;
+  border: 2px solid rgba(202, 75, 67, .48);
+  border-radius: 7px;
+  box-shadow: inset 0 0 0 2px rgba(226, 96, 86, .14);
+}
+.bx-battery { background: transparent; }
+.bx-evo-cell {
+  position: absolute;
+  top: 24%;
+  width: 37%;
+  height: 52%;
+  border: 2px solid #3e444b;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #68717b, #414850 62%, #30363d);
+  box-shadow: inset 0 1px rgba(255,255,255,.18), 0 4px 0 #262b30, 0 8px 10px rgba(0,0,0,.38);
+}
+.bx-evo-cell::before {
+  content: '4000mAh';
+  position: absolute;
+  left: 8%;
+  top: 42%;
+  color: rgba(255,255,255,.42);
+  font: 700 8px/1 var(--font-mono);
+  letter-spacing: .12em;
+}
+.bx-evo-cell.is-left { left: 10%; }
+.bx-evo-cell.is-right { right: 10%; }
+.bx-build-panel[data-layout='evo75'] .bx-weight {
+  background: transparent;
+  box-shadow: none;
+}
+.bx-build-panel[data-layout='evo75'] .bx-weight-strip {
+  inset: 28px 11%;
+  border: 2px solid rgba(246, 246, 244, .78);
+  border-radius: 14px;
+  background: linear-gradient(105deg, #aeb2b4, #f3f3f1 28%, #b7bbbd 51%, #f7f7f5 73%, #9ca1a4);
+  box-shadow: inset 0 0 0 2px rgba(70,75,78,.2), inset 0 6px 12px rgba(255,255,255,.52), 0 5px 0 #898e91, 0 10px 14px rgba(0,0,0,.4);
+}
+.bx-build-panel[data-layout='evo75'] .bx-weight-strip::after {
+  content: 'EVO75';
+  position: absolute;
+  right: 11%;
+  top: 40%;
+  color: rgba(56, 61, 64, .54);
+  font: 500 25px/1 var(--font-mono);
+  letter-spacing: .12em;
+  text-shadow: 0 1px rgba(255,255,255,.75);
+}
+.bx-evo-weight-vents {
+  position: absolute;
+  top: 22%;
+  width: 22px;
+  height: 56%;
+  background-image: radial-gradient(circle, rgba(75, 80, 83, .72) 0 1px, transparent 1.5px);
+  background-size: 6px 6px;
+}
+.bx-evo-weight-vents.is-left { left: 6%; }
+.bx-evo-weight-vents.is-right { right: 6%; }
+.bx-build-panel[data-layout='evo75'] .bx-model-key {
+  border-color: rgba(100, 102, 101, .38);
+  background: linear-gradient(155deg, #f2f1ed, #cfcec9);
+  box-shadow: 0 2px 0 #e0dfda, 0 4px 0 #c8c7c2, 0 7px 0 #b3b2ad, 0 10px 8px rgba(0,0,0,.38);
+}
+.bx-build-panel[data-layout='evo75'] .bx-model-key::before {
+  background: radial-gradient(circle at 28% 22%, rgba(255,255,255,.72), transparent 36%), linear-gradient(155deg, #fbfaf7, #e9e8e3 58%, #d6d5d0);
+  box-shadow: inset 0 1px #fff, inset 0 -2px 3px rgba(90,94,93,.14);
+}
+.bx-build-panel[data-layout='evo75'] .bx-model-key::after { background: linear-gradient(180deg, #d5d4cf, #bdbcb7); }
+.bx-build-panel[data-layout='evo75'] .bx-model-key.is-evo-grey {
+  border-color: rgba(70, 73, 74, .48);
+  background: linear-gradient(155deg, #9fa2a2, #737777);
+  box-shadow: 0 2px 0 #8b8e8e, 0 4px 0 #6f7373, 0 7px 0 #555959, 0 10px 8px rgba(0,0,0,.4);
+}
+.bx-build-panel[data-layout='evo75'] .bx-model-key.is-evo-grey::before {
+  background: radial-gradient(circle at 28% 22%, rgba(255,255,255,.42), transparent 36%), linear-gradient(155deg, #b2b4b4, #959898 58%, #797d7d);
+}
+.bx-build-panel[data-layout='evo75'] .bx-model-key.is-evo-grey::after { background: linear-gradient(180deg, #777b7b, #5b5f5f); }
+.bx-build-panel[data-layout='evo75'] .bx-model-key.is-evo-red {
+  border-color: rgba(99, 18, 17, .62);
+  background: linear-gradient(155deg, #d23b36, #9d201e);
+  box-shadow: 0 2px 0 #b52926, 0 4px 0 #8f1d1b, 0 7px 0 #681514, 0 10px 8px rgba(0,0,0,.43);
+}
+.bx-build-panel[data-layout='evo75'] .bx-model-key.is-evo-red::before {
+  background: radial-gradient(circle at 28% 22%, rgba(255,255,255,.36), transparent 36%), linear-gradient(155deg, #e34b45, #c42e2a 58%, #a51f1d);
+}
+.bx-build-panel[data-layout='evo75'] .bx-model-key.is-evo-red::after { background: linear-gradient(180deg, #9a211e, #701716); }
+.bx-build-panel[data-layout='evo75'] .bx-model-key span {
+  color: #b21e1b;
+  font-size: 6px;
+  text-shadow: 0 1px rgba(255,255,255,.48);
+}
+.bx-build-panel[data-layout='evo75'] .bx-model-key.is-evo-red span { color: #fff3ed; text-shadow: 0 1px rgba(75, 8, 7, .6); }

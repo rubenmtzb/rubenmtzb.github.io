@@ -19,19 +19,26 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      # 22.6 es la primera versión que ejecuta TypeScript sin compilar: las
+      # comprobaciones del movimiento importan el módulo del juego tal cual.
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
       - name: Install dependencies
         run: npm ci
+      # Los tipos también son parte del contrato. Se comprobaban a mano y en
+      # local, así que nada impedía desplegar un fallo que `astro check` ya
+      # sabía ver: ahora corre antes que el build y para la línea igual.
+      - name: Comprobar tipos
+        run: npm run check
       - name: Build
         run: npm run build
       # El despliegue solo continúa si el build cumple el contrato por los dos
       # lados: el HTML sin JavaScript (URLs, lang, canonical, hreflang, sitemap,
-      # JSON-LD, H1, enlaces, imágenes, anclas heredadas) y la capa de
-      # interacción ejecutando el bundle real contra ese mismo HTML.
+      # JSON-LD, H1, enlaces, imágenes, anclas heredadas, presupuesto de peso)
+      # y la capa de interacción ejecutando el bundle real contra ese mismo HTML.
       - name: Verificar dist e interacción
         run: npm run verify
       - name: Setup Pages

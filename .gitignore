@@ -26,11 +26,33 @@ dist-ssr
 # Astro
 .astro/
 
+# Copias que deja iCloud Drive al sincronizar la carpeta del proyecto: duplica
+# el fichero añadiéndole un número —"index 2", "types.d 2.ts"— y llegó a crear
+# ocho copias del índice de git. Ninguna es del proyecto y ninguna debe
+# versionarse jamás.
+* [0-9]
+* [0-9].*
+
 # Material personal original: nunca entra al repositorio.
 # Las versiones WebP optimizadas de src/assets/personal-web/ sí se versionan
 # para que el build estático sea reproducible fuera del equipo local.
-*.jpeg
+#
+# Cada extensión se escribe en minúscula y en mayúscula a propósito. macOS
+# resuelve rutas sin distinguir mayúsculas, así que en este equipo `*.JPG`
+# parecía cubrir también los `.jpg`; en un sistema de ficheros sensible a
+# mayúsculas —cualquier Linux, empezando por el runner de CI— no los cubre,
+# y los originales entrarían al repositorio sin que nadie se diera cuenta.
+*.jpg
 *.JPG
+*.jpeg
+*.JPEG
+*.heic
+*.HEIC
+*.mov
 *.MOV
 *.mp4
-*.heic
+*.MP4
+# Tomas de sonido sin cortar, en la raíz del proyecto. Los cortes servidos
+# viven en public/keyboards/sound/ y sí se versionan.
+/*.m4a
+/*.wav

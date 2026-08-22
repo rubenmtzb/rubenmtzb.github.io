@@ -1,0 +1,116 @@
+/* ---------------- RETRATO ASCII (KILLUA) ---------------- */
+.ascii-card {
+  box-shadow: 0 20px 60px -20px rgba(0, 0, 0, 0.9), 0 0 25px -8px rgba(91, 155, 255, 0.18);
+  width: fit-content;
+  max-width: 100%;
+}
+.ascii-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ascii-canvas {
+  display: block;
+  cursor: crosshair;
+  touch-action: none;
+  max-width: 100%;
+  height: auto;
+}
+.ascii-fallback {
+  width: 260px;
+  max-width: 100%;
+  height: auto;
+  filter: grayscale(1) brightness(1.1) sepia(1) hue-rotate(185deg) saturate(3.2);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.4rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+}
+.btn:hover {
+  transform: translateY(-1px);
+}
+.btn-primary {
+  background: var(--blue);
+  color: #fff;
+  box-shadow: 0 8px 20px -8px rgba(43, 107, 255, 0.6);
+}
+.btn-primary:hover {
+  background: var(--blue-bright);
+  box-shadow: 0 10px 24px -6px rgba(91, 155, 255, 0.7);
+}
+.btn-ghost {
+  border: 1px solid var(--line);
+  color: var(--fg);
+  background: var(--ink-800);
+}
+.btn-ghost:hover {
+  border-color: var(--blue-bright);
+  color: var(--blue-bright);
+}
+
+.job-tab {
+  position: relative;
+  width: 100%;
+  padding: 0.85rem 1.25rem;
+  border-left: 2px solid var(--line);
+  font-size: 0.92rem;
+  text-align: left;
+  transition: color 0.25s ease, background-color 0.25s ease;
+}
+.job-tab:hover {
+  background-color: color-mix(in srgb, var(--ink-800) 60%, transparent);
+}
+.job-tab.is-active {
+  background-color: color-mix(in srgb, var(--blue) 8%, transparent);
+}
+
+@media (max-width: 1023px) {
+  .job-tab {
+    border-left: none;
+    border-bottom: 2px solid var(--line);
+    min-width: 140px;
+    padding: 0.75rem 1rem;
+  }
+}
+
+.job-indicator {
+  position: absolute;
+  background: var(--blue-bright);
+  box-shadow: 0 0 10px var(--blue-bright);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), height 0.25s, width 0.25s;
+  pointer-events: none;
+  z-index: 10;
+}
+
+html.js .job-panel {
+  display: none;
+}
+html.js .job-panel.is-active {
+  display: block;
+  animation: panelFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes panelFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+html:not(.js) .job-panel {
+  display: block !important;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--line-soft);
+  padding-bottom: 2rem;
+}
+html:not(.js) .job-tab {
+  pointer-events: none;
+}
+html:not(.js) #job-indicator {
+  display: none;
+}

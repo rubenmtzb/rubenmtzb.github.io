@@ -1,0 +1,23 @@
+---
+/**
+ * The CV document. The two language versions used to be the same page written
+ * twice; here the only thing that changes is the language handed to it.
+ */
+import BaseLayout from './BaseLayout.astro'
+import CvDocument from '../components/cv/CvDocument.astro'
+import type { Lang } from '../i18n/ui'
+import '../styles/global.css'
+
+interface Props { lang: Lang }
+const { lang } = Astro.props
+---
+
+<BaseLayout
+  lang={lang}
+  pageKey="cv"
+  pageType="ProfilePage"
+  displayFont={false}
+  bodyClass="cv-body font-mono text-slate-100"
+>
+  <main id="main"><CvDocument lang={lang} /></main>
+</BaseLayout>

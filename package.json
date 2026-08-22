@@ -7,9 +7,12 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "verify": "node scripts/verify-dist.mjs && node scripts/verify-interaction.mjs",
+    "verify": "node scripts/verify-dist.mjs && node scripts/verify-interaction.mjs && node scripts/verify-source.mjs && node --experimental-strip-types scripts/verify-physics.mjs",
     "check": "astro check",
-    "test": "npm run build && npm run verify"
+    "test": "npm run check && npm run build && npm run verify"
+  },
+  "engines": {
+    "node": ">=22.6"
   },
   "dependencies": {
     "@fontsource-variable/archivo": "^5.3.0",
@@ -20,6 +23,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@types/node": "^22.20.1",
     "linkedom": "^0.18.12",
     "typescript": "^5.9.3"
   }

@@ -2,34 +2,63 @@
 import { getProfile } from '../../lib/content'
 import { t, type Lang } from '../../i18n/ui'
 /**
- * El pie es común a la portada y a las fichas de proyecto, que no tienen la
- * sección de identidad. Cada página declara cuál es su principio, así que
- * "Volver arriba" siempre tiene destino.
+ * The footer is shared by the home page and the case studies, which have no
+ * identity section. Each page declares where its top is, so "back to top" always
+ * has a destination.
  */
 interface Props { lang: Lang; topId?: string }
 const { lang, topId = 'identity' } = Astro.props
 const profile = await getProfile(lang)
 const year = new Date().getFullYear()
 ---
-<footer class="border-t border-[color:var(--line-soft)] bg-[color:var(--ink-900)]">
-  <div class="shell flex flex-col gap-4 py-10 sm:flex-row sm:items-center sm:justify-between">
-    <div class="flex items-center gap-3">
-      <p class="t-meta normal-case tracking-[0.12em]">© {year} {profile.name}</p>
-      <button
-        type="button"
-        id="gm-trigger"
-        class="rounded p-1 text-sm text-[color:var(--fg-3)] opacity-60 transition hover:opacity-100 hover:text-[color:var(--cyan)] hover:scale-125"
-        title={t(lang, 'v2.footer.gameHint')}
-        aria-label={t(lang, 'v2.footer.gameHint')}
-      >
-        ⚡
-      </button>
+<footer class="relative overflow-hidden border-t border-[color:var(--line-soft)] bg-[color:var(--ink-900)]">
+  <div class="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--cyan)]/70 to-transparent" aria-hidden="true"></div>
+  <div class="shell grid gap-7 py-9 lg:grid-cols-[1fr_auto_1fr] lg:items-center">
+    <div class="min-w-0">
+      <div class="flex items-center gap-3">
+        <span class="h-1.5 w-1.5 rounded-full bg-[color:var(--cyan)] shadow-[0_0_10px_var(--cyan)]" aria-hidden="true"></span>
+        <p class="t-meta normal-case tracking-[0.12em]">© {year} {profile.name}</p>
+        <button
+          type="button"
+          id="gm-trigger"
+          class="rounded p-1 text-sm text-[color:var(--fg-3)] opacity-60 transition hover:scale-125 hover:text-[color:var(--cyan)] hover:opacity-100"
+          title={t(lang, 'v2.footer.gameHint')}
+          aria-label={t(lang, 'v2.footer.gameHint')}
+        >
+          ⚡
+        </button>
+      </div>
+      <p class="mt-2 font-mono text-[0.6rem] uppercase tracking-[0.18em] text-[color:var(--fg-3)]">
+        {profile.locality} // {t(lang, 'v2.contact.country')} · {t(lang, 'v2.footer.intent')}
+      </p>
     </div>
-    <p class="t-meta normal-case tracking-[0.12em] text-[color:var(--fg-3)]">
-      Astro · {lang === 'es' ? 'HTML estático' : 'static HTML'}
-    </p>
-    <a href={`#${topId}`} class="t-meta normal-case tracking-[0.12em] transition hover:text-[color:var(--blue-bright)]">
-      {t(lang, 'footer.top')} ↑
-    </a>
+
+    <nav class="flex flex-wrap items-center gap-x-4 gap-y-2 lg:justify-center" aria-label={t(lang, 'v2.footer.profiles')}>
+      {profile.socials.map((social) => (
+        <a
+          href={social.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group inline-flex items-center gap-1.5 font-mono text-[0.65rem] uppercase tracking-[0.14em] text-[color:var(--fg-3)] transition hover:text-[color:var(--cyan)]"
+        >
+          <span class="h-1 w-1 rounded-full bg-[color:var(--line)] transition group-hover:bg-[color:var(--cyan)]" aria-hidden="true"></span>
+          {social.label}
+        </a>
+      ))}
+      <a href={`mailto:${profile.email}`} class="group inline-flex items-center gap-1.5 font-mono text-[0.65rem] uppercase tracking-[0.14em] text-[color:var(--fg-3)] transition hover:text-[color:var(--live-soft)]">
+        <span class="h-1 w-1 rounded-full bg-[color:var(--line)] transition group-hover:bg-[color:var(--live-soft)]" aria-hidden="true"></span>
+        {t(lang, 'v2.footer.email')}
+      </a>
+    </nav>
+
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-2 lg:justify-self-end">
+      <p class="t-meta normal-case tracking-[0.12em] text-[color:var(--fg-3)]">
+        <span class="text-[color:var(--cyan)]">Astro</span> · {t(lang, 'v2.footer.staticHtml')}
+      </p>
+      <a href={`#${topId}`} class="group t-meta inline-flex items-center gap-1.5 normal-case tracking-[0.12em] transition hover:text-[color:var(--blue-bright)]">
+        {t(lang, 'footer.top')}
+        <span class="transition-transform group-hover:-translate-y-0.5" aria-hidden="true">↑</span>
+      </a>
+    </div>
   </div>
 </footer>

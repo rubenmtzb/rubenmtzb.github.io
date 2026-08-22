@@ -1,0 +1,104 @@
+---
+/**
+ * The keyboard's model, layer by layer.
+ *
+ * It is the visual reflection of the parts listing, not a second source: over a
+ * thousand decorative, textless elements — cut-outs, sockets, springs, keycaps —
+ * that a screen reader would have to wade through to reach the information, and
+ * that information is already written right next to it, in the numbered list.
+ * Which is why the whole block is `aria-hidden`.
+ *
+ * What each layer draws depends on the part's `id` and on the model: the list
+ * below is the full catalogue of parts the archive knows how to depict.
+ *
+ * Each layer splits in two: the layer, which is placed in space, and the skin,
+ * which carries the drawing. The dimming of out-of-focus parts lives on the skin
+ * and not on the layer because a `filter` or an `opacity` turns the element into
+ * a group and flattens the 3D of everything inside it; with the label hanging
+ * off the layer, its counter-rotation stays three-dimensional and the text reads
+ * face-on even while the part is dimmed.
+ */
+import KeyArt from './KeyArt.astro'
+import { MODEL_LAYOUTS, keyClass, modelKeys } from '../../../lib/keyboard-layouts'
+import { localizer, type KeyboardBuild, type KeyboardPart } from '../../../lib/content'
+import type { Lang } from '../../../i18n/ui'
+
+interface Props { build: KeyboardBuild; lang: Lang }
+const { build, lang } = Astro.props
+const pick = localizer(lang)
+
+/** The keys each layer draws come from the model, not from whoever places it. */
+const keys = modelKeys(MODEL_LAYOUTS[build.layout])
+
+/**
+ * The explode staggering comes from the assembly order, not from a number
+ * hand-written per layer: the last part to go in is the first to come apart, and
+ * adding a part re-sequences everything on its own.
+ */
+const STAGGER_MS = 70
+
+const layerStyle = (part: KeyboardPart, order: number) =>
+  `--z:${part.z}px;--ze:${part.exploded}px;--delay:${order * STAGGER_MS}ms`
+---
+
+<div class="bx-model" data-bx-model aria-hidden="true">
+  {[...build.parts].reverse().map((part, reverseIndex) => (
+    <div
+      class="bx-layer"
+      data-bx-part={part.id}
+      style={layerStyle(part, build.parts.length - 1 - reverseIndex)}
+    >
+      <div class={`bx-skin bx-${part.id}`}>
+        {part.id === 'weight' && (
+          <div class="bx-weight-strip">
+            {build.layout === 'evo75' && <i class="bx-evo-weight-vents is-left"></i>}
+            {build.layout === 'evo75' && <i class="bx-evo-weight-vents is-right"></i>}
+          </div>
+        )}
+        {(part.id === 'case' || part.id === 'bottom-case') && build.layout !== 'corne' && <div class="bx-case-well"></div>}
+        {(part.id === 'case' || part.id === 'bottom-case') && build.layout !== 'corne' && <div class="bx-case-mark">{build.name.slice(0, 3).toUpperCase()}</div>}
+        {part.id === 'case' && build.layout === 'hhkb' && <div class="bx-hhkb-battery"></div>}
+        {part.id === 'top-case' && <div class="bx-evo-case-opening"></div>}
+        {part.id === 'top-case' && <i class="bx-evo-grille is-left"></i>}
+        {part.id === 'top-case' && <i class="bx-evo-grille is-right"></i>}
+        {part.id === 'mount' && Array.from({ length: 8 }, (_, index) => <i class={`bx-evo-leaf is-${index + 1}`}></i>)}
+        {(part.id.includes('foam') || part.id === 'dampening') && keys.map((_key, index) => <i class={`bx-cutout ${keyClass(index)}`}></i>)}
+        {part.id === 'dampening' && <div class="bx-evo-silicone-core"></div>}
+        {part.id === 'battery' && <i class="bx-evo-cell is-left"></i>}
+        {part.id === 'battery' && <i class="bx-evo-cell is-right"></i>}
+        {build.layout === 'corne' && ['plate', 'pcb', 'spacers', 'bottom-case'].includes(part.id) && <i class={`bx-corne-half is-left is-${part.id}`}></i>}
+        {build.layout === 'corne' && ['plate', 'pcb', 'spacers', 'bottom-case'].includes(part.id) && <i class={`bx-corne-half is-right is-${part.id}`}></i>}
+        {part.id === 'pcb' && build.layout === 'corne' && <i class="bx-corne-mcu is-left"></i>}
+        {part.id === 'pcb' && build.layout === 'corne' && <i class="bx-corne-mcu is-right"></i>}
+        {part.id === 'interconnect' && <i class="bx-corne-cable"></i>}
+        {part.id === 'interconnect' && <i class="bx-corne-jack is-left"></i>}
+        {part.id === 'interconnect' && <i class="bx-corne-jack is-right"></i>}
+        {part.id === 'spacers' && Array.from({ length: 8 }, (_, index) => <i class={`bx-corne-standoff is-${index + 1}`}></i>)}
+        {part.id === 'feet' && Array.from({ length: 8 }, (_, index) => <i class={`bx-corne-foot is-${index + 1}`}></i>)}
+        {part.id === 'pcb' && <div class="bx-circuit bx-circuit-a"></div>}
+        {part.id === 'pcb' && <div class="bx-circuit bx-circuit-b"></div>}
+        {part.id === 'pcb' && build.layout !== 'hhkb' && keys.map((_key, index) => <i class={`bx-socket ${keyClass(index)}`}></i>)}
+        {part.id === 'pcb' && build.layout === 'hhkb' && keys.map((_key, index) => <i class={`bx-cap-pad ${keyClass(index)}`}></i>)}
+        {part.id === 'plate' && keys.map((_key, index) => <i class={`bx-cutout ${keyClass(index)}`}></i>)}
+        {part.id === 'switches' && keys.map((_key, index) => <i class={`bx-switch ${keyClass(index)}`}><b></b></i>)}
+        {part.id === 'sliders' && keys.map((_key, index) => <i class={`bx-topre-slider ${keyClass(index)}`}><b></b></i>)}
+        {part.id === 'housing' && keys.map((_key, index) => <i class={`bx-housing-bore ${keyClass(index)}`}></i>)}
+        {part.id === 'domes' && keys.map((_key, index) => <i class={`bx-topre-dome ${keyClass(index)}`}></i>)}
+        {part.id === 'springs' && keys.map((_key, index) => <i class={`bx-topre-spring ${keyClass(index)}`}></i>)}
+        {part.id === 'keycaps' && keys.map((key, index) => (
+          <i class:list={['bx-model-key', keyClass(index), key.variant && `is-${key.variant}`]}>
+            {key.artwork && <KeyArt artwork={key.artwork} />}
+            {!key.artwork && key.label && (
+              <span>
+                {key.label}
+                {key.secondary && <small>{key.secondary}</small>}
+                {key.functionLegend && <em class="bx-key-function">{key.functionLegend}</em>}
+              </span>
+            )}
+          </i>
+        ))}
+      </div>
+      <span class="bx-layer-tag" aria-hidden="true">{pick(part.label)}</span>
+    </div>
+  ))}
+</div>

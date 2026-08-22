@@ -2,30 +2,40 @@
 import { Picture } from 'astro:assets'
 import { getCollection } from 'astro:content'
 import { t, type Lang } from '../../i18n/ui'
+import BuildExplorer from './keyboards/BuildExplorer.astro'
 
 interface Props { lang: Lang }
 const { lang } = Astro.props
 
-/** El retrato es identidad, no archivo: no entra en la narrativa fotográfica. */
+/** The portrait is identity, not archive: it stays out of the photographic narrative. */
 const photos = (await getCollection('personal'))
   .map((e) => e.data)
   .filter((p) => p.category !== 'identity')
   .sort((a, b) => a.order - b.order)
 
 /**
- * Distribución HHKB (Happy Hacking Keyboard) 60 %.
- * El 4º elemento de cada tupla es una etiqueta puramente decorativa que
- * sustituye el glifo en pantalla (p. ej. "esc", "control", "delete") sin
- * tocar `label`, que sigue alimentando data-char exactamente igual que
- * antes: el test de mecanografía, el sonido y el click-to-type no cambian.
+ * HHKB (Happy Hacking Keyboard) 60% layout.
+ * The 4th element of each tuple is a purely decorative label that replaces the
+ * glyph on screen (e.g. "esc", "control", "delete") without touching `label`,
+ * which keeps feeding data-char exactly as before: the typing test, the sound
+ * and click-to-type are unchanged.
  */
 const ROWS: Array<Array<[string, string, number?, string?]>> = [
-  [['`','Backquote',1,'esc'],['1','Digit1'],['2','Digit2'],['3','Digit3'],['4','Digit4'],['5','Digit5'],['6','Digit6'],['7','Digit7'],['8','Digit8'],['9','Digit9'],['0','Digit0'],['-','Minus'],['=','Equal'],['⌫','Backspace',1.6,'delete']],
+  [['`','Backquote',1,'esc'],['1','Digit1'],['2','Digit2'],['3','Digit3'],['4','Digit4'],['5','Digit5'],['6','Digit6'],['7','Digit7'],['8','Digit8'],['9','Digit9'],['0','Digit0'],['-','Minus'],['=','Equal'],['⌫','Backspace',1.6,t(lang, 'kbd.delete')]],
   [['⇥','Tab',1.5,'tab'],['Q','KeyQ'],['W','KeyW'],['E','KeyE'],['R','KeyR'],['T','KeyT'],['Y','KeyY'],['U','KeyU'],['I','KeyI'],['O','KeyO'],['P','KeyP'],['[','BracketLeft'],[']','BracketRight'],['\\','Backslash',1.5]],
-  [['⇪','CapsLock',1.6,'control'],['A','KeyA'],['S','KeyS'],['D','KeyD'],['F','KeyF'],['G','KeyG'],['H','KeyH'],['J','KeyJ'],['K','KeyK'],['L','KeyL'],[';','Semicolon'],["'",'Quote'],['⏎','Enter',1.9,'return']],
-  [['⇧','ShiftLeft',2.1,'shift'],['Z','KeyZ'],['X','KeyX'],['C','KeyC'],['V','KeyV'],['B','KeyB'],['N','KeyN'],['M','KeyM'],[',','Comma'],['.','Period'],['/','Slash'],['⇧','ShiftRight',2.5,'shift']],
-  [['ctrl','ControlLeft',1.25],['opt','AltLeft',1.25],['cmd','MetaLeft',1.5],['','Space',6.5],['cmd','MetaRight',1.5],['opt','AltRight',1.25],['ctrl','ControlRight',1.25]],
+  [['⇪','CapsLock',1.6,'control'],['A','KeyA'],['S','KeyS'],['D','KeyD'],['F','KeyF'],['G','KeyG'],['H','KeyH'],['J','KeyJ'],['K','KeyK'],['L','KeyL'],[';','Semicolon'],["'",'Quote'],['⏎','Enter',1.9,t(lang, 'kbd.return')]],
+  [['⇧','ShiftLeft',2.1,t(lang, 'kbd.shift')],['Z','KeyZ'],['X','KeyX'],['C','KeyC'],['V','KeyV'],['B','KeyB'],['N','KeyN'],['M','KeyM'],[',','Comma'],['.','Period'],['/','Slash'],['⇧','ShiftRight',2.5,t(lang, 'kbd.shift')]],
+  [['ctrl','ControlLeft',1.25],[t(lang, 'kbd.opt'),'AltLeft',1.25],['cmd','MetaLeft',1.5],['','Space',6.5],['cmd','MetaRight',1.5],[t(lang, 'kbd.opt'),'AltRight',1.25],['ctrl','ControlRight',1.25]],
 ]
+
+/*
+ * The deck cards' cuts.
+ *
+ * A card measures 210-260 px and the originals are 1600 px portraits, so three
+ * cuts covering up to 2.5x density screens are enough. Serving 750 px to a
+ * 260 px card cost hundreds of kB per photo without gaining a pixel of
+ * sharpness.
+ */
 
 const ROTATIONS = [-9, -5.5, -2, 2, 5.5, 9]
 const OFFSETS_X = [-440, -264, -88, 88, 264, 440]
@@ -50,15 +60,15 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
       </p>
     </div>
 
-    <!-- Indicador de interacción y botón de reset -->
+    <!-- Interaction hint and reset button -->
     <div class="reveal flex flex-wrap items-center justify-between w-full max-w-4xl px-2 mb-6 text-xs font-mono text-[color:var(--fg-3)]">
       <div class="inline-flex items-center gap-2">
         <span class="relative flex h-2 w-2">
           <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--cyan)] opacity-75"></span>
           <span class="relative inline-flex h-2 w-2 rounded-full bg-[color:var(--cyan)]"></span>
         </span>
-        <span class="hidden sm:inline">{lang === 'es' ? 'Pasa el ratón para voltear en 3D · Arrastra libremente' : 'Hover to flip in 3D · Drag & toss freely'}</span>
-        <span class="sm:hidden">{lang === 'es' ? 'Toca para voltear · Arrastra para ordenar' : 'Tap to flip · Drag to arrange'}</span>
+        <span class="hidden sm:inline">{t(lang, 'otc.hoverFlip')}</span>
+        <span class="sm:hidden">{t(lang, 'otc.tapFlip')}</span>
       </div>
       <button
         type="button"
@@ -66,11 +76,11 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
         class="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--line)] bg-[color:var(--ink-800)] px-3.5 py-1.5 text-[0.72rem] font-mono text-[color:var(--fg-2)] transition hover:border-[color:var(--blue-bright)] hover:text-[color:var(--cyan)] shadow-sm"
       >
         <span>↺</span>
-        <span>{lang === 'es' ? 'Reorganizar fotos' : 'Reset Deck'}</span>
+        <span>{t(lang, 'otc.resetDeck')}</span>
       </button>
     </div>
 
-    <!-- Escenario de cartas desplegadas en abanico 3D y arrastrables libremente -->
+    <!-- Stage of cards fanned out in 3D and freely draggable -->
     <div class="moments-deck-wrap relative w-full flex flex-col items-center my-4 overflow-visible">
       <div id="moments-stage" class="moments-stage reveal relative w-full min-h-[420px] sm:min-h-[460px] flex items-center justify-center">
         {photos.map((photo, i) => {
@@ -86,24 +96,28 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
               data-origin-y={oy}
               tabindex="0"
               role="button"
-              aria-label={`${photo.location} — ${photo.alt[lang]}`}
+              aria-label={`${photo.location?.[lang] ?? ''} — ${photo.alt[lang]}`}
             >
               <div class="moment-card-inner">
-                <!-- Cara frontal: Fotografía limpia con bordes redondeados -->
+                <!-- Front face: clean photograph with rounded corners -->
                 <div class="moment-card-face moment-card-front flex items-center justify-center bg-[color:var(--ink-950)]">
                   <Picture
                     src={photo.image}
-                    formats={['avif', 'webp']}
-                    widths={[400, 750]}
+                    formats={['avif']}
+                    fallbackFormat="webp"
+                    widths={[260, 420, 640]}
+                    width={640}
+                    quality={72}
                     sizes="(max-width: 768px) 210px, 260px"
                     alt={photo.alt[lang]}
                     loading="lazy"
                     decoding="async"
+                    draggable="false"
                     class="moment-img object-cover"
                   />
                 </div>
 
-                <!-- Cara posterior: nota estilo "story" — fecha, lugar y una frase corta -->
+                <!-- Back face: a "story"-style note — date, place and one short sentence -->
                 <div class="moment-card-face moment-card-back">
                   <div class="flex h-full flex-col justify-center items-center gap-1.5 p-6 text-center bg-[color:var(--ink-900)] border border-[color:var(--line)] rounded-2xl shadow-2xl">
                     {photo.date && (
@@ -112,7 +126,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
                       </span>
                     )}
                     <h4 class="text-base sm:text-lg font-bold text-[color:var(--fg)]">
-                      {photo.location}
+                      {photo.location?.[lang]}
                     </h4>
                     {photo.caption?.[lang] && (
                       <p class="text-xs sm:text-sm text-[color:var(--fg-2)] mt-1 leading-relaxed max-w-[22ch]">
@@ -145,55 +159,70 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
         <!-- Consola de control interactiva y selector de modos -->
         <div class="kb-console-card rounded-2xl p-4 sm:p-5 shadow-2xl mt-6">
           <div class="flex items-center justify-between border-b border-[color:var(--line-soft)] pb-3 mb-4">
-            <span class="font-mono text-[0.68rem] tracking-wider text-[color:var(--cyan)] font-bold">HOBBY LOG 01 // KEYBOARDS</span>
+            <span class="font-mono text-[0.68rem] tracking-wider text-[color:var(--cyan)] font-bold">{t(lang, 'otc.consoleTitle')}</span>
             <span class="inline-flex items-center gap-1.5 font-mono text-[0.65rem] text-[color:var(--fg-3)]">
-              <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              ONLINE
+              <span class="h-1.5 w-1.5 rounded-full bg-[color:var(--live)] animate-pulse"></span>
+              {t(lang, 'otc.online')}
             </span>
           </div>
 
-          <!-- Selector de modos estilo Segmented Pill Switcher -->
+          <!-- Mode selector, segmented pill switcher style -->
           <div class="mb-4">
-            <label class="font-mono text-[0.7rem] text-[color:var(--fg-3)] uppercase tracking-wider block mb-2">{lang === 'es' ? 'Modo de interacción:' : 'Interaction mode:'}</label>
-            <div class="grid grid-cols-3 gap-1 rounded-xl border border-[color:var(--line)] bg-[color:var(--ink-950)] p-1" role="tablist" aria-label="Teclado mecánico y juego">
+            <label class="font-mono text-[0.7rem] text-[color:var(--fg-3)] uppercase tracking-wider block mb-2">{t(lang, 'otc.interactionMode')}</label>
+            <div class="grid grid-cols-3 gap-1 rounded-xl border border-[color:var(--line)] bg-[color:var(--ink-950)] p-1" role="tablist" aria-label={t(lang, 'a11y.keyboardTabs')}>
               <button
                 type="button"
                 id="kb-tab-speed"
                 role="tab"
                 aria-selected="true"
-                class="kb-mode-pill active flex flex-col items-center justify-center py-2 px-1 rounded-lg font-mono text-[0.72rem] transition-all"
+                aria-controls="kb-panel-interactive"
+                class="kb-mode-pill is-speed active flex flex-col items-center justify-center py-2 px-1 rounded-lg font-mono text-[0.72rem] transition-all"
               >
+                <i class="kb-pill-fx" aria-hidden="true">
+                  <svg class="kb-bolt" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M14.615 1.595a.75.75 0 0 1 .359.852L12.982 9.75h7.268a.75.75 0 0 1 .548 1.262l-10.5 11.25a.75.75 0 0 1-1.272-.71l1.992-7.302H3.75a.75.75 0 0 1-.548-1.262l10.5-11.25a.75.75 0 0 1 .913-.143Z"></path>
+                  </svg>
+                </i>
                 <span class="text-sm mb-0.5">⚡</span>
-                <span class="font-semibold">{lang === 'es' ? 'Speed Trial' : 'Speed Trial'}</span>
+                <span class="font-semibold">{t(lang, 'otc.speedTrial')}</span>
               </button>
               <button
                 type="button"
                 id="kb-tab-sim"
                 role="tab"
                 aria-selected="false"
-                class="kb-mode-pill flex flex-col items-center justify-center py-2 px-1 rounded-lg font-mono text-[0.72rem] transition-all"
+                aria-controls="kb-panel-interactive"
+                tabindex="-1"
+                class="kb-mode-pill is-sim flex flex-col items-center justify-center py-2 px-1 rounded-lg font-mono text-[0.72rem] transition-all"
               >
+                <i class="kb-pill-fx" aria-hidden="true">
+                  <b></b><b></b><b></b><b></b><b></b>
+                </i>
                 <span class="text-sm mb-0.5">⌨️</span>
-                <span>{lang === 'es' ? 'Simulador' : 'Free Sim'}</span>
+                <span>{t(lang, 'otc.freeSim')}</span>
               </button>
               <button
                 type="button"
                 id="kb-tab-photos"
                 role="tab"
                 aria-selected="false"
-                class="kb-mode-pill flex flex-col items-center justify-center py-2 px-1 rounded-lg font-mono text-[0.72rem] transition-all"
+                aria-controls="kb-panel-photos"
+                tabindex="-1"
+                class="kb-mode-pill is-photos flex flex-col items-center justify-center py-2 px-1 rounded-lg font-mono text-[0.72rem] transition-all"
               >
+                <i class="kb-pill-fx" aria-hidden="true">
+                  <b></b><b></b><b></b><b></b>
+                </i>
                 <span class="text-sm mb-0.5">📸</span>
-                <span>{lang === 'es' ? 'Fotos Build' : 'Build Photos'}</span>
-                <span class="mt-0.5 text-[0.56rem] uppercase tracking-wider text-amber-300/90">{lang === 'es' ? 'pronto' : 'soon'}</span>
+                <span>{t(lang, 'otc.buildPhotos')}</span>
               </button>
             </div>
           </div>
 
-          <!-- Ajustes de hardware y sonido -->
+          <!-- Hardware and sound settings -->
           <div class="space-y-2.5 pt-3 border-t border-[color:var(--line-soft)]">
             <div class="flex items-center justify-between">
-              <span class="font-mono text-[0.7rem] text-[color:var(--fg-3)]">{lang === 'es' ? 'Tipo de switch:' : 'Switch profile:'}</span>
+              <span class="font-mono text-[0.7rem] text-[color:var(--fg-3)]">{t(lang, 'otc.switchProfile')}</span>
               <button
                 type="button"
                 id="kb-switch-type"
@@ -205,7 +234,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
             </div>
 
             <div class="flex items-center justify-between">
-              <span class="font-mono text-[0.7rem] text-[color:var(--fg-3)]">{lang === 'es' ? 'Efectos de audio:' : 'Audio feedback:'}</span>
+              <span class="font-mono text-[0.7rem] text-[color:var(--fg-3)]">{t(lang, 'otc.audioFeedback')}</span>
               <button
                 type="button"
                 id="kb-sound-toggle"
@@ -222,29 +251,27 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
       </div>
 
       <div class="reveal m-0 lg:col-span-8" style="--i:1">
-        <!-- 1. Panel MonkeyType: Killua Speed Trial & Teclado interactivo -->
-        <div id="kb-panel-interactive" class="rounded-xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-4 sm:p-6 shadow-xl">
+        <!-- 1. MonkeyType panel: Killua speed trial & interactive keyboard -->
+        <div id="kb-panel-interactive" role="tabpanel" aria-labelledby="kb-tab-speed" class="rounded-xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-4 sm:p-6 shadow-xl">
 
-          <!-- Diálogo de Killua estilo Manga / Comic con personaje Pixel Art interactivo -->
+          <!-- Killua's manga/comic dialogue with an interactive pixel-art character -->
           <div class="mb-5 flex items-end sm:items-center gap-3 relative">
             <!-- Personaje Pixel Art de Killua interactivo -->
             <div class="comic-killua-wrap relative shrink-0 flex flex-col items-center">
-              <canvas id="kb-pixel-killua" class="comic-killua-canvas rounded-lg bg-[color:var(--ink-950)] border border-[color:var(--blue-bright)]/40 p-1" width="76" height="84" aria-label="Killua Pixel Sprite"></canvas>
+              <canvas id="kb-pixel-killua" class="comic-killua-canvas rounded-lg bg-[color:var(--ink-950)] border border-[color:var(--blue-bright)]/40 p-1" width="76" height="84" aria-label={t(lang, 'a11y.mascot')}></canvas>
               <span class="font-mono text-[0.6rem] text-[color:var(--cyan)] font-bold tracking-wider mt-1">KILLUA ⚡</span>
             </div>
 
-            <!-- Bocadillo de Comic / Manga Speech Bubble con altura estable -->
+            <!-- Comic / manga speech bubble with a stable height -->
             <div class="comic-bubble flex-1 relative rounded-2xl p-3.5 sm:p-4 shadow-xl min-h-[68px] flex items-center">
               <div class="comic-bubble-tail" aria-hidden="true"></div>
               <div class="flex items-center justify-between gap-3 w-full">
                 <p id="killua-typing-speech" class="text-xs sm:text-sm font-semibold tracking-wide text-[color:var(--fg)] leading-relaxed">
-                  {lang === 'es'
-                    ? '"¿Crees que puedes teclear más rápido que mi Godspeed? ¡A ver cuánto WPM alcanzas!"'
-                    : '"You think you can type faster than my Godspeed lightning? Let\'s see your WPM!"'}
+                  {t(lang, 'otc.killuaIntro')}
                 </p>
-                <button type="button" id="monkey-restart-btn" class="shrink-0 inline-flex items-center gap-1 rounded-full border border-[color:var(--line)] bg-[color:var(--ink-800)] px-2.5 py-1 text-[0.68rem] font-mono text-[color:var(--cyan)] hover:border-[color:var(--cyan)] transition shadow-sm" title="Reiniciar prueba">
+                <button type="button" id="monkey-restart-btn" class="shrink-0 inline-flex items-center gap-1 rounded-full border border-[color:var(--line)] bg-[color:var(--ink-800)] px-2.5 py-1 text-[0.68rem] font-mono text-[color:var(--cyan)] hover:border-[color:var(--cyan)] transition shadow-sm" title={t(lang, 'otc.restartTrial')}>
                   <span>↺</span>
-                  <span class="hidden sm:inline">{lang === 'es' ? 'Reiniciar' : 'Restart'}</span>
+                  <span class="hidden sm:inline">{t(lang, 'otc.restart')}</span>
                 </button>
               </div>
             </div>
@@ -252,55 +279,55 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
 
           <!-- Contenedor Modo 1: MonkeyType Speed Trial -->
           <div id="kb-speed-mode-wrap">
-            <!-- Cuadro de texto MonkeyType con stream dinámico -->
+            <!-- MonkeyType text box with a dynamic stream -->
             <div id="monkey-box" class="relative mb-4 rounded-xl border border-[color:var(--line-soft)] bg-[color:var(--ink-950)] p-4 sm:p-5 text-left font-mono shadow-inner cursor-text select-none min-h-[90px]" tabindex="0" role="group" aria-label={t(lang, 'otc.trialBox')}>
               <div id="monkey-words" class="text-sm sm:text-base leading-relaxed tracking-wide text-[color:var(--fg-3)]">
-                <!-- Las palabras se generan dinámicamente letra a letra en cliente -->
+                <!-- The words are generated letter by letter on the client -->
               </div>
             </div>
 
-            <!-- Marcador de estadísticas en vivo estilo MonkeyType -->
+            <!-- MonkeyType-style live statistics board -->
             <div class="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[color:var(--line-soft)] bg-[color:var(--ink-900)] px-3.5 py-2 text-xs font-mono">
               <div class="flex items-center gap-4">
                 <span>WPM: <strong id="kb-wpm" class="text-[color:var(--cyan)] font-bold text-sm">0</strong></span>
-                <span>{lang === 'es' ? 'Precisión' : 'Acc'}: <strong id="kb-acc" class="text-emerald-400 font-bold text-sm">100%</strong></span>
-                <span>{lang === 'es' ? 'Racha' : 'Streak'}: <strong id="kb-combo" class="text-[color:var(--blue-bright)] font-bold">x0</strong></span>
+                <span>{t(lang, 'otc.accuracy')}: <strong id="kb-acc" class="text-[color:var(--live)] font-bold text-sm">100%</strong></span>
+                <span>{t(lang, 'otc.streak')}: <strong id="kb-combo" class="text-[color:var(--blue-bright)] font-bold">x0</strong></span>
               </div>
               <span id="kb-timer" class="text-[color:var(--fg-3)]">⏱️ 30s</span>
             </div>
           </div>
 
-          <!-- Contenedor Modo 2: Free Sim / Sandbox Libre con salida en vivo -->
+          <!-- Mode 2 container: free sim / sandbox with live output -->
           <div id="kb-free-mode-wrap" class="hidden">
             <!-- Terminal de escritura libre en vivo -->
             <div id="free-sim-box" class="relative mb-4 rounded-xl border border-[color:var(--cyan)]/30 bg-[color:var(--ink-950)] p-4 sm:p-5 text-left font-mono shadow-inner cursor-text min-h-[90px]" tabindex="0" role="group" aria-label={t(lang, 'otc.sandboxBox')}>
               <div class="flex items-center justify-between border-b border-[color:var(--line-soft)] pb-2 mb-2">
-                <span class="text-[0.68rem] text-[color:var(--cyan)] font-bold tracking-wider">TERMINAL // FREE TYPING SANDBOX</span>
+                <span class="text-[0.68rem] text-[color:var(--cyan)] font-bold tracking-wider">{t(lang, 'otc.sandboxTitle')}</span>
                 <button type="button" id="free-sim-clear-btn" class="text-[0.68rem] text-[color:var(--fg-3)] hover:text-[color:var(--cyan)] transition">
-                  ↺ {lang === 'es' ? 'Limpiar pantalla' : 'Clear screen'}
+                  ↺ {t(lang, 'otc.clearScreen')}
                 </button>
               </div>
               <div id="free-sim-output" class="text-sm sm:text-base leading-relaxed tracking-wide text-[color:var(--fg)] break-words font-mono min-h-[36px]">
                 <span class="text-[color:var(--fg-3)] select-none pointer-events-none" id="free-sim-placeholder">
-                  {lang === 'es' ? 'Teclea libremente aquí para probar la acústica y el tacto del teclado...' : 'Type anything here to test keyboard acoustic sound and tactile feel...'}
+                  {t(lang, 'otc.sandboxPlaceholder')}
                 </span>
                 <span id="free-sim-text"></span>
                 <span class="inline-block w-2 h-4 bg-[color:var(--cyan)] align-middle animate-pulse ml-0.5" aria-hidden="true"></span>
               </div>
             </div>
 
-            <!-- Telemetría de hardware en vivo en Modo Libre -->
+            <!-- Live hardware telemetry in free play -->
             <div class="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[color:var(--line-soft)] bg-[color:var(--ink-900)] px-3.5 py-2 text-xs font-mono">
               <div class="flex flex-wrap items-center gap-4">
-                <span>{lang === 'es' ? 'Pulsaciones' : 'Keystrokes'}: <strong id="kb-free-count" class="text-[color:var(--cyan)] font-bold text-sm">0</strong></span>
-                <span>{lang === 'es' ? 'Última tecla' : 'Last key'}: <strong id="kb-free-last-key" class="text-[color:var(--blue-bright)] font-bold text-sm">—</strong></span>
-                <span>{lang === 'es' ? 'Cadencia' : 'Speed'}: <strong id="kb-free-wpm" class="text-emerald-400 font-bold">0 WPM</strong></span>
+                <span>{t(lang, 'otc.keystrokes')}: <strong id="kb-free-count" class="text-[color:var(--cyan)] font-bold text-sm">0</strong></span>
+                <span>{t(lang, 'otc.lastKey')}: <strong id="kb-free-last-key" class="text-[color:var(--blue-bright)] font-bold text-sm">—</strong></span>
+                <span>{t(lang, 'otc.typingSpeed')}: <strong id="kb-free-wpm" class="text-[color:var(--live)] font-bold">0 WPM</strong></span>
               </div>
               <span id="kb-free-sound-pill" class="text-[color:var(--fg-3)]">🔊 45g Linear</span>
             </div>
           </div>
 
-          <!-- Teclado físico visual, distribución HHKB, que se ilumina al pulsar -->
+          <!-- Visual physical keyboard, HHKB layout, that lights up on press -->
           <div id="kb" class="kb kb-hhkb" aria-hidden="true">
             <span class="kb-brand">HHKB</span>
             {ROWS.map((row) => (
@@ -322,60 +349,12 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
           </div>
 
           <figcaption class="mt-3 flex items-center justify-between gap-4 border-t border-[color:var(--line-soft)] pt-3">
-            <span class="t-meta text-[color:var(--fg-3)]">HHKB Layout · 60%</span>
-            <span class="t-index">Linear switches · 45g</span>
+            <span class="t-meta text-[color:var(--fg-3)]">{t(lang, 'otc.keyboardLayout')}</span>
+            <span class="t-index">{t(lang, 'otc.switchesWeight')}</span>
           </figcaption>
         </div>
 
-        <!--
-          2. Panel de Fotos del Teclado — pendiente.
-          Todavía no hay fotografías propias de los builds, así que el panel
-          declara el estado en lugar de rellenarse con imágenes que no son de
-          teclados. El laboratorio con hotspots y ficha técnica vuelve cuando
-          exista el archivo fotográfico real.
-        -->
-        <div id="kb-panel-photos" class="hidden rounded-xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-4 sm:p-6 shadow-xl">
-          <div class="flex flex-wrap items-center justify-between border-b border-[color:var(--line-soft)] pb-3 mb-4 gap-3">
-            <div>
-              <span class="font-mono text-[0.68rem] font-bold text-[color:var(--cyan)] tracking-wider">LABORATORY // BUILD ARCHIVE</span>
-              <h4 class="text-sm sm:text-base font-bold text-[color:var(--fg)] mt-0.5">
-                {lang === 'es' ? 'Fotos de mis builds' : 'My build photos'}
-              </h4>
-            </div>
-            <span class="inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 px-3 py-1 text-[0.7rem] font-mono text-amber-300">
-              <span class="h-1.5 w-1.5 rounded-full bg-amber-300 animate-pulse"></span>
-              <span>{lang === 'es' ? 'En construcción' : 'Under construction'}</span>
-            </span>
-          </div>
-
-          <div class="rounded-xl border border-dashed border-[color:var(--line)] bg-[color:var(--ink-950)] px-5 py-10 text-center">
-            <span class="text-2xl" aria-hidden="true">📸</span>
-            <p class="mt-3 font-mono text-sm font-bold text-[color:var(--fg)]">
-              {lang === 'es' ? 'Próximamente' : 'Coming soon'}
-            </p>
-            <p class="mx-auto mt-2 max-w-sm text-xs leading-relaxed text-[color:var(--fg-2)]">
-              {lang === 'es'
-                ? 'Estoy documentando cada build con fotos propias: case, placa, montaje y switches. Cuando el archivo esté listo, aparecerá aquí con su ficha técnica.'
-                : 'I am documenting each build with my own photos: case, plate, mounting, and switches. Once the archive is ready, it will land here with its technical breakdown.'}
-            </p>
-            <div class="mt-5 flex flex-wrap justify-center gap-1.5">
-              {(lang === 'es'
-                ? ['Case', 'Placa y montaje', 'Switches y lubricado', 'Keycaps']
-                : ['Case', 'Plate & mounting', 'Switches & lube', 'Keycaps']
-              ).map((item) => (
-                <span class="rounded-lg border border-[color:var(--line-soft)] bg-[color:var(--ink-900)] px-2.5 py-1 text-[0.68rem] font-mono text-[color:var(--fg-3)]">
-                  {item}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <p class="mt-4 text-center font-mono text-[0.68rem] text-[color:var(--fg-3)]">
-            {lang === 'es'
-              ? 'Mientras tanto, prueba el Speed Trial o el simulador para escuchar los switches.'
-              : 'Meanwhile, try the Speed Trial or the simulator to hear the switches.'}
-          </p>
-        </div>
+        <BuildExplorer {lang} />
       </div>
     </div>
   </div>
