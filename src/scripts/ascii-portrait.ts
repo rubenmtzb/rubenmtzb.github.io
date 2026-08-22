@@ -304,7 +304,12 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
       size = next
       canvas.style.width = `${size}px`
       canvas.style.height = `${size}px`
-      if (img.complete) build(img)
+      if (!img.complete) return
+      build(img)
+      /* Con el bucle parado —"reduce motion"— nadie va a repintar el retrato
+         al nuevo tamaño, así que la reconstrucción se queda sin pintar y el
+         navegador escala el bitmap anterior. Un fotograma basta. */
+      if (!running) draw()
     }, 100)
   })
 
