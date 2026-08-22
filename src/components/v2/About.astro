@@ -105,12 +105,12 @@ for (const cert of certs) {
       <div id="profile-workbench" class="profile-workbench overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[color:var(--ink-900)] shadow-2xl">
         <div class="profile-workbench-bar flex items-center justify-between border-b border-[color:var(--line-soft)] px-4 py-3 font-mono text-[0.68rem] text-[color:var(--fg-3)]">
           <div class="flex items-center gap-1.5" aria-hidden="true">
-            <span class="h-2.5 w-2.5 rounded-full bg-rose-500/80"></span>
-            <span class="h-2.5 w-2.5 rounded-full bg-amber-500/80"></span>
-            <span class="h-2.5 w-2.5 rounded-full bg-emerald-500/80"></span>
+            <span class="h-2.5 w-2.5 rounded-full bg-[color:var(--closed)]/80"></span>
+            <span class="h-2.5 w-2.5 rounded-full bg-[color:var(--pending)]/80"></span>
+            <span class="h-2.5 w-2.5 rounded-full bg-[color:var(--live-strong)]/80"></span>
           </div>
           <span>{t(lang, 'v2.about.workspace')}</span>
-          <span class="hidden sm:block text-emerald-400">{t(lang, 'v2.about.session')}</span>
+          <span class="hidden sm:block text-[color:var(--live)]">{t(lang, 'v2.about.session')}</span>
         </div>
 
         <div class="grid lg:grid-cols-[13rem_minmax(0,1fr)]">
@@ -126,7 +126,7 @@ for (const cert of certs) {
                 <Icon name="briefcase" class="h-3.5 w-3.5 text-[color:var(--blue-bright)]" /><span>{t(lang, 'v2.about.fileFocus')}</span>
               </button>
               <button type="button" class="profile-file" data-profile-tab="learning" aria-selected="false">
-                <Icon name="graduation" class="h-3.5 w-3.5 text-emerald-400" /><span>{t(lang, 'v2.about.fileLearning')}</span>
+                <Icon name="graduation" class="h-3.5 w-3.5 text-[color:var(--live)]" /><span>{t(lang, 'v2.about.fileLearning')}</span>
               </button>
             </div>
           </aside>
@@ -163,7 +163,7 @@ for (const cert of certs) {
                   <p>{t(lang, 'v2.about.axisResearchBody')}</p>
                 </article>
                 <article class="profile-signal">
-                  <span class="font-mono text-[0.65rem] text-emerald-400">03 / {t(lang, 'v2.about.axisLearning')}</span>
+                  <span class="font-mono text-[0.65rem] text-[color:var(--live)]">03 / {t(lang, 'v2.about.axisLearning')}</span>
                   <h3>{t(lang, 'v2.about.axisLearningTitle')}</h3>
                   <p>{t(lang, 'v2.about.axisLearningBody')}</p>
                 </article>
@@ -174,7 +174,7 @@ for (const cert of certs) {
               <p class="font-mono text-xs text-[color:var(--cyan)]">$ tail -f {t(lang, 'v2.about.fileLearning')}</p>
               <div class="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
                 <div class="profile-learning-stream">
-                  <span class="text-emerald-400">●</span>
+                  <span class="text-[color:var(--live)]">●</span>
                   <div>
                     <p class="font-mono text-xs text-[color:var(--fg-3)]">{currentEducation.periodLabel}</p>
                     <h3 class="mt-1 text-lg font-bold text-[color:var(--fg)]">{currentEducation.title}</h3>
@@ -236,7 +236,7 @@ for (const cert of certs) {
                 </span>
               )}
               {group.items.some((item) => item.inProgress) && (
-                <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" title={t(lang, 'background.inProgress')}></span>
+                <span class="h-2 w-2 rounded-full bg-[color:var(--live)] animate-pulse" title={t(lang, 'background.inProgress')}></span>
               )}
               {group.items.some((item) => item.grade) && (
                 <span class="text-[0.65rem] text-[color:var(--cyan)] font-bold">★</span>
@@ -282,12 +282,12 @@ for (const cert of certs) {
 
                   <div>
                     {inProgress ? (
-                      <span class="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-mono text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.2)]">
-                        <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                      <span class="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--live-strong)]/30 bg-[color:var(--live-strong)]/10 px-3 py-1 text-xs font-mono text-[color:var(--live)] shadow-[0_0_12px_rgb(var(--live-legacy-rgb)_/_0.2)]">
+                        <span class="h-2 w-2 rounded-full bg-[color:var(--live)] animate-pulse"></span>
                         <span>{t(lang, 'v2.about.inProgressCurrent')}</span>
                       </span>
                     ) : (!multi && head.grade) ? (
-                      <span class="inline-flex items-center gap-1 rounded-full border border-[color:var(--cyan)]/40 bg-[color:var(--cyan)]/10 px-3 py-1 text-xs font-mono text-[color:var(--cyan)] shadow-[0_0_12px_rgba(111,227,255,0.2)]">
+                      <span class="inline-flex items-center gap-1 rounded-full border border-[color:var(--cyan)]/40 bg-[color:var(--cyan)]/10 px-3 py-1 text-xs font-mono text-[color:var(--cyan)] shadow-[0_0_12px_rgb(var(--cyan-rgb)_/_0.2)]">
                         <span>🏆</span>
                         <span>{head.grade}</span>
                       </span>
@@ -435,7 +435,7 @@ for (const cert of certs) {
                       href={cert.verifyUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="inline-flex items-center gap-2 rounded-lg border border-[color:var(--cyan)]/40 bg-[color:var(--cyan)]/10 px-4 py-1.5 text-xs font-mono text-[color:var(--cyan)] hover:bg-[color:var(--cyan)]/20 transition shadow-[0_0_12px_rgba(111,227,255,0.15)]"
+                      class="inline-flex items-center gap-2 rounded-lg border border-[color:var(--cyan)]/40 bg-[color:var(--cyan)]/10 px-4 py-1.5 text-xs font-mono text-[color:var(--cyan)] hover:bg-[color:var(--cyan)]/20 transition shadow-[0_0_12px_rgb(var(--cyan-rgb)_/_0.15)]"
                     >
                       <span>
                         {group.entries.length > 1

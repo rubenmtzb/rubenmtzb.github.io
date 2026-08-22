@@ -33,7 +33,7 @@ const other = await getAlternate(pageKey, lang)
           width="28"
           height="28"
           alt="Killua"
-          class="relative z-10 h-7 w-7 rounded-full border border-[color:var(--blue-bright)]/60 bg-[color:var(--ink-800)] object-cover shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:border-[color:var(--cyan)] group-hover:shadow-[0_0_12px_rgba(111,227,255,0.45)]"
+          class="relative z-10 h-7 w-7 rounded-full border border-[color:var(--blue-bright)]/60 bg-[color:var(--ink-800)] object-cover shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:border-[color:var(--cyan)] group-hover:shadow-[0_0_12px_rgb(var(--cyan-rgb)_/_0.45)]"
         />
       </div>
       <span class="text-sm font-bold tracking-[0.25em] text-[color:var(--fg)] group-hover:text-[color:var(--cyan)] transition-colors">RM</span>
@@ -53,7 +53,7 @@ const other = await getAlternate(pageKey, lang)
         <button
           type="button"
           id="nav-game-btn"
-          class="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--blue-bright)]/40 bg-[color:var(--ink-800)] px-2.5 sm:px-3 py-1 text-xs font-mono text-[color:var(--cyan)] transition hover:border-[color:var(--cyan)] hover:bg-[color:var(--cyan)]/10 hover:shadow-[0_0_15px_rgba(111,227,255,0.35)]"
+          class="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--blue-bright)]/40 bg-[color:var(--ink-800)] px-2.5 sm:px-3 py-1 text-xs font-mono text-[color:var(--cyan)] transition hover:border-[color:var(--cyan)] hover:bg-[color:var(--cyan)]/10 hover:shadow-[0_0_15px_rgb(var(--cyan-rgb)_/_0.35)]"
           title={t(lang, 'v2.game.activate')}
           aria-label={t(lang, 'v2.game.activate')}
         >
@@ -69,7 +69,7 @@ const other = await getAlternate(pageKey, lang)
         <div class="nav-game-info relative group flex items-center">
           <button
             type="button"
-            class="flex h-6 w-6 items-center justify-center rounded-full border border-[color:var(--blue-bright)]/40 bg-[color:var(--ink-800)] text-xs font-mono font-bold text-[color:var(--cyan)] transition hover:border-[color:var(--cyan)] hover:bg-[color:var(--cyan)]/15 hover:shadow-[0_0_10px_rgba(111,227,255,0.3)]"
+            class="flex h-6 w-6 items-center justify-center rounded-full border border-[color:var(--blue-bright)]/40 bg-[color:var(--ink-800)] text-xs font-mono font-bold text-[color:var(--cyan)] transition hover:border-[color:var(--cyan)] hover:bg-[color:var(--cyan)]/15 hover:shadow-[0_0_10px_rgb(var(--cyan-rgb)_/_0.3)]"
             aria-label={t(lang, 'v2.game.infoLabel')}
             title={t(lang, 'v2.game.infoTitle')}
           >
@@ -77,7 +77,7 @@ const other = await getAlternate(pageKey, lang)
           </button>
 
           <!-- Tooltip flotante al pasar el mouse por encima del botón (i) -->
-          <div class="nav-game-hover-card pointer-events-none opacity-0 transition-all duration-200 ease-out group-hover:pointer-events-auto group-hover:opacity-100 absolute top-full right-0 mt-2.5 w-80 rounded-xl border border-[color:var(--blue-bright)]/50 bg-[color:var(--ink-900)]/95 p-3.5 shadow-[0_12px_36px_rgba(0,0,0,0.7)] backdrop-blur-xl z-50">
+          <div class="nav-game-hover-card pointer-events-none opacity-0 transition-all duration-200 ease-out group-hover:pointer-events-auto group-hover:opacity-100 absolute top-full right-0 mt-2.5 w-80 rounded-xl border border-[color:var(--blue-bright)]/50 bg-[color:var(--ink-900)]/95 p-3.5 shadow-[0_12px_36px_rgb(var(--scrim)_/_0.7)] backdrop-blur-xl z-50">
             <div class="flex items-center justify-between border-b border-[color:var(--line-soft)] pb-1.5 mb-2">
               <span class="font-mono text-xs font-bold text-[color:var(--cyan)] tracking-wider flex items-center gap-1">
                 ⚡ KILLUA GODSPEED

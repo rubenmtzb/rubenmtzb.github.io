@@ -36,6 +36,38 @@
   --blue-bright: #5b9bff;
   --cyan: #6fe3ff;
 
+  /*
+   * Colores de estado.
+   *
+   * No existían, así que cada componente echaba mano del color de Tailwind que
+   * le pareciera: `emerald-400` para lo que está vivo, `amber-500` para lo que
+   * está en curso, `rose-500` para lo cerrado. Treinta y cuatro decisiones
+   * sueltas y ningún sitio donde cambiarlas a la vez.
+   *
+   * Los valores son exactamente los que emite Tailwind —oklch, no hexadecimal,
+   * que en pantallas de gama amplia no es lo mismo— así que nombrarlos no ha
+   * movido un solo píxel.
+   */
+  --live: oklch(76.5% .177 163.223);
+  --live-soft: oklch(84.5% .143 164.978);
+  --live-strong: oklch(69.6% .17 162.48);
+  --pending: oklch(76.9% .188 70.08);
+  --pending-soft: oklch(87.9% .169 91.605);
+  --pending-line: oklch(82.8% .189 84.429);
+  --closed: oklch(64.5% .246 16.439);
+
+  /*
+   * Los mismos colores en canales sueltos, para cuando hace falta alfa. El
+   * marcado escribía `rgba(111,227,255,.2)` a mano: los tres números son
+   * `--cyan`, copiados a ojo cada vez.
+   */
+  --cyan-rgb: 111 227 255;
+
+  /* Velo bajo el texto que se superpone a una fotografía: sombra dura y negra
+     para que el titular se lea sobre cualquier imagen. */
+  --scrim: 0 0 0;
+  --live-legacy-rgb: 16 185 129;
+
   --measure: 68ch;
 }
 

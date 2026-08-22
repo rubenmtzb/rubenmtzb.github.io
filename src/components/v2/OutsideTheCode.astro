@@ -161,7 +161,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
           <div class="flex items-center justify-between border-b border-[color:var(--line-soft)] pb-3 mb-4">
             <span class="font-mono text-[0.68rem] tracking-wider text-[color:var(--cyan)] font-bold">{t(lang, 'otc.consoleTitle')}</span>
             <span class="inline-flex items-center gap-1.5 font-mono text-[0.65rem] text-[color:var(--fg-3)]">
-              <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="h-1.5 w-1.5 rounded-full bg-[color:var(--live)] animate-pulse"></span>
               {t(lang, 'otc.online')}
             </span>
           </div>
@@ -290,7 +290,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
             <div class="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[color:var(--line-soft)] bg-[color:var(--ink-900)] px-3.5 py-2 text-xs font-mono">
               <div class="flex items-center gap-4">
                 <span>WPM: <strong id="kb-wpm" class="text-[color:var(--cyan)] font-bold text-sm">0</strong></span>
-                <span>{t(lang, 'otc.accuracy')}: <strong id="kb-acc" class="text-emerald-400 font-bold text-sm">100%</strong></span>
+                <span>{t(lang, 'otc.accuracy')}: <strong id="kb-acc" class="text-[color:var(--live)] font-bold text-sm">100%</strong></span>
                 <span>{t(lang, 'otc.streak')}: <strong id="kb-combo" class="text-[color:var(--blue-bright)] font-bold">x0</strong></span>
               </div>
               <span id="kb-timer" class="text-[color:var(--fg-3)]">⏱️ 30s</span>
@@ -321,7 +321,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
               <div class="flex flex-wrap items-center gap-4">
                 <span>{t(lang, 'otc.keystrokes')}: <strong id="kb-free-count" class="text-[color:var(--cyan)] font-bold text-sm">0</strong></span>
                 <span>{t(lang, 'otc.lastKey')}: <strong id="kb-free-last-key" class="text-[color:var(--blue-bright)] font-bold text-sm">—</strong></span>
-                <span>{t(lang, 'otc.typingSpeed')}: <strong id="kb-free-wpm" class="text-emerald-400 font-bold">0 WPM</strong></span>
+                <span>{t(lang, 'otc.typingSpeed')}: <strong id="kb-free-wpm" class="text-[color:var(--live)] font-bold">0 WPM</strong></span>
               </div>
               <span id="kb-free-sound-pill" class="text-[color:var(--fg-3)]">🔊 45g Linear</span>
             </div>

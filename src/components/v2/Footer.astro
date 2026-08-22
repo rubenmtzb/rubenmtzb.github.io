@@ -45,8 +45,8 @@ const year = new Date().getFullYear()
           {social.label}
         </a>
       ))}
-      <a href={`mailto:${profile.email}`} class="group inline-flex items-center gap-1.5 font-mono text-[0.65rem] uppercase tracking-[0.14em] text-[color:var(--fg-3)] transition hover:text-emerald-300">
-        <span class="h-1 w-1 rounded-full bg-[color:var(--line)] transition group-hover:bg-emerald-300" aria-hidden="true"></span>
+      <a href={`mailto:${profile.email}`} class="group inline-flex items-center gap-1.5 font-mono text-[0.65rem] uppercase tracking-[0.14em] text-[color:var(--fg-3)] transition hover:text-[color:var(--live-soft)]">
+        <span class="h-1 w-1 rounded-full bg-[color:var(--line)] transition group-hover:bg-[color:var(--live-soft)]" aria-hidden="true"></span>
         {t(lang, 'v2.footer.email')}
       </a>
     </nav>

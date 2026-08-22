@@ -201,7 +201,7 @@ const caseLink = (projectKey: string, origin: 'project-carousel' | 'project-deck
             <div class="project-overlay absolute inset-0 z-10 flex flex-col justify-between p-3 sm:p-8 md:p-10">
               <!-- Fila superior: estado + tipo de proyecto -->
               <div class="flex items-center gap-3">
-                <span class={`rounded-md border px-2 py-0.5 font-mono text-[0.6rem] sm:text-[0.65rem] uppercase tracking-[0.18em] ${p.badge === 'live' ? 'border-emerald-500/40 text-emerald-400' : p.badge === 'coming-soon' ? 'border-amber-400/40 text-amber-300' : 'border-[color:var(--blue-bright)]/50 text-[color:var(--blue-bright)]'}`}>
+                <span class={`rounded-md border px-2 py-0.5 font-mono text-[0.6rem] sm:text-[0.65rem] uppercase tracking-[0.18em] ${p.badge === 'live' ? 'border-[color:var(--live-strong)]/40 text-[color:var(--live)]' : p.badge === 'coming-soon' ? 'border-[color:var(--pending-line)]/40 text-[color:var(--pending-soft)]' : 'border-[color:var(--blue-bright)]/50 text-[color:var(--blue-bright)]'}`}>
                   {badgeLabel(p.badge)}
                 </span>
                 <span class="font-mono text-[0.6rem] sm:text-[0.65rem] uppercase tracking-[0.22em] text-[color:var(--fg-3)]">
@@ -212,7 +212,7 @@ const caseLink = (projectKey: string, origin: 'project-carousel' | 'project-deck
               <!-- Fila inferior: título grande, stack en línea y acciones -->
               <div class="flex items-end justify-between gap-3 sm:gap-8">
                 <div class="min-w-0 flex-1">
-                  <h4 class="project-cover-title max-w-[26ch] text-xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.05] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.7)]">
+                  <h4 class="project-cover-title max-w-[26ch] text-xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.05] text-white drop-shadow-[0_2px_12px_rgb(var(--scrim)_/_0.7)]">
                     {p.title.split(' ').map((word) => <span class="mr-[0.22em] inline-block whitespace-nowrap">{word}</span>)}
                   </h4>
                   <ul class="hidden sm:flex mt-3 flex-wrap gap-1.5">
@@ -327,7 +327,7 @@ const caseLink = (projectKey: string, origin: 'project-carousel' | 'project-deck
             <div>
               <div class="flex items-center justify-between gap-2">
                 <span class="font-mono text-xs text-[color:var(--cyan)] uppercase tracking-wider">{p.eyebrow}</span>
-                <span class={`rounded-full px-2 py-0.5 text-[0.65rem] font-mono uppercase ${p.badge === 'live' ? 'bg-emerald-500/10 text-emerald-400' : p.badge === 'coming-soon' ? 'bg-amber-500/10 text-amber-300' : 'bg-[color:var(--ink-700)] text-[color:var(--fg-3)]'}`}>
+                <span class={`rounded-full px-2 py-0.5 text-[0.65rem] font-mono uppercase ${p.badge === 'live' ? 'bg-[color:var(--live-strong)]/10 text-[color:var(--live)]' : p.badge === 'coming-soon' ? 'bg-[color:var(--pending)]/10 text-[color:var(--pending-soft)]' : 'bg-[color:var(--ink-700)] text-[color:var(--fg-3)]'}`}>
                   {badgeLabel(p.badge)}
                 </span>
               </div>
