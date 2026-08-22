@@ -1,5 +1,6 @@
 import { defineCollection, z } from 'astro:content'
 import { file } from 'astro/loaders'
+import { LANGS, STACK_GROUPS, STACK_TIERS } from './site.config'
 
 /**
  * Fuente única de verdad.
@@ -12,7 +13,6 @@ import { file } from 'astro/loaders'
  * en un idioma y no en el otro (ver scripts/verify-dist.mjs y checkPairs).
  */
 
-const LANGS = ['en', 'es'] as const
 const lang = z.enum(LANGS)
 
 /** ISO corta: YYYY-MM. Permite calcular duraciones en build sin ambigüedad. */
@@ -192,8 +192,8 @@ const stack = defineCollection({
   schema: z.object({
     key: z.string().min(1),
     name: z.string().min(1),
-    group: z.enum(['backend', 'frontend', 'devops', 'data', 'practices']),
-    tier: z.enum(['actual', 'historica', 'formacion', 'secundaria']),
+    group: z.enum(STACK_GROUPS),
+    tier: z.enum(STACK_TIERS),
     icon: z.string().optional(),
     label: z.object({ en: z.string().min(1), es: z.string().min(1) }),
     order: z.number().int(),

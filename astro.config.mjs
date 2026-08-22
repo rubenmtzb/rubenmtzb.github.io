@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config'
 import tailwindcss from '@tailwindcss/vite'
 import pruneUnusedAssets from './src/integrations/prune-unused-assets'
+import { DEFAULT_LANG, LANGS, SITE } from './src/site.config'
 
 /**
  * Gramática de URLs: /[experiencia]/[idioma]/[ruta]/
@@ -15,12 +16,12 @@ import pruneUnusedAssets from './src/integrations/prune-unused-assets'
  * helper de i18n, que produciría /es/v1/.
  */
 export default defineConfig({
-  site: 'https://rubenitx.me',
+  site: SITE,
   trailingSlash: 'always',
   build: { format: 'directory' },
   i18n: {
-    defaultLocale: 'en',
-    locales: ['en', 'es'],
+    defaultLocale: DEFAULT_LANG,
+    locales: [...LANGS],
     routing: { prefixDefaultLocale: false },
   },
   integrations: [pruneUnusedAssets()],

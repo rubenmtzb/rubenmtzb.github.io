@@ -1,7 +1,6 @@
 import { getCollection } from 'astro:content'
+import { SITE, STACK_GROUPS, type StackGroup } from '../site.config'
 import { DEFAULT_LANG, t, type Lang } from '../i18n/ui'
-
-export const SITE = 'https://rubenitx.me'
 
 /* ------------------------------------------------------------------ */
 /* Acceso a colecciones                                                */
@@ -35,9 +34,6 @@ export async function getEducation(lang: Lang) {
 export async function getCerts(lang: Lang) {
   return byOrder(byLang(await getCollection('certs'), lang)).map((e) => e.data)
 }
-
-export type StackGroup = 'backend' | 'frontend' | 'devops' | 'data' | 'practices'
-export const STACK_GROUPS: StackGroup[] = ['backend', 'frontend', 'devops', 'data', 'practices']
 
 /** Devuelve el stack agrupado por función y ordenado dentro de cada grupo. */
 export async function getStackByGroup() {

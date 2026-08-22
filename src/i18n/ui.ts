@@ -1,6 +1,9 @@
-export const LANGS = ['en', 'es'] as const
-export type Lang = (typeof LANGS)[number]
-export const DEFAULT_LANG: Lang = 'en'
+import { DEFAULT_LANG, LANGS, type Lang } from '../site.config'
+
+/* El vocabulario cerrado vive en site.config: aquí solo se reexporta para que
+   los componentes sigan pidiendo el idioma al módulo de i18n, que es donde lo
+   buscan. */
+export { DEFAULT_LANG, LANGS, type Lang }
 
 /** Las cinco áreas de la V1. El orden es el orden del documento. */
 export const NAV = [
