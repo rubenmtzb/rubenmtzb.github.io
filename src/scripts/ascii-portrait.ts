@@ -73,6 +73,16 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
     const rect = canvas.getBoundingClientRect()
     pointer.tx = ((pending.x - rect.left) / rect.width) * size
     pointer.ty = ((pending.y - rect.top) / rect.height) * size
+    /*
+     * Al entrar en el retrato, el cursor no tiene posición anterior útil: viene
+     * de fuera del canvas. Anclarlo al primer punto evita que la interpolación
+     * arrastre la repulsión desde OFFSCREEN y hace que el vacío nazca bajo el
+     * puntero, también al entrar desde abajo o por un lateral.
+     */
+    if (!pointer.active) {
+      pointer.x = pointer.tx
+      pointer.y = pointer.ty
+    }
     pointer.active = true
     pending = null
   }
