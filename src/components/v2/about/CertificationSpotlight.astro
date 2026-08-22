@@ -1,0 +1,197 @@
+---
+/**
+ * Certificaciones oficiales, en un escaparate navegable.
+ *
+ * Udemy acredita dos itinerarios complementarios de la misma época. Se
+ * presentan como una credencial compuesta para no duplicar marca ni pestaña,
+ * pero se conservan sus enlaces, identificadores y habilidades por separado.
+ */
+import TechChip from '../TechChip.astro'
+import { getCerts, twoDigits } from '../../../lib/content'
+import { certBrand } from '../../../lib/brands'
+import { t, type Lang } from '../../../i18n/ui'
+
+interface Props { lang: Lang }
+const { lang } = Astro.props
+
+const certs = await getCerts(lang)
+type CertEntry = (typeof certs)[number]
+type CertGroup = {
+  key: string
+  issuer: string
+  shortLabel: string
+  title: string
+  summary: string
+  date: string
+  entries: CertEntry[]
+  tags: string[]
+}
+
+/** Qué acredita cada certificado, para el rótulo del enlace de verificación. */
+const certSubject = (cert: CertEntry) =>
+  cert.tags?.find((tag) => tag === 'Python' || tag === 'JavaScript') ?? cert.title
+
+const certGroups: CertGroup[] = []
+for (const cert of certs) {
+  const isUdemy = cert.issuer === 'Udemy'
+  const key = isUdemy ? 'udemy' : cert.key
+  const existing = certGroups.find((group) => group.key === key)
+  if (existing) {
+    existing.entries.push(cert)
+    existing.tags = [...new Set([...existing.tags, ...(cert.tags ?? [])])]
+    continue
+  }
+
+  certGroups.push({
+    key,
+    issuer: cert.issuer,
+    shortLabel: isUdemy ? 'PY + JS' : cert.title.split(' ')[0],
+    title: isUdemy ? t(lang, 'v2.about.udemyTitle') : cert.title,
+    summary: isUdemy ? t(lang, 'v2.about.udemySummary') : cert.summary,
+    date: cert.date,
+    entries: [cert],
+    tags: [...(cert.tags ?? [])],
+  })
+}
+---
+
+<!-- ══════════ 02.3 // CERTIFICACIONES OFICIALES (DYNAMIC SPOTLIGHT SLIDE) ══════════ -->
+<div class="reveal mt-14 sm:mt-20" style="--i:3">
+  <!-- Cabecera de Certificaciones -->
+  <div class="flex flex-wrap items-center justify-between mb-6 gap-3 border-b border-[color:var(--line-soft)] pb-3">
+    <div>
+      <span class="font-mono text-xs text-[color:var(--cyan)] font-bold tracking-wider uppercase">02.3 // {t(lang, 'v2.about.certificationsKicker')}</span>
+      <h3 class="t-h3 text-[color:var(--fg)] mt-0.5">{t(lang, 'v2.about.certificationsTitle')}</h3>
+    </div>
+  </div>
+
+  <!-- Selector de Certificados en Pills -->
+  <div class="mb-5 flex flex-wrap gap-2" role="tablist" aria-label={t(lang, 'a11y.certTabs')}>
+    {certGroups.map((group, idx) => {
+      const brand = certBrand(group.entries[0].key)
+      return (
+        <button
+          type="button"
+          class={`cert-pill flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-mono transition-all ${idx === 0 ? 'is-active' : ''}`}
+          data-cert-pill={idx}
+          role="tab"
+          aria-selected={idx === 0 ? 'true' : 'false'}
+        >
+          {brand.logo ? (
+            <span class="inline-grid h-4 w-4 shrink-0 place-items-center rounded bg-[color:var(--fg)] p-0.5">
+              <img src={brand.logo} alt="" width="16" height="16" loading="lazy" decoding="async" class="h-full w-full object-contain" />
+            </span>
+          ) : (
+            <span>●</span>
+          )}
+          <span class="font-bold">{group.issuer}</span>
+          <span class="text-[0.68rem] text-[color:var(--fg-3)]">· {group.shortLabel}</span>
+        </button>
+      )
+    })}
+  </div>
+
+  <!-- Escenario del Slider de Certificaciones -->
+  <div id="certs-stage" class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-6 sm:p-8 shadow-2xl min-h-[300px]">
+    {certGroups.map((group, idx) => {
+      const brand = certBrand(group.entries[0].key)
+      return (
+        <div
+          class={`cert-slide flex flex-col justify-between ${idx === 0 ? 'is-active' : ''}`}
+          data-cert-slide={idx}
+        >
+          <div>
+            <!-- Brand Badge & Date -->
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <div class="flex items-center gap-3">
+                {brand.logo ? (
+                  <span class="inline-grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-[color:var(--fg)] p-1.5 shadow-sm">
+                    <img src={brand.logo} alt="" width="36" height="36" loading="lazy" decoding="async" class="h-full w-full object-contain" />
+                  </span>
+                ) : (
+                  <span class="text-3xl">●</span>
+                )}
+                <div>
+                  <span
+                    class="inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 text-xs font-mono font-bold"
+                    style={`background: ${brand.bg}; color: ${brand.text}; border: 1px solid ${brand.border}; box-shadow: 0 0 12px ${brand.glow};`}
+                  >
+                    <span>●</span>
+                    <span>{group.issuer}</span>
+                  </span>
+                  <span class="font-mono text-xs text-[color:var(--fg-3)] ml-2.5">
+                    {group.date}
+                  </span>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap justify-end gap-1.5">
+                {group.entries.map((cert) => cert.credentialId && (
+                  <span class="font-mono text-xs text-[color:var(--fg-2)] bg-[color:var(--ink-950)] px-3 py-1 rounded-lg border border-[color:var(--line-soft)]">
+                    {group.entries.length > 1 && <span class="mr-1 text-[color:var(--fg-3)]">{certSubject(cert)}:</span>}
+                    {t(lang, 'v2.about.credentialId')}: <strong class="text-[color:var(--cyan)]">{cert.credentialId}</strong>
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <h4 class="text-xl sm:text-2xl font-bold text-[color:var(--fg)] mb-3">
+              {group.title}
+            </h4>
+
+            <p class="text-sm sm:text-base text-[color:var(--fg-2)] leading-relaxed mb-6 max-w-3xl">
+              {group.summary}
+            </p>
+          </div>
+
+          <div class="border-t border-[color:var(--line-soft)] pt-4 flex flex-wrap items-center justify-between gap-4">
+            {group.tags.length > 0 && (
+              <ul class="flex flex-wrap items-center gap-1.5">
+                <li class="text-[0.68rem] font-mono text-[color:var(--fg-3)] mr-1">{t(lang, 'v2.about.skillsValidated')}</li>
+                {group.tags.map((tag) => (
+                  <li><TechChip tag={tag} lang={lang} /></li>
+                ))}
+              </ul>
+            )}
+
+            <div class="flex flex-wrap gap-2">
+              {group.entries.map((cert) => cert.verifyUrl && (
+                <a
+                  href={cert.verifyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-2 rounded-lg border border-[color:var(--cyan)]/40 bg-[color:var(--cyan)]/10 px-4 py-1.5 text-xs font-mono text-[color:var(--cyan)] hover:bg-[color:var(--cyan)]/20 transition shadow-[0_0_12px_rgb(var(--cyan-rgb)_/_0.15)]"
+                >
+                  <span>
+                    {group.entries.length > 1
+                      ? `${t(lang, 'v2.about.verify')} ${certSubject(cert)}`
+                      : (t(lang, 'v2.about.verifyOfficial'))}
+                  </span>
+                  <span>↗</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      )
+    })}
+  </div>
+
+  <div class="slider-footer">
+    <button type="button" id="certs-prev" class="slider-nav-arrow" aria-label={t(lang, 'v2.about.previousCert')}>‹</button>
+    <div class="flex items-center gap-3">
+      <span id="certs-counter" class="font-mono text-xs text-[color:var(--fg-3)]">01 / {twoDigits(certGroups.length)}</span>
+      <div id="certs-dots" class="flex items-center gap-2">
+        {certGroups.map((_, i) => (
+          <button
+            type="button"
+            class={`cert-dot-indicator h-1.5 w-2 rounded-full bg-[color:var(--line)] transition-all duration-300 hover:bg-[color:var(--blue-bright)] ${i === 0 ? 'is-active' : ''}`}
+            data-cert-dot={i}
+            aria-label={`${t(lang, 'v2.about.slide')} ${i + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+    <button type="button" id="certs-next" class="slider-nav-arrow" aria-label={t(lang, 'v2.about.nextCert')}>›</button>
+  </div>
+</div>
