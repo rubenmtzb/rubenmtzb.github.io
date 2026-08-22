@@ -5,7 +5,8 @@
  *
  * No es una URL del sitio, así que no está en la colección `pages`, no entra
  * en el sitemap y no emite hreflang. Como el hosting sirve el mismo fichero
- * para las rutas de los dos idiomas, se escribe en el idioma por defecto.
+ * para las rutas de los dos idiomas. El HTML parte del idioma por defecto y
+ * adapta la copia si la URL solicitada pertenece al prefijo castellano.
  */
 import BaseLayout from '../layouts/BaseLayout.astro'
 import Icon from '../components/Icon.astro'
@@ -25,16 +26,44 @@ import '../styles/v2.css'
 
   <main id="main" class="mx-auto flex min-h-dvh max-w-2xl flex-col justify-center px-6">
     <p class="t-index">404</p>
-    <h1 class="t-display mt-4">This route does not resolve.</h1>
-    <p class="t-lead mt-5 max-w-none">
+    <h1 id="not-found-title" class="t-display mt-4">This route does not resolve.</h1>
+    <p id="not-found-copy" class="t-lead mt-5 max-w-none">
       The page you were looking for is not here. It may have moved, or the link may be out of date.
     </p>
     <p class="mt-8 flex flex-wrap gap-3">
-      <a href="/" class="btn btn-primary">
-        <Icon name="arrowLeft" class="h-4 w-4" />Home
+      <a id="not-found-home" href="/" class="btn btn-primary">
+        <Icon name="arrowLeft" class="h-4 w-4" /><span>Home</span>
       </a>
-      <a href="/cv/" class="btn btn-ghost">CV</a>
-      <a href="/v1/" class="btn btn-ghost">Documentary version</a>
+      <a id="not-found-cv" href="/cv/" class="btn btn-ghost">CV</a>
+      <a id="not-found-v1" href="/v1/" class="btn btn-ghost">Documentary version</a>
     </p>
   </main>
+
+  <!--
+    El hosting sirve este mismo fichero para cualquier ruta que no exista, en
+    los dos idiomas, así que la traducción es lo único que no puede resolverse
+    en build. Cada retoque es independiente: si mañana falta un elemento, se
+    queda ese sin traducir en vez de abortar el resto a medias.
+  -->
+  <script is:inline>
+    if (location.pathname === '/es' || location.pathname.startsWith('/es/')) {
+      const write = (selector, text) => {
+        const node = document.querySelector(selector)
+        if (node) node.textContent = text
+      }
+      const point = (selector, href) => {
+        const node = document.querySelector(selector)
+        if (node) node.href = href
+      }
+      document.documentElement.lang = 'es'
+      write('.skip-link', 'Saltar al contenido')
+      write('#not-found-title', 'Esta ruta no existe.')
+      write('#not-found-copy', 'La página que buscabas no está aquí. Puede que se haya movido o que el enlace ya no esté actualizado.')
+      write('#not-found-home span', 'Inicio')
+      point('#not-found-home', '/es/')
+      point('#not-found-cv', '/es/cv/')
+      write('#not-found-v1', 'Versión documental')
+      point('#not-found-v1', '/v1/es/')
+    }
+  </script>
 </BaseLayout>
