@@ -47,13 +47,26 @@ on every build.
 | **CSS** | Layout, theming and every animation that does not need state |
 | **Client JS** | Progressive enhancement only — remove it and nothing but motion is lost |
 
-That order is enforced, not just intended. Two scripts verify it from opposite ends, and
-both gate the deploy:
+That order is enforced, not just intended. Four scripts verify it from different ends, and
+all of them gate the deploy:
 
 - `verify-dist.mjs` strips every `<script>` from the generated HTML and asserts that the
   content, the navigation and the language switcher are still there.
 - `verify-interaction.mjs` does the reverse — it runs the real bundle against that same
   HTML in a minimal DOM and asserts the carousels, tabs and typing test behave.
+- `verify-source.mjs` checks the conventions that leave no trace in the output: no view
+  branching on language, both dictionary tables in step, no colour outside the palette.
+- `verify-physics.mjs` imports the platformer's arithmetic directly and checks its rules.
+
+**Why the gate is this large.** A site with no framework runtime has almost no logic worth
+unit-testing: the units are Astro components that render, and rendering them in isolation
+proves nothing about the page. What can break here is structural — an hreflang set that
+stops matching its cluster, a section that ships at `opacity: 0` because the bundle failed,
+a Spanish page quietly missing a link its English twin has, a photograph served at ten times
+the size the card can display. None of that throws, none of it looks wrong in a component,
+and all of it is only visible in the finished output. So the assertions live where the
+evidence is. Every one of them was written after a real defect got through, which is why
+there are 613 of them and why the list keeps growing rather than being trimmed.
 
 **Weight is a contract too.** `verify-dist.mjs` holds three budgets, each written after it
 was breached: no emitted image slice may exceed 500 kB; no page may carry more than 32 kB of
