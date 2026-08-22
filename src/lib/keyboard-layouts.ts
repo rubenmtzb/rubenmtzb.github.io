@@ -10,9 +10,6 @@
  * cambia porque cambie el marcado que la pinta.
  */
 
-/** Una tecla dibujada del modelo, tal y como la devuelve `modelKeys`. */
-export type ModelKey = ReturnType<typeof modelKeys>[number]
-
 type KeyVariant =
   | 'neo-blue'
   | 'neo-red'
@@ -171,23 +168,6 @@ export const modelKeys = ({ rows }: Layout) =>
     })
   })
 
-/**
- * Geometría de las teclas, emitida como hoja de estilo y no como atributo
- * `style` por elemento.
- *
- * Cada modelo dibuja las mismas teclas en todas sus capas —el hueco de la
- * espuma, el socket de la PCB, el switch, la tecla—, así que la posición de
- * la tecla 12 del EVO75 se repetía idéntica una decena de veces por panel y
- * con toda su precisión en coma flotante. Eran 1.486 atributos y 213 kB de
- * HTML para decir tres números por tecla. Aquí cada posición se escribe una
- * vez por modelo y el elemento se limita a nombrarla.
- *
- * Solo viajan los tres valores que distinguen una tecla de otra. La altura
- * de fila es constante dentro de un modelo, así que vive en el panel, y todo
- * lo que se derivaba de ella —altura de tecla, de switch, de socket— lo
- * calcula el CSS a partir de ella en lugar de recibirlo ya multiplicado.
- */
-
 /** Cuatro decimales: sobre un modelo de 502 px son cinco milésimas de píxel. */
 const percent = (value: number) => `${Number(value.toFixed(4))}%`
 
@@ -198,7 +178,7 @@ export const keyClass = (index: number) => `bx-k${index}`
 export type LayoutName = keyof typeof MODEL_LAYOUTS
 type Layout = typeof MODEL_LAYOUTS[LayoutName]
 
-const layoutGeometry = (name: string, layout: Layout) => {
+const layoutGeometry = (name: LayoutName, layout: Layout) => {
   const scope = `.bx-build-panel[data-layout='${name}']`
   const rowHeight = 100 / layout.rows.length
   const positions = modelKeys(layout).map((key, index) => {
@@ -211,8 +191,23 @@ const layoutGeometry = (name: string, layout: Layout) => {
 }
 
 /**
- * Hoja de posiciones de los modelos pedidos, y solo de esos: un build que
- * nadie usa no deja reglas sueltas en la página.
+ * Geometría de las teclas, emitida como hoja de estilo y no como atributo
+ * `style` por elemento.
+ *
+ * Cada modelo dibuja las mismas teclas en todas sus capas —el hueco de la
+ * espuma, el socket de la PCB, el switch, la tecla—, así que la posición de
+ * la tecla 12 del EVO75 se repetía idéntica una decena de veces por panel y
+ * con toda su precisión en coma flotante. Eran 1.486 atributos y 213 kB de
+ * HTML para decir tres números por tecla. Aquí cada posición se escribe una
+ * vez por modelo y el elemento se limita a nombrarla.
+ *
+ * Solo viajan los tres valores que distinguen una tecla de otra: la altura de
+ * fila es constante dentro de un modelo, así que se declara una vez en el
+ * panel y el CSS deriva de ella la altura de la tecla, del switch y del
+ * socket en lugar de recibirlas ya multiplicadas.
+ *
+ * Solo entran los modelos pedidos: un build que nadie usa no deja reglas
+ * sueltas en la página.
  */
 export const keyGeometry = (names: LayoutName[]) =>
   [...new Set(names)].map((name) => layoutGeometry(name, MODEL_LAYOUTS[name])).join('')

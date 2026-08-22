@@ -1,9 +1,10 @@
-import { DEFAULT_LANG, LANGS, type Lang } from '../site.config'
+import { DEFAULT_LANG, type Lang } from '../site.config'
 
-/* El vocabulario cerrado vive en site.config: aquí solo se reexporta para que
-   los componentes sigan pidiendo el idioma al módulo de i18n, que es donde lo
-   buscan. */
-export { DEFAULT_LANG, LANGS, type Lang }
+/* El vocabulario cerrado vive en site.config. Aquí se reexporta lo que el
+   sitio pide por su nombre de i18n, que es donde lo busca: el idioma de una
+   página y cuál es el de por defecto. La lista completa solo la necesita el
+   esquema de contenido, y esa la coge de la fuente. */
+export { DEFAULT_LANG, type Lang }
 
 /** Las cinco áreas de la V1. El orden es el orden del documento. */
 export const NAV = [
