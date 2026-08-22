@@ -1,7 +1,7 @@
 ---
 import Icon from './Icon.astro'
 import TechChip from './v2/TechChip.astro'
-import { getExperience, getProjects, formatPeriod } from '../lib/content'
+import { getExperience, getProjects, formatPeriod, localePath } from '../lib/content'
 import { t, type Lang } from '../i18n/ui'
 
 /**
@@ -20,7 +20,7 @@ if (!project) throw new Error(`Ficha: no existe el proyecto "${projectKey}"`)
 
 /** El puesto desde el que se construyó, si lo hubo. */
 const role = (await getExperience(lang)).find((e) => e.company === project.deep?.partnerName)
-const backPath = lang === 'es' ? '/es/#work' : '/#work'
+const backPath = localePath('/#work', lang)
 
 const CARD = 'rounded-xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-5'
 const CARD_LABEL = 't-meta text-[0.62rem] text-[color:var(--fg-3)]'

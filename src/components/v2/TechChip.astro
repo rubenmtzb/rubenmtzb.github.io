@@ -1,5 +1,6 @@
 ---
 import { TECH } from '../../lib/tech'
+import { homePath } from '../../lib/content'
 import type { Lang } from '../../i18n/ui'
 
 /**
@@ -12,7 +13,7 @@ interface Props { tag: string; lang: Lang; class?: string }
 const { tag, lang, class: extra = 'project-tech-chip' } = Astro.props
 
 const meta = TECH[tag]
-const home = lang === 'es' ? '/es/' : '/'
+const home = homePath(lang)
 
 /*
  * Las chips de concepto apuntan a una sección de la portada. El enlace es

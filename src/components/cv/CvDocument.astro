@@ -11,6 +11,8 @@ import {
   getProfile,
   getProjects,
   getStackByGroup,
+  cvPdfPath,
+  homePath,
   STACK_GROUPS,
   tenureMonths,
   formatYears,
@@ -29,8 +31,8 @@ const projects = (await getProjects(lang)).filter((p) => p.inCv)
 const stack = await getStackByGroup()
 
 const other = await getAlternate('cv', lang)
-const homePath = lang === 'es' ? '/es/' : '/'
-const pdfHref = lang === 'es' ? '/cv/CV_RubenMartinez_ES.pdf' : '/cv/CV_RubenMartinez_EN.pdf'
+const home = homePath(lang)
+const pdfHref = cvPdfPath(lang)
 
 /**
  * Antigüedad empresarial derivada del puesto en curso, es decir de la fecha
@@ -55,7 +57,7 @@ const groups = STACK_GROUPS.map((g) => ({
   <!-- Barra de herramientas: no se imprime -->
   <div class="no-print mb-8 flex flex-wrap items-center justify-between gap-3">
     <a
-      href={homePath}
+      href={home}
       class="inline-flex items-center gap-2 rounded-full border border-green-500/25 bg-black/40 px-4 py-2 text-xs uppercase tracking-[0.2em] text-green-300 transition hover:border-green-300/45 hover:text-green-100"
     >
       <Icon name="arrowLeft" class="h-4 w-4" />

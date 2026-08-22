@@ -110,6 +110,30 @@ export async function getAlternate(key: string, lang: Lang) {
 export const abs = (path: string) => new URL(path, SITE).href
 
 /**
+ * La misma ruta en el idioma pedido.
+ *
+ * La gramática de URLs pone el inglés en la raíz y el castellano bajo `/es/`,
+ * así que la traducción de una ruta es mecánica. Estaba escrita a mano en
+ * media docena de componentes —cada uno con su propio ternario— y basta con
+ * que uno se olvide del prefijo para mandar a un lector castellano a la
+ * versión inglesa sin que nada falle.
+ */
+export const localePath = (path: string, lang: Lang) => (lang === 'es' ? `/es${path}` : path)
+
+/** Ruta del CV en el idioma dado. La enlazan la V1, la V2 y el propio CV. */
+export const cvPath = (lang: Lang) => localePath('/cv/', lang)
+
+/** Ruta de la portada en el idioma dado. */
+export const homePath = (lang: Lang) => localePath('/', lang)
+
+/**
+ * PDF del CV. Los dos ficheros viven en `public/cv/` y no llevan prefijo de
+ * idioma: es el nombre del fichero el que distingue la versión.
+ */
+export const cvPdfPath = (lang: Lang) =>
+  `/cv/CV_RubenMartinez_${lang === 'es' ? 'ES' : 'EN'}.pdf`
+
+/**
  * Proyectos con ficha propia. La V1 y la V2 enlazan a la misma página, así
  * que el mapa vive aquí: si mañana hay una segunda ficha, se añade una vez.
  */
@@ -118,8 +142,7 @@ const CASE_PATHS: Record<string, string> = { 'sars-cov-2': '/work/sars-cov-2/' }
 /** Ruta de la ficha en el idioma dado, o null si el proyecto no tiene ficha. */
 export function casePath(projectKey: string, lang: Lang): string | null {
   const path = CASE_PATHS[projectKey]
-  if (!path) return null
-  return lang === 'es' ? `/es${path}` : path
+  return path ? localePath(path, lang) : null
 }
 
 /* ------------------------------------------------------------------ */
