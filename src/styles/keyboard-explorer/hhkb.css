@@ -1,0 +1,302 @@
+/* ---------------- Arquitectura Topre del HHKB ---------------- */
+.bx-build-panel[data-layout='hhkb'] .bx-housing,
+.bx-build-panel[data-layout='hhkb'] .bx-domes,
+.bx-build-panel[data-layout='hhkb'] .bx-springs,
+.bx-build-panel[data-layout='hhkb'] .bx-pcb { inset: 8px; }
+.bx-build-panel[data-layout='hhkb'] .bx-case {
+  border: 9px solid #d9d7d0;
+  background: linear-gradient(155deg, #f4f2ec, #dcdad3);
+  box-shadow: inset 0 1px #fff, inset 0 0 0 1px rgba(72, 75, 78, .16), 0 5px 0 #c9c7c0, 0 10px 0 #b7b5ae, 0 18px 22px rgba(0, 0, 0, .42);
+}
+.bx-build-panel[data-layout='hhkb'] .bx-case-well { border-color: rgba(72, 75, 78, .2); }
+.bx-build-panel[data-layout='hhkb'] .bx-case-mark { color: rgba(29, 34, 38, .28); }
+.bx-hhkb-battery {
+  position: absolute;
+  left: 37%;
+  top: -15px;
+  width: 26%;
+  height: 24px;
+  border: 2px solid #c8c6bf;
+  border-radius: 8px 8px 2px 2px;
+  background: linear-gradient(#eceae4, #d2d0ca);
+  box-shadow: inset 0 1px #fff, 0 3px 4px rgba(0, 0, 0, .22);
+}
+.bx-housing {
+  border: 7px solid #dedcd5;
+  background: linear-gradient(150deg, #f5f3ed, #dfddd6);
+  box-shadow: inset 0 1px #fff, inset 0 0 0 1px rgba(70, 74, 77, .16), 0 4px 0 #cccac3, 0 9px 12px rgba(0, 0, 0, .34);
+}
+.bx-domes {
+  background: linear-gradient(155deg, rgba(224, 226, 228, .76), rgba(170, 174, 178, .7));
+  box-shadow: inset 0 1px rgba(255, 255, 255, .62), 0 3px 0 rgba(120, 124, 128, .6), 0 7px 10px rgba(0, 0, 0, .3);
+}
+.bx-springs {
+  border: 1px solid rgba(183, 188, 193, .58);
+  background: linear-gradient(155deg, rgba(223, 227, 230, .16), rgba(123, 130, 136, .1));
+  box-shadow: 0 3px 8px rgba(0, 0, 0, .24);
+}
+.bx-build-panel[data-layout='hhkb'] .bx-pcb {
+  background-color: #315f43;
+  background-image:
+    linear-gradient(25deg, transparent 18%, rgba(199, 169, 79, .26) 18% 18.5%, transparent 18.5% 60%, rgba(199, 169, 79, .2) 60% 60.5%, transparent 60.5%),
+    radial-gradient(rgba(216, 193, 114, .38) 1px, transparent 1px);
+  background-size: 82px 38px, 12px 12px;
+  box-shadow: inset 0 1px rgba(255,255,255,.28), inset 0 0 0 1px #1d3d2a, 0 3px 0 #244b34, 0 7px 0 #183424, 0 12px 14px rgba(0,0,0,.38);
+}
+.bx-topre-slider,
+.bx-housing-bore,
+.bx-topre-dome,
+.bx-topre-spring,
+.bx-cap-pad {
+  position: absolute;
+  /* El centro de la tecla, derivado de su caja: nunca se transmite aparte. */
+  left: calc(var(--x) + var(--w) / 2);
+  top: calc(var(--y) + var(--row-h) / 2);
+  transform: translate(-50%, -50%);
+}
+.bx-housing-bore {
+  width: 3.8%;
+  height: 13.5%;
+  border: 2px solid #c9c7c0;
+  border-radius: 47% 47% 38% 38%;
+  background: radial-gradient(circle, #1b1f22 0 42%, #62666a 44% 53%, #d8d6cf 55%);
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, .48), 0 1px #fff;
+}
+.bx-topre-slider {
+  display: grid;
+  place-items: center;
+  width: 3.35%;
+  height: 12%;
+  border: 1px solid #090b0d;
+  border-radius: 46% 46% 34% 34%;
+  background: linear-gradient(145deg, #3b4145, #15191c 68%);
+  box-shadow: inset 0 1px rgba(255, 255, 255, .2), 0 3px 0 #0d1012, 0 7px 6px rgba(0, 0, 0, .45);
+}
+.bx-topre-slider::before,
+.bx-topre-slider::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  background: #090b0c;
+  border-radius: 1px;
+}
+.bx-topre-slider::before { width: 52%; height: 16%; }
+.bx-topre-slider::after { width: 16%; height: 52%; }
+.bx-topre-slider b {
+  position: absolute;
+  inset: -2px;
+  border: 2px solid rgba(208, 211, 213, .72);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(22, 25, 27, .75);
+}
+.bx-topre-slider b::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 1px solid rgba(174, 179, 182, .62);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(16, 19, 21, .72);
+}
+.bx-topre-dome {
+  width: 4.35%;
+  height: 14.5%;
+  border: 1px solid rgba(120, 124, 128, .58);
+  border-radius: 48% 48% 38% 38%;
+  background: radial-gradient(circle at 38% 28%, rgba(255,255,255,.72), rgba(199,202,205,.78) 36%, rgba(142,147,151,.82) 72%);
+  box-shadow: inset 0 2px 3px rgba(255, 255, 255, .5), 0 3px 3px rgba(0, 0, 0, .28);
+}
+.bx-topre-dome::after {
+  content: '';
+  position: absolute;
+  left: 26%;
+  right: 26%;
+  bottom: 12%;
+  height: 28%;
+  border-radius: 50%;
+  background: rgba(64, 69, 73, .3);
+}
+.bx-topre-spring {
+  width: 3.8%;
+  height: 13%;
+  border: 1px solid #d5d9dc;
+  border-radius: 50%;
+  background: repeating-radial-gradient(ellipse, transparent 0 2px, rgba(215, 219, 222, .95) 2.5px 3.5px, transparent 4px 5px);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, .35);
+}
+.bx-topre-spring::after {
+  content: '';
+  position: absolute;
+  inset: 28%;
+  border: 1px solid rgba(223, 226, 229, .9);
+  border-radius: 50%;
+}
+.bx-cap-pad {
+  width: 4%;
+  height: 13%;
+  border: 1px solid rgba(205, 174, 82, .72);
+  border-radius: 50%;
+  background: radial-gradient(circle, #315f43 0 28%, #d1ad55 31% 42%, #315f43 45% 60%, #ba9448 63% 70%, #254b35 72%);
+  box-shadow: inset 0 0 4px rgba(255, 221, 123, .34);
+}
+/*
+ * Keycaps del build real: PBT oscuro con leyendas amarillas. Los tonos
+ * salen de las fotografías del propio teclado, no de un set genérico.
+ */
+.bx-model-key { display: grid; place-items: center; transform-style: preserve-3d; border: 1px solid rgba(26,27,25,.75); border-radius: 4px; background: linear-gradient(155deg, #34352f, #1f201c); box-shadow: 0 2px 0 #2c2d28, 0 5px 0 #242520, 0 8px 0 #1b1c18, 0 11px 9px rgba(0, 0, 0, .58); }
+.bx-model-key::before { content: ''; position: absolute; inset: 1px 1px 3px; z-index: 0; border-radius: 3px; background: radial-gradient(circle at 28% 22%, rgba(255,255,255,.14), transparent 34%), repeating-linear-gradient(110deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px), linear-gradient(155deg, #46473f, #383930 54%, #2b2c26); box-shadow: inset 0 1px rgba(255,255,255,.22), inset 0 -2px 3px rgba(0,0,0,.3); }
+.bx-model-key::after { content: ''; position: absolute; left: 9%; right: 9%; bottom: -3px; height: 4px; z-index: -1; border-radius: 0 0 3px 3px; background: linear-gradient(180deg, #2a2b25, #1c1d19); }
+.bx-model-key span { position: relative; z-index: 1; overflow: hidden; color: #e4cb4b; font: 600 8px/1 var(--font-mono); text-shadow: 0 1px rgba(0,0,0,.65), 0 0 4px rgba(228,203,75,.12); text-overflow: clip; }
+
+/*
+ * Set del Neo65 fotografiado: PBT negro, leyendas amarillas y novelties
+ * espaciales azules/rojas. Todo queda limitado al ANSI65 para no cambiar la
+ * piel de los otros teclados que reutilizan la geometría base.
+ */
+.bx-build-panel[data-layout='ansi65'] .bx-model-key {
+  border-color: rgba(8, 10, 12, .92);
+  border-radius: 4px 4px 5px 5px;
+  background: linear-gradient(155deg, #2b2e32, #15171a 72%);
+  box-shadow:
+    0 2px 0 #24272b,
+    0 5px 0 #1b1e21,
+    0 8px 0 #111316,
+    0 11px 9px rgba(0, 0, 0, .62);
+}
+.bx-build-panel[data-layout='ansi65'] .bx-model-key::before {
+  inset: 2px 2px 4px;
+  border-radius: 3px;
+  background:
+    radial-gradient(circle at 28% 20%, rgba(255,255,255,.12), transparent 32%),
+    repeating-linear-gradient(112deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px),
+    linear-gradient(155deg, #373a3e, #292c30 58%, #202327);
+  box-shadow:
+    inset 0 1px rgba(255,255,255,.18),
+    inset 1px 0 rgba(255,255,255,.045),
+    inset 0 -2px 3px rgba(0,0,0,.44);
+}
+.bx-build-panel[data-layout='ansi65'] .bx-model-key::after {
+  background: linear-gradient(180deg, #202327, #111316);
+}
+.bx-build-panel[data-layout='ansi65'] .bx-model-key > span {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: visible;
+  color: #f1d65b;
+  font-size: 8.5px;
+  font-weight: 650;
+  text-shadow: 0 1px #050607, 0 0 5px rgba(241, 214, 91, .13);
+}
+.bx-build-panel[data-layout='ansi65'] .bx-model-key > span small {
+  position: absolute;
+  top: 20%;
+  right: 19%;
+  color: inherit;
+  font: 600 4.5px/1 var(--font-mono);
+  opacity: .92;
+}
+.bx-build-panel[data-layout='ansi65'] .bx-model-key.is-neo-blue > span,
+.bx-build-panel[data-layout='ansi65'] .bx-model-key.is-neo-blue .bx-key-art {
+  color: #3fa2ff;
+}
+.bx-build-panel[data-layout='ansi65'] .bx-model-key.is-neo-red > span,
+.bx-build-panel[data-layout='ansi65'] .bx-model-key.is-neo-red .bx-key-art {
+  color: #ff5049;
+}
+.bx-build-panel[data-layout='ansi65'] .bx-model-key.is-neo-blue > span,
+.bx-build-panel[data-layout='ansi65'] .bx-model-key.is-neo-red > span {
+  font-size: 11px;
+  text-shadow: 0 1px #050607, 0 0 5px currentColor;
+}
+.bx-key-art {
+  position: relative;
+  z-index: 2;
+  width: min(58%, 34px);
+  height: 62%;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.45;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 1px #050607) drop-shadow(0 0 2px currentColor);
+}
+.bx-key-art .is-fill { fill: currentColor; stroke: none; }
+.bx-key-art .is-cutout { fill: #272a2e; stroke: none; }
+
+.bx-build-panel[data-layout='hhkb'] .bx-model-key {
+  border-color: rgba(101, 105, 104, .48);
+  border-radius: 4px 4px 5px 5px;
+  background: linear-gradient(155deg, #eeeeea, #c8c9c5 72%);
+  box-shadow:
+    0 2px 0 #e2e2de,
+    0 5px 0 #c9cac6,
+    0 8px 0 #afb1ad,
+    0 11px 9px rgba(0, 0, 0, .4);
+}
+.bx-build-panel[data-layout='hhkb'] .bx-model-key::before {
+  inset: 2px 2px 4px;
+  background:
+    radial-gradient(circle at 27% 20%, rgba(255,255,255,.82), transparent 34%),
+    repeating-linear-gradient(112deg, rgba(40,45,42,.018) 0 1px, transparent 1px 3px),
+    linear-gradient(155deg, #fffefa, #f1f1ed 58%, #dedfdb);
+  box-shadow:
+    inset 0 1px #fff,
+    inset 1px 0 rgba(255,255,255,.45),
+    inset 0 -2px 3px rgba(90, 94, 93, .16);
+}
+.bx-build-panel[data-layout='hhkb'] .bx-model-key::after {
+  background: linear-gradient(180deg, #d5d6d2, #b8bab6);
+}
+.bx-build-panel[data-layout='hhkb'] .bx-model-key.is-wasabi {
+  border-color: rgba(78, 113, 89, .5);
+  background: linear-gradient(155deg, #b8dcc0, #86b291 72%);
+  box-shadow:
+    0 2px 0 #b2d8bb,
+    0 5px 0 #94bd9e,
+    0 8px 0 #789c82,
+    0 11px 9px rgba(0, 0, 0, .4);
+}
+.bx-build-panel[data-layout='hhkb'] .bx-model-key.is-wasabi::before {
+  background:
+    radial-gradient(circle at 27% 20%, rgba(255,255,255,.62), transparent 34%),
+    repeating-linear-gradient(112deg, rgba(33,74,46,.018) 0 1px, transparent 1px 3px),
+    linear-gradient(155deg, #d5f0dc, #bde3c6 58%, #a4ceaf);
+  box-shadow:
+    inset 0 1px rgba(255,255,255,.78),
+    inset 1px 0 rgba(255,255,255,.2),
+    inset 0 -2px 3px rgba(50, 94, 62, .2);
+}
+.bx-build-panel[data-layout='hhkb'] .bx-model-key.is-wasabi::after {
+  background: linear-gradient(180deg, #91ba9a, #73947b);
+}
+.bx-build-panel[data-layout='hhkb'] .bx-model-key > span {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: visible;
+  color: #262b29;
+  font-size: 7.5px;
+  font-weight: 560;
+  text-shadow: 0 1px rgba(255,255,255,.65);
+}
+.bx-build-panel[data-layout='hhkb'] .bx-model-key > span small {
+  position: absolute;
+  top: 17%;
+  left: 50%;
+  color: inherit;
+  font: 500 4.5px/1 var(--font-mono);
+  transform: translateX(-50%);
+}
+.bx-key-function {
+  position: absolute;
+  left: 50%;
+  bottom: 13%;
+  color: #404744;
+  font: 500 4px/1 var(--font-mono);
+  font-style: normal;
+  letter-spacing: -.04em;
+  transform: translateX(-50%);
+}

@@ -1,0 +1,105 @@
+/* ---------------- Ficha lateral ---------------- */
+.bx-specs { min-width: 0; padding-top: .25rem; }
+.bx-specs h5 { margin-top: .35rem; color: var(--fg); font-size: 1.2rem; font-weight: 700; }
+.bx-specs > p { margin-top: .45rem; }
+.bx-detail-status {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  margin-top: .45rem;
+  color: var(--cyan);
+  font: 600 .54rem/1 var(--font-mono);
+  letter-spacing: .09em;
+}
+.bx-detail-status i { width: .3rem; height: .3rem; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
+.bx-build-panel.is-scaffold .bx-detail-status { color: #f0bd68; }
+.bx-build-panel.is-in-progress .bx-detail-status { color: #f0bd68; }
+.bx-build-panel.is-planning .bx-detail-status { color: #a995ff; }
+.bx-parts-head { margin-top: 1rem; padding: .65rem 0 .3rem; border-top: 1px solid var(--line-soft); color: var(--fg-3); font: 500 .56rem/1 var(--font-mono); letter-spacing: .11em; text-transform: uppercase; }
+.bx-parts { display: grid; gap: .2rem; list-style: none; }
+/*
+ * La lista es un índice compacto: al elegir una pieza, su especificación
+ * completa queda en el chip activo del modelo. La referencia conserva su
+ * acción propia, sin añadir una segunda fila por cada una de las capas.
+ */
+.bx-parts li { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .35rem; }
+.bx-source {
+  display: inline-flex;
+  align-items: center;
+  gap: .38rem;
+  margin: 0;
+  padding: .28rem .45rem;
+  border: 1px solid rgba(111, 227, 255, .28);
+  border-radius: .3rem;
+  background: linear-gradient(180deg, rgba(111, 227, 255, .07), rgba(111, 227, 255, .02));
+  color: var(--cyan);
+  font: 600 .56rem/1 var(--font-mono);
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  transition: border-color .28s ease, background .28s ease, box-shadow .28s ease, transform .28s cubic-bezier(.22, 1, .36, 1);
+}
+/* Punto vivo: el mismo indicador que usa el resto del panel. */
+.bx-source i { width: .3rem; height: .3rem; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 6px var(--cyan); transition: box-shadow .28s ease; }
+.bx-source svg { transition: transform .28s cubic-bezier(.22, 1, .36, 1); }
+.bx-source:hover {
+  border-color: rgba(111, 227, 255, .75);
+  background: linear-gradient(180deg, rgba(111, 227, 255, .18), rgba(111, 227, 255, .07));
+  box-shadow: 0 0 0 3px rgba(111, 227, 255, .09), 0 10px 22px -14px var(--cyan);
+  transform: translateY(-1px);
+}
+.bx-source:hover i { box-shadow: 0 0 10px var(--cyan); }
+.bx-source:hover svg { transform: translate(2px, -2px); }
+.bx-parts button { display: grid; grid-template-columns: 1.2rem .55rem 1fr; align-items: center; gap: .55rem; width: 100%; min-height: 2rem; padding: .38rem .55rem; border: 0; border-radius: .35rem; background: transparent; color: inherit; text-align: left; cursor: pointer; transition: background .2s ease, box-shadow .2s ease; }
+.bx-parts button:hover, .bx-parts button[aria-pressed='true'] { background: rgba(111, 227, 255, .07); box-shadow: inset 2px 0 var(--cyan); }
+.bx-part-index { color: var(--fg-3); font: 400 .56rem/1 var(--font-mono); }
+.bx-parts button > i { width: .52rem; height: .52rem; border: 1px solid rgba(255, 255, 255, .16); border-radius: 2px; background: var(--swatch); }
+.bx-parts button > span:last-child { min-width: 0; }
+.bx-parts strong { color: var(--fg); font: 600 .67rem/1.2 var(--font-mono); letter-spacing: .05em; }
+.bx-parts button[aria-pressed='true'] strong, .bx-parts button:hover strong { color: var(--cyan); }
+.bx-sheet { margin-top: .35rem; }
+.bx-sheet > div { display: flex; align-items: baseline; justify-content: space-between; gap: .8rem; padding: .28rem 0; border-bottom: 1px dashed var(--line-soft); }
+.bx-sheet > div:last-child { border-bottom: 0; }
+.bx-sheet dt { color: var(--fg-3); font: 400 .6rem/1.4 var(--font-mono); }
+.bx-sheet dd { color: var(--fg-2); font: 600 .6rem/1.4 var(--font-mono); text-align: right; }
+
+/*
+ * Un único juego de puntos de ruptura, y por ancho del propio componente:
+ * el explorador vive en una columna de rejilla, así que su ancho y el de
+ * la ventana no coinciden. Antes había dos bloques idénticos, uno por
+ * contenedor y otro por viewport, que había que mantener a la vez.
+ */
+@container (max-width: 56rem) {
+  .bx-workbench { grid-template-columns: 1fr; }
+  .bx-stage { --stage-h: 22rem; --stage-grow: 7rem; }
+  .bx-model { --fit-base: .72; }
+}
+@container (max-width: 34rem) {
+  .kb-build-explorer { padding: .85rem; }
+  .bx-build-grid { grid-template-columns: 1fr; }
+  .bx-header { align-items: flex-start; }
+  .bx-status { font-size: .55rem; }
+  .bx-workbench { padding: .5rem; }
+  .bx-toolbar { align-items: flex-start; flex-direction: column; }
+  .bx-build-navigation { grid-template-columns: 1fr 1fr; }
+  .bx-build-nav-all { grid-column: 1 / -1; grid-row: 1; }
+  .bx-build-nav-button { grid-row: 2; }
+  .bx-view-switch { width: 100%; grid-template-columns: repeat(2, 1fr); }
+  .bx-stage { --stage-h: 17rem; --stage-grow: 6rem; }
+  .bx-model { --fit-base: .47; }
+  .bx-active-chip small, .bx-hint-wide, .bx-layer-tag { display: none; }
+  .bx-hint-narrow { display: inline; }
+  .bx-card-authentic { top: .55rem; right: .55rem; }
+  .bx-card-photo-meta > span { display: none; }
+  .bx-prototype-note { max-width: calc(100% - 5rem); overflow: hidden; text-overflow: ellipsis; }
+  .bx-scrub { grid-template-columns: minmax(0, 1fr) 2.8rem; }
+  .bx-scrub label { grid-column: 1 / -1; }
+  .bx-clip { padding: .6rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bx-build-card, .bx-card-id strong, .bx-card-pointer-light, .bx-card-pagination button, .bx-card-nav,
+  .bx-layer, .bx-model, .bx-stage, .bx-active-chip, .bx-layer-tag,
+  .bx-source, .bx-source i, .bx-source svg,
+  .bx-clip, .bx-clip-play { transition-duration: .01ms !important; }
+  .bx-quip-poke, .bx-quip-bubble p { animation: none !important; }
+}

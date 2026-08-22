@@ -1,0 +1,42 @@
+.kb-build-explorer {
+  /* 0 montado, 1 totalmente separado: lo gobierna el deslizador. */
+  --spread: 0;
+  container-type: inline-size;
+  border: 1px solid var(--line);
+  border-radius: .75rem;
+  background: var(--ink-800);
+  padding: clamp(1rem, 2.2vw, 1.5rem);
+  box-shadow: 0 20px 45px -28px rgba(0, 0, 0, .9);
+}
+.kb-build-explorer[hidden], .bx-viewer[hidden], .bx-gallery[hidden],
+.bx-scrub[hidden], .bx-build-panel[hidden] { display: none; }
+.bx-header, .bx-toolbar, .bx-card-copy, .bx-parts-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.bx-header { padding-bottom: .85rem; border-bottom: 1px solid var(--line-soft); }
+.bx-kicker {
+  display: block;
+  color: var(--cyan);
+  font: 700 .66rem/1.2 var(--font-mono);
+  letter-spacing: .12em;
+}
+.bx-header h4 { margin-top: .3rem; color: var(--fg); font-size: 1rem; font-weight: 700; }
+.bx-status {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  color: var(--fg-3);
+  font: 500 .64rem/1 var(--font-mono);
+  letter-spacing: .06em;
+  white-space: nowrap;
+}
+.bx-status i {
+  width: .35rem;
+  height: .35rem;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 10px rgba(111, 227, 255, .55);
+}
