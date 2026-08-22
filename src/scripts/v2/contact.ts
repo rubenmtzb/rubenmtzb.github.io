@@ -91,10 +91,12 @@ export function initClock() {
 
   /*
    * A clock nobody is watching has no business waking the tab every second: it
-   * stops when the tab is hidden and resets itself on return, so what is on
-   * screen is always right and the background costs nothing.
+   * stops when the tab is hidden, when the block is off screen, and resets
+   * itself on return, so what is on screen is always right and the background
+   * costs nothing.
    */
   let timer: number | null = null
+  let onScreen = false
   const stop = () => {
     if (timer !== null) window.clearInterval(timer)
     timer = null
@@ -103,8 +105,21 @@ export function initClock() {
     update()
     if (timer === null) timer = window.setInterval(update, 1000)
   }
-  document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()))
-  start()
+  const sync = () => {
+    if (onScreen && !document.hidden) start()
+    else stop()
+  }
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver((entries) => {
+      onScreen = Boolean(entries[0]?.isIntersecting)
+      sync()
+    }, { rootMargin: '200px', threshold: 0 }).observe(clock)
+  } else {
+    onScreen = true
+    start()
+  }
+  document.addEventListener('visibilitychange', sync)
 }
 
 /* ---------------- Contact: signal typed on entering the screen ---------------- */

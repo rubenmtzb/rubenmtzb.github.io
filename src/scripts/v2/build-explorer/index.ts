@@ -5,7 +5,7 @@
  * Neo65: opening a card wires up the matching panel and all of the state —
  * camera, exploded view, pinned part — lives inside it.
  */
-import { onSwipe, pad, trackPointer } from '../dom'
+import { onSwipe, pad, trackPointer, whenNear } from '../dom'
 import { createBuildPanel, type BuildPanel } from './panel'
 import { createBuildSound } from './sound'
 
@@ -64,13 +64,36 @@ export function initKeyboardBuildExplorer() {
 
   const sound = createBuildSound(root)
 
+  /*
+   * The layered models travel in <template> so they are not live DOM on first
+   * paint. They have to be in the tree before a build opens, and they have to
+   * be there before the visitor arrives — cloning on the click is what made
+   * the first open wait. Approaching the archive is the moment: far enough
+   * to finish, close enough that nobody pays for four models while reading
+   * the hero.
+   */
   const panels = new Map<string, BuildPanel>()
-  for (const element of root.querySelectorAll<HTMLElement>('[data-bx-build]')) {
-    const key = element.dataset.bxBuild
-    if (key) panels.set(key, createBuildPanel(element, root))
+  let buildKeys: string[] = []
+  let modelsReady = false
+
+  const materializeModels = () => {
+    if (modelsReady) return
+    modelsReady = true
+    for (const template of root.querySelectorAll<HTMLTemplateElement>('template[data-bx-model-template]')) {
+      template.replaceWith(template.content)
+    }
+    for (const element of root.querySelectorAll<HTMLElement>('[data-bx-build]')) {
+      const key = element.dataset.bxBuild
+      if (key) panels.set(key, createBuildPanel(element, root))
+    }
+    buildKeys = [...panels.keys()]
   }
-  if (panels.size === 0) return
-  const buildKeys = [...panels.keys()]
+
+  if (root.querySelector('[data-bx-build]') === null) return
+
+  const archive = document.getElementById('archive') ?? root
+  whenNear(archive, materializeModels, '1400px')
+  document.getElementById('kb-tab-photos')?.addEventListener('click', materializeModels)
 
   const archivedLabel = status?.textContent ?? ''
   let active: BuildPanel | null = null
@@ -120,6 +143,7 @@ export function initKeyboardBuildExplorer() {
   }
 
   const openBuild = (key: string) => {
+    materializeModels()
     const panel = panels.get(key)
     if (!panel) return
     sound.silence()

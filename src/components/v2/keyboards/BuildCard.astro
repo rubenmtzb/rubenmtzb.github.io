@@ -7,12 +7,11 @@
  * leaving the gallery. Which is which is decided by the explorer reading
  * `data-bx-open`.
  *
- * Every photograph downloads up front rather than on display: the carousel is
- * paged with the arrows, and an image that only starts coming down the moment it
- * is asked for arrives late, and the gap shows. Since the block lives behind a
- * tab and far below the fold, the download carries `fetchpriority="low"`, so it
- * happens with the connection already free and takes no bandwidth away from
- * whatever is on screen.
+ * Photographs stay lazy on first paint: this block lives behind a tab and far
+ * below the fold. The boot warms every cover as soon as the archive is close,
+ * so paging with the arrows does not wait on a download that only starts on
+ * the click. fetchpriority stays low so they never take the connection away
+ * from whatever is on screen.
  */
 import { Picture } from 'astro:assets'
 import { buildDisplayStatus, localizer, twoDigits, type KeyboardBuild } from '../../../lib/content'
@@ -78,7 +77,7 @@ const photoWidth = (intrinsic: number) => photoWidths(intrinsic).at(-1) ?? intri
             quality={82}
             sizes="(max-width: 544px) calc(100vw - 4rem), (max-width: 1024px) 44vw, 340px"
             alt={pick(photo.alt)}
-            loading="eager"
+            loading="lazy"
             fetchpriority="low"
             decoding="async"
             draggable="false"

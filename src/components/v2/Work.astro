@@ -7,10 +7,10 @@
  * as the fallback, at high quality so the screenshot's thin lines and text do
  * not get muddy.
  *
- * They all download, not just the first: pressing the arrow used to mean waiting
- * for the next one's download to start, and that wait is visible. The ones out
- * of view come down at minimum priority, so they arrive without fighting the
- * cover actually on screen for bandwidth.
+ * They stay lazy on first paint so they do not fight the hero. The boot warms
+ * every cover as soon as #work is close — paging used to wait on a download
+ * that only started on the arrow, and that wait is visible. Priority stays low
+ * so the cover on screen still wins the connection.
  */
 import { Picture } from 'astro:assets'
 import Icon from '../Icon.astro'
@@ -177,8 +177,8 @@ const caseLink = (projectKey: string, origin: 'project-carousel' | 'project-deck
                 width={1600}
                 sizes="(max-width: 1216px) 100vw, 1104px"
                 alt={p.imageAlt || `${p.title} — ${t(lang, 'v2.work.cover')}`}
-                loading="eager"
-                fetchpriority={i === 0 ? 'high' : 'low'}
+                loading="lazy"
+                fetchpriority="low"
                 decoding="async"
                 class="project-cover absolute inset-0 h-full w-full object-cover"
               />

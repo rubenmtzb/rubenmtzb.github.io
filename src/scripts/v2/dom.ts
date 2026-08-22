@@ -7,12 +7,18 @@
  * have in common.
  */
 
-/** Preferences and language are read once: they do not change during the session. */
+/** Preferences are read once: they do not change during the session. */
 export const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-export const isSpanish = document.documentElement.lang === 'es'
+
+/**
+ * The document's language, read when asked. The primitives chunk is shared
+ * across the deferred modules, so capturing `lang` at import time would freeze
+ * the first page that loaded it — English leaking into `/es/` in the verifier.
+ */
+export const isSpanish = () => document.documentElement.lang === 'es'
 
 /** Picks between the Spanish and the English variant by the document's language. */
-export const say = <T,>(es: T, en: T): T => (isSpanish ? es : en)
+export const say = <T,>(es: T, en: T): T => (isSpanish() ? es : en)
 
 /** Two-digit numbering: "01 / 04". Shared by both counters. */
 export const pad = (n: number) => String(n).padStart(2, '0')
@@ -57,4 +63,32 @@ export function onSwipe(el: HTMLElement, handler: (direction: 1 | -1) => void, t
     const dx = e.changedTouches[0].clientX - startX
     if (Math.abs(dx) > threshold) handler(dx < 0 ? 1 : -1)
   }, { passive: true })
+}
+
+/**
+ * Runs `task` once the element is close enough to the viewport that the visitor
+ * is about to see it — and immediately if the browser cannot tell.
+ *
+ * The margin is the head start: images and inert markup have to be live before
+ * the section is on screen, otherwise the first slide or the first opened build
+ * waits. One shot; after it has run there is nothing left to observe.
+ */
+export function whenNear(el: Element, task: () => void, rootMargin = '1200px') {
+  if (!('IntersectionObserver' in window)) {
+    task()
+    return
+  }
+  const io = new IntersectionObserver((entries, observer) => {
+    if (!entries.some((entry) => entry.isIntersecting)) return
+    observer.disconnect()
+    task()
+  }, { rootMargin, threshold: 0 })
+  io.observe(el)
+}
+
+/** Turns lazy images into downloads so paging a carousel does not wait on them. */
+export function warmImages(root: ParentNode) {
+  for (const img of root.querySelectorAll('img')) {
+    if (img.loading === 'lazy') img.loading = 'eager'
+  }
 }

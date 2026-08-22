@@ -21,6 +21,7 @@
  *   already made: the loop simulates, `paintFrame` only reads.
  */
 
+import '../styles/v2/game-mode.css'
 import {
   BODY,
   PHYSICS,
