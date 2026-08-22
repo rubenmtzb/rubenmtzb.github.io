@@ -69,6 +69,30 @@ export async function getKeyboards() {
   })
 }
 
+/** Un build del archivo, ya resuelto: el tipo que reciben los componentes. */
+export type KeyboardBuild = Awaited<ReturnType<typeof getKeyboards>>[number]
+export type KeyboardPart = KeyboardBuild['parts'][number]
+
+/**
+ * Estado que muestra la ficha.
+ *
+ * El montaje físico puede seguir en curso aunque el modelo por capas ya esté
+ * documentado, y es eso lo que hay que enseñar: un teclado a medio montar no
+ * es un "build real" por mucho que su despiece esté completo.
+ */
+export const buildDisplayStatus = (build: KeyboardBuild) =>
+  build.buildInProgress ? 'in-progress' : build.status
+
+/**
+ * Resuelve un par {en, es} al idioma pedido.
+ *
+ * El contenido bilingüe dentro de una misma entrada —una foto con dos pies,
+ * una pieza con dos descripciones— se resuelve en la vista y no en la carga,
+ * porque la imagen es la misma y solo cambia el texto.
+ */
+export const localizer = (lang: Lang) =>
+  <T,>(pair: { en: T, es: T }): T => (lang === 'es' ? pair.es : pair.en)
+
 export async function getPage(key: string, lang: Lang) {
   const all = await getCollection('pages')
   const entry = all.find((e) => e.data.key === key && e.data.lang === lang)
