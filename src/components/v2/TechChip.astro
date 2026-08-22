@@ -2,6 +2,7 @@
 import { TECH } from '../../lib/tech'
 import { homePath } from '../../lib/content'
 import type { Lang } from '../../i18n/ui'
+import { canonicalTerm, localizedTerm } from '../../i18n/terms'
 
 /**
  * Chip de tecnología: logotipo, color de marca y enlace a la página oficial.
@@ -12,8 +13,11 @@ import type { Lang } from '../../i18n/ui'
 interface Props { tag: string; lang: Lang; class?: string }
 const { tag, lang, class: extra = 'project-tech-chip' } = Astro.props
 
-const meta = TECH[tag]
+/* El registro indexa por la forma canónica; el contenido castellano escribe la
+   etiqueta ya traducida. Se busca por la primera y se muestra la segunda. */
+const meta = TECH[canonicalTerm(tag)]
 const home = homePath(lang)
+const displayTag = localizedTerm(tag, lang)
 
 /*
  * Las chips de concepto apuntan a una sección de la portada. El enlace es
@@ -25,8 +29,8 @@ const href = meta?.anchor ? `${home}#${meta.anchor}` : meta?.url
 const isInternal = Boolean(meta?.anchor)
 
 const label = isInternal
-  ? `${tag} — ${lang === 'es' ? 'ver estudios' : 'view education'}`
-  : `${tag} — ${lang === 'es' ? 'sitio oficial' : 'official site'}`
+  ? `${displayTag} — ${lang === 'es' ? 'ver estudios' : 'view education'}`
+  : `${displayTag} — ${lang === 'es' ? 'sitio oficial' : 'official site'}`
 ---
 
 {meta && href ? (
@@ -39,7 +43,7 @@ const label = isInternal
     aria-label={label}
   >
     {meta.icon && <img src={meta.icon} alt="" width="12" height="12" loading="lazy" decoding="async" />}
-    <span>{tag}</span>
+    <span>{displayTag}</span>
   </a>
 ) : (
   <span
@@ -47,6 +51,6 @@ const label = isInternal
     style="--chip-color: var(--cyan); --chip-glow: rgba(111, 227, 255, 0.2);"
   >
     <span class="project-tech-marker" aria-hidden="true"></span>
-    <span>{tag}</span>
+    <span>{displayTag}</span>
   </span>
 )}

@@ -1,4 +1,34 @@
-/* Workbench de perfil: ficheros, paneles y línea de comando. */
+/**
+ * Workbench de perfil: ficheros, paneles y línea de comando.
+ *
+ * La caja de comando y el explorador de ficheros son dos vías al mismo sitio,
+ * así que el nombre del fichero y las palabras que lo abren se declaran juntos:
+ * lo que se ve escrito en la pestaña es literalmente lo que se puede teclear.
+ */
+import { isSpanish } from './dom'
+
+/**
+ * Un panel por fila: cómo se llama su fichero en cada idioma y qué palabras lo
+ * abren desde la línea de comando. `identity` cierra la lista porque es el
+ * destino por defecto de cualquier comando que no reconozca ningún otro.
+ */
+const PANELS = [
+  {
+    id: 'focus',
+    file: { en: 'engineering.md', es: 'ingenieria.md' },
+    words: ['focus', 'engineering', 'enfoque', 'ingenier', 'arquitect'],
+  },
+  {
+    id: 'learning',
+    file: { en: 'learning.log', es: 'aprendizaje.log' },
+    words: ['learning', 'education', 'aprendizaje', 'estudio', 'formaci'],
+  },
+  {
+    id: 'identity',
+    file: { en: 'identity.json', es: 'identidad.json' },
+    words: [],
+  },
+] as const
 
 export function initProfileWorkbench() {
   const workbench = document.getElementById('profile-workbench')
@@ -9,11 +39,9 @@ export function initProfileWorkbench() {
   const tabLabel = document.getElementById('profile-tab-label')
   const command = document.getElementById('profile-command') as HTMLFormElement | null
   const input = document.getElementById('profile-command-input') as HTMLInputElement | null
-  const names: Record<string, string> = {
-    identity: 'identity.json',
-    focus: 'engineering.md',
-    learning: 'learning.log',
-  }
+  const names: Record<string, string> = Object.fromEntries(
+    PANELS.map((panel) => [panel.id, isSpanish ? panel.file.es : panel.file.en]),
+  )
 
   const select = (tab: string) => {
     if (!(tab in names)) return
@@ -34,8 +62,8 @@ export function initProfileWorkbench() {
   command?.addEventListener('submit', (event) => {
     event.preventDefault()
     const value = input?.value.trim().toLowerCase() ?? ''
-    if (value.includes('focus') || value.includes('engineering') || value.includes('arquitect')) select('focus')
-    else if (value.includes('learning') || value.includes('education') || value.includes('estudio') || value.includes('formaci')) select('learning')
+    const match = PANELS.find((panel) => panel.words.some((word) => value.includes(word)))
+    if (match) select(match.id)
     else if (value) select('identity')
     if (input) input.value = ''
   })
