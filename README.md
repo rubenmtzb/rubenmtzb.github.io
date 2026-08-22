@@ -69,6 +69,22 @@ Every page is the same document shell. Where two files had to agree on a fact �
 domain, the locale list, the stack groups — the fact moved to `src/site.config.ts` and
 both import it.
 
+**Two layers of styling, not two systems.** Tailwind and the hand-written sheets are
+not competing here — they do different jobs. Anything with identity, state or motion is a
+named class (`t-h2`, `btn`, `project-slide`, `bx-*`): it has to be selected from JavaScript,
+animated, or reasoned about as a thing. Anything that is a one-off arrangement — a flex row,
+a gap, a breakpoint — is a Tailwind utility, because naming it would invent a component that
+does not exist.
+
+Colour never improvises. Every value comes from the palette in `src/styles/v2/tokens.css`,
+delivered through Tailwind's arbitrary-value syntax (`text-[color:var(--fg-3)]`). That reads
+repetitive, and the repetition is free: an arbitrary value emits exactly one rule no matter
+how many elements use it, and the whole V2 stylesheet is 21 kB over the wire. What was not
+free was the palette having no state colours, so forty-four places reached for `emerald-400`,
+`amber-500` or a hand-typed `rgba(111,227,255,.2)` — the cyan token, retyped by eye. Those are
+now `--live`, `--pending`, `--closed` and `--cyan-rgb`, and `verify-source.mjs` fails the build
+if a V2 component names a colour any other way.
+
 **Both languages say the same thing.** Translation is split by role, not scattered: UI strings
 live in `src/i18n/ui.ts` behind `t(lang, key)`; the build archive keeps its own copy in
 `src/i18n/keyboards.ts`, typed as `ES: typeof EN` so a missing string is a compile error; and
