@@ -291,10 +291,17 @@ for (const asset of [
  * no mide el tamaño de la página —el contenido puede crecer— sino cuánta
  * presentación viaja repetida en el marcado en lugar de vivir en una hoja
  * de estilo.
+ *
+ * El tercero: el mismo modelo, con el CSS del componente en ámbito, obligaba
+ * a marcar 2.745 elementos con el atributo del ámbito, que eran 66 kB de la
+ * portada. Con la hoja fuera del componente el atributo desaparece, y el
+ * límite existe para que no vuelva a entrar sin que nadie se dé cuenta: es un
+ * atributo que no dice nada y se paga una vez por elemento.
  */
 console.log('\n· Presupuesto')
 const MAX_IMAGE_BYTES = 500 * 1024
 const MAX_INLINE_STYLE_BYTES = 32 * 1024
+const MAX_SCOPE_ATTRIBUTES = 200
 
 const assetDir = join(DIST, '_astro')
 const oversized = existsSync(assetDir)
@@ -311,11 +318,19 @@ assert(
 )
 
 for (const page of EXPECTED) {
-  const inline = [...read(page.file).matchAll(/\sstyle="([^"]*)"/g)]
+  const html = read(page.file)
+
+  const inline = [...html.matchAll(/\sstyle="([^"]*)"/g)]
     .reduce((total, match) => total + match[1].length, 0)
   assert(
     inline <= MAX_INLINE_STYLE_BYTES,
     `${page.path} lleva ${Math.round(inline / 1024)} kB de estilo en línea (máximo ${MAX_INLINE_STYLE_BYTES / 1024} kB)`,
+  )
+
+  const scoped = [...html.matchAll(/\sdata-astro-cid-[a-z0-9]+/g)].length
+  assert(
+    scoped <= MAX_SCOPE_ATTRIBUTES,
+    `${page.path} marca ${scoped} elementos con el atributo de ámbito (máximo ${MAX_SCOPE_ATTRIBUTES})`,
   )
 }
 
