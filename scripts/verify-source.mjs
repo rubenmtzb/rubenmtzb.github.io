@@ -93,6 +93,34 @@ const unused = [...enKeys].filter((key) => {
 })
 assert(unused.length === 0, `ninguna clave sin consumidor${unused.length ? ` — sobran: ${unused.join(', ')}` : ''}`)
 
+/* ---------- El color de la V2 sale de la paleta ---------- */
+/*
+ * La V2 tiene su paleta en `styles/v2/tokens.css`, pero no tenía colores de
+ * estado, así que cada componente elegía el de Tailwind que le sonaba bien:
+ * `emerald-400` aquí, `amber-500` allá, y `rgba(111,227,255,.2)` escrito a
+ * mano donde hacía falta cian con alfa. Cuarenta y cuatro decisiones sueltas
+ * y ningún sitio donde cambiarlas de una vez.
+ *
+ * Las utilidades de Tailwind siguen siendo el vehículo —`text-[color:var(…)]`—
+ * pero el valor tiene que venir de un token. La V1 queda fuera: es la versión
+ * documental y tiene su propia identidad en verde.
+ */
+console.log('\n· Color')
+const STOCK_COLOURS = /\b(?:text|bg|border|from|via|to|shadow|ring|fill|stroke|decoration|outline|accent|caret|divide)-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\d{2,3}\b/g
+const RAW_COLOURS = /(?:class|style)(?::list)?=[""'`{][^""'`]*?(#[0-9a-fA-F]{3,8}\b|rgba?\([\d\s.,]+\))/g
+
+const improvised = sources('src/components/v2', ['.astro']).flatMap((file) => {
+  const text = readFileSync(file, 'utf8')
+  const stock = [...text.matchAll(STOCK_COLOURS)].map((m) => m[0])
+  const raw = [...text.matchAll(RAW_COLOURS)].map((m) => m[1])
+  const found = [...new Set([...stock, ...raw])]
+  return found.length ? [`${file} (${found.slice(0, 3).join(', ')})`] : []
+})
+assert(
+  improvised.length === 0,
+  `ningún color de la V2 se improvisa fuera de la paleta${improvised.length ? ` — lo hacen: ${improvised.join('; ')}` : ''}`,
+)
+
 console.log(`\n${'─'.repeat(52)}`)
 if (failures > 0) {
   console.error(`❌ ${failures} desvío(s) sobre ${checks + failures} convenciones`)
