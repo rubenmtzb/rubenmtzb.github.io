@@ -55,10 +55,11 @@ both gate the deploy:
 - `verify-interaction.mjs` does the reverse — it runs the real bundle against that same
   HTML in a minimal DOM and asserts the carousels, tabs and typing test behave.
 
-**Weight is a contract too.** `verify-dist.mjs` also holds two budgets, both written after
-they were breached: no emitted image slice may exceed 500 kB, and no page may carry more
-than 32 kB of inline `style` attributes — presentation that repeats per element belongs in
-a stylesheet, not in the markup. A build that breaks either one does not deploy.
+**Weight is a contract too.** `verify-dist.mjs` holds three budgets, each written after it
+was breached: no emitted image slice may exceed 500 kB; no page may carry more than 32 kB of
+inline `style` attributes; and no page may mark more than 200 elements with a CSS scope
+attribute — presentation that repeats per element belongs in a stylesheet, not in the markup.
+A build that breaks any of them does not deploy.
 
 **One shape per concern.** Nothing in `src/` is a container for unrelated things.
 The client layer is one module per feature and a boot file that is nothing but the
@@ -67,6 +68,19 @@ sound sample — with its key tables as data in `src/lib/` and its copy in `src/
 Every page is the same document shell. Where two files had to agree on a fact — the
 domain, the locale list, the stack groups — the fact moved to `src/site.config.ts` and
 both import it.
+
+**Both languages say the same thing.** Translation is split by role, not scattered: UI strings
+live in `src/i18n/ui.ts` behind `t(lang, key)`; the build archive keeps its own copy in
+`src/i18n/keyboards.ts`, typed as `ES: typeof EN` so a missing string is a compile error; and
+`src/i18n/terms.ts` handles the concepts that are also registry keys — `localizedTerm()`
+translates one for display, `canonicalTerm()` maps it back to the key the registry indexes by.
+
+That last one exists because of a real bug: the Spanish rows of the content write their tags
+already translated, so a technology chip silently lost its logo and its link on `/es/` while
+`/` kept both. Nothing caught it, so now something does. `verify-dist.mjs` compares every
+language pair — links, buttons, images, media and form controls — and fails the build when one
+version offers an affordance the other does not. Prose may split into a different number of
+elements; an action that exists in one language and not the other is always a defect.
 
 **Nothing ships that nothing asks for.** Bundling emits the original of every image in
 `src/assets/` alongside the slices `astro:assets` actually generates. The
@@ -101,6 +115,8 @@ entity across the whole site, with a stable `@id`.
 - **Project showcase, education and certification carousels**, all driven by one shared primitive
 - **Draggable 3D photo deck** with throw physics
 - **Interactive HHKB keyboard** with a typing speed trial and synthesised switch sound
+- **Keyboard build archive** — every build as a layered 3D model you can orbit and explode,
+  with its assembly order, its spec sheet and a recorded sound sample
 - **Killua Game Mode** — an optional platformer that uses the real DOM as its level geometry
 - **English / Spanish** as real, separate URLs — never a client-side toggle
 
@@ -182,12 +198,13 @@ rubenmtzb.github.io/
 │   │   └── cv/                    # CV document
 │   ├── i18n/
 │   │   ├── ui.ts                  # UI strings and anchor aliases
-│   │   └── keyboards.ts           # Copy for the build explorer
+│   │   ├── keyboards.ts           # Copy for the build explorer
+│   │   └── terms.ts               # Concepts that are also registry keys
 │   ├── lib/
-│   │   ├── content.ts             # Collection access, routes, date maths, JSON-LD
+│   │   ├── content.ts             # Collections, routes, date maths, JSON-LD
 │   │   ├── keyboard-layouts.ts    # Key tables and model geometry
 │   │   ├── keyboard-sound.ts      # Waveform geometry for the sound samples
-│   │   ├── tech.ts                # Technology registry: colour, logo, official link
+│   │   ├── tech.ts                # Technology registry: colour, logo, link
 │   │   └── brands.ts              # Issuer and institution registry
 │   ├── integrations/              # Build-time hooks (unused-asset pruning)
 │   ├── pages/                     # URL grammar + sitemap.xml + manifest.json
