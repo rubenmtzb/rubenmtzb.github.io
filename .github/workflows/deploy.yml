@@ -19,6 +19,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      # 22.6 es la primera versión que ejecuta TypeScript sin compilar: las
+      # comprobaciones del movimiento importan el módulo del juego tal cual.
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
