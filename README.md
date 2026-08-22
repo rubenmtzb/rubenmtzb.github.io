@@ -198,6 +198,8 @@ rubenmtzb.github.io/
 ├── scripts/
 │   ├── verify-dist.mjs            # Assertions over the generated HTML (no JS)
 │   ├── verify-interaction.mjs     # Runs the real bundle against that HTML
+│   ├── verify-source.mjs          # Conventions that leave no trace in the output
+│   ├── verify-physics.mjs         # The platformer's movement rules
 │   └── generate-sprites.mjs       # One-off sprite generation for Game Mode
 ├── src/
 │   ├── site.config.ts             # Domain, locales and closed vocabulary
@@ -213,7 +215,7 @@ rubenmtzb.github.io/
 │   │   │   └── keyboards/         # Build explorer: card, panel, model, sound
 │   │   └── cv/                    # CV document
 │   ├── i18n/
-│   │   ├── ui.ts                  # UI strings and anchor aliases
+│   │   ├── ui.ts                  # Every UI string, in both languages
 │   │   ├── keyboards.ts           # Copy for the build explorer
 │   │   └── terms.ts               # Concepts that are also registry keys
 │   ├── lib/
@@ -230,6 +232,7 @@ rubenmtzb.github.io/
 │   │   │   ├── keyboard/          # Mascot, switch audio, speed trial, sandbox
 │   │   │   └── build-explorer/    # Panel state, sound rack, orbit and explode
 │   │   ├── game-mode.ts           # Split into its own chunk, loaded on demand
+│   │   ├── game/                  # Its levels, its synthesiser and its physics
 │   │   └── ascii-portrait.ts      # Canvas particle portrait
 │   └── styles/
 │       ├── global.css             # V1
