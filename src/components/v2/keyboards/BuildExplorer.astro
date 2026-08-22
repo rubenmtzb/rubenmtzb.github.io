@@ -4,7 +4,9 @@
  *
  * Two views onto the same content: a gallery of photographic covers and, once
  * one is opened, the keyboard's layered model with its details alongside. Both
- * are emitted in the built HTML; the client only decides which one is visible.
+ * are emitted in the built HTML; the models sit inside a template so they are
+ * not live DOM until the archive is close, and the client only decides which
+ * view is visible.
  *
  * Only the composition lives here. The data is the `keyboards` collection, the
  * models' geometry is in `lib/keyboard-layouts`, the copy in `i18n/keyboards`
