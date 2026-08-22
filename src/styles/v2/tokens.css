@@ -1,0 +1,100 @@
+/* ============================================================
+   SISTEMA VISUAL V2 — DIRECCIÓN DE ARTE EDITORIAL + WOW EFFECTS
+
+   Fusión de arquitectura limpia, tipografía editorial y microinteracciones
+   de alto impacto (Killua ASCII live particles, 3D Cards Stack Carousel,
+   Spotlight Projects Carousel, Tabbed JobList, Interactive 60% Keyboard,
+   Game Mode Killua Platformer).
+
+   Paleta de color fría e intensa:
+     Fondo: Ink 900 (#05080f), Ink 800 (#0a0f1c), Ink 700 (#111828)
+     Bordes: Line (#1b2438), Line-Soft (#131b2b)
+     Texto: Foreground (#edf1f8), Fg-2 (#a2b0c9), Fg-3 (#6e7d99)
+     Acentos: Blue (#2b6bff), Blue-Bright (#5b9bff), Cyan (#6fe3ff)
+   ============================================================ */
+
+@theme {
+  --font-display: 'Archivo Variable', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace;
+}
+
+:root {
+  /* Terreno */
+  --ink-900: #05080f;
+  --ink-800: #0a0f1c;
+  --ink-700: #111828;
+  --line: #1b2438;
+  --line-soft: #131b2b;
+
+  /* Texto */
+  --fg: #edf1f8;      /* Alto contraste */
+  --fg-2: #a2b0c9;    /* Secundario legible */
+  --fg-3: #6e7d99;    /* Metadatos y etiquetas */
+
+  /* Identidad Eléctrica */
+  --blue: #2b6bff;
+  --blue-bright: #5b9bff;
+  --cyan: #6fe3ff;
+
+  --measure: 68ch;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
+  background: var(--ink-900);
+}
+
+body {
+  background: var(--ink-900);
+  color: var(--fg);
+  font-family: var(--font-display);
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+::selection {
+  background: rgb(43 107 255 / 0.36);
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+::-webkit-scrollbar-track {
+  background: var(--ink-900);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2a3550;
+}
+
+:where(a, button, [tabindex], summary):focus-visible {
+  outline: 2px solid var(--blue-bright);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1.5rem;
+  top: 1rem;
+  translate: 0 -250%;
+  z-index: 200;
+  background: var(--blue);
+  color: #fff;
+  padding: 0.7rem 1.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: translate 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.skip-link:focus-visible {
+  translate: 0 0;
+}
