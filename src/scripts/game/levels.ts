@@ -1,14 +1,14 @@
 /**
- * Los tres niveles y las formas que los describen.
+ * The three levels and the shapes that describe them.
  *
- * Un nivel no dibuja plataformas propias: las toma de la página. Cada orbe
- * apunta a un selector real del portfolio —el carrusel, una tarjeta, el
- * teclado— y el juego usa el elemento como geometría. `fallbackRatio` es dónde
- * ponerlo si ese elemento no está en la página, que es lo que pasa en la V1 y
- * en las fichas de proyecto.
+ * A level draws no platforms of its own: it takes them from the page. Every orb
+ * points at a real selector in the portfolio — the carousel, a card, the
+ * keyboard — and the game uses that element as geometry. `fallbackRatio` is
+ * where to put it when the element is not on the page, which is what happens on
+ * the V1 and on the case studies.
  *
- * Son datos, así que viven fuera del bucle: añadir un nivel no debería obligar
- * a abrir el fichero donde se juega.
+ * They are data, so they live outside the loop: adding a level should not force
+ * anyone to open the file where the game is played.
  */
 
 export type Rect = { x: number; y: number; w: number; isCustom?: boolean }

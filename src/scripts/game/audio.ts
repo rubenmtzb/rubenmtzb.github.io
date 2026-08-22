@@ -1,16 +1,17 @@
 /**
- * Sonido del Modo Juego: un sintetizador diminuto, sin un solo fichero.
+ * Game Mode's sound: a tiny synthesiser, without a single file.
  *
- * Todo lo que suena —el rayo, el doble salto, el aura y los chirridos de voz—
- * son osciladores de vida muy corta creados en el momento. No hay descargas ni
- * assets: el easter egg no puede costarle un kilobyte a quien no lo abre.
+ * Everything that sounds — the bolt, the double jump, the aura and the voice
+ * bleeps — are very short-lived oscillators created on the spot. There are no
+ * downloads and no assets: the easter egg must not cost a kilobyte to anyone
+ * who never opens it.
  *
- * El contexto se crea en la primera reproducción, que es cuando existe el
- * gesto de usuario que los navegadores exigen, y cada llamada va envuelta: si
- * el navegador bloquea el audio, se sigue jugando en silencio.
+ * The context is created on the first playback, which is when the user gesture
+ * browsers demand actually exists, and every call is wrapped: if the browser
+ * blocks audio, the game carries on in silence.
  */
 
-/** Lo que el juego puede pedirle al sintetizador. */
+/** What the game can ask of the synthesiser. */
 export type GameAudio = ReturnType<typeof createGameAudio>
 
 export type BleepMood = 'normal' | 'alert' | 'godspeed' | 'success'
@@ -124,8 +125,8 @@ const playVoiceBleep = (mood: BleepMood = 'normal') => {
     playDoubleJumpSound,
     playGodspeedSound,
     playVoiceBleep,
-    /* Al salir del juego el contexto se cierra: sin esto queda vivo y el
-       navegador acaba negando el audio a la siguiente partida. */
+    /* Leaving the game closes the context: without this it stays alive and the
+       browser ends up denying audio to the next run. */
     close() {
       if (audioCtx && audioCtx.state !== 'closed') void audioCtx.close()
       audioCtx = null

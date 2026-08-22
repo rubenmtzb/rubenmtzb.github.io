@@ -1,14 +1,24 @@
 /**
- * Modo Juego — Killua Platformer (Godspeed ⚡ / Kanmuru)
+ * Game Mode — Killua Platformer (Godspeed ⚡ / Kanmuru)
  *
- * Principios:
- *   · Cámara con zona muerta y scroll inmediato, independiente del smooth-scroll del portfolio.
- *   · Simulación limitada a 60 FPS y normalizada en el tiempo para monitores de alta frecuencia.
- *   · Plataformas DOM deduplicadas y efectos acotados para no convertir el easter egg en una carga.
- *   · Aislamiento de teclado total: Las teclas solo controlan a Killua; el ratón mantiene 100% de interacción web.
- *   · Físicas calibradas y controladas con animaciones retro de Killua (Idle, Pasos 1 y 2, Salto, Godspeed).
- *   · Diálogos con bocadillos de cómic/manga y efectos sonoros retro estilo sintetizador (Voice Chirps).
- *   · Habilidad Definitiva: MODO KANMURU / GODSPEED (Aura azul neón pura, relámpagos e imán de orbes).
+ * Principles:
+ *   · Dead-zone camera with immediate scrolling, independent of the portfolio's smooth scroll.
+ *   · Simulation capped at 60 FPS and normalised over time for high-refresh monitors.
+ *   · Deduplicated DOM platforms and bounded effects, so the easter egg never becomes a burden.
+ *   · Total keyboard isolation: keys only drive Killua; the mouse keeps 100% of the web interaction.
+ *   · Calibrated physics driven by Killua's retro animations (idle, steps 1 and 2, jump, Godspeed).
+ *   · Comic/manga speech bubbles and retro synthesiser sound effects (voice chirps).
+ *   · Ultimate ability: KANMURU / GODSPEED MODE (pure neon-blue aura, lightning and orb magnet).
+ *
+ * What lives elsewhere, and why the drawing does not:
+ *   The arithmetic (`game/physics`), the levels (`game/levels`) and the
+ *   synthesiser (`game/audio`) were pulled out because each one can be reasoned
+ *   about — and, in the first case, tested — without a canvas. The drawing code
+ *   stays here on purpose: every routine paints into this canvas, with this
+ *   camera and this frame's state, so moving it out would only trade a long file
+ *   for a wide interface passing the same six variables around. The split that
+ *   pays for itself is the one between calculating and painting, and that one is
+ *   already made: the loop simulates, `paintFrame` only reads.
  */
 
 import {
@@ -35,7 +45,7 @@ const W = BODY.width
 const H = BODY.height
 const BLOCK_H = 8
 
-// Habilidad Definitiva: Modo Godspeed (Kanmuru / Aura Eléctrica)
+// Ultimate ability: Godspeed mode (Kanmuru / electric aura)
 const GODSPEED_DURATION = 4500
 const GODSPEED_COOLDOWN = 7500
 const FRAME_MS = 1000 / 60
@@ -133,7 +143,7 @@ export function startGameMode(onExit: () => void) {
     sy: 1,
   }
 
-  // ── CÁMARA SILKY-SMOOTH (CERO TEMBLORES Y LOCKSTEP) ──
+  // ── SILKY-SMOOTH CAMERA (ZERO JITTER, LOCKSTEP) ──
   let cameraY = window.scrollY
   let targetCameraY = window.scrollY
   let cameraInspectionActive = false
@@ -141,7 +151,7 @@ export function startGameMode(onExit: () => void) {
   let descentAnimationUntil = -9999
   let scrollDirection = 0
 
-  // Pre-cálculo de plataformas del DOM (cero layout thrashing en el loop de animación)
+  // Pre-computed DOM platforms (zero layout thrashing inside the animation loop)
   const cacheDomPlatforms = () => {
     const list: Rect[] = []
     const seen = new Set<string>()
@@ -178,7 +188,7 @@ export function startGameMode(onExit: () => void) {
   const sparks: Array<{ x: number; y: number; vx: number; vy: number; life: number; color?: string }> = []
   const shockwaves: Array<{ x: number; y: number; r: number; maxR: number; a: number; color?: string }> = []
 
-  // Cargar nivel y construir arquitectura de plataformas limpias y dinámicas
+  // Load the level and build a clean, dynamic platform architecture
   const loadLevel = (idx: number) => {
     keys.clear()
     currentLevelIdx = idx
@@ -203,7 +213,7 @@ export function startGameMode(onExit: () => void) {
     const firstTargetSafeY = Math.min(docHeight - 160, Math.max(300, h * 0.38))
     cacheDomPlatforms()
 
-    // 1. Ubicar orbes en los objetivos clave
+    // 1. Place the orbs on the key targets
     orbs = cfg.targets.map((tgt, i) => {
       let targetX = Math.round(w * tgt.fallbackRatio.x)
       let targetY = Math.round(docHeight * tgt.fallbackRatio.y)
@@ -230,7 +240,7 @@ export function startGameMode(onExit: () => void) {
       .map((orb, index) => ({ ...orb, id: `target-${index}` }))
     totalOrbsInLevel = orbs.length
 
-    // Spawn Killua cerca del primer orbe
+    // Spawn Killua near the first orb
     const firstOrb = orbs[0]
     const startY = firstOrb ? Math.max(70, firstOrb.y - 110) : 100
     const startX = firstOrb ? Math.round(Math.max(80, Math.min(w - 80, firstOrb.x > w / 2 ? firstOrb.x - 80 : firstOrb.x + 80))) : Math.round(w / 2)
@@ -249,10 +259,10 @@ export function startGameMode(onExit: () => void) {
     document.documentElement.scrollTop = appliedScrollY
     previousFrame = performance.now()
 
-    // Plataforma inicial segura
+    // Safe starting platform
     customLedges.push({ x: Math.round(startX - 65), y: startY, w: 130, alpha: 1 })
 
-    // 2. Plataforma base garantizada bajo cada orbe
+    // 2. Guaranteed base platform under every orb
     orbs.forEach((orb) => {
       customLedges.push({
         x: Math.max(20, Math.min(w - 125, orb.x - 55)),
@@ -262,14 +272,14 @@ export function startGameMode(onExit: () => void) {
       })
     })
 
-    // 3. Escaleras y plataformas móviles fluidas entre orbes consecutivos
+    // 3. Smooth staircases and moving platforms between consecutive orbs
     for (let i = 0; i < orbs.length - 1; i++) {
       const oA = orbs[i]
       const oB = orbs[i + 1]
       const dy = oB.y - oA.y
       const dx = oB.x - oA.x
 
-      // Más apoyos fijos y menos plataformas móviles: el recorrido prima fluidez sobre dificultad.
+      // More fixed footholds and fewer moving platforms: the route favours flow over difficulty.
       const numSteps = Math.max(2, Math.min(8, Math.ceil(Math.abs(dy) / 120)))
       const stepY = dy / (numSteps + 1)
       const stepX = dx / (numSteps + 1)
@@ -293,7 +303,7 @@ export function startGameMode(onExit: () => void) {
         }
       }
 
-      // 1 repisa lateral de rescate bien posicionada por tramo
+      // One well-placed side rescue ledge per stretch
       const rescueY = Math.round(oA.y + 36 + dy * 0.5)
       if (i % 2 === 0) {
         customLedges.push({ x: 25, y: rescueY, w: 85, alpha: 0.85 })
@@ -319,7 +329,7 @@ export function startGameMode(onExit: () => void) {
     renderUI()
   }
 
-  // Habilidad Definitiva Godspeed
+  // Godspeed ultimate ability
   const triggerGodspeed = () => {
     if (status !== 'playing') return
     const now = performance.now()
@@ -349,7 +359,7 @@ export function startGameMode(onExit: () => void) {
     say(isSpanish ? '¡KANMURU: Velocidad del Rayo! ⚡' : 'KANMURU: Lightning Speed! ⚡', 3000, 'godspeed')
   }
 
-  // Doble Salto en el aire
+  // Mid-air double jump
   const executeAirJump = () => {
     if (status !== 'playing' || me.jumpsLeft <= 0) return
     const isGodspeed = performance.now() < godspeedActiveUntil
@@ -395,7 +405,7 @@ export function startGameMode(onExit: () => void) {
     }
   }
 
-  // Bajar / Atravesar plataforma
+  // Drop down / fall through a platform
   const triggerDropThrough = () => {
     if (status !== 'playing') return
     descentAnimationStartedAt = performance.now()
@@ -591,7 +601,7 @@ export function startGameMode(onExit: () => void) {
     ctx.restore()
   }
 
-  // Renderizado de Killua
+  // Killua's rendering
   const drawKillua = (px: number, py: number, now: number) => {
     const isGodspeed = now < godspeedActiveUntil
     const isMoving = me.grounded && Math.abs(me.vx) > 0.35
@@ -623,7 +633,7 @@ export function startGameMode(onExit: () => void) {
       activeSprite = stepIdx === 0 ? spriteRun1 : spriteRun2
     }
 
-    // Aura Eléctrica Azul Neón y Cian
+    // Neon blue and cyan electric aura
     if (isGodspeed) {
       ctx.save()
       const auraPulse = 0.92 + Math.sin(now * 0.012) * 0.08
@@ -678,7 +688,7 @@ export function startGameMode(onExit: () => void) {
     ctx.restore()
   }
 
-  // Bocadillos de Cómic / Manga
+  // Comic / manga speech bubbles
   const drawSpeechBubble = (px: number, py: number, now: number) => {
     if (!currentBubble) return
 
@@ -787,7 +797,7 @@ export function startGameMode(onExit: () => void) {
     ctx.restore()
   }
 
-  // Brújula de radar para orbes fuera de pantalla
+  // Radar compass for off-screen orbs
   const drawRadarBeacon = (orb: SectionOrb, sy: number, index: number, now: number) => {
     const screenX = orb.x
     const screenY = orb.y - sy
@@ -869,30 +879,30 @@ export function startGameMode(onExit: () => void) {
   let appliedScrollY = Math.round(cameraY)
 
   /**
-   * Pinta el fotograma.
+   * Paints the frame.
    *
-   * Nada de lo que hay aquí cambia el estado del juego: la simulación ya ha
-   * terminado cuando se llama, así que este bloque solo lee. Separarlo permite
-   * leer el fotograma como lo que es —primero se calcula, después se dibuja—
-   * en lugar de como cuatrocientas líneas donde ambas cosas se alternan.
+   * Nothing in here changes the game's state: the simulation has already
+   * finished by the time it is called, so this block only reads. Splitting it
+   * out lets the frame read as what it is — first it is computed, then it is
+   * drawn — instead of as four hundred lines where the two alternate.
    */
   const paintFrame = (now: number, frameScale: number, isGodspeed: boolean) => {
-  // Usar cameraY redondeada para sincronía perfecta 1:1 en pantalla
+  // Use a rounded cameraY for perfect 1:1 sync on screen
   const sy = Math.round(cameraY)
 
-  // Dibujar plataformas fijas
+  // Draw the fixed platforms
   customLedges.forEach((ledge) => {
     const ly = ledge.y - sy
     if (ly > -20 && ly < h + 20) drawLedge(ledge.x, ly, ledge.w, ledge.alpha)
   })
 
-  // Dibujar plataformas móviles
+  // Draw the moving platforms
   movingLedges.forEach((ml) => {
     const ly = ml.y - sy
     if (ly > -20 && ly < h + 20) drawLedge(ml.x, ly, ml.w, 1, true)
   })
 
-  // Dibujar ondas de choque
+  // Draw the shockwaves
   for (let i = shockwaves.length - 1; i >= 0; i--) {
     const sw = shockwaves[i]
     sw.r += 3.5 * frameScale
@@ -909,7 +919,7 @@ export function startGameMode(onExit: () => void) {
     ctx.restore()
   }
 
-  // Dibujar estela de movimiento
+  // Draw the motion trail
   for (let i = trail.length - 1; i >= 0; i--) {
     const tr = trail[i]
     tr.a -= (tr.isGodspeed ? 0.04 : 0.06) * frameScale
@@ -922,7 +932,7 @@ export function startGameMode(onExit: () => void) {
     ctx.fillRect(tr.x - 2, ty - 2, 4, 4)
   }
 
-  // Dibujar chispas
+  // Draw the sparks
   for (let i = sparks.length - 1; i >= 0; i--) {
     const sp = sparks[i]
     sp.x += sp.vx * frameScale
@@ -934,7 +944,7 @@ export function startGameMode(onExit: () => void) {
     ctx.fillRect(sp.x, sp.y - sy, 2.5, 2.5)
   }
 
-  // Dibujar y recolectar rayos
+  // Draw and collect the bolts
   const t = now * 0.003
   const activeOrb = orbs.find((orb) => !orb.taken)
   orbs.forEach((orb, i) => {
@@ -996,7 +1006,7 @@ export function startGameMode(onExit: () => void) {
     }
   })
 
-  // Rastro guía eléctrico hacia el próximo orbe
+  // Electric guide trail towards the next orb
   const nextTargetOrb = orbs.find((o) => !o.taken)
   if (nextTargetOrb && Math.random() < 0.08 * frameScale) {
     const kx = me.x + W / 2
@@ -1012,7 +1022,7 @@ export function startGameMode(onExit: () => void) {
     })
   }
 
-  // Dibujar Killua y Bocadillo de Cómic
+  // Draw Killua and the comic bubble
   const py = me.y - sy
   if (py > -H && py < h + H) {
     drawKillua(me.x, py, now)
@@ -1036,7 +1046,7 @@ export function startGameMode(onExit: () => void) {
     me.frame += frameScale
     updateGodspeedHud(now)
 
-    // Actualizar plataformas móviles
+    // Update the moving platforms
     movingLedges.forEach((ml) => {
       const deltaX = ml.speed * ml.dir * frameScale
       ml.x += deltaX
@@ -1065,7 +1075,7 @@ export function startGameMode(onExit: () => void) {
       if (left) me.face = -1
       else if (right) me.face = 1
 
-      // Salto desde el suelo
+      // Jump from the ground
       const canCoyote = now - me.lastGround < PHYSICS.coyoteMs
       const buffered = now - me.lastJump < PHYSICS.bufferMs
       if (buffered && canCoyote) {
@@ -1096,7 +1106,7 @@ export function startGameMode(onExit: () => void) {
       me.x = bounded.x
       me.vx = bounded.vx
 
-      // Colisiones de plataformas optimizadas (memoria en lugar de DOM queries continuas)
+      // Optimised platform collisions (memory instead of continuous DOM queries)
       const dropping = now < dropThroughUntil
       const wasAir = !me.grounded
       me.grounded = false
@@ -1124,7 +1134,7 @@ export function startGameMode(onExit: () => void) {
 
         if (!landedOnMoving) {
           me.currentMovingLedge = null
-          // Comprobar plataformas personalizadas
+          // Check the custom platforms
           for (const p of customLedges) {
             if (landsOn(me, p, frameScale, LEDGE_INSET.custom)) {
               me.y = p.y - H
@@ -1142,7 +1152,7 @@ export function startGameMode(onExit: () => void) {
             }
           }
 
-          // Comprobar plataformas del DOM pre-cacheadas
+          // Check the pre-cached DOM platforms
           if (!me.grounded) {
             for (const p of cachedDomPlatforms) {
               const bottom = me.y + H
@@ -1177,7 +1187,7 @@ export function startGameMode(onExit: () => void) {
       me.sx += (1 - me.sx) * squashEase
       me.sy += (1 - me.sy) * squashEase
 
-      // Caída al vacío segura
+      // Safe fall into the void
       if (me.y > deathY && me.vy > 0) {
         status = 'dead'
         keys.clear()
@@ -1185,7 +1195,7 @@ export function startGameMode(onExit: () => void) {
         renderUI()
       }
 
-      // Estela de velocidad
+      // Speed trail
       if (isGodspeed || Math.abs(me.vx) > 1.6 || Math.abs(me.vy) > 3.5) {
         if (trail.length >= MAX_TRAIL) trail.shift()
         trail.push({
@@ -1196,9 +1206,9 @@ export function startGameMode(onExit: () => void) {
         })
       }
 
-      // ── SEGUIMIENTO DE CÁMARA SILKY-SMOOTH POR ESTANTES (CERO TEMBLOR) ──
-      // Durante saltos normales dentro de la sección, la cámara no se mueve.
-      // Solo actualiza target cuando Killua cruza holgadamente los límites superior/inferior.
+      // ── SILKY-SMOOTH SHELF-BY-SHELF CAMERA TRACKING (ZERO JITTER) ──
+      // During ordinary jumps inside a section the camera does not move.
+      // It only updates its target once Killua clears the upper/lower bounds.
       if (!cameraInspectionActive) {
         const screenY = me.y - cameraY
         if (screenY < h * 0.22) {
@@ -1221,7 +1231,7 @@ export function startGameMode(onExit: () => void) {
         }
       }
 
-      // Si el siguiente objetivo queda atrás, se recupera delante del jugador.
+      // If the next target ends up behind, it is recovered ahead of the player.
       const missedOrbAbove = orbs.find((orb) => !orb.taken)
       if (missedOrbAbove && missedOrbAbove.y < me.y - 240) {
         missedOrbAbove.x = Math.max(70, Math.min(w - 90, me.x + W / 2))
@@ -1271,7 +1281,7 @@ export function startGameMode(onExit: () => void) {
     raf = requestAnimationFrame(loop)
   }
 
-  // ── AISLAMIENTO DE TECLADO Y CONTROL EXCLUSIVO DEL JUEGO ──
+  // ── KEYBOARD ISOLATION AND EXCLUSIVE GAME CONTROL ──
   if (document.activeElement && document.activeElement !== document.body) {
     ;(document.activeElement as HTMLElement).blur()
   }
@@ -1319,17 +1329,17 @@ export function startGameMode(onExit: () => void) {
       return
     }
 
-    // Habilidad Definitiva Godspeed (Q / R / F)
+    // Godspeed ultimate ability (Q / R / F)
     if (['KeyQ', 'KeyR', 'KeyF'].includes(e.code)) {
       triggerGodspeed()
     }
 
-    // Bajar / Fast Fall (S / Flecha Abajo)
+    // Drop down / fast fall (S / Arrow Down)
     if (['ArrowDown', 'KeyS'].includes(e.code)) {
       triggerDropThrough()
     }
 
-    // Salto / Doble Salto (Espacio, W, Flecha Arriba, Shift, E)
+    // Jump / double jump (Space, W, Arrow Up, Shift, E)
     if (['Space', 'ArrowUp', 'KeyW', 'ShiftLeft', 'ShiftRight', 'KeyE', 'KeyK'].includes(e.code)) {
       requestJump()
     }
