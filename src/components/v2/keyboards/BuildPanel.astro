@@ -1,0 +1,135 @@
+---
+/**
+ * Panel de un build abierto: el modelo a la izquierda y su ficha a la derecha.
+ *
+ * Se renderiza oculto para todos los builds del archivo; el explorador enseña
+ * el que toque. El estado —ángulo, separación, pieza aislada— lo lleva el
+ * cliente, así que aquí solo está el marcado y sus valores de partida.
+ */
+import BuildModel from './BuildModel.astro'
+import SoundSample from './SoundSample.astro'
+import { MODEL_LAYOUTS, modelKeys } from '../../../lib/keyboard-layouts'
+import { buildDisplayStatus, localizer, type KeyboardBuild } from '../../../lib/content'
+import { keyboardCopy } from '../../../i18n/keyboards'
+import type { Lang } from '../../../i18n/ui'
+
+interface Props {
+  build: KeyboardBuild
+  lang: Lang
+  /** Trazo de la envolvente, con la ganancia común a todas las muestras. */
+  wave: { height: number, path: (peaks: number[]) => string, width: (peaks: number[]) => number }
+}
+const { build, lang, wave } = Astro.props
+const pick = localizer(lang)
+const copy = keyboardCopy(lang)
+
+const keys = modelKeys(MODEL_LAYOUTS[build.layout])
+---
+
+<div
+  class={`bx-build-panel is-${build.status} is-${buildDisplayStatus(build)}`}
+  data-bx-build={build.key}
+  data-layout={build.layout}
+  hidden
+>
+  <div class="bx-workbench">
+    <div class="bx-stage-column">
+      <div
+        class="bx-stage"
+        data-bx-stage
+        tabindex="0"
+        role="group"
+        aria-label={`${copy.model} — ${build.name}`}
+      >
+        <BuildModel build={build} keys={keys} lang={lang} />
+
+        {build.status !== 'complete' && (
+          <span class="bx-prototype-note">{copy.prototype}</span>
+        )}
+        <div class="bx-active-chip" data-bx-chip aria-live="polite">
+          <b data-bx-chip-index>01</b>
+          <span data-bx-chip-label>{pick(build.parts[0].label)}</span>
+          <i></i>
+          <small data-bx-chip-spec>
+            {build.status === 'complete' ? pick(build.parts[0].spec) : copy.prototypePart}
+          </small>
+        </div>
+        <span class="bx-view-readout" data-bx-readout>100% · 56° / -29°</span>
+      </div>
+
+      <div class="bx-scrub" data-bx-scrub>
+        <label for={`bx-spread-${build.key}`}>{copy.separation}</label>
+        <input
+          id={`bx-spread-${build.key}`}
+          type="range"
+          min="0"
+          max="100"
+          value="0"
+          step="1"
+          data-bx-range
+        />
+        <output data-bx-range-out>0%</output>
+      </div>
+      <p class="bx-hint">
+        <span>
+          <span class="bx-hint-wide">{copy.hintWide}</span>
+          <span class="bx-hint-narrow">{copy.hintNarrow}</span>
+        </span>
+      </p>
+    </div>
+
+    <aside class="bx-specs">
+      <span class="bx-kicker">{build.name.toUpperCase()} // ARCHIVE</span>
+      <h5>{build.name}</h5>
+      <span class="bx-detail-status"><i></i>{copy.status[buildDisplayStatus(build)]}</span>
+      <p>{pick(build.summary)}</p>
+
+      <div class="bx-parts-head">
+        <span>{build.status === 'complete' ? copy.order : copy.prototypeOrder}</span>
+        <span>{build.parts.length} {copy.pieces}</span>
+      </div>
+      <ol class="bx-parts">
+        {build.parts.map((part, index) => (
+          <li>
+            <button type="button" data-bx-part-button={part.id} aria-pressed="false">
+              <span class="bx-part-index">{String(index + 1).padStart(2, '0')}</span>
+              <i style={`--swatch:${part.color}`}></i>
+              <span>
+                <strong>{pick(part.label)}</strong>
+                <small>{build.status === 'complete' ? pick(part.spec) : copy.prototypePart}</small>
+              </span>
+            </button>
+            {build.status === 'complete' && part.source && (
+              <a
+                class="bx-source"
+                href={part.source.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${copy.source} ${pick(part.label)}: ${part.source.label}`}
+              >
+                <i aria-hidden="true"></i>
+                <span>{part.source.label}</span>
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M7 17 17 7"></path><path d="M8 7h9v9"></path>
+                </svg>
+              </a>
+            )}
+          </li>
+        ))}
+      </ol>
+
+      <SoundSample build={build} lang={lang} wave={wave} />
+
+      {build.specs.length > 0 && (
+        <div class="bx-parts-head"><span>{copy.sheet}</span></div>
+      )}
+      {build.specs.length > 0 && (
+        <dl class="bx-sheet">
+          {build.specs.map((spec) => (
+            <div><dt>{pick(spec.label)}</dt><dd>{pick(spec.value)}</dd></div>
+          ))}
+        </dl>
+      )}
+    </aside>
+  </div>
+</div>

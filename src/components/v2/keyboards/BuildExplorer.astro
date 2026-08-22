@@ -1,0 +1,88 @@
+---
+/**
+ * Archivo interactivo de teclados montados a mano.
+ *
+ * Dos vistas sobre el mismo contenido: una galería de portadas fotográficas y,
+ * al abrir una, el modelo del teclado por capas con su ficha al lado. Las dos
+ * se emiten en el HTML de build; el cliente solo decide cuál se ve.
+ *
+ * Aquí vive únicamente la composición. Los datos son la colección `keyboards`,
+ * la geometría de los modelos está en `lib/keyboard-layouts`, los textos en
+ * `i18n/keyboards` y el estilo en su propia hoja.
+ */
+import BuildCard from './BuildCard.astro'
+import BuildPanel from './BuildPanel.astro'
+import { getKeyboards, buildDisplayStatus } from '../../../lib/content'
+import { keyGeometry } from '../../../lib/keyboard-layouts'
+import { createWaveform } from '../../../lib/keyboard-sound'
+import { keyboardCopy } from '../../../i18n/keyboards'
+import type { Lang } from '../../../i18n/ui'
+import '../../../styles/keyboard-explorer.css'
+
+interface Props { lang: Lang }
+const { lang } = Astro.props
+const copy = keyboardCopy(lang)
+
+const builds = await getKeyboards()
+const completeBuilds = builds.filter((build) => buildDisplayStatus(build) === 'complete').length
+
+/** Solo la geometría de los modelos que algún build usa de verdad. */
+const KEY_GEOMETRY = keyGeometry(builds.map((build) => build.layout))
+
+/**
+ * La ganancia de la envolvente se calcula una vez sobre todas las tomas y no
+ * por muestra: es lo que hace que las alturas de dos teclados se puedan
+ * comparar entre sí, así que se resuelve aquí y baja a cada ficha.
+ */
+const wave = createWaveform(builds.map((build) => build.sound?.peaks ?? []))
+
+const twoDigits = (value: number) => String(value).padStart(2, '0')
+---
+
+<div
+  id="kb-panel-photos"
+  role="tabpanel"
+  aria-labelledby="kb-tab-photos"
+  class="kb-build-explorer hidden"
+  data-kb-build-explorer
+  data-assembled={copy.assembled}
+  data-exploded={copy.exploded}
+>
+  <style is:inline set:html={KEY_GEOMETRY}></style>
+
+  <header class="bx-header">
+    <div>
+      <span class="bx-kicker">LABORATORY // BUILD ARCHIVE</span>
+      <h4>{copy.title}</h4>
+    </div>
+    <span class="bx-status">
+      <i></i>
+      <span data-bx-status>
+        {twoDigits(builds.length)} BUILDS // {twoDigits(completeBuilds)} COMPLETE
+      </span>
+    </span>
+  </header>
+
+  <div class="bx-gallery" data-bx-gallery>
+    <p class="bx-intro">{copy.intro}</p>
+
+    <ul class="bx-build-grid">
+      {builds.map((build, index) => <BuildCard build={build} index={index} lang={lang} />)}
+    </ul>
+
+  </div>
+
+  <div class="bx-viewer" data-bx-viewer hidden>
+    <div class="bx-toolbar">
+      <button type="button" class="bx-back" data-bx-close>
+        <span aria-hidden="true">←</span> {copy.allBuilds}
+      </button>
+      <div class="bx-view-switch" role="group" aria-label={copy.view}>
+        <button type="button" data-bx-assembled-view aria-pressed="true">{copy.assembled}</button>
+        <button type="button" data-bx-explode aria-pressed="false">{copy.exploded}</button>
+      </div>
+    </div>
+
+    {builds.map((build) => <BuildPanel build={build} lang={lang} wave={wave} />)}
+  </div>
+</div>

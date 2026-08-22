@@ -1,0 +1,134 @@
+---
+/**
+ * Muestra de sonido de un build.
+ *
+ * El sonido es una propiedad del teclado, así que se escucha dentro de su
+ * ficha —con el despiece delante— y no en un banco aparte: al entrar en un
+ * build se ve cómo está montado y se oye cómo suena sin cambiar de pantalla.
+ *
+ * La envolvente llega ya calculada desde el contenido y aquí solo se convierte
+ * en geometría: el navegador no decodifica audio ni mide nada, pinta un trazo
+ * y desplaza un recorte por encima conforme avanza la reproducción.
+ */
+import { clock, dbfs } from '../../../lib/keyboard-sound'
+import { localizer, type KeyboardBuild } from '../../../lib/content'
+import { keyboardCopy } from '../../../i18n/keyboards'
+import type { Lang } from '../../../i18n/ui'
+
+interface Props {
+  build: KeyboardBuild
+  lang: Lang
+  /** Trazo de la envolvente. Lo calcula el explorador con la ganancia común. */
+  wave: { height: number, path: (peaks: number[]) => string, width: (peaks: number[]) => number }
+}
+const { build, lang, wave } = Astro.props
+const pick = localizer(lang)
+const copy = keyboardCopy(lang)
+---
+
+<div class="bx-parts-head">
+  <span>{copy.soundTitle}</span>
+  <span>{build.sound ? clock(build.sound.duration) : copy.soundPending}</span>
+</div>
+<!--
+  Solo asoman los builds montados buscando el silencio: son los
+  únicos que tienen algo que contar sobre por qué suenan así. El
+  adorno sale del contenido —si no hay apuntes, no hay nadie
+  asomado— y nunca al revés.
+-->
+{build.sound?.quips && (
+  <div class="bx-quip" data-bx-quip>
+    <div class="bx-quip-bubble">
+      <p data-bx-quip-text aria-live="polite">{pick(build.sound.quips)[0]}</p>
+      <i class="bx-quip-tail" aria-hidden="true"></i>
+    </div>
+    <button
+      type="button"
+      class="bx-quip-poke"
+      data-bx-quip-next
+      data-quips={JSON.stringify(pick(build.sound.quips))}
+      data-listen={copy.quipListen}
+      aria-label={copy.quipNext}
+    >
+      <img
+        src="/killua-pixel.png"
+        width="132"
+        height="293"
+        alt=""
+        aria-hidden="true"
+        decoding="async"
+        loading="lazy"
+        draggable="false"
+      />
+    </button>
+  </div>
+)}
+{build.sound ? (
+  <div
+    class="bx-clip"
+    data-bx-clip={build.sound.clip}
+    data-duration={build.sound.duration}
+    style={`--ref:${((build.sound.typingFrom / build.sound.duration) * 100).toFixed(2)}%`}
+  >
+    <!--
+      `preload="none"`: entrar en la ficha no descarga nada hasta
+      que alguien pulsa. Dos fuentes porque el AAC es más limpio a
+      este bitrate y el MP3 no lo rechaza ningún navegador.
+    -->
+    <audio preload="none" data-bx-clip-audio>
+      <source src={`/keyboards/sound/${build.sound.clip}.m4a`} type="audio/mp4" />
+      <source src={`/keyboards/sound/${build.sound.clip}.mp3`} type="audio/mpeg" />
+      {copy.noAudio}
+    </audio>
+
+    <div class="bx-clip-head">
+      <button
+        class="bx-clip-play"
+        type="button"
+        data-bx-clip-toggle
+        data-play={`${copy.play}: ${build.name}`}
+        data-pause={`${copy.pause}: ${build.name}`}
+        aria-label={`${copy.play}: ${build.name}`}
+      >
+        <svg class="is-play" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M9 6.1v11.8a.9.9 0 0 0 1.37.77l9.5-5.9a.9.9 0 0 0 0-1.54l-9.5-5.9A.9.9 0 0 0 9 6.1Z"></path>
+        </svg>
+        <svg class="is-pause" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <rect x="7.6" y="5.5" width="3.4" height="13" rx="1.1"></rect>
+          <rect x="13" y="5.5" width="3.4" height="13" rx="1.1"></rect>
+        </svg>
+      </button>
+      <span class="bx-clip-level">{copy.typing} {dbfs(build.sound.level)}</span>
+      <b class="bx-clip-time"><span data-bx-clip-now>0:00</span> / {clock(build.sound.duration)}</b>
+    </div>
+
+    <div class="bx-clip-wave">
+      <svg viewBox={`0 0 ${wave.width(build.sound.peaks)} ${wave.height}`} preserveAspectRatio="none" aria-hidden="true">
+        <path d={wave.path(build.sound.peaks)} vector-effect="non-scaling-stroke"></path>
+      </svg>
+      <svg class="is-played" viewBox={`0 0 ${wave.width(build.sound.peaks)} ${wave.height}`} preserveAspectRatio="none" aria-hidden="true">
+        <path d={wave.path(build.sound.peaks)} vector-effect="non-scaling-stroke"></path>
+      </svg>
+      <i class="bx-clip-ref" aria-hidden="true"><span>REF</span></i>
+      <!--
+        El cabezal es un control nativo con la pista invisible: sale
+        gratis el arrastre, las flechas y el anuncio del avance.
+      -->
+      <input
+        type="range"
+        min="0"
+        max="1000"
+        value="0"
+        step="1"
+        data-bx-clip-seek
+        aria-label={`${copy.seek}: ${build.name}`}
+        aria-valuetext="0:00"
+      />
+    </div>
+
+    <p class="bx-clip-note">{pick(build.sound.character)}</p>
+    <p class="bx-clip-note is-ref">{copy.soundRef}</p>
+  </div>
+) : (
+  <p class="bx-clip-note">{copy.soundPendingNote}</p>
+)}

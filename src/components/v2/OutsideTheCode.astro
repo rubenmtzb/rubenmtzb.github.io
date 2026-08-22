@@ -2,7 +2,7 @@
 import { Picture } from 'astro:assets'
 import { getCollection } from 'astro:content'
 import { t, type Lang } from '../../i18n/ui'
-import KeyboardBuildExplorer from './KeyboardBuildExplorer.astro'
+import BuildExplorer from './keyboards/BuildExplorer.astro'
 
 interface Props { lang: Lang }
 const { lang } = Astro.props
@@ -353,7 +353,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
           </figcaption>
         </div>
 
-        <KeyboardBuildExplorer {lang} />
+        <BuildExplorer {lang} />
       </div>
     </div>
   </div>
