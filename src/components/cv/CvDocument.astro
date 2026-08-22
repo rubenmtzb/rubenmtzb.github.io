@@ -59,7 +59,7 @@ const groups = STACK_GROUPS.map((g) => ({
   <div class="no-print mb-8 flex flex-wrap items-center justify-between gap-3">
     <a
       href={home}
-      class="inline-flex items-center gap-2 rounded-full border border-green-500/25 bg-black/40 px-4 py-2 text-xs uppercase tracking-[0.2em] text-green-300 transition hover:border-green-300/45 hover:text-green-100"
+      class="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/5 px-4 py-2 text-xs uppercase tracking-[0.2em] text-cyan-200 transition hover:border-cyan-200/60 hover:bg-cyan-400/10 hover:text-cyan-100"
     >
       <Icon name="arrowLeft" class="h-4 w-4" />
       {t(lang, 'cv.back')}
@@ -70,7 +70,7 @@ const groups = STACK_GROUPS.map((g) => ({
         hreflang={other.lang}
         rel="alternate"
         aria-label={t(lang, 'cv.langSwitch')}
-        class="inline-flex items-center gap-2 rounded-full border border-green-500/25 bg-black/40 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-green-300 transition hover:border-green-300/45 hover:text-green-100"
+        class="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200 transition hover:border-cyan-200/60 hover:bg-cyan-400/10 hover:text-cyan-100"
       >
         <Icon name="globe" class="h-4 w-4" />
         {t(lang, 'nav.langNext')}
@@ -86,11 +86,11 @@ const groups = STACK_GROUPS.map((g) => ({
     </div>
   </div>
 
-  <article class="cv-page rounded-2xl border border-green-500/20 bg-black/40 p-6 backdrop-blur-sm sm:p-10">
+  <article class="cv-page rounded-2xl border border-cyan-400/25 p-6 backdrop-blur-sm sm:p-10">
     <!-- Cabecera -->
-    <header class="border-b border-green-500/20 pb-8">
-      <p class="text-[0.68rem] uppercase tracking-[0.35em] text-dim">&gt; premium.cv / export</p>
-      <h1 class="mt-3 text-3xl font-black tracking-tight text-white sm:text-5xl">{profile.name}</h1>
+    <header class="border-b border-cyan-400/20 pb-8">
+      <p class="text-[0.68rem] uppercase tracking-[0.35em] text-cyan-200">&gt; premium.cv / export</p>
+      <h1 class="text-glow-cv mt-3 text-3xl font-black tracking-tight text-white sm:text-5xl">{profile.name}</h1>
       <p class="mt-2 text-lg font-semibold text-green-300 text-glow-green">{profile.jobTitle}</p>
       <p class="mt-4 max-w-2xl leading-7 text-slate-300/90">{profile.bioLong}</p>
       <p class="mt-4 inline-block rounded-full border border-cyan-400/25 bg-cyan-400/5 px-3 py-1.5 text-xs text-cyan-200">
@@ -137,7 +137,7 @@ const groups = STACK_GROUPS.map((g) => ({
     </header>
 
     <!-- Resumen profesional: exclusivo del CV -->
-    <section class="border-b border-green-500/15 py-8">
+    <section class="border-b border-cyan-400/15 py-8">
       <h2 class="text-sm font-bold uppercase tracking-[0.3em] text-green-300">{profile.cvOnly.summaryTitle}</h2>
       <p class="mt-1 text-xs text-dim">{profile.cvOnly.summaryKicker}</p>
       <p class="mt-4 font-semibold text-white">{withYears(profile.cvOnly.summaryLead, yearsPhrase)}</p>
@@ -145,7 +145,7 @@ const groups = STACK_GROUPS.map((g) => ({
       <ul class="mt-6 grid gap-4 sm:grid-cols-3">
         {
           profile.cvOnly.metrics.map((m) => (
-            <li class="rounded-lg border border-green-500/15 bg-green-500/5 p-4">
+            <li class="rounded-lg border border-cyan-400/15 bg-cyan-400/5 p-4">
               <p class="text-xs font-semibold uppercase tracking-[0.18em] text-green-300">{m.title}</p>
               <p class="mt-2 text-sm leading-6 text-slate-300/85">{withYears(m.description, yearsPhrase)}</p>
             </li>
@@ -155,7 +155,7 @@ const groups = STACK_GROUPS.map((g) => ({
     </section>
 
     <!-- Experiencia: aquí sí van los bullets completos -->
-    <section class="border-b border-green-500/15 py-8">
+    <section class="border-b border-cyan-400/15 py-8">
       <h2 class="text-sm font-bold uppercase tracking-[0.3em] text-green-300">{t(lang, 'cv.experience')}</h2>
       <ol class="mt-6 space-y-7">
         {
@@ -180,7 +180,7 @@ const groups = STACK_GROUPS.map((g) => ({
                 <ul class="mt-3 space-y-1.5">
                   {item.bullets.map((b) => (
                     <li class="flex gap-2.5 text-sm leading-6 text-slate-300/90">
-                      <span class="mt-2 h-1 w-1 shrink-0 rounded-full bg-green-400" aria-hidden="true" />
+                      <span class="mt-2 h-1 w-1 shrink-0 rounded-full bg-cyan-300" aria-hidden="true" />
                       {b}
                     </li>
                   ))}
@@ -199,7 +199,7 @@ const groups = STACK_GROUPS.map((g) => ({
     </section>
 
     <!-- Proyectos propios (D9): nunca presentados como experiencia -->
-    <section class="border-b border-green-500/15 py-8">
+    <section class="border-b border-cyan-400/15 py-8">
       <h2 class="text-sm font-bold uppercase tracking-[0.3em] text-green-300">{t(lang, 'cv.projects')}</h2>
       <ul class="mt-6 space-y-5">
         {
@@ -207,10 +207,10 @@ const groups = STACK_GROUPS.map((g) => ({
             <li>
               <h3 class="text-base font-semibold text-white">{p.title}</h3>
               <p class="mt-1 text-sm leading-6 text-slate-300/90">{p.description}</p>
-              <p class="mt-1.5 text-xs text-dim">{[...p.tech, ...p.domains].join(', ')}</p>
+              <p class="mt-1.5 text-xs text-dim">{[...p.tech, ...p.domains].map((tag) => localizedTerm(tag, lang)).join(', ')}</p>
               <p class="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-xs">
                 {p.link && (
-                  <a href={p.link} class="text-green-300 hover:text-green-100">
+                  <a href={p.link} class="text-cyan-200 hover:text-cyan-100">
                     {p.link.replace(/^https?:\/\//, '')}
                   </a>
                 )}
@@ -227,7 +227,7 @@ const groups = STACK_GROUPS.map((g) => ({
     </section>
 
     <!-- Habilidades: agrupación funcional, tecnologías y prácticas separadas -->
-    <section class="border-b border-green-500/15 py-8">
+    <section class="border-b border-cyan-400/15 py-8">
       <h2 class="text-sm font-bold uppercase tracking-[0.3em] text-green-300">{t(lang, 'cv.skills')}</h2>
       <dl class="mt-5 space-y-3">
         {
@@ -249,7 +249,7 @@ const groups = STACK_GROUPS.map((g) => ({
     </section>
 
     <!-- Formación y certificaciones -->
-    <div class="grid gap-8 border-b border-green-500/15 py-8 md:grid-cols-2">
+    <div class="grid gap-8 border-b border-cyan-400/15 py-8 md:grid-cols-2">
       <section>
         <h2 class="text-sm font-bold uppercase tracking-[0.3em] text-green-300">{t(lang, 'cv.education')}</h2>
         <ul class="mt-5 space-y-4">
@@ -323,7 +323,7 @@ const groups = STACK_GROUPS.map((g) => ({
       </section>
     </div>
 
-    <footer class="border-t border-green-500/15 pt-6 text-xs text-dim">
+    <footer class="border-t border-cyan-400/15 pt-6 text-xs text-dim">
       {profile.cvOnly.referencesNote}
     </footer>
   </article>
