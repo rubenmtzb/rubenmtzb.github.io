@@ -1,10 +1,10 @@
 ---
 /**
- * Certificaciones oficiales, en un escaparate navegable.
+ * Official certifications, in a navigable spotlight.
  *
- * Udemy acredita dos itinerarios complementarios de la misma época. Se
- * presentan como una credencial compuesta para no duplicar marca ni pestaña,
- * pero se conservan sus enlaces, identificadores y habilidades por separado.
+ * Udemy certifies two complementary tracks from the same period. They are
+ * presented as one composite credential so neither the brand nor the tab is
+ * duplicated, but their links, identifiers and skills are kept separate.
  */
 import TechChip from '../TechChip.astro'
 import { getCerts, twoDigits } from '../../../lib/content'
@@ -27,7 +27,7 @@ type CertGroup = {
   tags: string[]
 }
 
-/** Qué acredita cada certificado, para el rótulo del enlace de verificación. */
+/** What each certificate attests, for the verification link's label. */
 const certSubject = (cert: CertEntry) =>
   cert.tags?.find((tag) => tag === 'Python' || tag === 'JavaScript') ?? cert.title
 
@@ -91,7 +91,7 @@ for (const cert of certs) {
     })}
   </div>
 
-  <!-- Escenario del Slider de Certificaciones -->
+  <!-- Certifications slider stage -->
   <div id="certs-stage" class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-6 sm:p-8 shadow-2xl min-h-[300px]">
     {certGroups.map((group, idx) => {
       const brand = certBrand(group.entries[0].key)

@@ -1,11 +1,11 @@
 ---
 /**
- * Perfil y filosofía de ingeniería, presentados como un espacio de trabajo.
+ * Profile and engineering philosophy, presented as a workbench.
  *
- * El explorador de ficheros y la línea de comando son dos caminos al mismo
- * sitio: los tres paneles. El nombre de cada fichero y las palabras que lo
- * abren viven juntos en `scripts/v2/profile-workbench`, que es quien los
- * gobierna en el navegador; aquí solo está el marcado y su estado inicial.
+ * The file explorer and the command line are two routes to the same place: the
+ * three panels. Each file's name and the words that open it live together in
+ * `scripts/v2/profile-workbench`, which governs them in the browser; all that is
+ * here is the markup and its initial state.
  */
 import Icon from '../../Icon.astro'
 import { getEducation, getProfile } from '../../../lib/content'
@@ -19,7 +19,7 @@ const education = await getEducation(lang)
 const currentEducation = education.find((item) => item.inProgress) ?? education[0]
 ---
 
-<!-- ══════════ 02.1 // PERFIL & FILOSOFÍA DE INGENIERÍA ══════════ -->
+<!-- ══════════ 02.1 // PROFILE & ENGINEERING PHILOSOPHY ══════════ -->
 <div class="reveal mt-12" style="--i:1">
   <div class="flex items-center justify-between mb-6 border-b border-[color:var(--line-soft)] pb-3">
     <span class="font-mono text-xs text-[color:var(--cyan)] font-bold tracking-wider uppercase">02.1 // {t(lang, 'v2.about.profileKicker')}</span>

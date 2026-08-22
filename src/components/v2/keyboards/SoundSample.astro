@@ -1,26 +1,27 @@
 ---
 /**
- * Muestra de sonido de un build.
+ * A build's sound sample.
  *
- * El sonido es una propiedad del teclado, así que se escucha dentro de su
- * ficha —con el despiece delante— y no en un banco aparte: al entrar en un
- * build se ve cómo está montado y se oye cómo suena sin cambiar de pantalla.
+ * Sound is a property of the keyboard, so it is heard inside the keyboard's card
+ * — with the exploded view right there — and not on a separate bench: entering a
+ * build shows how it is assembled and plays how it sounds without changing
+ * screen.
  *
- * La envolvente llega ya calculada desde el contenido y aquí solo se convierte
- * en geometría: el navegador no decodifica audio ni mide nada, pinta un trazo
- * y desplaza un recorte por encima conforme avanza la reproducción.
+ * The envelope arrives already computed from the content and is only turned into
+ * geometry here: the browser decodes no audio and measures nothing, it paints a
+ * stroke and slides a clip over it as playback advances.
  *
- * El fichero va con `preload="none"`: entrar en la ficha no descarga nada
- * hasta que alguien pulsa. Se declaran dos fuentes porque el AAC es más limpio
- * a este bitrate y el MP3 no lo rechaza ningún navegador.
+ * The file carries `preload="none"`: entering the card downloads nothing until
+ * somebody presses play. Two sources are declared because AAC is cleaner at this
+ * bitrate and no browser rejects MP3.
  *
- * El cabezal es un `input[type=range]` con la pista invisible: salen gratis el
- * arrastre, las flechas y el anuncio del avance.
+ * The playhead is an `input[type=range]` with an invisible track: dragging, the
+ * arrow keys and the announcement of progress all come for free.
  *
- * Solo asoma la mascota en los builds montados buscando el silencio, que son
- * los únicos que tienen algo que contar sobre por qué suenan así. El adorno
- * sale del contenido —si no hay apuntes, no hay nadie asomado— y nunca al
- * revés.
+ * The mascot only peeks out on the builds assembled chasing silence, which are
+ * the only ones with something to say about why they sound the way they do. The
+ * ornament comes from the content — no notes, nobody peeking — and never the
+ * other way round.
  */
 import { clock, dbfs, type Waveform } from '../../../lib/keyboard-sound'
 import { localizer, type KeyboardBuild } from '../../../lib/content'

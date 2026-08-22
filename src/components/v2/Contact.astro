@@ -37,7 +37,7 @@ const profile = await getProfile(lang)
       </p>
     </div>
 
-    <!-- Señal de contacto: el nodo visual enmarca una única acción, sin competir con ella. -->
+    <!-- Contact signal: the visual node frames a single action without competing with it. -->
     <div class="reveal mt-10 grid gap-6 lg:grid-cols-12" style="--i:3">
       <div class="contact-signal lg:col-span-12 relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-6 sm:p-8 shadow-2xl">
         <div class="contact-signal-glow pointer-events-none absolute inset-0" aria-hidden="true"></div>
@@ -62,8 +62,8 @@ const profile = await getProfile(lang)
                 <span class="text-[color:var(--fg-3)]">{t(lang, 'v2.contact.route')}:</span> {profile.email}
               </a>
               <div class="flex flex-wrap items-center gap-3 shrink-0">
-                <!-- Copiar requiere JavaScript: el botón nace oculto y lo revela el
-                     script. Sin él, el correo sigue en el enlace y en el mailto. -->
+                <!-- Copying needs JavaScript: the button starts hidden and the script
+                     reveals it. Without it, the address is still in the link and the mailto. -->
                 <button
                   type="button"
                   id="copy-mail"
@@ -86,7 +86,7 @@ const profile = await getProfile(lang)
         </div>
       </div>
 
-      <!-- Tarjeta 1: Ubicación & Hora Local en Tiempo Real -->
+      <!-- Card 1: location & real-time local time -->
       <div class="lg:col-span-4 rounded-2xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-5 shadow-xl flex flex-col justify-between hover:border-[color:var(--blue-bright)] transition-all">
         <div>
           <div class="flex items-center justify-between border-b border-[color:var(--line-soft)] pb-2.5 mb-3">
@@ -123,7 +123,7 @@ const profile = await getProfile(lang)
         </div>
       </a>
 
-      <!-- Tarjeta 3: GitHub & Código -->
+      <!-- Card 3: GitHub & code -->
       <a
         href={profile.socials.find(s => s.label === 'GitHub')?.href ?? 'https://github.com/rubenmtzb'}
         target="_blank"
@@ -146,7 +146,7 @@ const profile = await getProfile(lang)
       </a>
     </div>
 
-    <!-- Barra de Acciones Final con Enlace a CV -->
+    <!-- Final action bar with a link to the CV -->
     <div class="reveal mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-[color:var(--line-soft)] pt-6" style="--i:3">
       <span class="t-meta text-xs text-[color:var(--fg-3)]">
         {t(lang, 'v2.contact.cvPrompt')}

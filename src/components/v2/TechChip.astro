@@ -5,25 +5,24 @@ import { t, type Lang } from '../../i18n/ui'
 import { canonicalTerm, localizedTerm } from '../../i18n/terms'
 
 /**
- * Chip de tecnología: logotipo, color de marca y enlace a la página oficial.
- * Única fuente del patrón, así que la misma tecnología se ve igual en el hero,
- * en los proyectos, en la experiencia, en la formación y en las certificaciones.
- * Si la etiqueta no está en TECH cae a una píldora neutra sin enlace.
+ * Technology chip: logo, brand colour and link to the official page. The single
+ * source of the pattern, so the same technology looks alike in the hero, in the
+ * projects, in the experience, in the education and in the certifications. If
+ * the tag is not in TECH it falls back to a neutral pill with no link.
  */
 interface Props { tag: string; lang: Lang; class?: string }
 const { tag, lang, class: extra = 'project-tech-chip' } = Astro.props
 
-/* El registro indexa por la forma canónica; el contenido castellano escribe la
-   etiqueta ya traducida. Se busca por la primera y se muestra la segunda. */
+/* The registry indexes by the canonical form; the Spanish content writes the
+   tag already translated. Look up by the former, display the latter. */
 const meta = TECH[canonicalTerm(tag)]
 const home = homePath(lang)
 const displayTag = localizedTerm(tag, lang)
 
 /*
- * Las chips de concepto apuntan a una sección de la portada. El enlace es
- * absoluto y con idioma para que también funcione desde las fichas de
- * proyecto, donde esa sección no existe: un "#education" suelto no llevaba
- * a ninguna parte fuera de la home.
+ * Concept chips point at a section of the home page. The link is absolute and
+ * language-aware so it also works from the case studies, where that section does
+ * not exist: a bare "#education" led nowhere outside the home page.
  */
 const href = meta?.anchor ? `${home}#${meta.anchor}` : meta?.url
 const isInternal = Boolean(meta?.anchor)

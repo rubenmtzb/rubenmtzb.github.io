@@ -1,11 +1,11 @@
 ---
 /**
- * Formación académica, como línea temporal navegable.
+ * Academic education, as a navigable timeline.
  *
- * Un bloque por centro y no por titulación: de Instituto la Guineueta salen
- * DAW y SMX, así que el centro aparecía dos veces en las píldoras y en el
- * slider. Se agrupa conservando el orden del contenido y las dos titulaciones
- * se muestran dentro del mismo bloque, igual que ya hace `alumniOf` en el
+ * One block per institution and not per degree: DAW and SMX both come from
+ * Instituto la Guineueta, so the institution showed up twice in the pills and in
+ * the slider. They are grouped keeping the content's order and both degrees are
+ * shown inside the same block, exactly as `alumniOf` already does in the
  * JSON-LD.
  */
 import Icon from '../../Icon.astro'
@@ -27,7 +27,7 @@ for (const item of education) {
   else eduGroups.push({ institution: item.institution, items: [item] })
 }
 
-/** Periodo del centro: rango que cubre todas sus titulaciones. */
+/** The institution's period: the range covering all of its degrees. */
 const groupPeriod = (items: EduEntry[]) => {
   if (items.length === 1) return items[0].periodLabel
   const startYear = items.reduce((min, i) => (i.start < min ? i.start : min), items[0].start).slice(0, 4)
@@ -37,9 +37,9 @@ const groupPeriod = (items: EduEntry[]) => {
 }
 ---
 
-<!-- ══════════ 02.2 // FORMACIÓN ACADÉMICA (DYNAMIC TIMELINE SLIDE) ══════════ -->
+<!-- ══════════ 02.2 // ACADEMIC EDUCATION (DYNAMIC TIMELINE SLIDE) ══════════ -->
 <div class="reveal mt-14 sm:mt-20" style="--i:2">
-  <!-- Cabecera de Formación -->
+  <!-- Education header -->
   <div class="flex flex-wrap items-center justify-between mb-6 gap-3 border-b border-[color:var(--line-soft)] pb-3">
     <div>
       <span class="font-mono text-xs text-[color:var(--cyan)] font-bold tracking-wider uppercase">02.2 // {t(lang, 'v2.about.educationKicker')}</span>
@@ -47,7 +47,7 @@ const groupPeriod = (items: EduEntry[]) => {
     </div>
   </div>
 
-  <!-- Selector de Centros / Píldoras de Progreso -->
+  <!-- Institution selector / progress pills -->
   <div class="mb-5 flex flex-wrap gap-2" role="tablist" aria-label={t(lang, 'a11y.eduTabs')}>
     {eduGroups.map((group, idx) => {
       const head = group.items[0]
@@ -83,7 +83,7 @@ const groupPeriod = (items: EduEntry[]) => {
     })}
   </div>
 
-  <!-- Escenario del Slider de Educación: un slide por centro -->
+  <!-- Education slider stage: one slide per institution -->
   <div id="edu-slider-stage" class="relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-6 sm:p-8 shadow-2xl min-h-[300px]">
     {eduGroups.map((group, idx) => {
       const head = group.items[0]
@@ -147,7 +147,7 @@ const groupPeriod = (items: EduEntry[]) => {
     })}
   </div>
 
-  <!-- Navegación inferior, compartiendo el lenguaje del showcase. -->
+  <!-- Bottom navigation, sharing the showcase's language. -->
   <div class="slider-footer">
     <button type="button" id="edu-prev" class="slider-nav-arrow" aria-label={t(lang, 'v2.about.previousStage')}>‹</button>
     <div class="flex items-center gap-3">

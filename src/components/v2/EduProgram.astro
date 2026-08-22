@@ -3,11 +3,11 @@ import TechChip from './TechChip.astro'
 import { t, type Lang } from '../../i18n/ui'
 
 /**
- * Una titulación dentro de un bloque de centro. Existe porque un mismo centro
- * puede tener varias titulaciones (Instituto la Guineueta: DAW y SMX) y ambas
- * variantes comparten título, descripción, competencias y credencial.
- *   - `solo`: el centro tiene una sola titulación (ocupa el ancho del slide).
- *   - `card`: convive con otras dentro de la misma tarjeta de centro.
+ * One degree inside an institution's block. It exists because a single
+ * institution can hold several degrees (Instituto la Guineueta: DAW and SMX) and
+ * both variants share title, description, competences and credential.
+ *   - `solo`: the institution has a single degree (it takes the slide's width).
+ *   - `card`: it shares the institution's card with others.
  */
 interface Program {
   title: string

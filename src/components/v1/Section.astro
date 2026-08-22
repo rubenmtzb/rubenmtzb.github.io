@@ -11,8 +11,8 @@ const aliases = ANCHOR_ALIASES[id] ?? []
 ---
 
 <section id={id} class={`relative overflow-hidden px-4 py-16 sm:px-6 sm:py-20 ${className}`}>
-  {/* Anclas heredadas de las 10 superficies anteriores: destino invisible
-      para que ningún enlace entrante existente quede sin sitio. */}
+  {/* Anchors inherited from the previous 10 surfaces: an invisible destination
+      so no existing incoming link is left without somewhere to land. */}
   {aliases.map((alias) => <span id={alias} class="anchor-alias" aria-hidden="true" />)}
 
   <div class="relative mx-auto max-w-6xl">

@@ -1,14 +1,14 @@
 ---
 /**
- * Archivo interactivo de teclados montados a mano.
+ * Interactive archive of hand-built keyboards.
  *
- * Dos vistas sobre el mismo contenido: una galería de portadas fotográficas y,
- * al abrir una, el modelo del teclado por capas con su ficha al lado. Las dos
- * se emiten en el HTML de build; el cliente solo decide cuál se ve.
+ * Two views onto the same content: a gallery of photographic covers and, once
+ * one is opened, the keyboard's layered model with its details alongside. Both
+ * are emitted in the built HTML; the client only decides which one is visible.
  *
- * Aquí vive únicamente la composición. Los datos son la colección `keyboards`,
- * la geometría de los modelos está en `lib/keyboard-layouts`, los textos en
- * `i18n/keyboards` y el estilo en su propia hoja.
+ * Only the composition lives here. The data is the `keyboards` collection, the
+ * models' geometry is in `lib/keyboard-layouts`, the copy in `i18n/keyboards`
+ * and the styling in a sheet of its own.
  */
 import BuildCard from './BuildCard.astro'
 import BuildPanel from './BuildPanel.astro'
@@ -26,13 +26,13 @@ const copy = keyboardCopy(lang)
 const builds = await getKeyboards()
 const completeBuilds = builds.filter((build) => buildDisplayStatus(build) === 'complete').length
 
-/** Solo la geometría de los modelos que algún build usa de verdad. */
+/** Only the geometry of the models some build actually uses. */
 const KEY_GEOMETRY = keyGeometry(builds.map((build) => build.layout))
 
 /**
- * La ganancia de la envolvente se calcula una vez sobre todas las tomas y no
- * por muestra: es lo que hace que las alturas de dos teclados se puedan
- * comparar entre sí, así que se resuelve aquí y baja a cada ficha.
+ * The envelope's gain is computed once across all the takes and not per sample:
+ * that is what makes two keyboards' heights comparable with each other, so it is
+ * resolved here and passed down to every card.
  */
 const wave = createWaveform(builds.map((build) => build.sound?.peaks ?? []))
 

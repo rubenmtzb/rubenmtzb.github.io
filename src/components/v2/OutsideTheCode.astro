@@ -7,18 +7,18 @@ import BuildExplorer from './keyboards/BuildExplorer.astro'
 interface Props { lang: Lang }
 const { lang } = Astro.props
 
-/** El retrato es identidad, no archivo: no entra en la narrativa fotográfica. */
+/** The portrait is identity, not archive: it stays out of the photographic narrative. */
 const photos = (await getCollection('personal'))
   .map((e) => e.data)
   .filter((p) => p.category !== 'identity')
   .sort((a, b) => a.order - b.order)
 
 /**
- * Distribución HHKB (Happy Hacking Keyboard) 60 %.
- * El 4º elemento de cada tupla es una etiqueta puramente decorativa que
- * sustituye el glifo en pantalla (p. ej. "esc", "control", "delete") sin
- * tocar `label`, que sigue alimentando data-char exactamente igual que
- * antes: el test de mecanografía, el sonido y el click-to-type no cambian.
+ * HHKB (Happy Hacking Keyboard) 60% layout.
+ * The 4th element of each tuple is a purely decorative label that replaces the
+ * glyph on screen (e.g. "esc", "control", "delete") without touching `label`,
+ * which keeps feeding data-char exactly as before: the typing test, the sound
+ * and click-to-type are unchanged.
  */
 const ROWS: Array<Array<[string, string, number?, string?]>> = [
   [['`','Backquote',1,'esc'],['1','Digit1'],['2','Digit2'],['3','Digit3'],['4','Digit4'],['5','Digit5'],['6','Digit6'],['7','Digit7'],['8','Digit8'],['9','Digit9'],['0','Digit0'],['-','Minus'],['=','Equal'],['⌫','Backspace',1.6,t(lang, 'kbd.delete')]],
@@ -29,12 +29,12 @@ const ROWS: Array<Array<[string, string, number?, string?]>> = [
 ]
 
 /*
- * Cortes de las cartas del mazo.
+ * The deck cards' cuts.
  *
- * La carta mide 210-260 px y los originales son retratos de 1600 px, así que
- * basta con tres cortes que cubran hasta pantallas de densidad 2,5x. Servir
- * 750 px a una carta de 260 px costaba cientos de kB por foto sin ganar un
- * pixel de nitidez.
+ * A card measures 210-260 px and the originals are 1600 px portraits, so three
+ * cuts covering up to 2.5x density screens are enough. Serving 750 px to a
+ * 260 px card cost hundreds of kB per photo without gaining a pixel of
+ * sharpness.
  */
 
 const ROTATIONS = [-9, -5.5, -2, 2, 5.5, 9]
@@ -60,7 +60,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
       </p>
     </div>
 
-    <!-- Indicador de interacción y botón de reset -->
+    <!-- Interaction hint and reset button -->
     <div class="reveal flex flex-wrap items-center justify-between w-full max-w-4xl px-2 mb-6 text-xs font-mono text-[color:var(--fg-3)]">
       <div class="inline-flex items-center gap-2">
         <span class="relative flex h-2 w-2">
@@ -80,7 +80,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
       </button>
     </div>
 
-    <!-- Escenario de cartas desplegadas en abanico 3D y arrastrables libremente -->
+    <!-- Stage of cards fanned out in 3D and freely draggable -->
     <div class="moments-deck-wrap relative w-full flex flex-col items-center my-4 overflow-visible">
       <div id="moments-stage" class="moments-stage reveal relative w-full min-h-[420px] sm:min-h-[460px] flex items-center justify-center">
         {photos.map((photo, i) => {
@@ -99,7 +99,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
               aria-label={`${photo.location?.[lang] ?? ''} — ${photo.alt[lang]}`}
             >
               <div class="moment-card-inner">
-                <!-- Cara frontal: Fotografía limpia con bordes redondeados -->
+                <!-- Front face: clean photograph with rounded corners -->
                 <div class="moment-card-face moment-card-front flex items-center justify-center bg-[color:var(--ink-950)]">
                   <Picture
                     src={photo.image}
@@ -117,7 +117,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
                   />
                 </div>
 
-                <!-- Cara posterior: nota estilo "story" — fecha, lugar y una frase corta -->
+                <!-- Back face: a "story"-style note — date, place and one short sentence -->
                 <div class="moment-card-face moment-card-back">
                   <div class="flex h-full flex-col justify-center items-center gap-1.5 p-6 text-center bg-[color:var(--ink-900)] border border-[color:var(--line)] rounded-2xl shadow-2xl">
                     {photo.date && (
@@ -166,7 +166,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
             </span>
           </div>
 
-          <!-- Selector de modos estilo Segmented Pill Switcher -->
+          <!-- Mode selector, segmented pill switcher style -->
           <div class="mb-4">
             <label class="font-mono text-[0.7rem] text-[color:var(--fg-3)] uppercase tracking-wider block mb-2">{t(lang, 'otc.interactionMode')}</label>
             <div class="grid grid-cols-3 gap-1 rounded-xl border border-[color:var(--line)] bg-[color:var(--ink-950)] p-1" role="tablist" aria-label={t(lang, 'a11y.keyboardTabs')}>
@@ -219,7 +219,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
             </div>
           </div>
 
-          <!-- Ajustes de hardware y sonido -->
+          <!-- Hardware and sound settings -->
           <div class="space-y-2.5 pt-3 border-t border-[color:var(--line-soft)]">
             <div class="flex items-center justify-between">
               <span class="font-mono text-[0.7rem] text-[color:var(--fg-3)]">{t(lang, 'otc.switchProfile')}</span>
@@ -251,10 +251,10 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
       </div>
 
       <div class="reveal m-0 lg:col-span-8" style="--i:1">
-        <!-- 1. Panel MonkeyType: Killua Speed Trial & Teclado interactivo -->
+        <!-- 1. MonkeyType panel: Killua speed trial & interactive keyboard -->
         <div id="kb-panel-interactive" role="tabpanel" aria-labelledby="kb-tab-speed" class="rounded-xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-4 sm:p-6 shadow-xl">
 
-          <!-- Diálogo de Killua estilo Manga / Comic con personaje Pixel Art interactivo -->
+          <!-- Killua's manga/comic dialogue with an interactive pixel-art character -->
           <div class="mb-5 flex items-end sm:items-center gap-3 relative">
             <!-- Personaje Pixel Art de Killua interactivo -->
             <div class="comic-killua-wrap relative shrink-0 flex flex-col items-center">
@@ -262,7 +262,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
               <span class="font-mono text-[0.6rem] text-[color:var(--cyan)] font-bold tracking-wider mt-1">KILLUA ⚡</span>
             </div>
 
-            <!-- Bocadillo de Comic / Manga Speech Bubble con altura estable -->
+            <!-- Comic / manga speech bubble with a stable height -->
             <div class="comic-bubble flex-1 relative rounded-2xl p-3.5 sm:p-4 shadow-xl min-h-[68px] flex items-center">
               <div class="comic-bubble-tail" aria-hidden="true"></div>
               <div class="flex items-center justify-between gap-3 w-full">
@@ -279,14 +279,14 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
 
           <!-- Contenedor Modo 1: MonkeyType Speed Trial -->
           <div id="kb-speed-mode-wrap">
-            <!-- Cuadro de texto MonkeyType con stream dinámico -->
+            <!-- MonkeyType text box with a dynamic stream -->
             <div id="monkey-box" class="relative mb-4 rounded-xl border border-[color:var(--line-soft)] bg-[color:var(--ink-950)] p-4 sm:p-5 text-left font-mono shadow-inner cursor-text select-none min-h-[90px]" tabindex="0" role="group" aria-label={t(lang, 'otc.trialBox')}>
               <div id="monkey-words" class="text-sm sm:text-base leading-relaxed tracking-wide text-[color:var(--fg-3)]">
-                <!-- Las palabras se generan dinámicamente letra a letra en cliente -->
+                <!-- The words are generated letter by letter on the client -->
               </div>
             </div>
 
-            <!-- Marcador de estadísticas en vivo estilo MonkeyType -->
+            <!-- MonkeyType-style live statistics board -->
             <div class="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[color:var(--line-soft)] bg-[color:var(--ink-900)] px-3.5 py-2 text-xs font-mono">
               <div class="flex items-center gap-4">
                 <span>WPM: <strong id="kb-wpm" class="text-[color:var(--cyan)] font-bold text-sm">0</strong></span>
@@ -297,7 +297,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
             </div>
           </div>
 
-          <!-- Contenedor Modo 2: Free Sim / Sandbox Libre con salida en vivo -->
+          <!-- Mode 2 container: free sim / sandbox with live output -->
           <div id="kb-free-mode-wrap" class="hidden">
             <!-- Terminal de escritura libre en vivo -->
             <div id="free-sim-box" class="relative mb-4 rounded-xl border border-[color:var(--cyan)]/30 bg-[color:var(--ink-950)] p-4 sm:p-5 text-left font-mono shadow-inner cursor-text min-h-[90px]" tabindex="0" role="group" aria-label={t(lang, 'otc.sandboxBox')}>
@@ -316,7 +316,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
               </div>
             </div>
 
-            <!-- Telemetría de hardware en vivo en Modo Libre -->
+            <!-- Live hardware telemetry in free play -->
             <div class="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[color:var(--line-soft)] bg-[color:var(--ink-900)] px-3.5 py-2 text-xs font-mono">
               <div class="flex flex-wrap items-center gap-4">
                 <span>{t(lang, 'otc.keystrokes')}: <strong id="kb-free-count" class="text-[color:var(--cyan)] font-bold text-sm">0</strong></span>
@@ -327,7 +327,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
             </div>
           </div>
 
-          <!-- Teclado físico visual, distribución HHKB, que se ilumina al pulsar -->
+          <!-- Visual physical keyboard, HHKB layout, that lights up on press -->
           <div id="kb" class="kb kb-hhkb" aria-hidden="true">
             <span class="kb-brand">HHKB</span>
             {ROWS.map((row) => (

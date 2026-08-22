@@ -11,7 +11,7 @@ const { lang } = Astro.props
 const profile = await getProfile(lang)
 const stack = await getStackByGroup()
 
-/** Tech Stack se integra aquí, agrupado por función en lugar de core/toolbox. */
+/** The tech stack is folded in here, grouped by function rather than core/toolbox. */
 const groups = STACK_GROUPS.map((g) => ({
   id: g,
   label: t(lang, `about.group.${g}` as UiKey),
@@ -21,7 +21,7 @@ const groups = STACK_GROUPS.map((g) => ({
 
 <Section id="about" title={t(lang, 'about.title')}>
   <div class="grid items-stretch gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-    <!-- Tarjeta terminal: identidad visual, con sus datos desde profile -->
+    <!-- Terminal card: the visual identity, with its data coming from profile -->
     <div class="reveal flex h-full flex-col justify-between rounded-xl border border-green-500/20 bg-black/40 p-5 backdrop-blur-sm sm:p-6">
       <div>
         <div class="mb-5 flex flex-wrap items-center gap-2 border-b border-green-500/20 pb-4">

@@ -1,10 +1,10 @@
 ---
 /**
- * Panel de un build abierto: el modelo a la izquierda y su ficha a la derecha.
+ * An open build's panel: the model on the left and its details on the right.
  *
- * Se renderiza oculto para todos los builds del archivo; el explorador enseña
- * el que toque. El estado —ángulo, separación, pieza aislada— lo lleva el
- * cliente, así que aquí solo está el marcado y sus valores de partida.
+ * It is rendered hidden for every build in the archive; the explorer shows
+ * whichever one applies. The state — angle, explode, isolated part — is carried
+ * by the client, so all that lives here is the markup and its starting values.
  */
 import BuildModel from './BuildModel.astro'
 import SoundSample from './SoundSample.astro'
@@ -23,10 +23,10 @@ const { build, lang, wave } = Astro.props
 const pick = localizer(lang)
 const copy = keyboardCopy(lang)
 /**
- * Ficha de una pieza. La lista es un índice compacto y no la muestra, así que
- * viaja en un atributo de datos: es lo que lee el chip del modelo al elegir la
- * capa, y de ahí sale también el nombre accesible del botón. Una sola fuente
- * para los tres sitios.
+ * A part's details. The list is a compact index and does not display them, so
+ * they travel in a data attribute: it is what the model's chip reads when a
+ * layer is selected, and the button's accessible name comes from there too. One
+ * source for all three places.
  */
 const partSpec = (part: KeyboardBuild['parts'][number]) =>
   build.status === 'complete' ? pick(part.spec) : copy.prototypePart

@@ -1,16 +1,15 @@
 ---
 /**
- * Esqueleto único del documento.
+ * The document's single skeleton.
  *
- * Las cuatro superficies del sitio —V1, V2, ficha de proyecto y CV— son
- * distintas por dentro, pero por fuera son el mismo documento: doctype, idioma,
- * cabecera, precarga de fuentes, marca de cliente y salto al contenido. Eso
- * vivía copiado en cada layout, así que un arreglo de cabecera había que
- * acordarse de aplicarlo cuatro veces.
+ * The site's four surfaces — V1, V2, case study and CV — differ on the inside,
+ * but from the outside they are the same document: doctype, language, head,
+ * font preload, client marker and skip link. That used to be copied into every
+ * layout, so a fix to the head had to be remembered four times over.
  *
- * La hoja de estilo no se importa aquí a propósito: cada superficie trae la
- * suya y son excluyentes. Importarla en el esqueleto metería el CSS de la V1
- * en las páginas de la V2 y al revés.
+ * The stylesheet is deliberately not imported here: each surface brings its own
+ * and they are mutually exclusive. Importing it in the skeleton would drag the
+ * V1's CSS into the V2's pages and the other way round.
  */
 import Seo from '../components/Seo.astro'
 import FontPreload from '../components/FontPreload.astro'
@@ -20,13 +19,13 @@ import { t, type Lang } from '../i18n/ui'
 interface Props {
   lang: Lang
   /**
-   * Página con metadata propia en la colección `pages`. La 404 no la tiene:
-   * no es una URL del sitio sino el documento que sirve el hosting cuando
-   * ninguna lo es, así que aporta su cabecera por el slot `head`.
+   * A page with its own metadata in the `pages` collection. The 404 has none:
+   * it is not a URL of the site but the document the hosting serves when no URL
+   * matches, so it contributes its head through the `head` slot.
    */
   pageKey?: string
   pageType?: 'WebPage' | 'ProfilePage'
-  /** La V1 es solo monoespaciada: no carga Archivo, así que no la precarga. */
+  /** The V1 is monospace only: it does not load Archivo, so it does not preload it. */
   displayFont?: boolean
   bodyClass?: string
 }
@@ -34,13 +33,13 @@ interface Props {
 const { lang, pageKey, pageType = 'WebPage', displayFont = true, bodyClass } = Astro.props
 
 /*
- * O la página tiene metadata en la colección, o la trae ella por el slot. Sin
- * ninguna de las dos saldría un documento sin charset, sin título y sin
- * canonical, y eso no lo ve nadie hasta que ya está publicado: aquí para el
- * build, que es cuando todavía se puede arreglar.
+ * Either the page has metadata in the collection, or it brings its own through
+ * the slot. With neither, the document would ship without charset, without a
+ * title and without a canonical, and nobody notices that until it is already
+ * published: this stops the build, which is while it can still be fixed.
  */
 if (!pageKey && !Astro.slots.has('head')) {
-  throw new Error('BaseLayout: la página necesita `pageKey` o contenido en el slot `head`')
+  throw new Error('BaseLayout: the page needs `pageKey` or content in the `head` slot')
 }
 ---
 

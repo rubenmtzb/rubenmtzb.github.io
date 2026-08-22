@@ -2,9 +2,9 @@
 import { getProfile } from '../../lib/content'
 import { t, type Lang } from '../../i18n/ui'
 /**
- * El pie es común a la portada y a las fichas de proyecto, que no tienen la
- * sección de identidad. Cada página declara cuál es su principio, así que
- * "Volver arriba" siempre tiene destino.
+ * The footer is shared by the home page and the case studies, which have no
+ * identity section. Each page declares where its top is, so "back to top" always
+ * has a destination.
  */
 interface Props { lang: Lang; topId?: string }
 const { lang, topId = 'identity' } = Astro.props

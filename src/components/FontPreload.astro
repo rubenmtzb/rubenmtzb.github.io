@@ -1,21 +1,21 @@
 ---
 /**
- * Precarga de las dos fuentes latinas.
+ * Preload of the two Latin fonts.
  *
- * Los @font-face viven dentro del CSS, así que el navegador no descubre el
- * fichero hasta haber descargado y analizado la hoja entera: con la conexión
- * ya libre, el titular se pinta antes con la fuente correcta en lugar de
- * pasar por el respaldo del sistema.
+ * The @font-face rules live inside the CSS, so the browser does not discover the
+ * file until it has downloaded and parsed the whole sheet: with the connection
+ * already free, the headline paints sooner in the right font instead of going
+ * through the system fallback.
  *
- * Solo el subconjunto latino. Los de cirílico, griego y vietnamita siguen
- * gobernados por su `unicode-range`: el navegador solo los pide si el texto
- * los necesita, y precargarlos sería descargar 40 kB que nadie usa.
+ * The Latin subset only. The Cyrillic, Greek and Vietnamese ones stay governed
+ * by their `unicode-range`: the browser only asks for them if the text needs
+ * them, and preloading them would mean downloading 40 kB nobody uses.
  */
 import archivoLatin from '@fontsource-variable/archivo/files/archivo-latin-wght-normal.woff2?url'
 import monoLatin from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url'
 
 interface Props {
-  /** La V1 es solo monoespaciada: no carga Archivo, así que no la precarga. */
+  /** The V1 is monospace only: it does not load Archivo, so it does not preload it. */
   display?: boolean
 }
 const { display = true } = Astro.props

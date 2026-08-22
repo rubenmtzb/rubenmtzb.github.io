@@ -1,16 +1,16 @@
 ---
 /**
- * Área de trayectoria: la línea temporal de puestos y el carrusel de proyectos.
+ * Career area: the timeline of roles and the project carousel.
  *
- * Las portadas del carrusel son capturas de 2000 px y el visor nunca pasa de
- * ~1100 px, así que se sirven redimensionadas y en AVIF/WebP. El PNG original
- * sigue siendo el respaldo, con calidad alta para que las líneas finas y el
- * texto de la captura no se ensucien.
+ * The carousel's covers are 2000 px screenshots and the viewer never exceeds
+ * ~1100 px, so they are served resized and in AVIF/WebP. The original PNG stays
+ * as the fallback, at high quality so the screenshot's thin lines and text do
+ * not get muddy.
  *
- * Se descargan todas, no solo la primera: pulsar la flecha obligaba a esperar
- * a que arrancara la descarga de la siguiente, y esa espera se ve. Las que no
- * están a la vista bajan con prioridad mínima, así que llegan sin disputarle
- * el ancho de banda a la portada que sí se está mirando.
+ * They all download, not just the first: pressing the arrow used to mean waiting
+ * for the next one's download to start, and that wait is visible. The ones out
+ * of view come down at minimum priority, so they arrive without fighting the
+ * cover actually on screen for bandwidth.
  */
 import { Picture } from 'astro:assets'
 import Icon from '../Icon.astro'
@@ -25,9 +25,9 @@ const experience = await getExperience(lang)
 const projects = await getProjects(lang)
 
 /**
- * Rótulo del estado de un proyecto. Como mapa y no como cadena de ternarios:
- * si mañana el esquema admite un estado más, el índice deja de compilar en
- * lugar de caer en la última rama sin que nadie se entere.
+ * A project's status label. As a map and not as a chain of ternaries: if the
+ * schema accepts one more status tomorrow, the index stops compiling instead of
+ * quietly falling through to the last branch.
  */
 const BADGE_LABELS: Record<'live' | 'private' | 'coming-soon', UiKey> = {
   live: 'work.badge.live',
@@ -46,16 +46,16 @@ const caseLink = (projectKey: string, origin: 'project-carousel' | 'project-deck
   {(V2_ANCHOR_ALIASES['work'] ?? []).map((a) => <span id={a} class="anchor-alias" aria-hidden="true" />)}
 
   <div class="shell">
-    <!-- Cabecera de sección 01 unificada -->
+    <!-- Unified section 01 header -->
     <header class="rule-head reveal">
       <span class="t-index">01</span>
       <h2 class="t-h2">{t(lang, 'v2.work.title')}</h2>
     </header>
 
-    <!-- ══════════ 1. TABS DE EXPERIENCIA PROFESIONAL (ESTILO GAZI-V2) ══════════ -->
+    <!-- ══════════ 1. PROFESSIONAL EXPERIENCE TABS (GAZI-V2 STYLE) ══════════ -->
     <div class="reveal mt-10 sm:mt-14" style="--i:1">
       <div class="grid lg:grid-cols-12 gap-8 items-start">
-        <!-- Columna Izquierda: Lista de Pestañas / Empresas -->
+        <!-- Left column: tab list / companies -->
         <div class="lg:col-span-4">
           <p class="t-meta text-[color:var(--fg-3)] mb-4">{t(lang, 'v2.work.timeline')}</p>
           <div id="job-tabs" class="job-tabs relative flex flex-row lg:flex-col overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 rounded-xl bg-[color:var(--ink-800)]/60 border border-[color:var(--line-soft)] p-1.5" role="tablist" aria-label={t(lang, 'a11y.jobTabs')}>
@@ -77,7 +77,7 @@ const caseLink = (projectKey: string, origin: 'project-carousel' | 'project-deck
           </div>
         </div>
 
-        <!-- Columna Derecha: Panel de Detalle del Puesto Activo -->
+        <!-- Right column: detail panel for the active role -->
         <div class="lg:col-span-8">
           <div id="job-panels" class="relative min-h-0 sm:min-h-[320px] rounded-2xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-5 sm:p-8 shadow-xl">
             {experience.map((item, i) => (
@@ -131,7 +131,7 @@ const caseLink = (projectKey: string, origin: 'project-carousel' | 'project-deck
       </div>
     </div>
 
-    <!-- ══════════ 2. CARRUSEL SPOTLIGHT DE PROYECTOS (ESTILO SOFTWARE SHOWCASE) ══════════ -->
+    <!-- ══════════ 2. PROJECTS SPOTLIGHT CAROUSEL (SOFTWARE SHOWCASE STYLE) ══════════ -->
     <div class="reveal mt-16 sm:mt-24" style="--i:2">
       <div class="flex flex-wrap items-center justify-between mb-6 gap-4 border-b border-[color:var(--line-soft)] pb-4">
         <div>
@@ -149,7 +149,7 @@ const caseLink = (projectKey: string, origin: 'project-carousel' | 'project-deck
         </a>
       </div>
 
-      <!-- Contenedor del Carrusel de Proyectos: portada real de fondo, texto superpuesto -->
+      <!-- Projects carousel container: the real cover behind, text laid over it -->
       <div
         id="project-carousel"
         class="project-carousel relative overflow-hidden rounded-3xl border border-[color:var(--line)] bg-[color:var(--ink-900)] shadow-2xl"
@@ -194,10 +194,10 @@ const caseLink = (projectKey: string, origin: 'project-carousel' | 'project-deck
 
             <div class="project-pointer-light pointer-events-none absolute inset-0" aria-hidden="true" />
 
-            <!-- Velo localizado: preserva la imagen y protege únicamente las zonas con texto. -->
+            <!-- Local scrim: preserves the image and shields only the areas holding text. -->
             <div class="project-cover-scrim pointer-events-none absolute inset-0" />
 
-            <!-- Texto real (SEO/a11y) superpuesto, compuesto como la portada -->
+            <!-- Real text (SEO/a11y) laid over it, composed like the cover -->
             <div class="project-overlay absolute inset-0 z-10 flex flex-col justify-between p-3 sm:p-8 md:p-10">
               <!-- Fila superior: estado + tipo de proyecto -->
               <div class="flex items-center gap-3">
@@ -209,7 +209,7 @@ const caseLink = (projectKey: string, origin: 'project-carousel' | 'project-deck
                 </span>
               </div>
 
-              <!-- Fila inferior: título grande, stack en línea y acciones -->
+              <!-- Bottom row: large title, inline stack and actions -->
               <div class="flex items-end justify-between gap-3 sm:gap-8">
                 <div class="min-w-0 flex-1">
                   <h4 class="project-cover-title max-w-[26ch] text-xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.05] text-white drop-shadow-[0_2px_12px_rgb(var(--scrim)_/_0.7)]">
@@ -222,7 +222,7 @@ const caseLink = (projectKey: string, origin: 'project-carousel' | 'project-deck
                   </ul>
                 </div>
 
-                <!-- Acciones: GitHub, demo, caso de estudio, publicación -->
+                <!-- Actions: GitHub, demo, case study, publication -->
                 <div class="flex shrink-0 items-center gap-2 sm:gap-2.5">
                   {p.github && (
                     <a
@@ -277,7 +277,7 @@ const caseLink = (projectKey: string, origin: 'project-carousel' | 'project-deck
           </article>
         ))}
 
-        <!-- Botones laterales; en móvil el gesto táctil deja la imagen completamente despejada. -->
+        <!-- Side buttons; on mobile the touch gesture leaves the image completely clear. -->
         <button
           type="button"
           id="proj-prev"
@@ -295,7 +295,7 @@ const caseLink = (projectKey: string, origin: 'project-carousel' | 'project-deck
           ›
         </button>
 
-        <!-- Indicadores arriba a la derecha: no compiten con título, stack ni acciones. -->
+        <!-- Indicators at the top right: they compete with neither title, stack nor actions. -->
         <div class="project-pagination absolute right-3 top-3 sm:right-8 sm:top-8 z-20 flex items-center gap-1.5 sm:gap-2" id="proj-dots">
           {projects.map((_, i) => (
             <button

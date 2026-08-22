@@ -1,19 +1,18 @@
 ---
 /**
- * Marca de cliente y red de seguridad del revelado.
+ * Client marker and the reveal's safety net.
  *
- * La clase `js` es lo que permite que el contenido salga del build visible y
- * solo se oculte cuando hay JavaScript para volver a mostrarlo. El riesgo de
- * ese trato es asimétrico: si el bundle no llega a ejecutarse —un fichero que
- * se pierde, un error en un import— todo lo marcado con `.reveal` se queda en
- * opacidad cero para siempre y la página aparece en blanco. El contenido
- * dependería entonces de que el JavaScript funcione, que es justo lo que este
- * sitio se compromete a no hacer.
+ * The `js` class is what lets the content leave the build visible and only get
+ * hidden once there is JavaScript around to show it again. The risk in that
+ * bargain is asymmetric: if the bundle never runs — a file that goes missing, an
+ * error in an import — everything marked `.reveal` stays at zero opacity for
+ * good and the page comes up blank. The content would then depend on JavaScript
+ * working, which is exactly what this site promises not to do.
  *
- * `DOMContentLoaded` no se dispara hasta que los módulos diferidos se han
- * ejecutado o han fallado, así que es el momento exacto para comprobarlo: si
- * nadie ha marcado el documento como mejorado, se revela todo de una vez. En
- * el camino normal esta comprobación no hace nada.
+ * `DOMContentLoaded` does not fire until the deferred modules have run or
+ * failed, so it is the precise moment to check: if nobody has marked the
+ * document as enhanced, everything is revealed at once. On the normal path this
+ * check does nothing.
  */
 ---
 

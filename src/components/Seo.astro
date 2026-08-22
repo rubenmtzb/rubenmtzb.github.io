@@ -16,9 +16,9 @@ const cluster = await getCluster(pageKey)
 const canonical = abs(page.path)
 
 /**
- * Invariante del clúster: todos los miembros emiten el MISMO conjunto
- * hreflang, se incluyen a sí mismos y declaran x-default. Se genera desde
- * los datos, así que no puede divergir entre páginas del mismo clúster.
+ * Cluster invariant: every member emits the SAME hreflang set, includes itself
+ * and declares x-default. It is generated from the data, so it cannot diverge
+ * between pages of the same cluster.
  */
 const alternates = cluster.alternates.map((a) => ({ lang: a.lang, href: abs(a.path) }))
 const xDefault = abs(cluster.xDefault)
@@ -34,17 +34,17 @@ const jsonLd = await buildJsonLd({
 const ogLocale = LOCALE_TAGS[lang]
 
 /*
- * `profile` describe a una persona, así que solo lo son las páginas que van
- * sobre Rubén. La ficha de proyecto y el CV declaraban lo mismo que la
- * portada, y una ficha de proyecto no es el perfil de nadie.
+ * `profile` describes a person, so only the pages that are about Rubén qualify.
+ * The case study and the CV used to declare the same as the home page, and a
+ * case study is nobody's profile.
  */
 const ogType = pageType === 'ProfilePage' ? 'profile' : 'website'
 
 /*
- * El `<` va escapado. En un bloque en línea, un `</script>` dentro de
- * cualquier cadena del contenido —el guion de un "C# <-> Java" basta— cerraría
- * la etiqueta antes de tiempo y partiría el JSON-LD. `\u003c` es un escape
- * válido de JSON, así que lo que lee un buscador es exactamente el mismo dato.
+ * The `<` is escaped. In an inline block, a `</script>` inside any string of the
+ * content — the dash in a "C# <-> Java" is enough — would close the tag early
+ * and break the JSON-LD. `\u003c` is a valid JSON escape, so what a search
+ * engine reads is exactly the same data.
  */
 const structuredData = JSON.stringify(jsonLd).replaceAll('<', '\\u003c')
 ---
@@ -60,9 +60,9 @@ const structuredData = JSON.stringify(jsonLd).replaceAll('<', '\\u003c')
 <link rel="canonical" href={canonical} />
 {
   /*
-   * hreflang solo en páginas indexables. Google lo ignora en páginas con
-   * noindex, y declararlo hacia una URL no indexable es un error de
-   * configuración: la preview y una eventual V1 en noindex no lo emiten.
+   * hreflang on indexable pages only. Google ignores it on noindex pages, and
+   * declaring it towards a non-indexable URL is a configuration error: the
+   * preview and an eventual noindex V1 do not emit it.
    */
   page.indexable && (
     <>
@@ -89,10 +89,10 @@ const structuredData = JSON.stringify(jsonLd).replaceAll('<', '\\u003c')
 <meta name="twitter:image:alt" content={page.ogImageAlt} />
 
 <!--
-  El icono vectorial pesa 883 bytes y sirve para cualquier tamaño; el PNG
-  queda como respaldo para los navegadores que no aceptan SVG en la pestaña.
-  Antes las dos ranuras apuntaban al retrato completo: 24 kB en cada página
-  para pintar dieciséis píxeles cuadrados.
+  The vector icon weighs 883 bytes and works at any size; the PNG stays as a
+  fallback for browsers that do not accept SVG in the tab. Both slots used to
+  point at the full portrait: 24 kB on every page to paint sixteen square
+  pixels.
 -->
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />

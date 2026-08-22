@@ -1,12 +1,13 @@
 ---
 /**
- * 404 personalizado. GitHub Pages sirve /404.html para cualquier ruta
- * inexistente: es la única pieza de routing que el hosting sí ofrece.
+ * Custom 404. GitHub Pages serves /404.html for any route that does not exist:
+ * it is the one piece of routing the hosting does offer.
  *
- * No es una URL del sitio, así que no está en la colección `pages`, no entra
- * en el sitemap y no emite hreflang. Como el hosting sirve el mismo fichero
- * para las rutas de los dos idiomas. El HTML parte del idioma por defecto y
- * adapta la copia si la URL solicitada pertenece al prefijo castellano.
+ * It is not a URL of the site, so it is absent from the `pages` collection, it
+ * stays out of the sitemap and it emits no hreflang. Since the hosting serves
+ * the same file for the routes of both languages, the HTML starts from the
+ * default language and adapts the copy when the requested URL belongs to the
+ * Spanish prefix.
  */
 import BaseLayout from '../layouts/BaseLayout.astro'
 import Icon from '../components/Icon.astro'
@@ -40,10 +41,10 @@ import '../styles/v2.css'
   </main>
 
   <!--
-    El hosting sirve este mismo fichero para cualquier ruta que no exista, en
-    los dos idiomas, así que la traducción es lo único que no puede resolverse
-    en build. Cada retoque es independiente: si mañana falta un elemento, se
-    queda ese sin traducir en vez de abortar el resto a medias.
+    The hosting serves this very file for any route that does not exist, in both
+    languages, so the translation is the one thing that cannot be resolved at
+    build time. Each touch-up is independent: if an element goes missing
+    tomorrow, that one stays untranslated instead of aborting the rest halfway.
   -->
   <script is:inline>
     if (location.pathname === '/es' || location.pathname.startsWith('/es/')) {

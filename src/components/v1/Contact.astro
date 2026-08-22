@@ -11,7 +11,7 @@ const profile = await getProfile(lang)
 const cvHref = cvPath(lang)
 const pdfHref = cvPdfPath(lang)
 
-/** Los métodos salen de profile: no se repiten enlaces dentro de la sección. */
+/** The methods come from profile: no links are repeated inside the section. */
 const methods = [
   { label: t(lang, 'contact.email'), display: profile.email, href: `mailto:${profile.email}`, icon: 'mail' as const, desc: t(lang, 'contact.emailDesc') },
   ...profile.socials.map((s) => ({
@@ -63,7 +63,7 @@ const methods = [
       {t(lang, 'contact.send')}
     </a>
 
-    {/* Resume deja de ser sección: pasa a recurso y CTA hacia /cv/. */}
+    {/* Resume stops being a section: it becomes a resource and a CTA towards /cv/. */}
     <div class="reveal mt-14 w-full rounded-2xl border border-green-500/20 bg-black/40 p-6 text-left backdrop-blur-sm sm:p-8">
       <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div>

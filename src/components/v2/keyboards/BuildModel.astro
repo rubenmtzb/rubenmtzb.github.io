@@ -1,22 +1,22 @@
 ---
 /**
- * Modelo del teclado, capa a capa.
+ * The keyboard's model, layer by layer.
  *
- * Es el reflejo visual del listado de piezas, no una segunda fuente: son más
- * de mil elementos decorativos sin texto —huecos, sockets, muelles, teclas—
- * que un lector de pantalla tendría que atravesar para llegar a la
- * información, y esa información ya está escrita al lado, en la lista
- * numerada. Por eso el bloque entero va `aria-hidden`.
+ * It is the visual reflection of the parts listing, not a second source: over a
+ * thousand decorative, textless elements — cut-outs, sockets, springs, keycaps —
+ * that a screen reader would have to wade through to reach the information, and
+ * that information is already written right next to it, in the numbered list.
+ * Which is why the whole block is `aria-hidden`.
  *
- * Qué dibuja cada capa depende del `id` de la pieza y del modelo: la lista de
- * abajo es el catálogo completo de piezas que el archivo sabe representar.
+ * What each layer draws depends on the part's `id` and on the model: the list
+ * below is the full catalogue of parts the archive knows how to depict.
  *
- * Cada capa se parte en dos: la capa, que se coloca en el espacio, y la piel,
- * que lleva el dibujo. El atenuado de las piezas fuera de foco vive en la piel
- * y no en la capa porque un `filter` o una `opacity` convierten al elemento en
- * un grupo y aplanan el 3D de cuanto lleva dentro; con la etiqueta colgando de
- * la capa, su contragiro sigue siendo tridimensional y el texto se lee de
- * frente aunque la pieza esté apagada.
+ * Each layer splits in two: the layer, which is placed in space, and the skin,
+ * which carries the drawing. The dimming of out-of-focus parts lives on the skin
+ * and not on the layer because a `filter` or an `opacity` turns the element into
+ * a group and flattens the 3D of everything inside it; with the label hanging
+ * off the layer, its counter-rotation stays three-dimensional and the text reads
+ * face-on even while the part is dimmed.
  */
 import KeyArt from './KeyArt.astro'
 import { MODEL_LAYOUTS, keyClass, modelKeys } from '../../../lib/keyboard-layouts'
@@ -27,13 +27,13 @@ interface Props { build: KeyboardBuild; lang: Lang }
 const { build, lang } = Astro.props
 const pick = localizer(lang)
 
-/** Las teclas que dibuja cada capa salen del modelo, no de quien lo coloca. */
+/** The keys each layer draws come from the model, not from whoever places it. */
 const keys = modelKeys(MODEL_LAYOUTS[build.layout])
 
 /**
- * El escalonado de la explosión sale del orden de montaje, no de un número
- * escrito a mano por capa: la última pieza en montarse es la primera en
- * separarse, y añadir una pieza recoloca la secuencia sola.
+ * The explode staggering comes from the assembly order, not from a number
+ * hand-written per layer: the last part to go in is the first to come apart, and
+ * adding a part re-sequences everything on its own.
  */
 const STAGGER_MS = 70
 

@@ -9,7 +9,7 @@ interface Props {
 }
 const { lang, pageKey } = Astro.props
 
-/** Selector de idioma: enlace real a la URL equivalente, no estado en cliente. */
+/** Language switcher: a real link to the equivalent URL, not client state. */
 const other = await getAlternate(pageKey, lang)
 ---
 
@@ -25,7 +25,7 @@ const other = await getAlternate(pageKey, lang)
       aria-label={t(lang, 'nav.home')}>RMB</a
     >
 
-    <!-- Desktop: todos los enlaces existen en el HTML -->
+    <!-- Desktop: every link exists in the HTML -->
     <div class="hidden items-center gap-1 lg:flex">
       <div id="nav-links" class="relative flex items-center gap-1">
         <span class="nav-pill" aria-hidden="true"></span>
@@ -69,9 +69,9 @@ const other = await getAlternate(pageKey, lang)
   </nav>
 
   <!--
-    El menú móvil y sus enlaces existen siempre en el HTML de build.
-    El script solo alterna el atributo hidden: sin JavaScript el menú
-    permanece visible y la navegación sigue siendo operativa.
+    The mobile menu and its links always exist in the built HTML. The script only
+    toggles the hidden attribute: without JavaScript the menu stays visible and
+    the navigation remains usable.
   -->
   <div
     id="mobile-menu"

@@ -36,13 +36,13 @@ const home = homePath(lang)
 const pdfHref = cvPdfPath(lang)
 
 /**
- * Antigüedad empresarial derivada del puesto en curso, es decir de la fecha
- * estructurada que ya existe en `experience`. Se recalcula en cada build:
- * el "3+ years" escrito a mano desaparece sin perder la señal.
+ * Company seniority derived from the current role, that is, from the structured
+ * date that already exists in `experience`. It is recomputed on every build: the
+ * hand-written "3+ years" goes away without losing the signal.
  */
 const yearsPhrase = formatYears(tenureMonths(experience), lang)
 
-/** Identificador legible del perfil; el href conserva la URL completa. */
+/** A readable profile identifier; the href keeps the full URL. */
 const handle = (url: string) =>
   url.replace(/^https?:\/\/(www\.)?[^/]+\//, '').replace(/\/$/, '')
 
@@ -55,7 +55,7 @@ const groups = STACK_GROUPS.map((g) => ({
 ---
 
 <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
-  <!-- Barra de herramientas: no se imprime -->
+  <!-- Toolbar: not printed -->
   <div class="no-print mb-8 flex flex-wrap items-center justify-between gap-3">
     <a
       href={home}
@@ -98,11 +98,10 @@ const groups = STACK_GROUPS.map((g) => ({
       </p>
 
       {/*
-        Rejilla de contacto: cada celda es una columna propia con la
-        etiqueta encima del valor. La URL completa de LinkedIn desbordaba
-        su celda y colisionaba con la de al lado, así que se muestra el
-        identificador —convención habitual en un CV— y el href conserva
-        la URL entera.
+        Contact grid: each cell is a column of its own with the label above the
+        value. LinkedIn's full URL overflowed its cell and collided with the one
+        next to it, so the identifier is shown instead — the usual convention on
+        a CV — and the href keeps the whole URL.
       */}
       <dl class="mt-6 grid gap-x-8 gap-y-4 text-sm text-slate-300 sm:grid-cols-2">
         <div class="min-w-0">
@@ -136,7 +135,7 @@ const groups = STACK_GROUPS.map((g) => ({
       </dl>
     </header>
 
-    <!-- Resumen profesional: exclusivo del CV -->
+    <!-- Professional summary: exclusive to the CV -->
     <section class="border-b border-cyan-400/15 py-8">
       <h2 class="text-sm font-bold uppercase tracking-[0.3em] text-green-300">{profile.cvOnly.summaryTitle}</h2>
       <p class="mt-1 text-xs text-dim">{profile.cvOnly.summaryKicker}</p>
@@ -154,14 +153,14 @@ const groups = STACK_GROUPS.map((g) => ({
       </ul>
     </section>
 
-    <!-- Experiencia: aquí sí van los bullets completos -->
+    <!-- Experience: this is where the full bullets do belong -->
     <section class="border-b border-cyan-400/15 py-8">
       <h2 class="text-sm font-bold uppercase tracking-[0.3em] text-green-300">{t(lang, 'cv.experience')}</h2>
       <ol class="mt-6 space-y-7">
         {
           experience.map((item) => {
             const duration = formatDuration(item.start, item.end, lang)
-            /* Las tres listas se imprimen juntas, así que las tres deciden si hay línea. */
+            /* The three lists print together, so all three decide whether there is a rule. */
             const tags = [...item.tech, ...item.practices, ...item.domains]
             return (
               <li>
@@ -198,7 +197,7 @@ const groups = STACK_GROUPS.map((g) => ({
       </ol>
     </section>
 
-    <!-- Proyectos propios (D9): nunca presentados como experiencia -->
+    <!-- Own projects (D9): never presented as experience -->
     <section class="border-b border-cyan-400/15 py-8">
       <h2 class="text-sm font-bold uppercase tracking-[0.3em] text-green-300">{t(lang, 'cv.projects')}</h2>
       <ul class="mt-6 space-y-5">
@@ -226,7 +225,7 @@ const groups = STACK_GROUPS.map((g) => ({
       </ul>
     </section>
 
-    <!-- Habilidades: agrupación funcional, tecnologías y prácticas separadas -->
+    <!-- Skills: functional grouping, technologies and practices kept apart -->
     <section class="border-b border-cyan-400/15 py-8">
       <h2 class="text-sm font-bold uppercase tracking-[0.3em] text-green-300">{t(lang, 'cv.skills')}</h2>
       <dl class="mt-5 space-y-3">
@@ -248,7 +247,7 @@ const groups = STACK_GROUPS.map((g) => ({
       </dl>
     </section>
 
-    <!-- Formación y certificaciones -->
+    <!-- Education and certifications -->
     <div class="grid gap-8 border-b border-cyan-400/15 py-8 md:grid-cols-2">
       <section>
         <h2 class="text-sm font-bold uppercase tracking-[0.3em] text-green-300">{t(lang, 'cv.education')}</h2>
@@ -294,7 +293,7 @@ const groups = STACK_GROUPS.map((g) => ({
       </section>
     </div>
 
-    <!-- Idiomas e intereses -->
+    <!-- Languages and interests -->
     <div class="grid gap-8 py-8 md:grid-cols-2">
       <section>
         <h2 class="text-sm font-bold uppercase tracking-[0.3em] text-green-300">{t(lang, 'cv.languages')}</h2>

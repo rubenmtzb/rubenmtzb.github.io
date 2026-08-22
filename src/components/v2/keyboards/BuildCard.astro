@@ -1,17 +1,18 @@
 ---
 /**
- * Portada de un build en la galería.
+ * A build's cover in the gallery.
  *
- * La tarjeta entera es el objetivo —foto, título y botón abren el mismo
- * build—, salvo los mandos del carrusel, que pasan de foto sin salir de la
- * galería. Quién es quién lo decide el explorador leyendo `data-bx-open`.
+ * The whole card is the target — photo, title and button all open the same
+ * build — except for the carousel's controls, which change photo without
+ * leaving the gallery. Which is which is decided by the explorer reading
+ * `data-bx-open`.
  *
- * Las fotografías se descargan todas desde el principio y no al mostrarse: el
- * carrusel se pasa con las flechas, y una imagen que empieza a bajar en el
- * momento en que se pide llega tarde, se ve el hueco. Como el bloque vive
- * detrás de una pestaña y muy por debajo del pliegue, la descarga va con
- * `fetchpriority="low"`, así que ocurre con la conexión ya libre y no le quita
- * ancho de banda a lo que se está mirando.
+ * Every photograph downloads up front rather than on display: the carousel is
+ * paged with the arrows, and an image that only starts coming down the moment it
+ * is asked for arrives late, and the gap shows. Since the block lives behind a
+ * tab and far below the fold, the download carries `fetchpriority="low"`, so it
+ * happens with the connection already free and takes no bandwidth away from
+ * whatever is on screen.
  */
 import { Picture } from 'astro:assets'
 import { buildDisplayStatus, localizer, twoDigits, type KeyboardBuild } from '../../../lib/content'
@@ -23,29 +24,29 @@ const { build, index, lang } = Astro.props
 const pick = localizer(lang)
 const copy = keyboardCopy(lang)
 
-/** Con una sola fotografía no hay nada que pasar: ni flechas, ni puntos, ni contador. */
+/** With a single photograph there is nothing to page: no arrows, no dots, no counter. */
 const hasCarousel = build.photos.length > 1
 
 /**
- * Cortes de la portada fotográfica.
+ * The photographic cover's cuts.
  *
- * La tarjeta nunca pasa de ~500 px de ancho —dos columnas dentro del panel,
- * una sola por debajo de 34rem— así que la escalera cubre hasta densidad 3x
- * y ahí se detiene: pedir el original de 1490 px para una tarjeta de 340 px
- * era gastar un megabyte en píxeles que la pantalla no puede enseñar.
+ * The card never exceeds ~500 px wide — two columns inside the panel, a single
+ * one below 34rem — so the ladder covers up to 3x density and stops there:
+ * asking for the 1490 px original for a 340 px card meant spending a megabyte on
+ * pixels the screen cannot show.
  */
 const PHOTO_WIDTHS = [420, 680, 1020, 1360]
 
-/** Nunca pide al pipeline un corte mayor que el original de cada fotografía. */
+/** It never asks the pipeline for a cut larger than each photograph's original. */
 const photoWidths = (intrinsic: number) => {
   const fitting = PHOTO_WIDTHS.filter((width) => width <= intrinsic)
   return fitting.length > 0 ? fitting : [intrinsic]
 }
 
 /**
- * El corte mayor que se llega a servir, que es también el `src` de respaldo.
- * Declarar aquí el original obligaba al pipeline a generar un corte extra a
- * tamaño completo que ninguna pantalla pedía: mismo aspecto, un fichero menos.
+ * The largest cut ever served, which is also the fallback `src`. Declaring the
+ * original here forced the pipeline to generate an extra full-size cut no screen
+ * ever asked for: same appearance, one file fewer.
  */
 const photoWidth = (intrinsic: number) => photoWidths(intrinsic).at(-1) ?? intrinsic
 ---

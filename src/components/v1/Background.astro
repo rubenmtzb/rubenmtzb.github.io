@@ -60,8 +60,8 @@ const profile = await getProfile(lang)
               </ul>
             )}
 
-            {/* La credencial verificable va aquí: INESEM deja de estar duplicado
-                entre formación y certificaciones. */}
+            {/* The verifiable credential belongs here: INESEM stops being duplicated
+                between education and certifications. */}
             {item.credential && (
               <a
                 href={item.credential.verifyUrl}
