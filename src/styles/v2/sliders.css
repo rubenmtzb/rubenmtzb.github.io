@@ -209,9 +209,19 @@ html.js .cert-slide.is-active {
 
 .edu-dot-indicator,
 .cert-dot-indicator {
+  position: relative;
   cursor: pointer;
   border: 1px solid var(--line-soft);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* Misma idea que en el carrusel de proyectos: se agranda lo que se pulsa, no
+   lo que se pinta. Los laterales crecen media separación, así que dos puntos
+   contiguos nunca se solapan. */
+.edu-dot-indicator::after,
+.cert-dot-indicator::after {
+  content: '';
+  position: absolute;
+  inset: -9px -3px;
 }
 .edu-dot-indicator.is-active,
 .cert-dot-indicator.is-active {
