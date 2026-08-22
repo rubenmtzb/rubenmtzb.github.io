@@ -8,7 +8,6 @@
  */
 import BuildModel from './BuildModel.astro'
 import SoundSample from './SoundSample.astro'
-import { MODEL_LAYOUTS, modelKeys } from '../../../lib/keyboard-layouts'
 import type { Waveform } from '../../../lib/keyboard-sound'
 import { buildDisplayStatus, localizer, type KeyboardBuild } from '../../../lib/content'
 import { keyboardCopy } from '../../../i18n/keyboards'
@@ -22,8 +21,6 @@ interface Props {
 const { build, lang, wave } = Astro.props
 const pick = localizer(lang)
 const copy = keyboardCopy(lang)
-
-const keys = modelKeys(MODEL_LAYOUTS[build.layout])
 ---
 
 <div
@@ -41,7 +38,7 @@ const keys = modelKeys(MODEL_LAYOUTS[build.layout])
         role="group"
         aria-label={`${copy.model} — ${build.name}`}
       >
-        <BuildModel build={build} keys={keys} lang={lang} />
+        <BuildModel build={build} lang={lang} />
 
         {build.status !== 'complete' && (
           <span class="bx-prototype-note">{copy.prototype}</span>

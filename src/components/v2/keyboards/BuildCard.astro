@@ -5,6 +5,13 @@
  * La tarjeta entera es el objetivo —foto, título y botón abren el mismo
  * build—, salvo los mandos del carrusel, que pasan de foto sin salir de la
  * galería. Quién es quién lo decide el explorador leyendo `data-bx-open`.
+ *
+ * Las fotografías se descargan todas desde el principio y no al mostrarse: el
+ * carrusel se pasa con las flechas, y una imagen que empieza a bajar en el
+ * momento en que se pide llega tarde, se ve el hueco. Como el bloque vive
+ * detrás de una pestaña y muy por debajo del pliegue, la descarga va con
+ * `fetchpriority="low"`, así que ocurre con la conexión ya libre y no le quita
+ * ancho de banda a lo que se está mirando.
  */
 import { Picture } from 'astro:assets'
 import { buildDisplayStatus, localizer, type KeyboardBuild } from '../../../lib/content'
@@ -12,9 +19,12 @@ import { keyboardCopy } from '../../../i18n/keyboards'
 import type { Lang } from '../../../i18n/ui'
 
 interface Props { build: KeyboardBuild; index: number; lang: Lang }
-const { build: item, index, lang } = Astro.props
+const { build, index, lang } = Astro.props
 const pick = localizer(lang)
 const copy = keyboardCopy(lang)
+
+/** Con una sola fotografía no hay nada que pasar: ni flechas, ni puntos, ni contador. */
+const hasCarousel = build.photos.length > 1
 
 /**
  * Cortes de la portada fotográfica.
@@ -25,16 +35,6 @@ const copy = keyboardCopy(lang)
  * era gastar un megabyte en píxeles que la pantalla no puede enseñar.
  */
 const PHOTO_WIDTHS = [420, 680, 1020, 1360]
-
-/**
- * Las seis portadas se descargan desde el principio, no al mostrarse.
- *
- * El carrusel de la tarjeta se pasa con las flechas, y una fotografía que
- * empieza a bajar en el momento en que se pide llega tarde: se ve el hueco.
- * Como el bloque vive detrás de una pestaña y muy por debajo del pliegue, la
- * descarga va con prioridad mínima —`fetchpriority="low"`—, así que ocurre con
- * la conexión ya libre y no le quita ancho de banda a lo que se está viendo.
- */
 
 /** Nunca pide al pipeline un corte mayor que el original de cada fotografía. */
 const photoWidths = (intrinsic: number) => {
@@ -51,16 +51,16 @@ const photoWidth = (intrinsic: number) => photoWidths(intrinsic).at(-1) ?? intri
 ---
 
 <li>
-  <article class={`bx-build-card is-${buildDisplayStatus(item)}`} data-bx-open={item.key}>
+  <article class={`bx-build-card is-${buildDisplayStatus(build)}`} data-bx-open={build.key}>
     <div
       class="bx-card-visual"
       data-bx-card-carousel
       tabindex="0"
       role="region"
       aria-roledescription="carousel"
-      aria-label={`${copy.cover}: ${item.name}`}
+      aria-label={`${copy.cover}: ${build.name}`}
     >
-      {item.photos.map((photo, photoIndex) => (
+      {build.photos.map((photo, photoIndex) => (
         <figure
           class="bx-card-slide"
           data-bx-card-slide={photoIndex}
@@ -87,22 +87,22 @@ const photoWidth = (intrinsic: number) => photoWidths(intrinsic).at(-1) ?? intri
       ))}
       <span class="bx-card-pointer-light" aria-hidden="true"></span>
       <span class="bx-card-index">BUILD {String(index + 1).padStart(2, '0')}</span>
-      <span class="bx-card-authentic"><i></i>{copy.status[buildDisplayStatus(item)]}</span>
-      {item.photos.length > 1 && (
+      <span class="bx-card-authentic"><i></i>{copy.status[buildDisplayStatus(build)]}</span>
+      {hasCarousel && (
         <button class="bx-card-nav bx-card-prev" type="button" data-bx-card-prev aria-label={copy.previous}>‹</button>
       )}
-      {item.photos.length > 1 && (
+      {hasCarousel && (
         <button class="bx-card-nav bx-card-next" type="button" data-bx-card-next aria-label={copy.next}>›</button>
       )}
       <span class="bx-card-photo-meta">
-        <span data-bx-card-caption>{pick(item.photos[0].label)}</span>
-        {item.photos.length > 1 && (
-          <b data-bx-card-counter>01 / {String(item.photos.length).padStart(2, '0')}</b>
+        <span data-bx-card-caption>{pick(build.photos[0].label)}</span>
+        {hasCarousel && (
+          <b data-bx-card-counter>01 / {String(build.photos.length).padStart(2, '0')}</b>
         )}
       </span>
-      {item.photos.length > 1 && (
-        <span class="bx-card-pagination" role="group" aria-label={`${item.photos.length} ${lang === 'es' ? 'imágenes' : 'images'}`}>
-          {item.photos.map((photo, photoIndex) => (
+      {hasCarousel && (
+        <span class="bx-card-pagination" role="group" aria-label={`${build.photos.length} ${copy.images}`}>
+          {build.photos.map((photo, photoIndex) => (
             <button
               type="button"
               data-bx-card-dot={photoIndex}
@@ -115,12 +115,12 @@ const photoWidth = (intrinsic: number) => photoWidths(intrinsic).at(-1) ?? intri
     </div>
     <div class="bx-card-copy">
       <span class="bx-card-id">
-        <strong>{item.name}</strong>
-        <small>{pick(item.summary)}</small>
+        <strong>{build.name}</strong>
+        <small>{pick(build.summary)}</small>
       </span>
       <span class="bx-card-meta">
-        <button class="bx-inspect" type="button" data-bx-open={item.key}>
-          {item.status === 'complete' ? copy.inspect : copy.openDraft} <b aria-hidden="true">→</b>
+        <button class="bx-inspect" type="button" data-bx-open={build.key}>
+          {build.status === 'complete' ? copy.inspect : copy.openDraft} <b aria-hidden="true">→</b>
         </button>
       </span>
     </div>

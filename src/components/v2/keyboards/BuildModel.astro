@@ -19,13 +19,16 @@
  * frente aunque la pieza esté apagada.
  */
 import KeyArt from './KeyArt.astro'
-import { keyClass, type ModelKey } from '../../../lib/keyboard-layouts'
+import { MODEL_LAYOUTS, keyClass, modelKeys } from '../../../lib/keyboard-layouts'
 import { localizer, type KeyboardBuild, type KeyboardPart } from '../../../lib/content'
 import type { Lang } from '../../../i18n/ui'
 
-interface Props { build: KeyboardBuild; keys: ModelKey[]; lang: Lang }
-const { build, keys, lang } = Astro.props
+interface Props { build: KeyboardBuild; lang: Lang }
+const { build, lang } = Astro.props
 const pick = localizer(lang)
+
+/** Las teclas que dibuja cada capa salen del modelo, no de quien lo coloca. */
+const keys = modelKeys(MODEL_LAYOUTS[build.layout])
 
 /**
  * El escalonado de la explosión sale del orden de montaje, no de un número
