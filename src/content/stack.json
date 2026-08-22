@@ -2,9 +2,9 @@
   { "id": "java", "key": "java", "name": "Java", "group": "backend", "tier": "actual", "icon": "/icons/java.svg", "order": 1, "label": { "en": "Backend core", "es": "Núcleo backend" } },
   { "id": "spring-boot", "key": "spring-boot", "name": "Spring Boot", "group": "backend", "tier": "actual", "icon": "/icons/spring.svg", "order": 2, "label": { "en": "APIs & microservices", "es": "APIs y microservicios" } },
   { "id": "php", "key": "php", "name": "PHP", "group": "backend", "tier": "historica", "order": 3, "label": { "en": "Research portal work", "es": "Portal de investigación" } },
-  { "id": "python", "key": "python", "name": "Python", "group": "backend", "tier": "actual", "icon": "/icons/python.svg", "order": 4, "label": { "en": "Scripting, AI & data", "es": "Scripting, IA y datos" } },
+  { "id": "python", "key": "python", "name": "Python", "group": "backend", "tier": "actual", "icon": "/icons/python.svg", "order": 4, "label": { "en": "Scripting, AI & data", "es": "Automatización, IA y datos" } },
 
-  { "id": "react", "key": "react", "name": "React", "group": "frontend", "tier": "actual", "icon": "/icons/react.svg", "order": 1, "label": { "en": "Frontend framework", "es": "Framework frontend" } },
+  { "id": "react", "key": "react", "name": "React", "group": "frontend", "tier": "actual", "icon": "/icons/react.svg", "order": 1, "label": { "en": "Frontend framework", "es": "Marco de trabajo frontend" } },
   { "id": "typescript", "key": "typescript", "name": "TypeScript", "group": "frontend", "tier": "actual", "icon": "/icons/typescript.svg", "order": 2, "label": { "en": "Type-safe JS", "es": "JS con tipos" } },
   { "id": "javascript", "key": "javascript", "name": "JavaScript", "group": "frontend", "tier": "actual", "icon": "/icons/javascript.svg", "order": 3, "label": { "en": "Web essentials", "es": "Base de la web" } },
   { "id": "liferay", "key": "liferay", "name": "Liferay", "group": "frontend", "tier": "actual", "icon": "/icons/liferay.svg", "order": 4, "label": { "en": "Portal platform", "es": "Plataforma de portales" } },
@@ -15,7 +15,7 @@
   { "id": "git", "key": "git", "name": "Git", "group": "devops", "tier": "actual", "icon": "/icons/git.svg", "order": 2, "label": { "en": "Version control", "es": "Control de versiones" } },
   { "id": "linux", "key": "linux", "name": "Linux", "group": "devops", "tier": "actual", "icon": "/icons/linux.svg", "order": 3, "label": { "en": "Server environment", "es": "Entorno de servidor" } },
   { "id": "kubernetes", "key": "kubernetes", "name": "Kubernetes", "group": "devops", "tier": "formacion", "icon": "/icons/kubernetes.svg", "order": 4, "label": { "en": "Orchestration", "es": "Orquestación" } },
-  { "id": "jenkins", "key": "jenkins", "name": "Jenkins", "group": "devops", "tier": "formacion", "order": 5, "label": { "en": "Build automation", "es": "Automatización de builds" } },
+  { "id": "jenkins", "key": "jenkins", "name": "Jenkins", "group": "devops", "tier": "formacion", "order": 5, "label": { "en": "Build automation", "es": "Automatización de compilaciones" } },
   { "id": "terraform", "key": "terraform", "name": "Terraform", "group": "devops", "tier": "formacion", "order": 6, "label": { "en": "Infrastructure as code", "es": "Infraestructura como código" } },
   { "id": "windows-server", "key": "windows-server", "name": "Windows Server", "group": "devops", "tier": "historica", "order": 7, "label": { "en": "Systems background", "es": "Base de sistemas" } },
 

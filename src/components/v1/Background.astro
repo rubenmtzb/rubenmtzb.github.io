@@ -3,6 +3,7 @@ import Section from './Section.astro'
 import Icon from '../Icon.astro'
 import { formatMonthYear, getCerts, getEducation, getProfile } from '../../lib/content'
 import { t, type Lang } from '../../i18n/ui'
+import { localizedTerm } from '../../i18n/terms'
 
 interface Props { lang: Lang }
 const { lang } = Astro.props
@@ -54,7 +55,7 @@ const profile = await getProfile(lang)
             {item.tags.length > 0 && (
               <ul class="mt-5 flex flex-wrap gap-2">
                 {item.tags.map((tag) => (
-                  <li class="rounded-full border border-green-500/30 bg-green-500/10 px-3 py-1 text-xs text-green-300">{tag}</li>
+                  <li class="rounded-full border border-green-500/30 bg-green-500/10 px-3 py-1 text-xs text-green-300">{localizedTerm(tag, lang)}</li>
                 ))}
               </ul>
             )}
@@ -129,7 +130,7 @@ const profile = await getProfile(lang)
 
             <ul class="mt-5 flex flex-wrap gap-2">
               {cert.tags.map((tag) => (
-                <li class="rounded-full border border-green-500/30 bg-green-500/10 px-3 py-1 text-xs text-green-300">{tag}</li>
+                <li class="rounded-full border border-green-500/30 bg-green-500/10 px-3 py-1 text-xs text-green-300">{localizedTerm(tag, lang)}</li>
               ))}
             </ul>
           </article>

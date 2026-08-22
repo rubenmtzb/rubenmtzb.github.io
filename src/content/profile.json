@@ -7,7 +7,7 @@
     "jobTitle": "Software Engineer",
     "positioning": "Full-Stack Developer",
     "locality": "Barcelona",
-    "region": "Cataluña",
+    "region": "Catalonia",
     "country": "ES",
     "email": "rmartbernabe@gmail.com",
     "bioShort": "Full-Stack Developer with solid experience in the Java ecosystem, turning complex problems into efficient, scalable and robust software.",
@@ -94,13 +94,13 @@
     "lang": "es",
     "name": "Rubén Martínez Bernabe",
     "jobTitle": "Ingeniero de Software",
-    "positioning": "Desarrollador Full-Stack",
+    "positioning": "Desarrollador de software integral",
     "locality": "Barcelona",
     "region": "Cataluña",
     "country": "ES",
     "email": "rmartbernabe@gmail.com",
-    "bioShort": "Desarrollador Full-Stack con sólida experiencia en el ecosistema Java, transformando problemas complejos en software eficiente, escalable y robusto.",
-    "bioLong": "Desarrollador Full-Stack con sólida experiencia en el ecosistema Java. Me enfoco en transformar problemas complejos en soluciones eficientes, escalables y robustas para proyectos de gran envergadura. Construyo servicios backend con Spring Boot e interfaces interactivas con React, con historial en diseño de APIs REST, procesamiento batch y desarrollo sobre portales Liferay. Mi objetivo es aportar valor mediante código limpio y alto rendimiento.",
+    "bioShort": "Desarrollador de software integral con sólida experiencia en el ecosistema Java, transformando problemas complejos en software eficiente, escalable y robusto.",
+    "bioLong": "Desarrollador de software integral con sólida experiencia en el ecosistema Java. Me enfoco en transformar problemas complejos en soluciones eficientes, escalables y robustas para proyectos de gran envergadura. Construyo servicios backend con Spring Boot e interfaces interactivas con React, con historial en diseño de APIs REST, procesamiento por lotes y desarrollo sobre portales Liferay. Mi objetivo es aportar valor mediante código limpio y alto rendimiento.",
     "socials": [
       {
         "label": "LinkedIn",
@@ -118,13 +118,13 @@
       "company": "Egarsat",
       "location": "Barcelona, España",
       "passion": [
-        "Clean Code",
-        "System Design",
+        "Código limpio",
+        "Diseño de sistemas",
         "AI/ML"
       ]
     },
     "contactHeadline": "¿Tienes un proyecto interesante?",
-    "contactSubheadline": "Estoy abierto a conversaciones sobre proyectos ambiciosos de backend, full-stack o investigación.",
+    "contactSubheadline": "Estoy abierto a conversaciones sobre proyectos ambiciosos de backend, desarrollo integral o investigación.",
     "languages": [
       {
         "name": "Español",
@@ -143,16 +143,16 @@
       "availability": "Disponible para oportunidades remotas, híbridas o presenciales",
       "referencesNote": "Referencias disponibles bajo petición.",
       "summaryTitle": "Resumen profesional",
-      "summaryKicker": "Una visión clara para recruiters que escanean el CV en segundos.",
-      "summaryLead": "Desarrollador Full-Stack con {years} de experiencia empresarial entregando software en backend, frontend y capas de plataforma.",
-      "summaryBody": "Construyo productos digitales fiables de extremo a extremo: desde APIs REST y procesos batch hasta interfaces con React, portales Liferay y despliegues listos para producción. Mi perfil combina entrega técnica en Egarsat, liderazgo de equipos en entornos exigentes, estudios actuales de Ingeniería Informática en la UOC y colaboración investigadora en un portal publicado sobre mutaciones de SARS-CoV-2. Actualmente sigo profundizando en DevOps, IA/LLMs y tecnología blockchain.",
+      "summaryKicker": "Una visión clara para responsables de selección que revisan el CV en segundos.",
+      "summaryLead": "Desarrollador de software integral con {years} de experiencia empresarial entregando software en backend, frontend y capas de plataforma.",
+      "summaryBody": "Construyo productos digitales fiables de extremo a extremo: desde APIs REST y procesos por lotes hasta interfaces con React, portales Liferay y despliegues listos para producción. Mi perfil combina entrega técnica en Egarsat, liderazgo de equipos en entornos exigentes, estudios actuales de Ingeniería Informática en la UOC y colaboración investigadora en un portal publicado sobre mutaciones de SARS-CoV-2. Actualmente sigo profundizando en DevOps, IA/LLMs y tecnología blockchain.",
       "metrics": [
         {
           "title": "Entrega empresarial",
-          "description": "Desarrollando software en producción desde hace {years}, con ownership de backend, frontend y portales."
+          "description": "Desarrollando software en producción desde hace {years}, con responsabilidad integral sobre backend, frontend y portales."
         },
         {
-          "title": "Stack principal",
+          "title": "Tecnologías principales",
           "description": "Java, Spring Boot, React, TypeScript, Liferay, Docker, MySQL y APIs REST."
         },
         {
@@ -166,11 +166,11 @@
           "description": "Desarrollando mejor criterio sobre herramientas y flujos de trabajo con IA moderna."
         },
         {
-          "title": "Blockchain y Smart Contracts",
+          "title": "Blockchain y contratos inteligentes",
           "description": "Explorando sistemas descentralizados, protocolos y aplicaciones prácticas."
         },
         {
-          "title": "System Design y Clean Architecture",
+          "title": "Diseño de sistemas y arquitectura limpia",
           "description": "Diseñando software resiliente que escala con el producto y el equipo."
         }
       ]

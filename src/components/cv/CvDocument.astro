@@ -19,6 +19,7 @@ import {
 } from '../../lib/content'
 import { STACK_GROUPS } from '../../site.config'
 import { t, type Lang, type UiKey } from '../../i18n/ui'
+import { localizedTerm } from '../../i18n/terms'
 
 interface Props { lang: Lang }
 const { lang } = Astro.props
@@ -187,7 +188,7 @@ const groups = STACK_GROUPS.map((g) => ({
                 {tags.length > 0 && (
                   <p class="mt-2.5 text-xs text-dim">
                     <span class="font-semibold">{t(lang, 'cv.technologies')}: </span>
-                    {tags.join(', ')}
+                    {tags.map((tag) => localizedTerm(tag, lang)).join(', ')}
                   </p>
                 )}
               </li>
@@ -235,7 +236,10 @@ const groups = STACK_GROUPS.map((g) => ({
               <dt class="w-48 shrink-0 text-sm font-semibold text-green-200">{g.label}</dt>
               <dd class="text-sm leading-6 text-slate-300/90">
                 {g.items
-                  .map((s) => (s.tier === 'actual' ? s.name : `${s.name} (${t(lang, `about.tier.${s.tier}` as UiKey)})`))
+                  .map((s) => {
+                    const name = localizedTerm(s.name, lang)
+                    return s.tier === 'actual' ? name : `${name} (${t(lang, `about.tier.${s.tier}` as UiKey)})`
+                  })
                   .join(', ')}
               </dd>
             </div>

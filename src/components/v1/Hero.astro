@@ -114,7 +114,7 @@ const ICONS = { LinkedIn: 'linkedin', GitHub: 'github' } as const
       <li>
         <a
           href={`mailto:${profile.email}`}
-          aria-label="Email"
+          aria-label={t(lang, 'contact.email')}
           class="flex h-12 w-12 items-center justify-center rounded-full border border-green-500/20 bg-black/40 text-green-300 transition hover:-translate-y-1 hover:border-green-300/40 hover:bg-green-500/10 hover:text-green-100"
         >
           <Icon name="mail" class="h-5 w-5" />

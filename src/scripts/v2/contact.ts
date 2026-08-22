@@ -2,14 +2,14 @@
  * Las tres capas del bloque de contacto: copiar el email al portapapeles, el
  * reloj de Barcelona y la señal que se escribe sola al entrar en pantalla.
  */
-import { reduce } from './dom'
+import { reduce, say } from './dom'
 
 export function initMail() {
   const btn = document.getElementById('copy-mail') as HTMLButtonElement | null
   if (!btn) return
 
-  const idleLabel = btn.dataset.label ?? 'Copiar email'
-  const doneLabel = btn.dataset.done ?? '¡Copiado! ✓'
+  const idleLabel = btn.dataset.label ?? say('Copiar correo', 'Copy email')
+  const doneLabel = btn.dataset.done ?? say('¡Copiado! ✓', 'Copied! ✓')
   const CONFIRM_CLASSES = ['border-[color:var(--cyan)]', 'text-[color:var(--cyan)]', 'shadow-[0_0_15px_rgba(111,227,255,0.35)]']
   const CONFIRM_MS = 2400
 
@@ -76,7 +76,7 @@ export function initClock() {
     zone = at({ timeZoneName: 'short' })        // CET en invierno, CEST en verano
     utcOffset = at({ timeZoneName: 'shortOffset' }) // GMT+1 / GMT+2
   } catch {
-    clock.textContent = 'Barcelona, Spain'
+    clock.textContent = say('Barcelona, España', 'Barcelona, Spain')
     return
   }
 

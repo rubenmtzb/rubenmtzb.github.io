@@ -7,7 +7,7 @@
     "status": "complete",
     "summary": {
       "en": "65% · Gasket mount · Wired hotswap",
-      "es": "65% · Montaje gasket · Hotswap por cable"
+      "es": "65% · Montaje con juntas · Zócalos intercambiables por cable"
     },
     "photos": [
       {
@@ -18,7 +18,7 @@
         },
         "alt": {
           "en": "Three-quarter view of the assembled Neo65 with a navy case, dark keycaps, yellow legends and blue novelty icons.",
-          "es": "Vista en tres cuartos del Neo65 montado, con chasis azul marino, keycaps oscuras, leyendas amarillas e iconos novelty azules."
+          "es": "Vista en tres cuartos del Neo65 montado, con chasis azul marino, teclas oscuras, leyendas amarillas e iconos decorativos azules."
         }
       },
       {
@@ -38,11 +38,11 @@
         "id": "keycaps",
         "label": {
           "en": "KEYCAPS",
-          "es": "KEYCAPS"
+          "es": "TECLAS"
         },
         "spec": {
           "en": "PBTfans Frontier · doubleshot PBT, yellow legends",
-          "es": "PBTfans Frontier · PBT doubleshot, leyendas amarillas"
+          "es": "PBTfans Frontier · PBT de doble inyección, leyendas amarillas"
         },
         "color": "#464a4e",
         "z": 46,
@@ -56,7 +56,7 @@
         "id": "switches",
         "label": {
           "en": "SWITCHES",
-          "es": "SWITCHES"
+          "es": "INTERRUPTORES"
         },
         "spec": {
           "en": "Gazzew Boba U4 · silent tactile, lubed",
@@ -92,7 +92,7 @@
         },
         "spec": {
           "en": "Hotswap · wired USB-C, non-flex cut",
-          "es": "Hotswap · USB-C por cable, sin flex cuts"
+          "es": "Intercambiable en caliente · USB-C por cable, sin cortes de flexión"
         },
         "color": "#e6eaef",
         "z": 11,
@@ -102,11 +102,11 @@
         "id": "foam",
         "label": {
           "en": "FOAM",
-          "es": "FOAM"
+          "es": "ESPUMA"
         },
         "spec": {
           "en": "Poron · case, plate and PCB",
-          "es": "Poron · en case, placa y PCB"
+          "es": "Poron · en carcasa, placa y PCB"
         },
         "color": "#1b1e23",
         "z": 3,
@@ -116,7 +116,7 @@
         "id": "case",
         "label": {
           "en": "CASE",
-          "es": "CASE"
+          "es": "CARCASA"
         },
         "spec": {
           "en": "CNC aluminium · navy anodised",
@@ -199,7 +199,7 @@
       {
         "label": {
           "en": "Switches",
-          "es": "Switches"
+          "es": "Interruptores"
         },
         "value": {
           "en": "Gazzew Boba U4",
@@ -209,7 +209,7 @@
       {
         "label": {
           "en": "Keycaps",
-          "es": "Keycaps"
+          "es": "Teclas"
         },
         "value": {
           "en": "PBTfans Frontier",
@@ -255,8 +255,8 @@
           "The quietest of the three, and that is no accident: it was built for exactly that."
         ],
         "es": [
-          "Este lo monté para la oficina: switches silenciosos para que los compañeros no me maten por el ruido.",
-          "Boba U4 silenciosos y espuma en el case, la placa y la PCB. Se nota la tecla; no se oye.",
+          "Este lo monté para la oficina: interruptores silenciosos para que los compañeros no me maten por el ruido.",
+          "Boba U4 silenciosos y espuma en la carcasa, la placa y la PCB. Se nota la tecla; no se oye.",
           "Es táctil, pero sin el clack. Puedes escribir a las ocho de la mañana sin despertar a nadie.",
           "El más callado de los tres, y no es casualidad: estaba pensado para eso desde el primer día."
         ]
@@ -283,7 +283,7 @@
         },
         "alt": {
           "en": "Three-quarter view of the assembled white HHKB Professional Hybrid Type-S with mint and white keycaps on a dark textured surface.",
-          "es": "Vista en tres cuartos del HHKB Professional Hybrid Type-S blanco montado, con keycaps verde menta y blancas sobre una superficie oscura texturizada."
+          "es": "Vista en tres cuartos del HHKB Professional Hybrid Type-S blanco montado, con teclas verde menta y blancas sobre una superficie oscura texturizada."
         }
       }
     ],
@@ -292,7 +292,7 @@
         "id": "keycaps",
         "label": {
           "en": "KEYCAPS",
-          "es": "KEYCAPS"
+          "es": "TECLAS"
         },
         "spec": {
           "en": "PFU PBT · mixed Snow + Wasabi colorways",
@@ -310,11 +310,11 @@
         "id": "sliders",
         "label": {
           "en": "TYPE-S SLIDERS",
-          "es": "SLIDERS TYPE-S"
+          "es": "DESLIZADORES TYPE-S"
         },
         "spec": {
           "en": "Factory-silenced Topre sliders · rails hand-lubed",
-          "es": "Sliders Topre silenciados de fábrica · guías lubricadas a mano"
+          "es": "Deslizadores Topre silenciados de fábrica · guías lubricadas a mano"
         },
         "color": "#22272b",
         "z": 31,
@@ -332,7 +332,7 @@
         },
         "spec": {
           "en": "Integrated top frame · guides and retains every slider",
-          "es": "Marco superior integrado · guía y retiene cada slider"
+          "es": "Marco superior integrado · guía y retiene cada deslizador"
         },
         "color": "#ebe9e2",
         "z": 20,
@@ -386,7 +386,7 @@
         },
         "spec": {
           "en": "Green FR4 · sensing pads, USB-C and wireless controller",
-          "es": "FR4 verde · pads sensores, USB-C y controlador inalámbrico"
+          "es": "FR4 verde · contactos sensores, USB-C y controlador inalámbrico"
         },
         "color": "#2f6b46",
         "z": 0,
@@ -429,7 +429,7 @@
       {
         "label": {
           "en": "Switches",
-          "es": "Switches"
+          "es": "Interruptores"
         },
         "value": {
           "en": "Topre EC Type-S · uniform 45g",
@@ -439,7 +439,7 @@
       {
         "label": {
           "en": "Keycaps",
-          "es": "Keycaps"
+          "es": "Teclas"
         },
         "value": {
           "en": "PFU PBT · Snow + Wasabi mix",
@@ -463,7 +463,7 @@
         },
         "value": {
           "en": "Slider rails hand-lubed",
-          "es": "Guías de sliders lubricadas a mano"
+          "es": "Guías de deslizadores lubricadas a mano"
         }
       },
       {
@@ -543,7 +543,7 @@
         },
         "alt": {
           "en": "Three-quarter view of the assembled white EVO75 with white, grey and red keycaps on a black textured surface.",
-          "es": "Vista en tres cuartos del EVO75 blanco montado, con keycaps blancas, grises y rojas sobre una superficie negra texturizada."
+          "es": "Vista en tres cuartos del EVO75 blanco montado, con teclas blancas, grises y rojas sobre una superficie negra texturizada."
         }
       },
       {
@@ -563,11 +563,11 @@
         "id": "keycaps",
         "label": {
           "en": "KEYCAPS",
-          "es": "KEYCAPS"
+          "es": "TECLAS"
         },
         "spec": {
           "en": "1.7 mm dye-sub PBT · white, grey and red factory set",
-          "es": "PBT dye-sub de 1,7 mm · set de fábrica blanco, gris y rojo"
+          "es": "PBT sublimado de 1,7 mm · juego de fábrica blanco, gris y rojo"
         },
         "color": "#e7e6e2",
         "z": 50,
@@ -599,7 +599,7 @@
         "id": "switches",
         "label": {
           "en": "LINEAR SWITCHES",
-          "es": "SWITCHES LINEALES"
+          "es": "INTERRUPTORES LINEALES"
         },
         "spec": {
           "en": "Keygeek Neo Rye · 36g linear, factory lubed",
@@ -639,7 +639,7 @@
         },
         "spec": {
           "en": "Leaf-spring supports · silicone cushions and gasket strips",
-          "es": "Soportes leaf-spring · apoyos de silicona y tiras gasket"
+          "es": "Soportes de resorte laminar · apoyos de silicona y tiras de junta"
         },
         "color": "#d84c45",
         "z": 15,
@@ -657,7 +657,7 @@
         },
         "spec": {
           "en": "ANSI hotswap · per-key RGB · VIA · 1000Hz wired/2.4G",
-          "es": "ANSI hotswap · RGB por tecla · VIA · 1000Hz por cable/2.4G"
+          "es": "ANSI intercambiable en caliente · RGB por tecla · VIA · 1000Hz por cable/2.4G"
         },
         "color": "#315f43",
         "z": 9,
@@ -758,7 +758,7 @@
         },
         "value": {
           "en": "Butterfly Leaf Spring · gasket + silicone",
-          "es": "Butterfly Leaf Spring · gasket + silicona"
+          "es": "Resortes laminares Butterfly · juntas + silicona"
         }
       },
       {
@@ -774,7 +774,7 @@
       {
         "label": {
           "en": "Switches / plate",
-          "es": "Switches / placa"
+          "es": "Interruptores / placa"
         },
         "value": {
           "en": "Keygeek Neo Rye 36g + polypropylene",
@@ -788,7 +788,7 @@
         },
         "value": {
           "en": "Tri-mode ANSI hotswap · per-key RGB",
-          "es": "ANSI hotswap trimodo · RGB por tecla"
+          "es": "ANSI intercambiable en caliente y trimodo · RGB por tecla"
         }
       },
       {
@@ -804,11 +804,11 @@
       {
         "label": {
           "en": "Polling",
-          "es": "Polling"
+          "es": "Frecuencia de sondeo"
         },
         "value": {
           "en": "1000Hz wired/2.4G · 125Hz Bluetooth",
-          "es": "1000Hz cable/2.4G · 125Hz Bluetooth"
+          "es": "1000Hz por cable/2.4G · 125Hz por Bluetooth"
         }
       },
       {
@@ -824,11 +824,11 @@
       {
         "label": {
           "en": "Keycaps",
-          "es": "Keycaps"
+          "es": "Teclas"
         },
         "value": {
           "en": "1.7 mm dye-sub PBT",
-          "es": "PBT dye-sub de 1,7 mm"
+          "es": "PBT sublimado de 1,7 mm"
         }
       },
       {
@@ -859,7 +859,7 @@
       "level": -25.6,
       "character": {
         "en": "Fullest of the three · dense low end from the silicone pack",
-        "es": "El más lleno de los tres · graves densos del pack de silicona"
+        "es": "El más lleno de los tres · graves densos del paquete de silicona"
       },
       "peaks": [0, 0, 0, 0, 0, 66, 0, 0, 0, 0, 65, 15, 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 59, 48, 63, 67, 32, 31, 71, 52, 69, 61, 28, 48, 72, 56, 59, 33, 3, 36, 52, 47, 25, 42, 72, 47, 72, 67, 58, 65, 42, 59, 55, 60, 65, 7, 0, 66, 71, 62, 47, 60, 58, 59, 70, 46, 71, 63, 69, 50, 63, 62, 61, 71, 52, 15, 69, 50, 72, 57, 64, 38, 61, 32, 71, 54, 71, 61, 64, 49, 70, 76, 48, 60, 68, 66, 62, 65, 45, 69, 71, 36, 6, 0, 56, 52, 23, 63, 45, 8, 30, 43, 47, 42, 69, 43, 53, 69, 73, 33, 53, 3, 61, 42, 70, 65, 67, 25, 60, 66, 71, 61, 32, 25, 73, 62, 57, 71, 54, 70, 60, 29, 62, 65, 58, 71, 55, 39, 47, 55, 54, 65, 41, 33, 0, 0],
       "quips": {
@@ -888,7 +888,7 @@
     "layout": "corne",
     "summary": {
       "en": "42-key split · Integrated RP2040 · Wired TRRS · Low-profile case",
-      "es": "Split de 42 teclas · RP2040 integrado · TRRS cableado · Case de perfil bajo"
+      "es": "Dividido, 42 teclas · RP2040 integrado · TRRS cableado · Carcasa de perfil bajo"
     },
     "photos": [
       {
@@ -899,7 +899,7 @@
         },
         "alt": {
           "en": "Top view of a wired Corne V4 split keyboard with two black low-profile halves, 42 blank white keycaps and a central TRRS cable.",
-          "es": "Vista superior de un Corne V4 split cableado con dos mitades negras de perfil bajo, 42 keycaps blancas sin leyendas y cable TRRS central."
+          "es": "Vista superior de un Corne V4 dividido y cableado, con dos mitades negras de perfil bajo, 42 teclas blancas sin leyendas y cable TRRS central."
         }
       }
     ],
@@ -908,11 +908,11 @@
         "id": "keycaps",
         "label": {
           "en": "BLANK KEYCAPS",
-          "es": "KEYCAPS SIN LEYENDAS"
+          "es": "TECLAS SIN LEYENDAS"
         },
         "spec": {
           "en": "42 sculpted white caps · material and profile unrecorded",
-          "es": "42 keycaps blancas esculpidas · material y perfil no registrados"
+          "es": "42 teclas blancas esculpidas · material y perfil no registrados"
         },
         "color": "#efeee9",
         "z": 48,
@@ -922,11 +922,11 @@
         "id": "switches",
         "label": {
           "en": "MX SWITCHES",
-          "es": "SWITCHES MX"
+          "es": "INTERRUPTORES MX"
         },
         "spec": {
           "en": "42 Cherry MX-compatible switches · fitted model not visible",
-          "es": "42 switches compatibles con Cherry MX · modelo montado no visible"
+          "es": "42 interruptores compatibles con Cherry MX · modelo montado no visible"
         },
         "color": "#d7d9dc",
         "z": 29,
@@ -944,7 +944,7 @@
         },
         "spec": {
           "en": "Two black FR4 switch plates · official 1.6mm specification",
-          "es": "Dos switch plates FR4 negras · especificación oficial de 1,6 mm"
+          "es": "Dos placas FR4 negras para interruptores · especificación oficial de 1,6 mm"
         },
         "color": "#20252b",
         "z": 19,
@@ -958,11 +958,11 @@
         "id": "pcb",
         "label": {
           "en": "SPLIT PCBS",
-          "es": "PCBS DIVIDIDAS"
+          "es": "PCB DIVIDIDAS"
         },
         "spec": {
           "en": "Corne Cherry V4.x hotswap · RP2040, 16MB flash and RGB per half",
-          "es": "Corne Cherry V4.x hotswap · RP2040, flash de 16MB y RGB por mitad"
+          "es": "Corne Cherry V4.x intercambiable en caliente · RP2040, memoria flash de 16MB y RGB por mitad"
         },
         "color": "#26313a",
         "z": 9,
@@ -1012,7 +1012,7 @@
         "id": "bottom-case",
         "label": {
           "en": "LOW-PROFILE CASES",
-          "es": "CASES DE PERFIL BAJO"
+          "es": "CARCASAS DE PERFIL BAJO"
         },
         "spec": {
           "en": "Two glossy black housings · photographed material unrecorded",
@@ -1049,7 +1049,7 @@
         },
         "value": {
           "en": "Split 3×6 + 3 · 42 keys",
-          "es": "Split 3×6 + 3 · 42 teclas"
+          "es": "Dividida 3×6 + 3 · 42 teclas"
         }
       },
       {
@@ -1059,7 +1059,7 @@
         },
         "value": {
           "en": "Corne Cherry V4.x hotswap",
-          "es": "Corne Cherry V4.x hotswap"
+          "es": "Corne Cherry V4.x intercambiable en caliente"
         }
       },
       {
@@ -1075,7 +1075,7 @@
       {
         "label": {
           "en": "Switches",
-          "es": "Switches"
+          "es": "Interruptores"
         },
         "value": {
           "en": "MX-compatible · installed model unrecorded",
@@ -1089,7 +1089,7 @@
         },
         "value": {
           "en": "Black low-profile housings · M2 hardware",
-          "es": "Cases negros de perfil bajo · tornillería M2"
+          "es": "Carcasas negras de perfil bajo · tornillería M2"
         }
       },
       {
@@ -1109,7 +1109,7 @@
         },
         "value": {
           "en": "Not native · no batteries in this build",
-          "es": "No nativo · esta build no lleva baterías"
+          "es": "No nativo · este montaje no lleva baterías"
         }
       },
       {
@@ -1145,7 +1145,7 @@
       {
         "label": {
           "en": "Encoders",
-          "es": "Encoders"
+          "es": "Codificadores"
         },
         "value": {
           "en": "None fitted · PCB supports up to four",

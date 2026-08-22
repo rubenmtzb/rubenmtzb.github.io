@@ -205,7 +205,7 @@ const stack = defineCollection({
  * un fichero por fotografía, no ficheros paralelos por idioma — la imagen
  * es la misma y solo cambian alt y caption.
  *
- * `alt` es obligatorio. `location` se guarda a nivel de ciudad: la
+ * `alt` es obligatorio. `location` se localiza y se guarda a nivel de ciudad: la
  * coordenada nunca entra, ni en el texto ni en el fichero.
  */
 const personal = defineCollection({
@@ -218,7 +218,7 @@ const personal = defineCollection({
       image: image(),
       alt: z.object({ en: z.string().min(10), es: z.string().min(10) }),
       caption: z.object({ en: z.string(), es: z.string() }).optional(),
-      location: z.string().optional(),
+      location: z.object({ en: z.string().min(1), es: z.string().min(1) }).optional(),
       date: z.string().optional(),
       featured: z.boolean().default(false),
     }),

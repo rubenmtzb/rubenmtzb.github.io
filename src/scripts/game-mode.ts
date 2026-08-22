@@ -76,13 +76,13 @@ type ComicBubble = {
 const LEVELS: LevelConfig[] = [
   {
     level: 1,
-    title: { es: 'NIVEL 1: Hunter Exam', en: 'LEVEL 1: Hunter Exam' },
+    title: { es: 'NIVEL 1: Examen de Cazador', en: 'LEVEL 1: Hunter Exam' },
     sub: { es: 'Supera las pruebas iniciales en Identidad y Experiencia.', en: 'Pass the initial trials across Identity & Experience.' },
     targets: [
       { selector: '#identity', fallbackRatio: { x: 0.25, y: 0.05 }, name: { es: 'Identidad', en: 'Identity' } },
-      { selector: '.hero-tech-chip', fallbackRatio: { x: 0.68, y: 0.12 }, name: { es: 'Tech Stack', en: 'Tech Stack' } },
+      { selector: '.hero-tech-chip', fallbackRatio: { x: 0.68, y: 0.12 }, name: { es: 'Tecnologías', en: 'Tech Stack' } },
       { selector: '#work .job-panel', fallbackRatio: { x: 0.35, y: 0.26 }, name: { es: 'Experiencia Profesional', en: 'Work Experience' } },
-      { selector: '#project-carousel', fallbackRatio: { x: 0.72, y: 0.32 }, name: { es: 'Showcase Técnico', en: 'Technical Showcase' } },
+      { selector: '#project-carousel', fallbackRatio: { x: 0.72, y: 0.32 }, name: { es: 'Muestra técnica', en: 'Technical Showcase' } },
     ],
   },
   {
@@ -93,17 +93,17 @@ const LEVELS: LevelConfig[] = [
       { selector: '#work', fallbackRatio: { x: 0.25, y: 0.22 }, name: { es: 'Entrada Greed Island', en: 'Greed Island Entry' } },
       { selector: '#project-deck .project-grid-card:nth-of-type(1)', fallbackRatio: { x: 0.30, y: 0.40 }, name: { es: 'Proyecto Destacado (Izq)', en: 'Featured Project (Left)' } },
       { selector: '#project-deck .project-grid-card:nth-of-type(2)', fallbackRatio: { x: 0.70, y: 0.46 }, name: { es: 'Proyecto Destacado (Der)', en: 'Featured Project (Right)' } },
-      { selector: '#archive .moment-card:nth-of-type(1)', fallbackRatio: { x: 0.48, y: 0.65 }, name: { es: 'Outside the Code', en: 'Outside the Code' } },
+      { selector: '#archive .moment-card:nth-of-type(1)', fallbackRatio: { x: 0.48, y: 0.65 }, name: { es: 'Más allá del código', en: 'Outside the Code' } },
     ],
   },
   {
     level: 3,
-    title: { es: 'NIVEL 3: Godspeed Master', en: 'LEVEL 3: Godspeed Master' },
+    title: { es: 'NIVEL 3: Maestro Godspeed', en: 'LEVEL 3: Godspeed Master' },
     sub: { es: 'Recorrido completo hasta el final del portfolio desatando el aura eléctrica.', en: 'Full traversal all the way to Contact with electric aura.' },
     targets: [
       { selector: '#identity', fallbackRatio: { x: 0.25, y: 0.08 }, name: { es: 'Arranque Godspeed', en: 'Godspeed Start' } },
-      { selector: '#project-carousel', fallbackRatio: { x: 0.75, y: 0.38 }, name: { es: 'Showcase de Proyectos', en: 'Projects Showcase' } },
-      { selector: '.profile-workbench', fallbackRatio: { x: 0.30, y: 0.52 }, name: { es: 'Educación & Skills', en: 'Education & Skills' } },
+      { selector: '#project-carousel', fallbackRatio: { x: 0.75, y: 0.38 }, name: { es: 'Muestra de proyectos', en: 'Projects Showcase' } },
+      { selector: '.profile-workbench', fallbackRatio: { x: 0.30, y: 0.52 }, name: { es: 'Educación y habilidades', en: 'Education & Skills' } },
       { selector: '#archive', fallbackRatio: { x: 0.70, y: 0.68 }, name: { es: 'Archivo Visual', en: 'Visual Archive' } },
       { selector: '#contact .contact-signal', fallbackRatio: { x: 0.50, y: 0.88 }, name: { es: 'Meta Final & Contacto ⚡', en: 'Final Goal & Contact ⚡' } },
     ],
@@ -611,7 +611,7 @@ export function startGameMode(onExit: () => void) {
           <span class="text-[0.62rem] opacity-80">${isGodspeedActive ? '⚡' : godspeedReady ? '[Q / F]' : `(${remainingCd}s)`}</span>
         </button>
 
-        <button type="button" class="gm-exit-btn" id="gm-exit" aria-label="Exit Game">✕ ${isSpanish ? 'Salir' : 'Exit'}</button>
+        <button type="button" class="gm-exit-btn" id="gm-exit" aria-label="${isSpanish ? 'Salir del juego' : 'Exit game'}">✕ ${isSpanish ? 'Salir' : 'Exit'}</button>
       </div>
 
       ${status === 'level_clear' ? `
@@ -644,7 +644,7 @@ export function startGameMode(onExit: () => void) {
       ${status === 'won' ? `
         <div class="gm-modal-overlay">
           <div class="gm-modal gm-modal-win">
-            <h3 class="gm-modal-title text-[color:var(--cyan)]">⚡ ${isSpanish ? '¡Godspeed Master Alcanzado!' : 'Godspeed Master Achieved!'}</h3>
+            <h3 class="gm-modal-title text-[color:var(--cyan)]">⚡ ${isSpanish ? '¡Maestría Godspeed alcanzada!' : 'Godspeed Master Achieved!'}</h3>
             <p class="gm-modal-sub">${isSpanish ? '¡Has completado todos los 3 niveles del portfolio con Killua!' : 'You mastered all 3 portfolio levels with Killua!'}</p>
             <div class="gm-modal-actions">
               <button type="button" id="gm-play-again" class="btn btn-primary text-sm">${isSpanish ? 'Jugar desde el inicio' : 'Play from start'}</button>
@@ -661,7 +661,7 @@ export function startGameMode(onExit: () => void) {
           <button type="button" id="gm-btn-down" class="gm-touch-btn" aria-label="Down">▼</button>
         </div>
         <div class="flex gap-2">
-          <button type="button" id="gm-btn-godspeed" class="gm-touch-btn !bg-[color:var(--blue-bright)]/25 !border-[color:var(--cyan)] text-[color:var(--cyan)]" aria-label="Godspeed Aura">⚡</button>
+          <button type="button" id="gm-btn-godspeed" class="gm-touch-btn !bg-[color:var(--blue-bright)]/25 !border-[color:var(--cyan)] text-[color:var(--cyan)]" aria-label="${isSpanish ? 'Aura Godspeed' : 'Godspeed aura'}">⚡</button>
           <button type="button" id="gm-btn-jump" class="gm-touch-btn gm-touch-jump" aria-label="Jump">▲ ${isSpanish ? 'Saltar' : 'Jump'}</button>
         </div>
       </div>
@@ -1403,7 +1403,7 @@ export function startGameMode(onExit: () => void) {
             say(isSpanish ? '¡Nivel completado! ¡Pan comido! ⚡' : 'Level cleared! Piece of cake! ⚡', 3500, 'success')
           } else {
             status = 'won'
-            say(isSpanish ? '¡Godspeed Master Alcanzado! ⚡' : 'Godspeed Master Achieved! ⚡', 4000, 'godspeed')
+            say(isSpanish ? '¡Maestría Godspeed alcanzada! ⚡' : 'Godspeed Master Achieved! ⚡', 4000, 'godspeed')
           }
           renderUI()
         }

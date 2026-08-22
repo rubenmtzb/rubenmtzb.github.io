@@ -9,8 +9,13 @@
  */
 import { say } from '../dom'
 
-/** Frases del test. Van en inglés a propósito: es el idioma que se teclea. */
-const QUOTES = [
+/*
+ * Las dos colecciones mantienen la misma dificultad aproximada y solo usan
+ * caracteres disponibles en el HHKB mostrado. Así una portada en español
+ * propone frases en español sin obligar a cambiar la distribución física ni
+ * las reglas de comparación de cada pulsación.
+ */
+const QUOTES_EN = [
   "lightning never strikes twice unless godspeed is activated",
   "assassination techniques require absolute silence and total aura control",
   "distributed systems scale when state is minimized and throughput is optimized",
@@ -21,6 +26,17 @@ const QUOTES = [
   "always keep your code clean and your blade razor sharp",
 ]
 
+const QUOTES_ES = [
+  'los rayos no caen dos veces salvo cuando godspeed esta activo',
+  'las tecnicas de asesinato exigen silencio absoluto y control total del aura',
+  'los sistemas distribuidos escalan cuando el estado se reduce y el flujo se optimiza',
+  'los interruptores mecanicos con lubricante krytox dan el sonido mas puro',
+  'la licencia de cazador llega a quien domina mente y velocidad de reaccion',
+  'las arquitecturas funcionales tipadas reducen los fallos en ejecucion a cero',
+  'nadie reacciona mas rapido que las senales electricas del cerebro',
+  'manten tu codigo limpio y tu hoja siempre afilada',
+]
+
 /** Duración de una ronda, en segundos. */
 const ROUND_SECONDS = 30
 
@@ -28,6 +44,7 @@ const ROUND_SECONDS = 30
 const GODSPEED_WPM = 85
 
 export function createSpeedTrial({ announce }: { announce: (text: string) => void }) {
+  const quotes = say(QUOTES_ES, QUOTES_EN)
   const wordsEl = document.getElementById('monkey-words')
   const box = document.getElementById('monkey-box')
   const restartBtn = document.getElementById('monkey-restart-btn')
@@ -133,8 +150,8 @@ export function createSpeedTrial({ announce }: { announce: (text: string) => voi
 
   /** Carga otra frase y devuelve el marcador a cero. */
   const restart = () => {
-    const others = QUOTES.filter((quote) => quote !== currentQuote)
-    currentQuote = others[Math.floor(Math.random() * others.length)] || QUOTES[0]
+    const others = quotes.filter((quote) => quote !== currentQuote)
+    currentQuote = others[Math.floor(Math.random() * others.length)] || quotes[0]
     targetChars = currentQuote.split('')
     charIndex = 0
     correctCount = 0

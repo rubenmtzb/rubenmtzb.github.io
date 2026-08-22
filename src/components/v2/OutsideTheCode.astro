@@ -21,11 +21,11 @@ const photos = (await getCollection('personal'))
  * antes: el test de mecanografía, el sonido y el click-to-type no cambian.
  */
 const ROWS: Array<Array<[string, string, number?, string?]>> = [
-  [['`','Backquote',1,'esc'],['1','Digit1'],['2','Digit2'],['3','Digit3'],['4','Digit4'],['5','Digit5'],['6','Digit6'],['7','Digit7'],['8','Digit8'],['9','Digit9'],['0','Digit0'],['-','Minus'],['=','Equal'],['⌫','Backspace',1.6,'delete']],
+  [['`','Backquote',1,'esc'],['1','Digit1'],['2','Digit2'],['3','Digit3'],['4','Digit4'],['5','Digit5'],['6','Digit6'],['7','Digit7'],['8','Digit8'],['9','Digit9'],['0','Digit0'],['-','Minus'],['=','Equal'],['⌫','Backspace',1.6,lang === 'es' ? 'supr' : 'delete']],
   [['⇥','Tab',1.5,'tab'],['Q','KeyQ'],['W','KeyW'],['E','KeyE'],['R','KeyR'],['T','KeyT'],['Y','KeyY'],['U','KeyU'],['I','KeyI'],['O','KeyO'],['P','KeyP'],['[','BracketLeft'],[']','BracketRight'],['\\','Backslash',1.5]],
-  [['⇪','CapsLock',1.6,'control'],['A','KeyA'],['S','KeyS'],['D','KeyD'],['F','KeyF'],['G','KeyG'],['H','KeyH'],['J','KeyJ'],['K','KeyK'],['L','KeyL'],[';','Semicolon'],["'",'Quote'],['⏎','Enter',1.9,'return']],
-  [['⇧','ShiftLeft',2.1,'shift'],['Z','KeyZ'],['X','KeyX'],['C','KeyC'],['V','KeyV'],['B','KeyB'],['N','KeyN'],['M','KeyM'],[',','Comma'],['.','Period'],['/','Slash'],['⇧','ShiftRight',2.5,'shift']],
-  [['ctrl','ControlLeft',1.25],['opt','AltLeft',1.25],['cmd','MetaLeft',1.5],['','Space',6.5],['cmd','MetaRight',1.5],['opt','AltRight',1.25],['ctrl','ControlRight',1.25]],
+  [['⇪','CapsLock',1.6,'control'],['A','KeyA'],['S','KeyS'],['D','KeyD'],['F','KeyF'],['G','KeyG'],['H','KeyH'],['J','KeyJ'],['K','KeyK'],['L','KeyL'],[';','Semicolon'],["'",'Quote'],['⏎','Enter',1.9,lang === 'es' ? 'intro' : 'return']],
+  [['⇧','ShiftLeft',2.1,lang === 'es' ? 'mayús' : 'shift'],['Z','KeyZ'],['X','KeyX'],['C','KeyC'],['V','KeyV'],['B','KeyB'],['N','KeyN'],['M','KeyM'],[',','Comma'],['.','Period'],['/','Slash'],['⇧','ShiftRight',2.5,lang === 'es' ? 'mayús' : 'shift']],
+  [['ctrl','ControlLeft',1.25],[lang === 'es' ? 'opc' : 'opt','AltLeft',1.25],['cmd','MetaLeft',1.5],['','Space',6.5],['cmd','MetaRight',1.5],[lang === 'es' ? 'opc' : 'opt','AltRight',1.25],['ctrl','ControlRight',1.25]],
 ]
 
 /*
@@ -96,7 +96,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
               data-origin-y={oy}
               tabindex="0"
               role="button"
-              aria-label={`${photo.location} — ${photo.alt[lang]}`}
+              aria-label={`${photo.location?.[lang] ?? ''} — ${photo.alt[lang]}`}
             >
               <div class="moment-card-inner">
                 <!-- Cara frontal: Fotografía limpia con bordes redondeados -->
@@ -126,7 +126,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
                       </span>
                     )}
                     <h4 class="text-base sm:text-lg font-bold text-[color:var(--fg)]">
-                      {photo.location}
+                      {photo.location?.[lang]}
                     </h4>
                     {photo.caption?.[lang] && (
                       <p class="text-xs sm:text-sm text-[color:var(--fg-2)] mt-1 leading-relaxed max-w-[22ch]">
@@ -159,16 +159,16 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
         <!-- Consola de control interactiva y selector de modos -->
         <div class="kb-console-card rounded-2xl p-4 sm:p-5 shadow-2xl mt-6">
           <div class="flex items-center justify-between border-b border-[color:var(--line-soft)] pb-3 mb-4">
-            <span class="font-mono text-[0.68rem] tracking-wider text-[color:var(--cyan)] font-bold">HOBBY LOG 01 // KEYBOARDS</span>
+            <span class="font-mono text-[0.68rem] tracking-wider text-[color:var(--cyan)] font-bold">{t(lang, 'otc.consoleTitle')}</span>
             <span class="inline-flex items-center gap-1.5 font-mono text-[0.65rem] text-[color:var(--fg-3)]">
               <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              ONLINE
+              {t(lang, 'otc.online')}
             </span>
           </div>
 
           <!-- Selector de modos estilo Segmented Pill Switcher -->
           <div class="mb-4">
-            <label class="font-mono text-[0.7rem] text-[color:var(--fg-3)] uppercase tracking-wider block mb-2">{lang === 'es' ? 'Modo de interacción:' : 'Interaction mode:'}</label>
+            <label class="font-mono text-[0.7rem] text-[color:var(--fg-3)] uppercase tracking-wider block mb-2">{t(lang, 'otc.interactionMode')}</label>
             <div class="grid grid-cols-3 gap-1 rounded-xl border border-[color:var(--line)] bg-[color:var(--ink-950)] p-1" role="tablist" aria-label={t(lang, 'a11y.keyboardTabs')}>
               <button
                 type="button"
@@ -184,7 +184,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
                   </svg>
                 </i>
                 <span class="text-sm mb-0.5">⚡</span>
-                <span class="font-semibold">{lang === 'es' ? 'Speed Trial' : 'Speed Trial'}</span>
+                <span class="font-semibold">{t(lang, 'otc.speedTrial')}</span>
               </button>
               <button
                 type="button"
@@ -199,7 +199,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
                   <b></b><b></b><b></b><b></b><b></b>
                 </i>
                 <span class="text-sm mb-0.5">⌨️</span>
-                <span>{lang === 'es' ? 'Simulador' : 'Free Sim'}</span>
+                <span>{t(lang, 'otc.freeSim')}</span>
               </button>
               <button
                 type="button"
@@ -214,7 +214,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
                   <b></b><b></b><b></b><b></b>
                 </i>
                 <span class="text-sm mb-0.5">📸</span>
-                <span>{lang === 'es' ? 'Fotos Build' : 'Build Photos'}</span>
+                <span>{t(lang, 'otc.buildPhotos')}</span>
               </button>
             </div>
           </div>
@@ -222,7 +222,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
           <!-- Ajustes de hardware y sonido -->
           <div class="space-y-2.5 pt-3 border-t border-[color:var(--line-soft)]">
             <div class="flex items-center justify-between">
-              <span class="font-mono text-[0.7rem] text-[color:var(--fg-3)]">{lang === 'es' ? 'Tipo de switch:' : 'Switch profile:'}</span>
+              <span class="font-mono text-[0.7rem] text-[color:var(--fg-3)]">{t(lang, 'otc.switchProfile')}</span>
               <button
                 type="button"
                 id="kb-switch-type"
@@ -234,7 +234,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
             </div>
 
             <div class="flex items-center justify-between">
-              <span class="font-mono text-[0.7rem] text-[color:var(--fg-3)]">{lang === 'es' ? 'Efectos de audio:' : 'Audio feedback:'}</span>
+              <span class="font-mono text-[0.7rem] text-[color:var(--fg-3)]">{t(lang, 'otc.audioFeedback')}</span>
               <button
                 type="button"
                 id="kb-sound-toggle"
@@ -271,9 +271,9 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
                     ? '"¿Crees que puedes teclear más rápido que mi Godspeed? ¡A ver cuánto WPM alcanzas!"'
                     : '"You think you can type faster than my Godspeed lightning? Let\'s see your WPM!"'}
                 </p>
-                <button type="button" id="monkey-restart-btn" class="shrink-0 inline-flex items-center gap-1 rounded-full border border-[color:var(--line)] bg-[color:var(--ink-800)] px-2.5 py-1 text-[0.68rem] font-mono text-[color:var(--cyan)] hover:border-[color:var(--cyan)] transition shadow-sm" title="Reiniciar prueba">
+                <button type="button" id="monkey-restart-btn" class="shrink-0 inline-flex items-center gap-1 rounded-full border border-[color:var(--line)] bg-[color:var(--ink-800)] px-2.5 py-1 text-[0.68rem] font-mono text-[color:var(--cyan)] hover:border-[color:var(--cyan)] transition shadow-sm" title={t(lang, 'otc.restartTrial')}>
                   <span>↺</span>
-                  <span class="hidden sm:inline">{lang === 'es' ? 'Reiniciar' : 'Restart'}</span>
+                  <span class="hidden sm:inline">{t(lang, 'otc.restart')}</span>
                 </button>
               </div>
             </div>
@@ -292,8 +292,8 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
             <div class="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[color:var(--line-soft)] bg-[color:var(--ink-900)] px-3.5 py-2 text-xs font-mono">
               <div class="flex items-center gap-4">
                 <span>WPM: <strong id="kb-wpm" class="text-[color:var(--cyan)] font-bold text-sm">0</strong></span>
-                <span>{lang === 'es' ? 'Precisión' : 'Acc'}: <strong id="kb-acc" class="text-emerald-400 font-bold text-sm">100%</strong></span>
-                <span>{lang === 'es' ? 'Racha' : 'Streak'}: <strong id="kb-combo" class="text-[color:var(--blue-bright)] font-bold">x0</strong></span>
+                <span>{t(lang, 'otc.accuracy')}: <strong id="kb-acc" class="text-emerald-400 font-bold text-sm">100%</strong></span>
+                <span>{t(lang, 'otc.streak')}: <strong id="kb-combo" class="text-[color:var(--blue-bright)] font-bold">x0</strong></span>
               </div>
               <span id="kb-timer" class="text-[color:var(--fg-3)]">⏱️ 30s</span>
             </div>
@@ -304,14 +304,14 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
             <!-- Terminal de escritura libre en vivo -->
             <div id="free-sim-box" class="relative mb-4 rounded-xl border border-[color:var(--cyan)]/30 bg-[color:var(--ink-950)] p-4 sm:p-5 text-left font-mono shadow-inner cursor-text min-h-[90px]" tabindex="0" role="group" aria-label={t(lang, 'otc.sandboxBox')}>
               <div class="flex items-center justify-between border-b border-[color:var(--line-soft)] pb-2 mb-2">
-                <span class="text-[0.68rem] text-[color:var(--cyan)] font-bold tracking-wider">TERMINAL // FREE TYPING SANDBOX</span>
+                <span class="text-[0.68rem] text-[color:var(--cyan)] font-bold tracking-wider">{t(lang, 'otc.sandboxTitle')}</span>
                 <button type="button" id="free-sim-clear-btn" class="text-[0.68rem] text-[color:var(--fg-3)] hover:text-[color:var(--cyan)] transition">
-                  ↺ {lang === 'es' ? 'Limpiar pantalla' : 'Clear screen'}
+                  ↺ {t(lang, 'otc.clearScreen')}
                 </button>
               </div>
               <div id="free-sim-output" class="text-sm sm:text-base leading-relaxed tracking-wide text-[color:var(--fg)] break-words font-mono min-h-[36px]">
                 <span class="text-[color:var(--fg-3)] select-none pointer-events-none" id="free-sim-placeholder">
-                  {lang === 'es' ? 'Teclea libremente aquí para probar la acústica y el tacto del teclado...' : 'Type anything here to test keyboard acoustic sound and tactile feel...'}
+                  {t(lang, 'otc.sandboxPlaceholder')}
                 </span>
                 <span id="free-sim-text"></span>
                 <span class="inline-block w-2 h-4 bg-[color:var(--cyan)] align-middle animate-pulse ml-0.5" aria-hidden="true"></span>
@@ -321,9 +321,9 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
             <!-- Telemetría de hardware en vivo en Modo Libre -->
             <div class="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[color:var(--line-soft)] bg-[color:var(--ink-900)] px-3.5 py-2 text-xs font-mono">
               <div class="flex flex-wrap items-center gap-4">
-                <span>{lang === 'es' ? 'Pulsaciones' : 'Keystrokes'}: <strong id="kb-free-count" class="text-[color:var(--cyan)] font-bold text-sm">0</strong></span>
-                <span>{lang === 'es' ? 'Última tecla' : 'Last key'}: <strong id="kb-free-last-key" class="text-[color:var(--blue-bright)] font-bold text-sm">—</strong></span>
-                <span>{lang === 'es' ? 'Cadencia' : 'Speed'}: <strong id="kb-free-wpm" class="text-emerald-400 font-bold">0 WPM</strong></span>
+                <span>{t(lang, 'otc.keystrokes')}: <strong id="kb-free-count" class="text-[color:var(--cyan)] font-bold text-sm">0</strong></span>
+                <span>{t(lang, 'otc.lastKey')}: <strong id="kb-free-last-key" class="text-[color:var(--blue-bright)] font-bold text-sm">—</strong></span>
+                <span>{t(lang, 'otc.typingSpeed')}: <strong id="kb-free-wpm" class="text-emerald-400 font-bold">0 WPM</strong></span>
               </div>
               <span id="kb-free-sound-pill" class="text-[color:var(--fg-3)]">🔊 45g Linear</span>
             </div>
@@ -351,8 +351,8 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
           </div>
 
           <figcaption class="mt-3 flex items-center justify-between gap-4 border-t border-[color:var(--line-soft)] pt-3">
-            <span class="t-meta text-[color:var(--fg-3)]">HHKB Layout · 60%</span>
-            <span class="t-index">Linear switches · 45g</span>
+            <span class="t-meta text-[color:var(--fg-3)]">{t(lang, 'otc.keyboardLayout')}</span>
+            <span class="t-index">{t(lang, 'otc.switchesWeight')}</span>
           </figcaption>
         </div>
 

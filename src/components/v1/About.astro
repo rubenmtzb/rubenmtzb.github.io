@@ -3,6 +3,7 @@ import Section from './Section.astro'
 import { getProfile, getStackByGroup } from '../../lib/content'
 import { STACK_GROUPS } from '../../site.config'
 import { t, type Lang, type UiKey } from '../../i18n/ui'
+import { localizedTerm } from '../../i18n/terms'
 
 interface Props { lang: Lang }
 const { lang } = Astro.props
@@ -27,16 +28,16 @@ const groups = STACK_GROUPS.map((g) => ({
           <span class="h-3 w-3 rounded-full bg-red-500/80" aria-hidden="true"></span>
           <span class="h-3 w-3 rounded-full bg-yellow-500/80" aria-hidden="true"></span>
           <span class="h-3 w-3 rounded-full bg-green-500/90" aria-hidden="true"></span>
-          <span class="ml-2 text-[10px] uppercase tracking-[0.22em] text-dim sm:ml-3 sm:text-xs sm:tracking-[0.3em]">portfolio/about.ts</span>
+          <span class="ml-2 text-[10px] uppercase tracking-[0.22em] text-dim sm:ml-3 sm:text-xs sm:tracking-[0.3em]">{lang === 'es' ? 'portfolio/sobre-mi.ts' : 'portfolio/about.ts'}</span>
         </div>
 
         <div class="rounded-xl border border-green-500/15 bg-[#02050b]/80 p-4 font-mono text-xs leading-6 sm:p-5 sm:text-base sm:leading-7">
           <div class="space-y-1 break-words text-gray-200">
             <div><span class="text-purple-300">const</span> <span class="text-cyan-300">ruben</span> = &#123;</div>
-            <div><span class="text-green-400">&nbsp;&nbsp;role</span>: "{profile.terminalCard.role}",</div>
-            <div><span class="text-green-400">&nbsp;&nbsp;company</span>: "{profile.terminalCard.company}",</div>
-            <div><span class="text-green-400">&nbsp;&nbsp;location</span>: "{profile.terminalCard.location}",</div>
-            <div><span class="text-green-400">&nbsp;&nbsp;passion</span>: [{profile.terminalCard.passion.map((p) => `"${p}"`).join(', ')}]</div>
+            <div><span class="text-green-400">&nbsp;&nbsp;{t(lang, 'v2.about.role')}</span>: "{profile.terminalCard.role}",</div>
+            <div><span class="text-green-400">&nbsp;&nbsp;{t(lang, 'v2.about.company')}</span>: "{profile.terminalCard.company}",</div>
+            <div><span class="text-green-400">&nbsp;&nbsp;{t(lang, 'v2.about.location')}</span>: "{profile.terminalCard.location}",</div>
+            <div><span class="text-green-400">&nbsp;&nbsp;{t(lang, 'v2.about.passion')}</span>: [{profile.terminalCard.passion.map((p) => `"${localizedTerm(p, lang)}"`).join(', ')}]</div>
             <div>&#125;;</div>
           </div>
         </div>
@@ -82,7 +83,7 @@ const groups = STACK_GROUPS.map((g) => ({
                         {item.icon && (
                           <img src={item.icon} alt="" width="14" height="14" class="h-3.5 w-3.5" loading="lazy" decoding="async" />
                         )}
-                        {item.name}
+                        {localizedTerm(item.name, lang)}
                         {item.tier !== 'actual' && (
                           <span class="text-[0.6rem] uppercase tracking-[0.14em] opacity-70">
                             {t(lang, `about.tier.${item.tier}` as UiKey)}
