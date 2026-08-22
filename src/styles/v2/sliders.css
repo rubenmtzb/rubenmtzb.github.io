@@ -214,9 +214,9 @@ html.js .cert-slide.is-active {
   border: 1px solid var(--line-soft);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-/* Misma idea que en el carrusel de proyectos: se agranda lo que se pulsa, no
-   lo que se pinta. Los laterales crecen media separación, así que dos puntos
-   contiguos nunca se solapan. */
+/* Same idea as in the projects carousel: what grows is what you press, not
+   what gets painted. The sides extend by half the gap, so two adjacent dots
+   never overlap. */
 .edu-dot-indicator::after,
 .cert-dot-indicator::after {
   content: '';

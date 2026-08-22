@@ -1,29 +1,30 @@
 /**
- * Explorador de builds de teclado.
+ * Keyboard build explorer.
  *
- * Hoja aparte y no `<style>` del componente a propósito, por dos razones.
+ * A separate sheet rather than the component's `<style>`, deliberately, for two
+ * reasons.
  *
- * La primera es de peso: el CSS con ámbito obliga a Astro a marcar cada
- * elemento de la plantilla con un atributo `data-astro-cid-*`, y el modelo por
- * capas son unos 2.700 elementos por página. Eran setenta y tantos kilobytes
- * de HTML dedicados a repetir el mismo identificador.
+ * The first is weight: scoped CSS forces Astro to mark every element of the
+ * template with a `data-astro-cid-*` attribute, and the layered model is around
+ * 2,700 elements per page. That was seventy-odd kilobytes of HTML dedicated to
+ * repeating the same identifier.
  *
- * La segunda es de estructura: con la hoja fuera, la vista puede repartirse en
- * los componentes que le corresponden —tarjeta, panel, modelo, muestra de
- * sonido— sin que el estilo se quede huérfano al cruzar la frontera de un
- * componente, que es justo lo que impide el ámbito.
+ * The second is structure: with the sheet outside, the view can be split across
+ * the components it belongs to — card, panel, model, sound sample — without the
+ * styling being orphaned as it crosses a component's boundary, which is exactly
+ * what scoping prevents.
  *
- * Todo el vocabulario va prefijado `bx-` y no aparece en ninguna otra hoja,
- * así que el ámbito no estaba evitando ninguna colisión real.
+ * The whole vocabulary is prefixed `bx-` and appears in no other sheet, so the
+ * scoping was not avoiding any real collision.
  */
 
 /* ============================================================
-   ÍNDICE DE LA HOJA
+   SHEET INDEX
 
-   Un fichero por bloque del explorador. El orden es el de la cascada: el
-   contenedor abre porque el resto se apoya en él, y las tres arquitecturas
-   —Topre, stock y split cableado— van después del modelo genérico porque lo
-   especializan. Reordenar esta lista cambia lo que se ve.
+   One file per block of the explorer. The order is the cascade's: the container
+   opens because everything else rests on it, and the three architectures —
+   Topre, stock and wired split — come after the generic model because they
+   specialise it. Reordering this list changes what you see.
    ============================================================ */
 
 @import './keyboard-explorer/shell.css';

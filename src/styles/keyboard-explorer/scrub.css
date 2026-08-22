@@ -1,4 +1,4 @@
-/* ---------------- Deslizador de separación ---------------- */
+/* ---------------- Explode slider ---------------- */
 .bx-scrub {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) 2.8rem;

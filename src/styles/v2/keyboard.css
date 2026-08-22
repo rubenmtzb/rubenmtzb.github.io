@@ -1,4 +1,4 @@
-/* ---------------- CONSOLA DE CONTROL DEL TECLADO ---------------- */
+/* ---------------- KEYBOARD CONTROL CONSOLE ---------------- */
 .kb-console-card {
   background: var(--ink-800);
   border: 1px solid var(--line);
@@ -24,10 +24,10 @@
 }
 
 /*
- * Los tres modos comparten la reacción —el borde se enciende, la pastilla se
- * levanta un pelo— y se separan en el gesto: cada uno anima aquello que hace.
- * El adorno vive en una capa propia bajo el texto, sin puntero y oculto a la
- * lectura asistida: la pastilla sigue siendo un `tab` y nada más.
+ * The three modes share the reaction — the border lights up, the tab lifts a
+ * hair — and part ways in the gesture: each animates what it actually does. The
+ * ornament lives on a layer of its own beneath the text, pointer-transparent and
+ * hidden from assistive reading: the tab is still a `tab` and nothing more.
  */
 .kb-mode-pill {
   transition: color 0.25s ease, background 0.25s ease, border-color 0.25s ease,
@@ -43,7 +43,7 @@
   position: relative;
   z-index: 1;
 }
-/* El rótulo se enciende sin ocupar más: el ancho de la pastilla no se mueve. */
+/* The label lights up without taking more room: the tab's width does not move. */
 .kb-mode-pill > span:last-child {
   transition: color 0.25s ease, text-shadow 0.25s ease;
 }
@@ -73,7 +73,7 @@
   filter: drop-shadow(0 0 7px var(--cyan));
   transform: translate(-50%, -50%) rotate(-9deg) scale(0.8);
 }
-/* Golpea, parpadea como un arco y descansa antes de volver a caer. */
+/* It strikes, flickers like an arc and rests before falling again. */
 @keyframes kb-strike {
   0%,
   100% {
@@ -99,7 +99,7 @@
     transform: translate(-50%, -50%) rotate(-9deg) scale(1.05);
   }
 }
-/* El destello que deja la descarga en la pastilla. */
+/* The flash the discharge leaves on the tab. */
 @keyframes kb-flash {
   0%,
   100% {
@@ -137,7 +137,7 @@
   animation: kb-flash 1.9s cubic-bezier(0.3, 0, 0.2, 1) infinite;
 }
 
-/* ---- Free Sim: la fila que se teclea ---- */
+/* ---- Free Sim: the row being typed ---- */
 .kb-mode-pill.is-sim .kb-pill-fx b {
   position: absolute;
   bottom: 0.32rem;
@@ -153,7 +153,7 @@
 .kb-mode-pill.is-sim .kb-pill-fx b:nth-child(3) { left: calc(50% - 0.17rem); }
 .kb-mode-pill.is-sim .kb-pill-fx b:nth-child(4) { left: calc(50% + 0.35rem); }
 .kb-mode-pill.is-sim .kb-pill-fx b:nth-child(5) { left: calc(50% + 0.87rem); }
-/* Cada tecla baja y se enciende; el desfase hace la onda de izquierda a derecha. */
+/* Each key drops and lights up; the offset makes the wave run left to right. */
 @keyframes kb-keypress {
   0%,
   62%,
@@ -184,7 +184,7 @@
 .kb-mode-pill.is-sim:hover .kb-pill-fx b:nth-child(5),
 .kb-mode-pill.is-sim:focus-visible .kb-pill-fx b:nth-child(5) { animation-delay: 0.36s; }
 
-/* ---- Build Photos: el visor que encuadra y dispara ---- */
+/* ---- Build Photos: the viewfinder that frames and shoots ---- */
 .kb-mode-pill.is-photos .kb-pill-fx b {
   position: absolute;
   width: 0.5rem;
@@ -196,7 +196,7 @@
 .kb-mode-pill.is-photos .kb-pill-fx b:nth-child(2) { top: 0.3rem; right: 0.3rem; border-width: 1px 1px 0 0; }
 .kb-mode-pill.is-photos .kb-pill-fx b:nth-child(3) { bottom: 0.3rem; left: 0.3rem; border-width: 0 0 1px 1px; }
 .kb-mode-pill.is-photos .kb-pill-fx b:nth-child(4) { bottom: 0.3rem; right: 0.3rem; border-width: 0 1px 1px 0; }
-/* Las esquinas entran desde fuera y se quedan: el encuadre queda hecho. */
+/* The corners come in from outside and stay: the frame is set. */
 @keyframes kb-frame {
   0% {
     opacity: 0;
@@ -207,7 +207,7 @@
     transform: translate(0, 0) scale(1);
   }
 }
-/* Un disparo de flash, una sola vez por acercamiento. */
+/* One flash, fired once per approach. */
 @keyframes kb-shutter {
   0% { opacity: 0; }
   22% { opacity: 0.5; }
@@ -239,7 +239,7 @@
   animation: kb-shutter 0.5s ease-out 0.16s 1;
 }
 
-/* El icono acompaña al gesto sin robarle protagonismo. */
+/* The icon accompanies the gesture without stealing the show. */
 .kb-mode-pill > span:first-of-type {
   transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -251,8 +251,8 @@
 .kb-mode-pill.is-photos:focus-visible > span:first-of-type { transform: scale(1.12) rotate(-4deg); }
 
 /*
- * Con movimiento reducido se queda el cambio de estado —borde, color, brillo—
- * y desaparece el gesto: la información no dependía de la animación.
+ * With reduced motion the state change stays — border, colour, glow — and the
+ * gesture goes: the information never depended on the animation.
  */
 @media (prefers-reduced-motion: reduce) {
   .kb-mode-pill,
@@ -267,7 +267,7 @@
   .kb-mode-pill.is-photos:hover .kb-pill-fx b,
   .kb-mode-pill.is-photos:focus-visible .kb-pill-fx b { opacity: 0.85; }
 }
-/* ---------------- TECLADO MECÁNICO DINÁMICO & MONKEYTYPE SPEED TRIAL ---------------- */
+/* ---------------- DYNAMIC MECHANICAL KEYBOARD & MONKEYTYPE SPEED TRIAL ---------------- */
 #monkey-words {
   user-select: none;
   line-height: 1.8;
@@ -368,7 +368,7 @@
   transition-duration: 0.04s;
 }
 
-/* ---------------- HHKB LAYOUT SKIN (puramente visual, misma lógica de teclas) ---------------- */
+/* ---------------- HHKB LAYOUT SKIN (purely visual, same key logic) ---------------- */
 .kb-hhkb {
   position: relative;
   padding-top: 1.5rem;

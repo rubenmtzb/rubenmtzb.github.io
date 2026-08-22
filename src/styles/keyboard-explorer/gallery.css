@@ -1,4 +1,4 @@
-/* ---------------- Galería de builds ---------------- */
+/* ---------------- Build gallery ---------------- */
 .bx-gallery { padding-top: 1rem; }
 .bx-intro { max-width: 60ch; color: var(--fg-2); font-size: .82rem; line-height: 1.65; }
 .bx-build-grid {
@@ -26,10 +26,10 @@
 .bx-build-card.is-in-progress { --bx-status: #f0bd68; }
 .bx-build-card.is-planning { --bx-status: #a995ff; }
 /*
- * La tarjeta entera es el objetivo, así que responde entera: se ilumina el
- * borde, el título toma el color de acción y la flecha se adelanta. El botón
- * sigue dentro porque es lo que recibe el foco y lo que se anuncia; lo que
- * cambia es dónde hay que apuntar con el ratón o el dedo.
+ * The whole card is the target, so the whole card responds: the border lights
+ * up, the title takes the action colour and the arrow steps forward. The button
+ * is still inside because it is what takes focus and what gets announced; what
+ * changes is where you have to aim with mouse or finger.
  */
 .bx-build-card { cursor: pointer; }
 .bx-build-card:hover { border-color: rgba(111, 227, 255, .45); box-shadow: 0 24px 48px -30px #000; }

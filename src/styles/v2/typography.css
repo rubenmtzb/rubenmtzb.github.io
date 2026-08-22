@@ -1,4 +1,4 @@
-/* ---------------- TIPOGRAFÍA Y CURSOR ---------------- */
+/* ---------------- TYPOGRAPHY AND CURSOR ---------------- */
 .intro-cursor {
   display: inline-block;
   animation: blinkCursor 1s step-end infinite;

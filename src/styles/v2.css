@@ -1,22 +1,22 @@
 @import 'tailwindcss';
 /*
- * Solo el eje de grosor. El fichero `wdth` trae además el eje de anchura
- * (font-stretch), que el sitio no usa en ninguna regla, y pesa 88 kB frente
- * a los 34 kB de este: 54 kB menos en la fuente que pinta el titular.
+ * The weight axis only. The `wdth` file also carries the width axis
+ * (font-stretch), which no rule on the site uses, and weighs 88 kB against this
+ * one's 34 kB: 54 kB less in the font that paints the headline.
  */
 @import '@fontsource-variable/archivo/wght.css';
 @import '@fontsource-variable/jetbrains-mono/wght.css';
 
 /* ============================================================
-   SISTEMA VISUAL V2 — ÍNDICE DE LA HOJA
+   V2 VISUAL SYSTEM — SHEET INDEX
 
-   La hoja era un único fichero de dos mil líneas con veinte bloques dentro.
-   Cada bloque vive ahora en su propio fichero y aquí queda el orden en que
-   se montan.
+   The sheet used to be a single two-thousand-line file with twenty blocks
+   inside it. Each block now lives in a file of its own and what is left here
+   is the order they are assembled in.
 
-   ATENCIÓN: este orden es la cascada. Los tokens abren porque todo lo demás
-   los lee, y el bloque de movimiento reducido cierra porque tiene que poder
-   anular lo anterior. Reordenar esta lista cambia lo que se ve.
+   CAREFUL: this order is the cascade. The tokens open because everything else
+   reads them, and the reduced-motion block closes because it has to be able to
+   override what came before. Reordering this list changes what you see.
    ============================================================ */
 
 @import './v2/tokens.css';

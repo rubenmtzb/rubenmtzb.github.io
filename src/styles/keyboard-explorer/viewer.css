@@ -48,9 +48,9 @@
 }
 .bx-stage-column { min-width: 0; }
 /*
- * El escenario crece con la separación en lugar de saltar entre dos
- * alturas: el mando es continuo, así que el encuadre también lo es y la
- * pila nunca se sale por arriba a mitad de recorrido.
+ * The stage grows with the explode instead of jumping between two heights: the
+ * control is continuous, so the framing is too and the stack never escapes out
+ * of the top halfway through.
  */
 .bx-stage {
   position: relative;

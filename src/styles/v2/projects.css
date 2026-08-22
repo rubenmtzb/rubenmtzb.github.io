@@ -100,7 +100,7 @@ html.js .project-slide.is-active {
 .proj-next-arrow {
   right: 1rem;
 }
-/* En móvil el swipe táctil ya navega el carrusel; las flechas no caben sin solapar el texto. */
+/* On mobile the touch swipe already pages the carousel; the arrows do not fit without overlapping the text. */
 @media (max-width: 639px) {
   .proj-nav-arrow {
     display: none;
@@ -115,15 +115,15 @@ html.js .project-slide.is-active {
   }
 }
 
-/* Indicadores de barra inferior estilo software showcase */
+/* Bottom bar indicators, software showcase style */
 /*
- * El área que se puede pulsar crece; el trazo que se ve, no.
+ * The pressable area grows; the visible stroke does not.
  *
- * El indicador mide tres píxeles de alto —seis los del temporizador—, que es
- * exactamente lo que tiene que medir para leerse como una barra fina. Como
- * objetivo, en cambio, era casi imposible de acertar con el dedo. El
- * pseudoelemento extiende la zona sensible por encima y por debajo sin ocupar
- * espacio en el diseño, así que el bloque se sigue viendo igual al píxel.
+ * The indicator is three pixels tall — six for the timer's — which is exactly
+ * what it has to be to read as a thin bar. As a target, however, it was nearly
+ * impossible to hit with a finger. The pseudo-element extends the sensitive zone
+ * above and below without taking up space in the layout, so the block still
+ * looks pixel-for-pixel the same.
  */
 .proj-bar-indicator {
   position: relative;

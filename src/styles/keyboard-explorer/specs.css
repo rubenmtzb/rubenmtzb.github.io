@@ -1,4 +1,4 @@
-/* ---------------- Ficha lateral ---------------- */
+/* ---------------- Side details ---------------- */
 .bx-specs { min-width: 0; padding-top: .25rem; }
 .bx-specs h5 { margin-top: .35rem; color: var(--fg); font-size: 1.2rem; font-weight: 700; }
 .bx-specs > p { margin-top: .45rem; }
@@ -18,9 +18,9 @@
 .bx-parts-head { margin-top: 1rem; padding: .65rem 0 .3rem; border-top: 1px solid var(--line-soft); color: var(--fg-3); font: 500 .56rem/1 var(--font-mono); letter-spacing: .11em; text-transform: uppercase; }
 .bx-parts { display: grid; gap: .2rem; list-style: none; }
 /*
- * La lista es un índice compacto: al elegir una pieza, su especificación
- * completa queda en el chip activo del modelo. La referencia conserva su
- * acción propia, sin añadir una segunda fila por cada una de las capas.
+ * The list is a compact index: selecting a part leaves its full spec in the
+ * model's active chip. The reference keeps an action of its own, without adding
+ * a second row for every one of the layers.
  */
 .bx-parts li { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .35rem; }
 .bx-source {
@@ -38,7 +38,7 @@
   text-transform: uppercase;
   transition: border-color .28s ease, background .28s ease, box-shadow .28s ease, transform .28s cubic-bezier(.22, 1, .36, 1);
 }
-/* Punto vivo: el mismo indicador que usa el resto del panel. */
+/* Live dot: the same indicator the rest of the panel uses. */
 .bx-source i { width: .3rem; height: .3rem; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 6px var(--cyan); transition: box-shadow .28s ease; }
 .bx-source svg { transition: transform .28s cubic-bezier(.22, 1, .36, 1); }
 .bx-source:hover {
@@ -63,10 +63,10 @@
 .bx-sheet dd { color: var(--fg-2); font: 600 .6rem/1.4 var(--font-mono); text-align: right; }
 
 /*
- * Un único juego de puntos de ruptura, y por ancho del propio componente:
- * el explorador vive en una columna de rejilla, así que su ancho y el de
- * la ventana no coinciden. Antes había dos bloques idénticos, uno por
- * contenedor y otro por viewport, que había que mantener a la vez.
+ * A single set of breakpoints, keyed off the component's own width: the explorer
+ * lives in a grid column, so its width and the viewport's do not match. There
+ * used to be two identical blocks, one by container and one by viewport, that
+ * had to be maintained in step.
  */
 @container (max-width: 56rem) {
   .bx-workbench { grid-template-columns: 1fr; }

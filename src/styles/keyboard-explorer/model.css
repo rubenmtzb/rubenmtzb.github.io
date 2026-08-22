@@ -1,8 +1,8 @@
-/* ---------------- Modelo 3D por capas ---------------- */
+/* ---------------- Layered 3D model ---------------- */
 .bx-model {
   --rx: 56deg;
   --rz: -29deg;
-  /* El encuadre se abre y el modelo baja a medida que la pila se separa. */
+  /* The framing widens and the model drops as the stack comes apart. */
   --fit: calc(var(--fit-base, .64) - .06 * var(--spread));
   --zoom: 1;
   --offset-y: calc(42px * var(--spread));
@@ -21,19 +21,19 @@
   position: absolute;
   inset: 0;
   transform-style: preserve-3d;
-  /* Una sola expresión interpola entre montado y explotado. */
+  /* A single expression interpolates between assembled and exploded. */
   transform: translateZ(calc(var(--z) + (var(--ze) - var(--z)) * var(--spread)));
   transition: transform .82s cubic-bezier(.32, 1.22, .4, 1);
   transition-delay: var(--delay);
   cursor: pointer;
 }
-/* Con el deslizador en la mano el movimiento sigue al dedo, sin rebote. */
+/* With the slider in hand the motion follows the finger, with no bounce. */
 .kb-build-explorer.is-scrubbing .bx-layer { transition: none; transition-delay: 0ms; }
 /*
- * La piel es la pieza pintada; la capa solo la coloca en la pila. El
- * apagado y el realce viven aquí porque `filter` y `opacity` agrupan al
- * elemento y aplanan el 3D de sus hijos: aplicados a la capa, aplastaban
- * la etiqueta contragirada que cuelga de ella.
+ * The skin is the painted part; the layer only places it in the stack. The
+ * dimming and the highlight live here because `filter` and `opacity` group the
+ * element and flatten its children's 3D: applied to the layer, they squashed the
+ * counter-rotated label hanging off it.
  */
 .bx-skin {
   position: absolute;
@@ -45,7 +45,7 @@
 .kb-build-explorer.has-active .bx-layer:not(.is-active) .bx-skin { filter: brightness(.52) saturate(.6); opacity: .64; }
 .kb-build-explorer .bx-layer.is-active .bx-skin { filter: brightness(1.18) saturate(1.08); }
 
-/* Etiqueta flotante: aparece con la separación, como en un despiece técnico. */
+/* Floating label: it appears with the explode, as on a technical exploded view. */
 .bx-layer-tag {
   position: absolute;
   left: calc(100% + 30px);
@@ -60,15 +60,15 @@
   white-space: nowrap;
   opacity: 0;
   /*
-   * Se despega de su capa a medida que la pila se abre —si no, la capa de
-   * encima la tapa— y se contragira para quedar siempre de cara: deshace
-   * las dos rotaciones del modelo en orden inverso.
+   * It lifts off its layer as the stack opens — otherwise the layer above covers
+   * it — and counter-rotates to always face front: it undoes the model's two
+   * rotations in reverse order.
    */
   transform: translateY(-50%) translateZ(calc(30px * var(--spread))) rotateZ(calc(var(--rz) * -1)) rotateX(calc(var(--rx) * -1));
   transition: opacity .3s ease, border-color .25s ease, background .25s ease, color .25s ease, box-shadow .25s ease;
   pointer-events: none;
 }
-/* Línea guía hasta el borde de la pieza, como en un plano de despiece. */
+/* Leader line to the part's edge, as on an exploded-view drawing. */
 .bx-layer-tag::before {
   content: '';
   position: absolute;
@@ -80,8 +80,8 @@
 }
 .kb-build-explorer.is-spread .bx-layer-tag { opacity: .9; }
 /*
- * Con una pieza en foco las demás etiquetas se retiran, pero siguen
- * legibles: lo que las distingue es cuánto pesan, no si se leen o no.
+ * With one part in focus the other labels recede, but stay legible: what tells
+ * them apart is how much they weigh, not whether they can be read at all.
  */
 .kb-build-explorer.has-active .bx-layer:not(.is-active) .bx-layer-tag { opacity: .45; }
 .kb-build-explorer.has-active .bx-layer.is-active .bx-layer-tag {
@@ -106,9 +106,9 @@
 .bx-plate { background-color: #24282f; background-image: repeating-linear-gradient(115deg, rgba(255,255,255,.035) 0 1px, transparent 1px 5px), linear-gradient(150deg, rgba(255,255,255,.08), transparent 45%); box-shadow: inset 0 1px rgba(255,255,255,.16), inset 0 0 0 1px #343942, 0 3px 0 #191c22, 0 7px 0 #0e1116, 0 11px 14px rgba(0,0,0,.42); }
 
 /*
- * `--x`, `--y`, `--w` y, cuando la hay, `--kr` los pone la hoja de
- * geometría del modelo; `--row-h` la pone su panel. Todo lo demás sale de
- * ahí: una tecla no necesita recibir cinco alturas ya multiplicadas.
+ * `--x`, `--y`, `--w` and, where there is one, `--kr` are set by the model's
+ * geometry sheet; `--row-h` is set by its panel. Everything else derives from
+ * those: a key does not need to be handed five pre-multiplied heights.
  */
 .bx-model-key, .bx-cutout, .bx-socket, .bx-switch {
   position: absolute;

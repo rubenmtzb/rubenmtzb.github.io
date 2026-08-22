@@ -1,4 +1,4 @@
-/* ---------------- Muestra de sonido ---------------- */
+/* ---------------- Sound sample ---------------- */
 .bx-clip {
   position: relative;
   z-index: 1;
@@ -45,7 +45,7 @@
   background: linear-gradient(180deg, rgba(111, 227, 255, .22), rgba(111, 227, 255, .07));
   transform: translateY(-1px);
 }
-/* Las dos caras ocupan la misma celda: el botón no cambia de tamaño al conmutar. */
+/* Both faces share the same cell: the button does not resize when it toggles. */
 .bx-clip-play svg { grid-area: 1 / 1; }
 .bx-clip-play .is-play { margin-left: .1rem; }
 .bx-clip-play .is-pause { display: none; }
@@ -59,9 +59,9 @@
 .bx-clip.is-playing .bx-clip-play .is-pause { display: block; }
 
 /*
- * La onda son dos trazos calcados: el de abajo es el corte entero y el de
- * arriba, recortado por la izquierda, lo que ya ha sonado. Mover un recorte
- * no vuelve a pintar la geometría, así que el avance no cuesta nada.
+ * The waveform is two identical strokes: the lower one is the whole clip and the
+ * upper one, clipped from the left, is what has already played. Moving a clip
+ * does not repaint the geometry, so the progress costs nothing.
  */
 .bx-clip-wave {
   --wave-h: 2.3rem;
@@ -74,16 +74,16 @@
 .bx-clip-wave .is-played { clip-path: inset(0 calc(100% - var(--played, 0%)) 0 0); }
 .bx-clip-wave .is-played path { stroke: var(--cyan); opacity: 1; }
 /*
- * El grosor del trazo depende del ancho de la onda y de nada más, así que
- * se pregunta por ella y no por el panel: la misma muestra vive en una
- * columna estrecha y, al plegarse el banco de trabajo, a lo ancho. Con 160
- * barras, un trazo fijo o deja huecos o las funde en un bloque.
+ * The stroke's width depends on the waveform's width and on nothing else, so it
+ * queries the waveform and not the panel: the same sample lives in a narrow
+ * column and, once the workbench folds, across the full width. With 160 bars, a
+ * fixed stroke either leaves gaps or fuses them into a block.
  */
 .bx-clip-wave path { stroke-width: .9; }
 @container (min-width: 20rem) { .bx-clip-wave path { stroke-width: 1.3; } }
 @container (min-width: 30rem) { .bx-clip-wave path { stroke-width: 1.9; } }
 @container (min-width: 42rem) { .bx-clip-wave path { stroke-width: 2.6; } }
-/* Tramo de los chasquidos: lo mismo en las tres tomas, y por eso se marca. */
+/* The snaps' stretch: identical across all three takes, which is why it is marked. */
 .bx-clip-ref {
   position: absolute;
   inset: 0 auto 0 0;
@@ -93,7 +93,7 @@
   pointer-events: none;
 }
 .bx-clip-ref span { position: absolute; left: .2rem; bottom: 0; color: var(--cyan); font: 600 .42rem/1 var(--font-mono); letter-spacing: .12em; opacity: .7; }
-/* Pista invisible sobre la onda: el cabezal es el pulgar del control. */
+/* Invisible track over the waveform: the playhead is the control's thumb. */
 .bx-clip-wave input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; appearance: none; background: transparent; cursor: pointer; }
 .bx-clip-wave input::-webkit-slider-runnable-track { height: 100%; background: transparent; }
 .bx-clip-wave input::-moz-range-track { height: 100%; background: transparent; }
@@ -107,5 +107,5 @@
 .bx-clip-wave input:focus-visible::-moz-range-thumb { opacity: 1; }
 
 .bx-clip-note { color: var(--fg-3); font: 400 .58rem/1.45 var(--font-mono); }
-/* La nota de referencia explica la lectura, así que pesa menos que el timbre. */
+/* The reference note explains the reading, so it weighs less than the timbre. */
 .bx-clip-note.is-ref { padding-top: .3rem; border-top: 1px dashed var(--line-soft); opacity: .72; }

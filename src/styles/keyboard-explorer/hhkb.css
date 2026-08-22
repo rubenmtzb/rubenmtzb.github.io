@@ -1,4 +1,4 @@
-/* ---------------- Arquitectura Topre del HHKB ---------------- */
+/* ---------------- The HHKB's Topre architecture ---------------- */
 .bx-build-panel[data-layout='hhkb'] .bx-housing,
 .bx-build-panel[data-layout='hhkb'] .bx-domes,
 .bx-build-panel[data-layout='hhkb'] .bx-springs,
@@ -49,7 +49,7 @@
 .bx-topre-spring,
 .bx-cap-pad {
   position: absolute;
-  /* El centro de la tecla, derivado de su caja: nunca se transmite aparte. */
+  /* The key's centre, derived from its box: it is never passed in separately. */
   left: calc(var(--x) + var(--w) / 2);
   top: calc(var(--y) + var(--row-h) / 2);
   transform: translate(-50%, -50%);
@@ -139,8 +139,8 @@
   box-shadow: inset 0 0 4px rgba(255, 221, 123, .34);
 }
 /*
- * Keycaps del build real: PBT oscuro con leyendas amarillas. Los tonos
- * salen de las fotografías del propio teclado, no de un set genérico.
+ * The real build's keycaps: dark PBT with yellow legends. The tones come from
+ * photographs of the keyboard itself, not from a generic set.
  */
 .bx-model-key { display: grid; place-items: center; transform-style: preserve-3d; border: 1px solid rgba(26,27,25,.75); border-radius: 4px; background: linear-gradient(155deg, #34352f, #1f201c); box-shadow: 0 2px 0 #2c2d28, 0 5px 0 #242520, 0 8px 0 #1b1c18, 0 11px 9px rgba(0, 0, 0, .58); }
 .bx-model-key::before { content: ''; position: absolute; inset: 1px 1px 3px; z-index: 0; border-radius: 3px; background: radial-gradient(circle at 28% 22%, rgba(255,255,255,.14), transparent 34%), repeating-linear-gradient(110deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px), linear-gradient(155deg, #46473f, #383930 54%, #2b2c26); box-shadow: inset 0 1px rgba(255,255,255,.22), inset 0 -2px 3px rgba(0,0,0,.3); }
@@ -148,9 +148,9 @@
 .bx-model-key span { position: relative; z-index: 1; overflow: hidden; color: #e4cb4b; font: 600 8px/1 var(--font-mono); text-shadow: 0 1px rgba(0,0,0,.65), 0 0 4px rgba(228,203,75,.12); text-overflow: clip; }
 
 /*
- * Set del Neo65 fotografiado: PBT negro, leyendas amarillas y novelties
- * espaciales azules/rojas. Todo queda limitado al ANSI65 para no cambiar la
- * piel de los otros teclados que reutilizan la geometría base.
+ * The photographed Neo65 set: black PBT, yellow legends and blue/red space
+ * novelties. All of it is confined to the ANSI65 so it does not change the skin
+ * of the other keyboards that reuse the base geometry.
  */
 .bx-build-panel[data-layout='ansi65'] .bx-model-key {
   border-color: rgba(8, 10, 12, .92);

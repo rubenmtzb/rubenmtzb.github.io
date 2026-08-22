@@ -1,5 +1,5 @@
 .kb-build-explorer {
-  /* 0 montado, 1 totalmente separado: lo gobierna el deslizador. */
+  /* 0 assembled, 1 fully apart: the slider governs it. */
   --spread: 0;
   container-type: inline-size;
   border: 1px solid var(--line);

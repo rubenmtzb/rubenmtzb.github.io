@@ -1,16 +1,16 @@
 /* ============================================================
-   SISTEMA VISUAL V2 — DIRECCIÓN DE ARTE EDITORIAL + WOW EFFECTS
+   V2 VISUAL SYSTEM — EDITORIAL ART DIRECTION + WOW EFFECTS
 
-   Fusión de arquitectura limpia, tipografía editorial y microinteracciones
-   de alto impacto (Killua ASCII live particles, 3D Cards Stack Carousel,
-   Spotlight Projects Carousel, Tabbed JobList, Interactive 60% Keyboard,
-   Game Mode Killua Platformer).
+   A fusion of clean architecture, editorial typography and high-impact
+   micro-interactions (Killua ASCII live particles, 3D cards stack carousel,
+   spotlight projects carousel, tabbed job list, interactive 60% keyboard,
+   Game Mode Killua platformer).
 
-   Paleta de color fría e intensa:
-     Fondo: Ink 900 (#05080f), Ink 800 (#0a0f1c), Ink 700 (#111828)
-     Bordes: Line (#1b2438), Line-Soft (#131b2b)
-     Texto: Foreground (#edf1f8), Fg-2 (#a2b0c9), Fg-3 (#6e7d99)
-     Acentos: Blue (#2b6bff), Blue-Bright (#5b9bff), Cyan (#6fe3ff)
+   A cold, intense colour palette:
+     Background: Ink 900 (#05080f), Ink 800 (#0a0f1c), Ink 700 (#111828)
+     Borders: Line (#1b2438), Line-Soft (#131b2b)
+     Text: Foreground (#edf1f8), Fg-2 (#a2b0c9), Fg-3 (#6e7d99)
+     Accents: Blue (#2b6bff), Blue-Bright (#5b9bff), Cyan (#6fe3ff)
    ============================================================ */
 
 @theme {
@@ -26,27 +26,27 @@
   --line: #1b2438;
   --line-soft: #131b2b;
 
-  /* Texto */
+  /* Text */
   --fg: #edf1f8;      /* Alto contraste */
   --fg-2: #a2b0c9;    /* Secundario legible */
   --fg-3: #6e7d99;    /* Metadatos y etiquetas */
 
-  /* Identidad Eléctrica */
+  /* Electric identity */
   --blue: #2b6bff;
   --blue-bright: #5b9bff;
   --cyan: #6fe3ff;
 
   /*
-   * Colores de estado.
+   * Status colours.
    *
-   * No existían, así que cada componente echaba mano del color de Tailwind que
-   * le pareciera: `emerald-400` para lo que está vivo, `amber-500` para lo que
-   * está en curso, `rose-500` para lo cerrado. Treinta y cuatro decisiones
-   * sueltas y ningún sitio donde cambiarlas a la vez.
+   * They did not exist, so every component reached for whichever Tailwind colour
+   * it fancied: `emerald-400` for what is live, `amber-500` for what is in
+   * progress, `rose-500` for what is closed. Thirty-four loose decisions and
+   * nowhere to change them all at once.
    *
-   * Los valores son exactamente los que emite Tailwind —oklch, no hexadecimal,
-   * que en pantallas de gama amplia no es lo mismo— así que nombrarlos no ha
-   * movido un solo píxel.
+   * The values are exactly what Tailwind emits — oklch, not hexadecimal, which
+   * on wide-gamut screens is not the same thing — so naming them has not moved a
+   * single pixel.
    */
   --live: oklch(76.5% .177 163.223);
   --live-soft: oklch(84.5% .143 164.978);
@@ -57,25 +57,25 @@
   --closed: oklch(64.5% .246 16.439);
 
   /*
-   * Los mismos colores en canales sueltos, para cuando hace falta alfa. El
-   * marcado escribía `rgba(111,227,255,.2)` a mano: los tres números son
-   * `--cyan`, copiados a ojo cada vez.
+   * The same colours as loose channels, for when alpha is needed. The markup
+   * used to write `rgba(111,227,255,.2)` by hand: those three numbers are
+   * `--cyan`, copied by eye every time.
    */
   --cyan-rgb: 111 227 255;
 
-  /* Velo bajo el texto que se superpone a una fotografía: sombra dura y negra
-     para que el titular se lea sobre cualquier imagen. */
+  /* Scrim under text laid over a photograph: a hard, black shadow so the
+     headline reads on top of any image. */
   --scrim: 0 0 0;
   /*
-   * Este verde NO es `--live-strong`, aunque debería serlo. Es el hexadecimal
-   * clásico de emerald-500 (#10b981) que el marcado llevaba escrito a mano,
-   * mientras que Tailwind v4 sirve el mismo nombre en oklch. Pintados dan
-   * rgb(16,185,129) y rgb(0,188,125): dieciséis puntos de diferencia en el
-   * canal rojo, poco pero real.
+   * This green is NOT `--live-strong`, though it ought to be. It is the classic
+   * emerald-500 hexadecimal (#10b981) the markup carried hand-written, while
+   * Tailwind v4 serves the same name in oklch. Painted, they come out as
+   * rgb(16,185,129) and rgb(0,188,125): sixteen points apart on the red channel,
+   * small but real.
    *
-   * Se conserva para no mover un píxel al nombrarlo. Unificarlo con
-   * `--live-strong` es una línea, y la decisión de si ese cambio se ve o no
-   * es de quien mira el diseño, no de quien mira el código.
+   * It is kept so that naming it moves no pixel. Unifying it with
+   * `--live-strong` is a one-line change, and whether that change is visible is
+   * a call for whoever looks at the design, not for whoever looks at the code.
    */
   --live-legacy-rgb: 16 185 129;
 

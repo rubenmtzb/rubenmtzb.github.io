@@ -1,20 +1,20 @@
-/* ---------------- Apunte asomado sobre la muestra ---------------- */
+/* ---------------- The note peeking over the sample ---------------- */
 /*
- * Killua se apoya en el borde superior de la caja de sonido: el bloque se
- * monta encima y se solapa hacia abajo, así que la propia caja le tapa las
- * piernas y queda asomado de medio cuerpo. Por eso la muestra sube de capa,
- * para pasarle por delante.
+ * Killua leans on the top edge of the sound box: the block sits above it and
+ * overlaps downwards, so the box itself covers his legs and he ends up peeking
+ * out from the waist up. That is why the sample is raised a layer, to pass in
+ * front of him.
  */
 .bx-quip {
   position: relative;
   z-index: 0;
-  /* Hueco reservado a la derecha: el bocadillo nunca corre bajo el sprite. */
+  /* Reserved gap on the right: the bubble never runs under the sprite. */
   padding-right: 2.75rem;
   margin-bottom: .35rem;
   /*
-   * El sprite sobresale por arriba del bloque, así que el bloque reserva su
-   * altura: con un apunte corto, el bocadillo encogía y la cabeza acababa
-   * pisando el rótulo de la sección.
+   * The sprite sticks out above the block, so the block reserves its height:
+   * with a short note the bubble shrank and the head ended up treading on the
+   * section's label.
    */
   min-height: 3.2rem;
 }
@@ -30,14 +30,14 @@
 .bx-quip-bubble p {
   color: var(--fg-2);
   font: 500 .58rem/1.5 var(--font-mono);
-  /* El texto entra con un salto corto cada vez que cambia el apunte. */
+  /* The text enters with a short hop every time the note changes. */
   animation: bx-quip-in .32s cubic-bezier(.22, 1, .36, 1);
 }
 @keyframes bx-quip-in {
   from { opacity: 0; transform: translateY(3px); }
   to { opacity: 1; transform: translateY(0); }
 }
-/* Pico del bocadillo, apuntando a quien habla. */
+/* The bubble's tail, pointing at whoever is speaking. */
 .bx-quip-tail {
   position: absolute;
   right: -7px;
@@ -60,18 +60,19 @@
   border-left: 6px solid var(--ink-950);
 }
 /*
- * El sprite se ancla aparte y no al lado: así se hunde en la caja sin
- * arrastrar consigo al bocadillo, que se quedaba medio tapado.
+ * The sprite is anchored on its own and not alongside: that way it sinks into
+ * the box without dragging the bubble down with it, which used to end up half
+ * covered.
  */
 .bx-quip-poke {
   position: absolute;
   right: .15rem;
   bottom: -.1rem;
   /*
-   * El recorte lo hace él y no la caja. Taparlo por orden de pintado no
-   * vale: al animarle el `transform` el navegador lo promociona a su propia
-   * capa y se cuela por delante. Con una ventana de alto fijo, la línea de
-   * corte es suya y no depende de quién se pinte antes.
+   * The clipping is his own doing and not the box's. Covering him by paint order
+   * does not work: animating his `transform` promotes him to a layer of his own
+   * and he slips in front. With a fixed-height window, the cut line is his and
+   * does not depend on who gets painted first.
    */
   height: 3.45rem;
   overflow: hidden;
@@ -80,9 +81,9 @@
   background: transparent;
   line-height: 0;
   cursor: pointer;
-  /* Se balancea de vez en cuando, como quien espía por encima del borde. */
+  /* He sways now and then, like someone spying over the edge. */
   animation: bx-quip-idle 7s ease-in-out infinite;
-  /* Desde abajo: al crecer no baja el corte y el borde se queda quieto. */
+  /* From the bottom: growing does not lower the cut and the edge stays put. */
   transform-origin: bottom center;
   transition: transform .3s cubic-bezier(.34, 1.56, .64, 1);
 }
@@ -104,7 +105,7 @@
   transform: scale(1.09);
 }
 .bx-quip-poke:focus-visible { outline: 2px solid var(--cyan); outline-offset: 4px; border-radius: .3rem; }
-/* Mientras suena la muestra, se asoma un poco más y sigue el compás. */
+/* While the sample plays he leans out a little further and keeps the beat. */
 .bx-quip.is-listening .bx-quip-poke {
   animation: bx-quip-listen 1.1s ease-in-out infinite;
 }

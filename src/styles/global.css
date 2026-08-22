@@ -1,13 +1,13 @@
 @import 'tailwindcss';
-/* Tipografía autohospedada: elimina el tercero de Google Fonts y su
-   petición bloqueante. Solo el subconjunto latino. */
+/* Self-hosted typography: removes the Google Fonts third party and its
+   render-blocking request. The Latin subset only. */
 @import '@fontsource-variable/jetbrains-mono/wght.css';
 
 /* ============================================================
-   Identidad visual de la V1 — portada desde src/index.css.
-   Se han retirado seis reglas que estaban definidas y sin usar:
+   The V1's visual identity — carried over from src/index.css.
+   Six rules that were defined and never used have been removed:
    text-glow-cyan, text-glow-purple, blink-anim, border-glow,
-   section-container y section-title.
+   section-container and section-title.
    ============================================================ */
 
 @theme {
@@ -37,11 +37,11 @@ body {
 ::-webkit-scrollbar-thumb { background: #00ff8844; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #00ff8866; }
 
-/* ---------- ACCESIBILIDAD ----------
-   Contraste: los tonos anteriores (green-500/45 en la navegación y
-   green-500/30 en las etiquetas del hero) daban ~2,5:1 sobre #030712,
-   muy por debajo del 4,5:1 exigido. Estos tokens superan 7:1 y
-   mantienen la jerarquía visual entre estado activo e inactivo.        */
+/* ---------- ACCESSIBILITY ----------
+   Contrast: the previous tones (green-500/45 in the navigation and
+   green-500/30 on the hero's labels) gave ~2.5:1 against #030712, far
+   below the required 4.5:1. These tokens clear 7:1 and keep the visual
+   hierarchy between the active and inactive states.                    */
 :root {
   --green-dim: #56b381;   /* ~7.8:1 sobre #030712 */
   --green-soft: #7fd4a6;  /* estados hover */
@@ -97,18 +97,18 @@ body.cv-body {
 }
 .skip-link:focus-visible { translate: -50% 0; }
 
-/* Alias de anclas heredadas: destino invisible, sin efecto semántico. */
+/* Inherited anchor aliases: an invisible destination with no semantic effect. */
 .anchor-alias {
   display: block;
   height: 0;
   scroll-margin-top: 6rem;
 }
 
-/* ---------- REVELADO PROGRESIVO ----------
-   Regla: visible es el estado por defecto. El estado inicial de la
-   animación solo se aplica cuando hay JS confirmado y el usuario no ha
-   pedido menos movimiento. Así el HTML de build nunca sale con
-   opacity:0 en contenido.                                              */
+/* ---------- PROGRESSIVE REVEAL ----------
+   The rule: visible is the default state. The animation's initial state
+   is applied only once JS is confirmed and the visitor has not asked for
+   less motion. That way the built HTML never ships content at
+   opacity:0.                                                           */
 .reveal { opacity: 1; transform: none; }
 
 html.js .reveal {
@@ -199,9 +199,9 @@ html.js .reveal.is-in {
 
 .terminal-prompt::before { content: '> '; color: #00ff88; }
 
-/* ---------- NAVEGACIÓN ----------
-   La píldora activa sustituye al layoutId de Framer Motion: un único
-   elemento absoluto cuya posición fija el script de scroll-spy.        */
+/* ---------- NAVIGATION ----------
+   The active pill replaces Framer Motion's layoutId: a single absolute
+   element whose position the scroll-spy script sets.                   */
 .nav-pill {
   position: absolute;
   inset-block: 0;
@@ -221,11 +221,11 @@ html.js .nav-pill {
   html.js .nav-pill { transition: none; }
 }
 
-/* Menú móvil: el markup y los enlaces existen siempre en el HTML;
-   el script solo alterna el atributo hidden. */
+/* Mobile menu: the markup and the links always exist in the HTML;
+   the script only toggles the hidden attribute. */
 #mobile-menu[hidden] { display: none; }
 
-/* ---------- IMPRESIÓN DEL CV ---------- */
+/* ---------- CV PRINTING ---------- */
 @media print {
   .no-print { display: none !important; }
   html, body { background: #fff !important; color: #111 !important; }

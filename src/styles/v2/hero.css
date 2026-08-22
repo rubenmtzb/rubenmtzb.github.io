@@ -54,7 +54,7 @@
   transform: scale(1.2) rotate(6deg);
 }
 
-/* Chips compactos del showcase: comparten color, glow y enlace del hero. */
+/* Compact showcase chips: they share the hero's colour, glow and link. */
 .project-tech-chip {
   min-height: 1.55rem;
   padding: 0.2rem 0.5rem;
