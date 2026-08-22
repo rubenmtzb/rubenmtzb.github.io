@@ -1,21 +1,22 @@
 /**
- * De qué showcase se salió hacia una ficha de proyecto.
+ * Which showcase a case study was entered from.
  *
- * La ficha se enlaza desde dos sitios —el carrusel destacado y la rejilla— y
- * cada enlace lleva su origen en `?from=`, que la propia ficha usa para volver.
- * El botón Atrás del navegador no pasa por ahí: reabre la entrada del historial
- * tal y como se dejó, y esa entrada apunta a la portada sin ancla, así que
- * devolvía al principio de la página en lugar de al bloque de donde se salió.
+ * The case study is linked from two places — the featured carousel and the grid
+ * — and every link carries its origin in `?from=`, which the case study itself
+ * uses to go back. The browser's Back button does not go through that: it
+ * reopens the history entry exactly as it was left, and that entry points at the
+ * home page with no anchor, so it returned to the top of the page instead of to
+ * the block the visitor left from.
  *
- * Antes de navegar se reescribe la entrada actual con el ancla del origen. No
- * añade una entrada nueva —`replaceState`, no `pushState`—, así que el
- * historial conserva exactamente los mismos pasos que antes.
+ * Before navigating, the current entry is rewritten with the origin's anchor. It
+ * adds no new entry — `replaceState`, not `pushState` — so the history keeps
+ * exactly the same steps as before.
  */
 export function initCaseOrigin() {
   for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-case-origin]')) {
     link.addEventListener('click', (event) => {
-      /* Un clic con modificador abre en otra pestaña: esta página no se va a
-         ninguna parte y su historial no debe tocarse. */
+      /* A modified click opens in another tab: this page is not going anywhere
+         and its history must not be touched. */
       if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
 
       const origin = link.dataset.caseOrigin

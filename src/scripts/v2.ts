@@ -1,13 +1,13 @@
 /**
- * Mejora progresiva de la V2.
+ * The V2's progressive enhancement.
  *
- * Todo lo que se arranca aquí es interactividad opcional: el HTML de build ya
- * es 100 % accesible, semántico e indexable sin JavaScript. Quitar este script
- * no quita contenido, solo movimiento.
+ * Everything started here is optional interactivity: the built HTML is already
+ * fully accessible, semantic and indexable without JavaScript. Removing this
+ * script removes motion, not content.
  *
- * Este fichero es únicamente el orden de arranque. Cada capa vive en su propio
- * módulo dentro de `./v2/`, se inicializa sola y no sabe nada de las demás: la
- * única dependencia compartida son las primitivas de `./v2/dom`.
+ * This file is nothing but the boot order. Each layer lives in its own module
+ * under `./v2/`, initialises itself and knows nothing about the others: the
+ * only shared dependency is the set of primitives in `./v2/dom`.
  */
 import { initAsciiPortrait } from './ascii-portrait'
 import { revealOnScroll } from './reveal'
@@ -25,7 +25,7 @@ import { initKeyboardBuildExplorer } from './v2/build-explorer'
 import { initMail, initClock, initContactSignal } from './v2/contact'
 import { initGameMode } from './v2/game-launcher'
 
-/** Retrato ASCII del hero. Sin canvas no se monta y el resto sigue igual. */
+/** The hero's ASCII portrait. With no canvas it never mounts and the rest is unaffected. */
 function initPortrait() {
   const canvas = document.getElementById('ascii') as HTMLCanvasElement | null
   if (canvas) initAsciiPortrait(canvas, '/avatar.png')

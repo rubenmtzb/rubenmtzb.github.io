@@ -1,10 +1,9 @@
 /**
- * Modo libre: pizarra de escritura y telemetría.
+ * Free play: writing pad and telemetry.
  *
- * Segundo modo del bloque de teclados: se escribe libremente y se ven el
- * texto, las pulsaciones y una cadencia instantánea. No comparte estado con
- * el test de velocidad, así que se gobierna a sí mismo y solo expone las
- * cuatro cosas que el teclado necesita de él.
+ * The keyboard block's second mode: you type freely and see the text, the
+ * keystrokes and a live cadence. It shares no state with the speed trial, so it
+ * governs itself and exposes only the four things the keyboard needs from it.
  */
 import { say } from '../dom'
 
@@ -21,7 +20,7 @@ export function createFreeSandbox({ onEveryTenKeys, announce }: {
   const wpmEl = document.getElementById('kb-free-wpm')
   const profilePill = document.getElementById('kb-free-sound-pill')
 
-  /** Ventana móvil sobre la que se calcula la cadencia en vivo. */
+  /** Sliding window the live cadence is computed over. */
   const WINDOW_MS = 8000
   const WINDOW_MINUTES = WINDOW_MS / 60_000
 
@@ -52,7 +51,7 @@ export function createFreeSandbox({ onEveryTenKeys, announce }: {
   })
 
   return {
-    /** El teclado global necesita saber si el foco está aquí dentro. */
+    /** The global keyboard needs to know whether focus is in here. */
     element: box,
     showProfile(label: string) {
       if (profilePill) profilePill.textContent = `🔊 ${label}`

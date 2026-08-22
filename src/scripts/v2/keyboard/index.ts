@@ -1,8 +1,8 @@
 /**
- * Teclado mecánico dibujado, con sus dos modos: el test de velocidad tipo
- * MonkeyType y el modo libre. Aquí solo vive el gobierno del bloque —qué
- * tecla se pulsa, en qué modo estamos y qué pestaña manda—; la mascota, el
- * sonido y la pizarra de escritura son piezas propias con su propio módulo.
+ * The drawn mechanical keyboard and its two modes: the MonkeyType-style speed
+ * trial and free play. Only the block's governance lives here — which key is
+ * pressed, which mode we are in and which tab is in charge; the mascot, the
+ * sound and the writing pad are pieces of their own with their own modules.
  */
 import { say } from '../dom'
 import { createPixelKillua } from './killua'
@@ -13,7 +13,7 @@ import { createSpeedTrial } from './speed-trial'
 export function initKeyboard() {
   const kb = document.getElementById('kb')
   if (!kb) return
-  /** Cada tecla dibujada, indexada por el código que reporta el teclado real. */
+  /** Every drawn key, indexed by the code the real keyboard reports. */
   const keys = new Map<string, HTMLElement>()
   for (const el of kb.querySelectorAll<HTMLElement>('[data-code]')) {
     if (el.dataset.code) keys.set(el.dataset.code, el)
@@ -32,7 +32,7 @@ export function initKeyboard() {
     if (killuaSpeech) killuaSpeech.textContent = `"${text}"`
   }
 
-  /* Lo que suelta la mascota cuando alguien le toca la cara en vez de teclear. */
+  /* What the mascot says when someone pokes its face instead of typing. */
   const KILLUA_QUIPS_ES = [
     '¡Oye! ¡No me toques la cara, mejor concéntrate en teclear a la velocidad del rayo!',
     '¡No me desconcentres! ¡Demuéstrame si puedes superar 80 WPM!',
@@ -59,9 +59,9 @@ export function initKeyboard() {
   let activeMode: 'speed' | 'sim' | 'photos' = 'speed'
 
   /*
-   * Los dos modos exponen la misma superficie —una tecla, un retroceso y la
-   * caja que recibe el foco—, así que el despachador trata a los dos igual y
-   * no tiene que saber cómo calcula cada uno lo suyo.
+   * Both modes expose the same surface — a key, a backspace and the box that
+   * takes focus — so the dispatcher treats them alike and never has to know how
+   * each one works out its own business.
    */
   const trial = createSpeedTrial({ announce: setKilluaSpeech })
   const sandbox = createFreeSandbox({
@@ -80,9 +80,9 @@ export function initKeyboard() {
   }
 
   /*
-   * Qué hace cada tecla en cada modo. Antes estaba escrito dos veces, una
-   * para el teclado físico y otra para el clic sobre las teclas en pantalla,
-   * con el riesgo de que las dos copias se separasen.
+   * What each key does in each mode. It used to be written twice, once for the
+   * physical keyboard and once for clicks on the on-screen keys, with the risk
+   * of the two copies drifting apart.
    */
   const dispatchKey = (code: string, char: string, fromHardware: boolean) => {
     if (activeMode === 'speed') {
@@ -94,12 +94,12 @@ export function initKeyboard() {
     if (activeMode !== 'sim') return
     if (code === 'Backspace') sandbox.backspace()
     else if (code === 'Space') sandbox.type(' ', 'Space')
-    // El Enter del teclado real inserta un espacio; la tecla dibujada escribe su glifo.
+    // The real keyboard's Enter inserts a space; the drawn key writes its glyph.
     else if (code === 'Enter' && fromHardware) sandbox.type(' ', 'Enter')
     else if (char.length === 1) sandbox.type(char, code)
   }
 
-  /** Escribir en un campo de la página no debe pilotar el teclado de adorno. */
+  /** Typing into a field on the page must not drive the decorative keyboard. */
   const isForeignField = (target: EventTarget | null) => {
     const el = target as HTMLElement | null
     return ['INPUT', 'TEXTAREA'].includes(el?.tagName ?? '')
@@ -107,11 +107,10 @@ export function initKeyboard() {
   }
 
   /*
-   * El bloque solo secuestra el espacio y el retroceso cuando está de
-   * verdad en juego: con el foco dentro del archivo, o con el panel a la
-   * vista. Antes bastaba con estar en modo Speed Trial —el modo por
-   * defecto—, así que la barra espaciadora dejaba de hacer scroll en toda
-   * la página desde el primer render.
+   * The block only hijacks space and backspace when it is genuinely in play:
+   * with focus inside the archive, or with the panel in view. It used to be
+   * enough to be in Speed Trial — the default mode — so the spacebar stopped
+   * scrolling the whole page from the very first render.
    */
   let panelOnScreen = false
   const interactivePanel = document.getElementById('kb-panel-interactive')
@@ -132,8 +131,8 @@ export function initKeyboard() {
       || panelOnScreen
 
     /*
-     * El tabulador nunca se bloquea: es la única forma de recorrer la
-     * página con el teclado y no le pertenece a este widget.
+     * Tab is never blocked: it is the only way to walk the page from the
+     * keyboard and it does not belong to this widget.
      */
     if (engaged && (e.code === 'Space' || e.code === 'Backspace')) e.preventDefault()
 
@@ -173,21 +172,21 @@ export function initKeyboard() {
 
   soundToggle?.addEventListener('click', () => {
     audio.toggle()
-    // Las dos etiquetas viajan en data-*: la traducción vive solo en i18n/ui.
+    // Both labels travel in data-*: the translation lives only in i18n/ui.
     const label = soundToggle.dataset[audio.enabled ? 'on' : 'off']
     if (soundLabel && label) soundLabel.textContent = label
   })
 
-  // Switcher de pestañas: Speed Trial vs Simulador vs Fotos
+  // Tab switcher: Speed Trial vs Simulator vs Photos
   const tabSpeed = document.getElementById('kb-tab-speed')
   const tabSim = document.getElementById('kb-tab-sim')
   const tabPhotos = document.getElementById('kb-tab-photos')
   const panelPhotos = document.getElementById('kb-panel-photos')
 
   /*
-   * Patrón ARIA de pestañas completo: además del estado visual, el grupo
-   * mantiene un único punto de tabulación y las flechas recorren los tres
-   * modos, que es como un lector de pantalla espera navegar un `tablist`.
+   * The full ARIA tabs pattern: beyond the visual state, the group keeps a
+   * single tab stop and the arrow keys walk the three modes, which is how a
+   * screen reader expects to navigate a `tablist`.
    */
   const setTabActive = (activeBtn: HTMLElement | null, inactiveBtns: (HTMLElement | null)[]) => {
     activeBtn?.classList.add('active')

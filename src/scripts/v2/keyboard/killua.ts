@@ -3,26 +3,26 @@
 type Spark = { x: number; y: number; vx: number; vy: number; life: number; maxLife: number }
 
 type PixelKillua = {
-  /** Está a media animación de salto; el clic no debe encadenar brincos. */
+  /** Mid-jump animation; a click must not chain one hop into the next. */
   readonly airborne: boolean
-  /** Un brinco con chispas, ignorado si ya está en el aire o acaba de saltar. */
+  /** A hop with sparks, ignored if already airborne or freshly jumped. */
   hop(): void
 }
 
-/** Sin canvas no hay mascota, pero el resto del teclado sigue funcionando igual. */
+/** With no canvas there is no mascot, but the rest of the keyboard works the same. */
 const NO_KILLUA: PixelKillua = { airborne: false, hop() {} }
 
 /**
- * Mascota del bloque de teclados. Expone solo lo que el resto necesita, y se
- * ocupa por dentro del canvas, de las chispas y de parar el bucle cuando no
- * se está viendo: es decoración, y no tiene por qué gastar batería mientras
- * el usuario lee otra sección.
+ * The keyboard block's mascot. It exposes only what the rest needs, and handles
+ * the canvas, the sparks and stopping the loop when nobody is looking: it is
+ * decoration, and it has no business spending battery while the reader is in
+ * another section.
  */
 export function createPixelKillua(canvas: HTMLCanvasElement | null): PixelKillua {
   const ctx = canvas?.getContext('2d')
   if (!canvas || !ctx) return NO_KILLUA
 
-  const W_PX = 76           // debe coincidir con width/height del <canvas>
+  const W_PX = 76           // must match the <canvas> width/height
   const H_PX = 84
   const SPRITE_W = 34
   const SPRITE_H = 76
@@ -64,7 +64,7 @@ export function createPixelKillua(canvas: HTMLCanvasElement | null): PixelKillua
   }
 
   const render = (time: number) => {
-    // Normalizado a 60 fps y acotado, para que un frame perdido no dé un salto.
+    // Normalised to 60 fps and clamped, so a dropped frame causes no jump.
     const dt = Math.min((time - lastFrame) / 16.67, 2)
     lastFrame = time
     ctx.clearRect(0, 0, W_PX, H_PX)
@@ -78,7 +78,7 @@ export function createPixelKillua(canvas: HTMLCanvasElement | null): PixelKillua
       }
     }
 
-    // Chispa ambiental ocasional: el aura eléctrica en reposo.
+    // The occasional ambient spark: the electric aura at rest.
     if (Math.random() < 0.12) {
       sparks.push({
         x: W_PX / 2 + (Math.random() - 0.5) * 26,
@@ -118,9 +118,9 @@ export function createPixelKillua(canvas: HTMLCanvasElement | null): PixelKillua
   }
 
   /*
-   * Solo se anima si está a la vez en pantalla y en una pestaña activa.
-   * Hacen falta las dos condiciones: volver a la pestaña no debe reanudar
-   * un canvas que quedó fuera de la ventana.
+   * It only animates while it is both on screen and in an active tab. Both
+   * conditions are needed: returning to the tab must not resume a canvas that
+   * scrolled out of the viewport.
    */
   let onScreen = true
   const sync = () => {

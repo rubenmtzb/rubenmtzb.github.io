@@ -1,9 +1,9 @@
 /**
- * Easter egg: lanzador del platformer de Killua.
+ * Easter egg: launcher for Killua's platformer.
  *
- * El platformer es la pieza más pesada del sitio y solo la ve quien la
- * busca, así que viaja en su propio chunk y se descarga con el primer
- * intento de abrirlo. El resto de la página no paga su peso.
+ * The platformer is the heaviest piece on the site and only whoever looks for it
+ * ever sees it, so it travels in its own chunk and downloads on the first
+ * attempt to open it. The rest of the page does not pay its weight.
  */
 export function initGameMode() {
   let gameRunning = false
@@ -15,7 +15,7 @@ export function initGameMode() {
       const { startGameMode } = await import('../game-mode')
       startGameMode(() => { gameRunning = false })
     } catch {
-      // Si el chunk no llega, el portfolio sigue intacto: solo falta el juego.
+      // If the chunk never arrives, the portfolio is untouched: only the game is missing.
       gameRunning = false
     }
   }

@@ -1,19 +1,19 @@
 /**
- * Primer modo del bloque de teclados: la prueba de velocidad.
+ * The keyboard block's first mode: the speed trial.
  *
- * Es la pareja del modo libre, así que expone la misma superficie —una tecla,
- * un retroceso y la caja que recibe el foco— y guarda dentro todo lo que solo
- * le incumbe: la frase en curso, el cronómetro y las estadísticas. El teclado
- * que la usa no sabe cómo se calculan las WPM, igual que no sabe cómo se pinta
- * la pizarra del otro modo.
+ * It is free play's counterpart, so it exposes the same surface — a key, a
+ * backspace and the box that takes focus — and keeps inside everything that
+ * concerns only itself: the current phrase, the clock and the statistics. The
+ * keyboard using it does not know how WPM are computed, just as it does not
+ * know how the other mode's pad is painted.
  */
 import { say } from '../dom'
 
 /*
- * Las dos colecciones mantienen la misma dificultad aproximada y solo usan
- * caracteres disponibles en el HHKB mostrado. Así una portada en español
- * propone frases en español sin obligar a cambiar la distribución física ni
- * las reglas de comparación de cada pulsación.
+ * Both collections hold roughly the same difficulty and use only characters
+ * available on the HHKB being shown. That way a Spanish page offers Spanish
+ * phrases without forcing a change of physical layout or of the rules each
+ * keystroke is compared against.
  */
 const QUOTES_EN = [
   "lightning never strikes twice unless godspeed is activated",
@@ -37,10 +37,10 @@ const QUOTES_ES = [
   'manten tu codigo limpio y tu hoja siempre afilada',
 ]
 
-/** Duración de una ronda, en segundos. */
+/** A round's duration, in seconds. */
 const ROUND_SECONDS = 30
 
-/** WPM a partir de las cuales la mascota reconoce el resultado. */
+/** The WPM from which the mascot acknowledges the result. */
 const GODSPEED_WPM = 85
 
 export function createSpeedTrial({ announce }: { announce: (text: string) => void }) {
@@ -64,19 +64,19 @@ export function createSpeedTrial({ announce }: { announce: (text: string) => voi
   let timerInterval: number | null = null
   let remainingSec = ROUND_SECONDS
   /*
-   * La ronda ha terminado y el marcador es definitivo.
+   * The round is over and the score is final.
    *
-   * Sin esto, seguir tecleando después de que se acabara el tiempo volvía a
-   * arrancar el cronómetro: la cuenta atrás bajaba a números negativos y el
-   * origen del cálculo de WPM se movía, así que las pulsaciones anteriores
-   * dejaban de contar. Hasta reiniciar, el tablero no acepta nada.
+   * Without this, typing on after time ran out restarted the clock: the
+   * countdown fell into negative numbers and the origin of the WPM calculation
+   * moved, so earlier keystrokes stopped counting. Until a restart, the board
+   * accepts nothing.
    */
   let over = false
 
   /*
-   * Los <span> de cada carácter se guardan al pintarlos. Antes cada
-   * pulsación hacía dos querySelector sobre la frase completa; ahora es
-   * un acceso por índice, que es lo que el bucle de tecleo necesita.
+   * Each character's <span> is stored as it is painted. Every keystroke used to
+   * run two querySelector calls over the whole phrase; now it is an access by
+   * index, which is what the typing loop actually needs.
    */
   let charSpans: HTMLElement[] = []
 
@@ -148,7 +148,7 @@ export function createSpeedTrial({ announce }: { announce: (text: string) => voi
     if (comboEl) comboEl.textContent = `x${combo}`
   }
 
-  /** Carga otra frase y devuelve el marcador a cero. */
+  /** Loads another phrase and returns the score to zero. */
   const restart = () => {
     const others = quotes.filter((quote) => quote !== currentQuote)
     currentQuote = others[Math.floor(Math.random() * others.length)] || quotes[0]
@@ -179,7 +179,7 @@ export function createSpeedTrial({ announce }: { announce: (text: string) => voi
   box?.addEventListener('click', () => box.focus())
 
   return {
-    /** El teclado global necesita saber si el foco está aquí dentro. */
+    /** The global keyboard needs to know whether focus is in here. */
     element: box,
     restart,
     type(inputChar: string) {

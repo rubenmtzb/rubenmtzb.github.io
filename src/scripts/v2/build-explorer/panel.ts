@@ -1,18 +1,18 @@
 /**
- * Un build abierto: su modelo por capas, su cámara y su despiece.
+ * One open build: its layered model, its camera and its exploded view.
  *
- * Todo el estado del teclado que se está mirando —ángulo, zoom, separación y
- * pieza fijada— vive dentro del panel, así que abrir otro build no arrastra
- * nada del anterior.
+ * All of the state of the keyboard being looked at — angle, zoom, explode and
+ * pinned part — lives inside the panel, so opening another build carries
+ * nothing over from the previous one.
  */
 import { pad } from '../dom'
 
-/** Límites de la órbita: fuera de ellos el modelo deja de leerse como teclado. */
+/** Orbit limits: beyond them the model stops reading as a keyboard. */
 const BX_TILT = { min: 24, max: 78, home: 56 }
 const BX_SPIN = { min: -84, max: 24, home: -29 }
 const BX_ZOOM = { min: .68, max: 1.65 }
 
-/** Lo que el explorador puede pedirle a un build abierto. */
+/** What the explorer can ask of an open build. */
 export type BuildPanel = ReturnType<typeof createBuildPanel>
 
 export function createBuildPanel(panel: HTMLElement, root: HTMLElement) {
@@ -32,13 +32,12 @@ export function createBuildPanel(panel: HTMLElement, root: HTMLElement) {
   const partLayers = all('[data-bx-part]')
 
   /*
-   * Ficha de cada pieza, leída del propio listado.
+   * Each part's details, read from the listing itself.
    *
-   * La especificación llega por atributo y no buscando una etiqueta dentro del
-   * botón: cuando la lista pasó a ser un índice compacto, el `<small>` que la
-   * contenía desapareció y el chip se quedaba en blanco al elegir cualquier
-   * capa. El dato que el modelo necesita no puede depender de cómo se decida
-   * maquetar la fila.
+   * The spec arrives as an attribute rather than by looking for a tag inside the
+   * button: when the list became a compact index, the `<small>` that held it
+   * disappeared and the chip went blank on every layer selection. The data the
+   * model needs cannot depend on how the row happens to be laid out.
    */
   const partDetails = new Map(partButtons.map((button, index) => [
     button.dataset.bxPartButton ?? '',
@@ -52,7 +51,7 @@ export function createBuildPanel(panel: HTMLElement, root: HTMLElement) {
   let tilt = BX_TILT.home
   let spin = BX_SPIN.home
   let zoom = 1
-  /** 0 montado, 1 totalmente separado. Es el único origen de la explosión. */
+  /** 0 assembled, 1 fully apart. The single source of the explode value. */
   let spread = 0
   let pinnedPart: string | null = null
 
@@ -65,7 +64,7 @@ export function createBuildPanel(panel: HTMLElement, root: HTMLElement) {
 
   const renderSpread = () => {
     const percent = Math.round(spread * 100)
-    // Vive en la raíz: el alto del escenario y el encuadre del modelo lo leen.
+    // It lives on the root: the stage's height and the model's framing read it.
     root.style.setProperty('--spread', String(spread))
     root.classList.toggle('is-exploded', spread > 0)
     root.classList.toggle('is-spread', spread > .12)
@@ -101,13 +100,13 @@ export function createBuildPanel(panel: HTMLElement, root: HTMLElement) {
       spread = Math.max(0, Math.min(1, next))
       renderSpread()
     },
-    /** Órbita absoluta desde un punto de partida: es la que usa el arrastre. */
+    /** Absolute orbit from a starting point: the one dragging uses. */
     orbitFrom(baseTilt: number, baseSpin: number, deltaTilt: number, deltaSpin: number) {
       tilt = Math.max(BX_TILT.min, Math.min(BX_TILT.max, baseTilt + deltaTilt))
       spin = Math.max(BX_SPIN.min, Math.min(BX_SPIN.max, baseSpin + deltaSpin))
       renderCamera()
     },
-    /** Órbita relativa a la posición actual: es la que usan las flechas. */
+    /** Orbit relative to the current position: the one the arrow keys use. */
     orbit(deltaTilt: number, deltaSpin: number) {
       this.orbitFrom(tilt, spin, deltaTilt, deltaSpin)
     },

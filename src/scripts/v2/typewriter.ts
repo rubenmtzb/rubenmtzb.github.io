@@ -1,4 +1,4 @@
-/* Efecto máquina de escribir alternante del titular (rubén <-> rubenitx). */
+/* The headline's alternating typewriter effect (rubén <-> rubenitx). */
 import { reduce, say } from './dom'
 
 export function initTypewriter() {
@@ -15,9 +15,9 @@ export function initTypewriter() {
   ]
 
   /*
-   * El prefijo y el nombre son dos nodos estables: escribir letra a letra
-   * solo cambia el texto de un nodo, en lugar de reconstruir el HTML del
-   * titular en cada fotograma.
+   * The prefix and the name are two stable nodes: typing letter by letter only
+   * changes one node's text instead of rebuilding the headline's HTML on every
+   * frame.
    */
   const prefixNode = document.createTextNode('')
   const nameNode = document.createElement('span')

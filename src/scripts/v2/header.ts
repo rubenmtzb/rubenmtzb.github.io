@@ -1,4 +1,4 @@
-/* Cabecera fija y navegación. */
+/* Sticky header and navigation. */
 
 export function initHeader() {
   const header = document.getElementById('site-header')
@@ -6,9 +6,9 @@ export function initHeader() {
   const mobileNav = document.getElementById('mobile-nav') as HTMLDetailsElement | null
 
   /*
-   * Las secciones se resuelven una vez. El bucle de scroll solo mide: buscar
-   * cada `id` en el documento en cada fotograma era trabajo repetido sobre
-   * un conjunto que no cambia mientras la página está abierta.
+   * The sections are resolved once. The scroll loop only measures: looking up
+   * every `id` in the document on every frame was repeated work over a set that
+   * does not change while the page is open.
    */
   const sections = [...new Set(links.map((l) => l.dataset.nav).filter((id): id is string => Boolean(id)))]
     .map((id) => ({ id, el: document.getElementById(id) }))
@@ -21,9 +21,9 @@ export function initHeader() {
     frame = null
 
     /*
-     * Primero se mide y después se escribe. Al revés, el cambio de clase de
-     * la cabecera invalidaba el estilo y la primera medición tenía que
-     * recalcular el diseño entero antes de responder.
+     * Measure first, write afterwards. The other way round, the header's class
+     * change invalidated the style and the first measurement had to recalculate
+     * the whole layout before it could answer.
      */
     const line = window.innerHeight * 0.34
     let next = ''

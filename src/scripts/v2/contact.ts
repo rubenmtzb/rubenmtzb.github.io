@@ -1,6 +1,6 @@
 /**
- * Las tres capas del bloque de contacto: copiar el email al portapapeles, el
- * reloj de Barcelona y la señal que se escribe sola al entrar en pantalla.
+ * The contact block's three layers: copying the email to the clipboard, the
+ * Barcelona clock, and the signal that types itself once it enters the screen.
  */
 import { reduce, say } from './dom'
 
@@ -14,10 +14,9 @@ export function initMail() {
   const CONFIRM_MS = 2400
 
   /*
-   * El icono y la etiqueta son dos nodos estables: confirmar la copia solo
-   * cambia su texto. Antes se reescribía el HTML del botón interpolando la
-   * etiqueta, y dos clics seguidos dejaban dos temporizadores compitiendo
-   * por restaurarlo.
+   * The icon and the label are two stable nodes: confirming the copy only
+   * changes their text. The button's HTML used to be rewritten by interpolating
+   * the label, and two clicks in a row left two timers competing to restore it.
    */
   const icon = document.createElement('span')
   const label = document.createElement('span')
@@ -35,8 +34,8 @@ export function initMail() {
       if (!navigator.clipboard) return
       await navigator.clipboard.writeText(btn.dataset.mail ?? '')
     } catch {
-      // Sin permiso de portapapeles no se confirma nada: el enlace mailto
-      // sigue al lado y decir "copiado" sin haber copiado sería mentir.
+      // With no clipboard permission nothing is confirmed: the mailto link is
+      // right there, and saying "copied" without copying would be a lie.
       return
     }
 
@@ -54,10 +53,10 @@ export function initMail() {
 /* ---------------- Reloj de hora local de Barcelona ---------------- */
 
 /**
- * La abreviatura de zona y el desfase UTC estaban escritos a mano como
- * "CEST" y "UTC+2", que solo son ciertos media parte del año. Los dos salen
- * ahora de la propia zona horaria, así que no pueden contradecirse entre sí
- * ni con la hora que acompañan.
+ * The zone abbreviation and the UTC offset used to be hand-written as "CEST"
+ * and "UTC+2", which are only true for half the year. Both now come from the
+ * time zone itself, so they cannot contradict each other or the time they
+ * accompany.
  */
 export function initClock() {
   const clock = document.getElementById('local-time')
@@ -69,7 +68,7 @@ export function initClock() {
   let zone: Intl.DateTimeFormat
   let utcOffset: Intl.DateTimeFormat
   try {
-    // Construir un formateador es caro: se hace una vez, no una vez por segundo.
+    // Building a formatter is expensive: do it once, not once per second.
     const at = (extra: Intl.DateTimeFormatOptions) =>
       new Intl.DateTimeFormat('es-ES', { timeZone: TIME_ZONE, ...extra })
     time = at({ hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })
@@ -80,7 +79,7 @@ export function initClock() {
     return
   }
 
-  /** El nombre de zona llega mezclado con la fecha; solo interesa esa parte. */
+  /** The zone name arrives mixed into the date; only that part matters. */
   const zoneNameFrom = (format: Intl.DateTimeFormat, now: Date) =>
     format.formatToParts(now).find((p) => p.type === 'timeZoneName')?.value ?? ''
 
@@ -91,9 +90,9 @@ export function initClock() {
   }
 
   /*
-   * Un reloj que nadie mira no tiene por qué despertar la pestaña cada
-   * segundo: se detiene al ocultarla y se pone en hora al volver, así que
-   * lo que se ve es siempre correcto y en segundo plano no cuesta nada.
+   * A clock nobody is watching has no business waking the tab every second: it
+   * stops when the tab is hidden and resets itself on return, so what is on
+   * screen is always right and the background costs nothing.
    */
   let timer: number | null = null
   const stop = () => {
@@ -108,7 +107,7 @@ export function initClock() {
   start()
 }
 
-/* ---------------- Contacto: señal escrita al entrar en pantalla ---------------- */
+/* ---------------- Contact: signal typed on entering the screen ---------------- */
 export function initContactSignal() {
   const target = document.querySelector<HTMLElement>('[data-contact-type]')
   if (!target) return

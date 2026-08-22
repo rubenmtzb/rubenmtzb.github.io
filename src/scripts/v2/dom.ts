@@ -1,32 +1,32 @@
 /**
- * Primitivas compartidas por la capa de interacción de la V2.
+ * Primitives shared by the V2's interaction layer.
  *
- * Todo lo que hay aquí lo usan varias funcionalidades a la vez: leer las
- * preferencias una sola vez, elegir texto por idioma, numerar los contadores
- * y los dos gestos —puntero y deslizamiento— que comparten los carruseles y
- * las portadas del archivo.
+ * Everything here is used by several features at once: reading the preferences
+ * a single time, picking copy by language, numbering the counters, and the two
+ * gestures — pointer and swipe — that the carousels and the archive's covers
+ * have in common.
  */
 
-/** Preferencias e idioma se leen una sola vez: no cambian durante la sesión. */
+/** Preferences and language are read once: they do not change during the session. */
 export const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 export const isSpanish = document.documentElement.lang === 'es'
 
-/** Elige entre la variante castellana y la inglesa según el idioma del documento. */
+/** Picks between the Spanish and the English variant by the document's language. */
 export const say = <T,>(es: T, en: T): T => (isSpanish ? es : en)
 
-/** Numeración de dos dígitos: "01 / 04". La comparten los dos contadores. */
+/** Two-digit numbering: "01 / 04". Shared by both counters. */
 export const pad = (n: number) => String(n).padStart(2, '0')
 
 export const clamp = (value: number, limit: number) => Math.max(-limit, Math.min(limit, value))
 
 /**
- * Luz que sigue al puntero, compartida por el carrusel de proyectos y por
- * las portadas del archivo de builds.
+ * A light that follows the pointer, shared by the project carousel and by the
+ * build archive's covers.
  *
- * `pointermove` se dispara muchas más veces de las que el navegador llega a
- * pintar —un ratón de 1.000 Hz son diecisiete eventos por fotograma— y cada
- * uno medía la caja del elemento, que obliga a recalcular el diseño. Aquí se
- * agrupa en un fotograma: el efecto es el mismo y la medición pasa a ser una.
+ * `pointermove` fires far more often than the browser ever paints — a 1,000 Hz
+ * mouse is seventeen events per frame — and each one measured the element's
+ * box, which forces a layout recalculation. Here it is batched into a frame:
+ * the effect is the same and the measuring drops to one.
  */
 export function trackPointer(el: HTMLElement, prefix: string) {
   let latest: PointerEvent | null = null
@@ -47,8 +47,8 @@ export function trackPointer(el: HTMLElement, prefix: string) {
 }
 
 /**
- * Gesto de deslizamiento horizontal. Lo comparten los tres carruseles,
- * así que el umbral y la dirección se definen en un único sitio.
+ * Horizontal swipe gesture. The three carousels share it, so the threshold and
+ * the direction are defined in a single place.
  */
 export function onSwipe(el: HTMLElement, handler: (direction: 1 | -1) => void, threshold = 50) {
   let startX = 0

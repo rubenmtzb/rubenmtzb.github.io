@@ -1,4 +1,4 @@
-/* Sonido sintetizado de los switches. */
+/* Synthesised switch sound. */
 
 const SWITCH_PROFILES = {
   linear: { label: 'Linear (Thock)', freqStart: 580, freqEnd: 110, duration: 0.042, type: 'triangle' as OscillatorType, gain: 0.16 },
@@ -10,9 +10,9 @@ type SwitchProfile = keyof typeof SWITCH_PROFILES
 const SWITCH_ORDER = Object.keys(SWITCH_PROFILES) as SwitchProfile[]
 
 /**
- * Cada pulsación es un oscilador de vida muy corta con una caída
- * exponencial. El AudioContext se crea en la primera pulsación real, que es
- * cuando existe el gesto de usuario que los navegadores exigen.
+ * Every keystroke is a very short-lived oscillator with an exponential decay.
+ * The AudioContext is created on the first real keystroke, which is when the
+ * user gesture browsers demand actually exists.
  */
 export function createSwitchAudio() {
   let ctx: AudioContext | null = null
@@ -23,7 +23,7 @@ export function createSwitchAudio() {
     get label() { return SWITCH_PROFILES[profile].label },
     get enabled() { return enabled },
     toggle() { enabled = !enabled },
-    /** Rota entre los tres perfiles y devuelve la etiqueta del nuevo. */
+    /** Cycles through the three profiles and returns the new one's label. */
     nextProfile() {
       profile = SWITCH_ORDER[(SWITCH_ORDER.indexOf(profile) + 1) % SWITCH_ORDER.length]
       return SWITCH_PROFILES[profile].label
@@ -42,7 +42,7 @@ export function createSwitchAudio() {
         const gain = ctx.createGain()
 
         osc.type = prof.type
-        // Una pizca de variación de tono evita que suene a metrónomo.
+        // A touch of pitch variation keeps it from sounding like a metronome.
         osc.frequency.setValueAtTime(prof.freqStart + (Math.random() - 0.5) * 80, now)
         osc.frequency.exponentialRampToValueAtTime(prof.freqEnd, now + prof.duration)
         gain.gain.setValueAtTime(prof.gain, now)

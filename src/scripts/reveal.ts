@@ -1,13 +1,13 @@
 /**
- * Revelado al hacer scroll — primitiva compartida por la V1 y la V2.
+ * Reveal on scroll — a primitive shared by the V1 and the V2.
  *
- * Las dos superficies marcaban `.reveal` con el mismo observador escrito dos
- * veces, y solo se diferenciaban en el margen y el umbral. La lógica vive
- * aquí una sola vez; cada superficie aporta su calibración.
+ * Both surfaces marked `.reveal` with the same observer written out twice, and
+ * differed only in margin and threshold. The logic lives here once; each
+ * surface brings its own calibration.
  *
- * Sin JavaScript, sin IntersectionObserver o con "reduce motion" activo, los
- * elementos se marcan de golpe: el revelado es un adorno, nunca un requisito
- * para leer el contenido.
+ * With no JavaScript, no IntersectionObserver, or with "reduce motion" on, the
+ * elements are marked all at once: the reveal is an ornament, never a
+ * requirement for reading the content.
  */
 export function revealOnScroll({ reduce, rootMargin, threshold }: {
   reduce: boolean
@@ -15,8 +15,8 @@ export function revealOnScroll({ reduce, rootMargin, threshold }: {
   threshold: number
 }) {
   /*
-   * Señal para la red de seguridad del <head>: a partir de aquí el revelado
-   * tiene quien lo active, así que no hace falta que se revele solo.
+   * A signal for the safety net in the <head>: from here on the reveal has
+   * someone to trigger it, so it no longer needs to reveal itself.
    */
   document.documentElement.classList.add('enhanced')
 

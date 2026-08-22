@@ -1,13 +1,13 @@
 /**
- * Los tres carruseles de la V2 —proyectos, formación y certificaciones— y la
- * primitiva única de la que salen.
+ * The V2's three carousels — projects, education and certifications — and the
+ * single primitive they all come from.
  */
 import { onSwipe, pad, trackPointer } from './dom'
 
-/** Un grupo de controles que refleja el índice activo y navega al pulsarlo. */
+/** A group of controls that mirrors the active index and navigates on press. */
 type CarouselControls = {
   els: HTMLElement[]
-  /** Atributo ARIA que además del estado visual describe la selección. */
+  /** ARIA attribute that describes the selection beyond the visual state. */
   state?: 'aria-selected' | 'aria-current'
 }
 
@@ -17,18 +17,18 @@ type CarouselOptions = {
   prev?: HTMLElement | null
   next?: HTMLElement | null
   counter?: HTMLElement | null
-  /** Zona que acepta gesto táctil y, si se indica, flechas del teclado. */
+  /** Region that accepts touch gestures and, when asked, the arrow keys. */
   surface?: HTMLElement | null
   keyboard?: boolean
-  /** Los slides ocultos se marcan como tales para lectores de pantalla. */
+  /** Hidden slides are marked as such for screen readers. */
   ariaHideInactive?: boolean
 }
 
 /**
- * Proyectos, formación y certificaciones eran tres implementaciones
- * copiadas con los identificadores cambiados. La lógica —índice circular,
- * marcado de controles, contador, flechas y swipe— es la misma para las
- * tres, así que vive aquí una sola vez.
+ * Projects, education and certifications used to be three copied
+ * implementations with the identifiers swapped. The logic — circular index,
+ * control marking, counter, arrow keys and swipe — is the same for all three,
+ * so it lives here once.
  */
 function createCarousel({
   slides,
@@ -100,7 +100,7 @@ export function initProjectCarousel() {
 
   const slides = Array.from(carousel.querySelectorAll<HTMLElement>('.project-slide'))
 
-  /* La luz que sigue al puntero es decorativa y no forma parte del carrusel. */
+  /* The light that follows the pointer is decorative and not part of the carousel. */
   for (const slide of slides) trackPointer(slide, '--project-pointer')
 
   createCarousel({
@@ -117,7 +117,7 @@ export function initProjectCarousel() {
   })
 }
 
-/* ---------------- Slider de Formación Académica (Timeline) ---------------- */
+/* ---------------- Education timeline slider ---------------- */
 export function initEducationSlider() {
   const stage = document.getElementById('edu-slider-stage')
   if (!stage) return

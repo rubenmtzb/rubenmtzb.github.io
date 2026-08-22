@@ -1,4 +1,4 @@
-/* Pestañas interactivas de experiencia. */
+/* Interactive experience tabs. */
 
 export function initJobList() {
   const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('.job-tab'))
@@ -71,8 +71,8 @@ export function initJobList() {
     })
   })
 
-  /* Recolocar el indicador mide la pestaña activa, así que un
-     redimensionado continuo costaba un recálculo de diseño por evento. */
+  /* Repositioning the indicator measures the active tab, so a continuous
+     resize cost one layout recalculation per event. */
   let indicatorFrame: number | null = null
   window.addEventListener('resize', () => {
     if (indicatorFrame !== null) return

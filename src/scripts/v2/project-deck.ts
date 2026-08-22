@@ -1,4 +1,4 @@
-/* Deck secundario de proyectos: rejilla desplazable con contador. */
+/* Secondary project deck: a scrollable grid with a counter. */
 import { pad } from './dom'
 
 export function initProjectDeck() {
@@ -21,7 +21,7 @@ export function initProjectDeck() {
     const gap = Number.parseFloat(getComputedStyle(track).gap) || 0
     visibleCount = Math.max(1, Math.round((viewport.clientWidth + gap) / (cardWidth + gap)))
     const maxIndex = Math.max(0, cards.length - visibleCount)
-    // El índice se acota por los dos lados: nada puede dejarlo en negativo.
+    // The index is clamped on both sides: nothing can leave it negative.
     startIndex = Math.max(0, Math.min(startIndex, maxIndex))
     track.style.transform = `translateX(-${startIndex * (cardWidth + gap)}px)`
     if (counter) {

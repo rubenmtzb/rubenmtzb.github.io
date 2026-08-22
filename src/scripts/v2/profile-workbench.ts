@@ -1,16 +1,16 @@
 /**
- * Workbench de perfil: ficheros, paneles y línea de comando.
+ * Profile workbench: files, panels and command line.
  *
- * La caja de comando y el explorador de ficheros son dos vías al mismo sitio,
- * así que el nombre del fichero y las palabras que lo abren se declaran juntos:
- * lo que se ve escrito en la pestaña es literalmente lo que se puede teclear.
+ * The command box and the file explorer are two routes to the same place, so a
+ * file's name and the words that open it are declared together: what is written
+ * on the tab is literally what can be typed.
  */
 import { isSpanish } from './dom'
 
 /**
- * Un panel por fila: cómo se llama su fichero en cada idioma y qué palabras lo
- * abren desde la línea de comando. `identity` cierra la lista porque es el
- * destino por defecto de cualquier comando que no reconozca ningún otro.
+ * One panel per row: what its file is called in each language and which words
+ * open it from the command line. `identity` closes the list because it is the
+ * default destination for any command no other row recognises.
  */
 const PANELS = [
   {

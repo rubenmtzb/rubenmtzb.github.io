@@ -1,24 +1,25 @@
 /**
- * Muestras de sonido, una por ficha de build.
+ * Sound samples, one per build card.
  *
- * Todo lo que se dibuja —la envolvente y el tramo de referencia— llega ya
- * resuelto en el HTML, así que aquí no se decodifica ni se mide nada: se
- * mueve un recorte por encima de un trazo y se escribe la hora.
+ * Everything drawn — the envelope and the reference stretch — arrives already
+ * resolved in the HTML, so nothing is decoded or measured here: a clip slides
+ * over a stroke and the time gets written.
  *
- * El avance se sigue con `requestAnimationFrame` y no con `timeupdate`, que
- * solo llega cuatro veces por segundo y deja el cabezal a tirones. Hay un
- * único bucle vivo, el de la muestra que esté sonando.
+ * Progress is tracked with `requestAnimationFrame` and not with `timeupdate`,
+ * which only fires four times a second and leaves the playhead stuttering.
+ * There is a single live loop, the one belonging to whichever sample is
+ * playing.
  *
- * Devuelve el silenciador porque las fichas se ocultan sin avisar al audio:
- * salir de un build tiene que apagarlo, o el teclado que suena deja de ser el
- * teclado que se está mirando.
+ * It returns the muter because the cards are hidden without telling the audio:
+ * leaving a build has to shut it up, or the keyboard you hear stops being the
+ * keyboard you are looking at.
  */
 import { pad } from '../dom'
 
 export function createBuildSound(rack: HTMLElement) {
   const clock = (seconds: number) => `${Math.floor(seconds / 60)}:${pad(Math.floor(seconds % 60))}`
 
-  /** Solo suena una muestra a la vez: comparar dos a la vez no compara nada. */
+  /** Only one sample plays at a time: hearing two at once compares nothing. */
   let current: { row: HTMLElement, audio: HTMLAudioElement, paint: (ratio: number) => void } | null = null
   let frame = 0
 
@@ -41,11 +42,11 @@ export function createBuildSound(rack: HTMLElement) {
     const toggle = row.querySelector<HTMLButtonElement>('[data-bx-clip-toggle]')
     const seek = row.querySelector<HTMLInputElement>('[data-bx-clip-seek]')
     const readout = row.querySelector<HTMLElement>('[data-bx-clip-now]')
-    /* Sin salida de audio la fila se queda quieta: el resto del panel no se entera. */
+    /* With no audio output the row just sits still: the rest of the panel never notices. */
     if (!audio || !toggle || !seek || typeof audio.play !== 'function') continue
 
-    /* La duración va en el marcado porque con `preload="none"` el fichero aún
-       no existe para el navegador cuando hay que escribir el primer 0:00. */
+    /* The duration ships in the markup because with `preload="none"` the file
+       does not yet exist for the browser when the first 0:00 must be written. */
     const declared = Number(row.dataset.duration) || 0
     const length = () => (audio.duration > 0 ? audio.duration : declared)
 
@@ -58,8 +59,8 @@ export function createBuildSound(rack: HTMLElement) {
       seek.setAttribute('aria-valuetext', stamp)
     }
 
-    /* Arrastrar antes de la primera reproducción: se guarda y se aplica en
-       cuanto el fichero declara cuánto dura. */
+    /* Scrubbing before the first playback: it is stored and applied as soon as
+       the file declares how long it is. */
     let pending = -1
 
     audio.addEventListener('loadedmetadata', () => {
@@ -68,7 +69,7 @@ export function createBuildSound(rack: HTMLElement) {
       paint(audio.duration > 0 ? audio.currentTime / audio.duration : 0)
     })
 
-    /* El rótulo nombra la acción, así que cambia con el estado del botón. */
+    /* The label names the action, so it changes with the button's state. */
     const label = (state: 'play' | 'pause') => {
       const text = toggle.dataset[state]
       if (text) toggle.setAttribute('aria-label', text)
@@ -95,7 +96,7 @@ export function createBuildSound(rack: HTMLElement) {
     toggle.addEventListener('click', () => {
       if (current?.audio === audio) return audio.pause()
       const started = audio.play()
-      /* Si la política de reproducción lo rechaza, la fila no se queda encendida. */
+      /* If the playback policy rejects it, the row does not stay lit. */
       if (started && typeof started.catch === 'function') started.catch(() => release())
     })
 
@@ -110,9 +111,9 @@ export function createBuildSound(rack: HTMLElement) {
   }
 
   /*
-   * El apunte asomado sobre la muestra. Vive fuera de la fila —es hermano de
-   * ella— así que se engancha por el panel del build: la mascota reacciona al
-   * audio de su propio teclado y no al de otro.
+   * The note peeking over the sample. It lives outside the row — it is the row's
+   * sibling — so it is wired up through the build's panel: the mascot reacts to
+   * its own keyboard's audio and not to somebody else's.
    */
   for (const quip of rack.querySelectorAll<HTMLElement>('[data-bx-quip]')) {
     const poke = quip.querySelector<HTMLButtonElement>('[data-bx-quip-next]')
@@ -124,19 +125,19 @@ export function createBuildSound(rack: HTMLElement) {
       const parsed: unknown = JSON.parse(poke.dataset.quips ?? '[]')
       if (Array.isArray(parsed)) lines = parsed.filter((line): line is string => typeof line === 'string')
     } catch {
-      /* Un apunte ilegible no puede llevarse por delante el reproductor. */
+      /* An unreadable note must not take the player down with it. */
     }
     if (lines.length === 0) continue
 
     const speak = (line: string) => {
       bubble.textContent = line
-      /* Rearranca la entrada: sin el reflujo el salto solo se vería una vez. */
+      /* Restarts the entrance: without the reflow the hop would only play once. */
       bubble.style.animation = 'none'
       void bubble.offsetWidth
       bubble.style.animation = ''
     }
 
-    /* Arranca por uno cualquiera: entrar dos veces en la ficha no repite. */
+    /* Starts on a random one: entering the card twice does not repeat. */
     let index = Math.floor(Math.random() * lines.length)
     if (index > 0) speak(lines[index])
 
@@ -164,6 +165,6 @@ export function createBuildSound(rack: HTMLElement) {
     audio.addEventListener('ended', backToQuip)
   }
 
-  /* `pause` dispara el evento, que es quien apaga la fila y suelta el bucle. */
+  /* `pause` fires the event, which is what turns the row off and releases the loop. */
   return { silence: () => current?.audio.pause() }
 }

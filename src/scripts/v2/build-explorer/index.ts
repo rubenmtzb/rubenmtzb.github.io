@@ -1,9 +1,9 @@
 /**
- * Explorador de builds: portada fotográfica y modelo 3D por capas.
+ * Build explorer: photographic cover and layered 3D model.
  *
- * El componente renderiza un panel por build, así que aquí no hay nada
- * atado al Neo65: al abrir una tarjeta se engancha el panel correspondiente
- * y todo el estado —cámara, despiece, pieza fijada— vive dentro de él.
+ * The component renders one panel per build, so nothing here is tied to the
+ * Neo65: opening a card wires up the matching panel and all of the state —
+ * camera, exploded view, pinned part — lives inside it.
  */
 import { onSwipe, pad, trackPointer } from '../dom'
 import { createBuildPanel, type BuildPanel } from './panel'
@@ -14,8 +14,8 @@ export function initKeyboardBuildExplorer() {
   if (!root) return
 
   /*
-   * Las fotos viven en la portada, no en un visor aparte. Cada build mantiene
-   * su propio índice y admite botones, barras, teclado y gesto táctil.
+   * The photos live on the cover, not in a separate viewer. Each build keeps its
+   * own index and accepts buttons, bars, keyboard and touch gestures.
    */
   for (const carousel of root.querySelectorAll<HTMLElement>('[data-bx-card-carousel]')) {
     const slides = [...carousel.querySelectorAll<HTMLElement>('[data-bx-card-slide]')]
@@ -78,7 +78,7 @@ export function initKeyboardBuildExplorer() {
   let drag: { x: number, y: number, tilt: number, spin: number, moved: boolean, partId: string | null } | null = null
   let suppressPartClick = false
 
-  /** El rótulo describe siempre lo que se está viendo, presets incluidos. */
+  /** The label always describes what is on screen, presets included. */
   const syncStatus = () => {
     if (!status) return
     const percent = Math.round((active?.spread ?? 0) * 100)
@@ -151,9 +151,9 @@ export function initKeyboardBuildExplorer() {
   explodeButton?.addEventListener('click', () => setViewMode('exploded'))
 
   /*
-   * Escape cierra el visor: es el gesto que espera cualquiera que haya
-   * entrado en una vista de detalle, y sin él el teclado solo podía salir
-   * tabulando hasta el botón de volver.
+   * Escape closes the viewer: it is the gesture anyone who entered a detail view
+   * expects, and without it the keyboard could only leave by tabbing all the way
+   * to the back button.
    */
   root.addEventListener('keydown', (event) => {
     if (event.key !== 'Escape' || !active) return
@@ -162,12 +162,12 @@ export function initKeyboardBuildExplorer() {
   })
 
   /*
-   * Los mandos del carrusel actúan sobre la tarjeta sin salir de la galería;
-   * cualquier otro punto de la tarjeta entra en el build.
+   * The carousel's controls act on the card without leaving the gallery; any
+   * other point on the card enters the build.
    */
   const CARD_CONTROLS = '[data-bx-card-prev], [data-bx-card-next], [data-bx-card-dot]'
 
-  /** La apertura y el listado de piezas crecen con cada build. */
+  /** Both the opening and the parts listing expand with every build. */
   root.addEventListener('click', (event) => {
     const target = event.target as HTMLElement
 
@@ -191,9 +191,9 @@ export function initKeyboardBuildExplorer() {
     active.previewPart(holder.dataset.bxPartButton ?? holder.dataset.bxPart ?? null)
   })
   /*
-   * `pointerout` burbujea, así que moverse entre las teclas dibujadas de una
-   * capa lo dispara constantemente. Solo cuenta como salida si el puntero
-   * aterriza fuera de la misma pieza.
+   * `pointerout` bubbles, so moving between a layer's drawn keys fires it
+   * constantly. It only counts as leaving if the pointer lands outside that same
+   * part.
    */
   root.addEventListener('pointerout', (event) => {
     if (!active) return
@@ -207,13 +207,13 @@ export function initKeyboardBuildExplorer() {
     active.previewPart(button?.dataset.bxPartButton ?? null)
   })
 
-  /* ---------- Deslizador de separación ---------- */
+  /* ---------- Explode slider ---------- */
   root.addEventListener('input', (event) => {
     const input = event.target as HTMLInputElement
     if (!active || !input.matches('[data-bx-range]')) return
     root.classList.add('is-scrubbing')
     active.setSpread(Number(input.value) / 100)
-    // Los presets siguen al mando: el estado accesible nunca miente.
+    // The presets follow the control: the accessible state never lies.
     const exploded = active.spread > .999
     const assembled = active.spread < .001
     assembledButton?.setAttribute('aria-pressed', String(assembled))
@@ -225,7 +225,7 @@ export function initKeyboardBuildExplorer() {
   root.addEventListener('pointercancel', endScrub)
   root.addEventListener('change', endScrub)
 
-  /* ---------- Órbita ---------- */
+  /* ---------- Orbit ---------- */
   const stopDragging = (cancelled = false) => {
     if (drag?.partId) {
       suppressPartClick = true
@@ -277,7 +277,7 @@ export function initKeyboardBuildExplorer() {
     if ((event.target as HTMLElement).closest('[data-bx-stage]')) active?.resetCamera()
   })
 
-  /* ---------- Teclado sobre el escenario ---------- */
+  /* ---------- Keyboard over the stage ---------- */
   const ORBIT_STEP = 6
   const SPREAD_STEP = .12
   root.addEventListener('keydown', (event) => {
@@ -285,8 +285,9 @@ export function initKeyboardBuildExplorer() {
     if (!active || !stage) return
 
     /*
-     * Orbitar y separar con el teclado: el modelo dejaba de existir para
-     * quien no puede arrastrar, aunque el contenedor ya fuese enfocable.
+     * Orbiting and exploding from the keyboard: the model simply did not exist
+     * for anyone who cannot drag, even though the container was already
+     * focusable.
      */
     const orbits: Record<string, [number, number]> = {
       ArrowUp: [-ORBIT_STEP, 0],
@@ -323,14 +324,14 @@ export function initKeyboardBuildExplorer() {
     }
   })
 
-  /* ---------- Zoom con rueda ---------- */
+  /* ---------- Wheel zoom ---------- */
   root.addEventListener('wheel', (event) => {
     const stage = (event.target as HTMLElement).closest<HTMLElement>('[data-bx-stage]')
     if (!active || !stage) return
     /*
-     * El zoom solo se apropia de la rueda cuando el escenario tiene el foco.
-     * Pasar el cursor por encima mientras se lee la página no debe bloquear
-     * el scroll: hay que entrar en el modelo a propósito.
+     * Zoom only claims the wheel while the stage holds focus. Passing the cursor
+     * over it while reading the page must not block scrolling: you have to enter
+     * the model on purpose.
      */
     if (!stage.contains(document.activeElement)) return
     event.preventDefault()
