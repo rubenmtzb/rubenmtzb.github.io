@@ -17,6 +17,7 @@ import { initTypewriter } from './v2/typewriter'
 import { initJobList } from './v2/job-list'
 import { initProjectCarousel, initEducationSlider, initCertsSlider } from './v2/carousels'
 import { initProjectDeck } from './v2/project-deck'
+import { initCaseOrigin } from './v2/case-origin'
 import { initProfileWorkbench } from './v2/profile-workbench'
 import { initMomentCards } from './v2/moment-cards'
 import { initKeyboard } from './v2/keyboard'
@@ -37,6 +38,7 @@ initPortrait()
 initJobList()
 initProjectCarousel()
 initProjectDeck()
+initCaseOrigin()
 initProfileWorkbench()
 initEducationSlider()
 initCertsSlider()
