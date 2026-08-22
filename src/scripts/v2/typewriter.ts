@@ -1,5 +1,5 @@
 /* The headline's alternating typewriter effect (rubén <-> rubenitx). */
-import { reduce, say } from './dom'
+import { reduce } from './dom'
 
 export function initTypewriter() {
   const el = document.getElementById('hero-typewriter')
@@ -8,11 +8,17 @@ export function initTypewriter() {
   const NAME_CLASS = 'text-[color:var(--blue-bright)] font-extrabold'
   const ALIAS_CLASS = 'text-[color:var(--cyan)] font-mono font-bold'
 
-  const prefix = say('hola, me llamo ', 'hi there, my name is ')
+  /*
+   * Prefix and name come from the markup the build already painted, so the
+   * animation types the same sentence the HTML showed — the dictionary and the
+   * profile, not a second copy that can drift and flash a different greeting.
+   */
+  const prefix = el.dataset.prefix ?? ''
   const names = [
-    { text: say('rubén.', 'ruben.'), cls: NAME_CLASS },
-    { text: 'rubenitx.', cls: ALIAS_CLASS },
+    { text: el.dataset.name ?? '', cls: NAME_CLASS },
+    { text: el.dataset.alias ?? 'rubenitx.', cls: ALIAS_CLASS },
   ]
+  if (!prefix || !names[0].text) return
 
   /*
    * The prefix and the name are two stable nodes: typing letter by letter only

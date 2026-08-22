@@ -8,6 +8,7 @@ interface Props { lang: Lang; cvPath: string }
 const { lang, cvPath } = Astro.props
 
 const profile = await getProfile(lang)
+const firstName = profile.name.split(' ')[0].toLowerCase()
 
 /**
  * The hero's six technologies. Colour, icon and link all come from TECH. Every
@@ -56,9 +57,14 @@ const ICONS = { LinkedIn: 'linkedin', GitHub: 'github' } as const
 
         <!-- Headline with an alternating typewriter animation: rubén <-> rubenitx -->
         <h1 class="reveal mt-3.5 text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-[color:var(--fg)]">
-          <span id="hero-typewriter">
+          <span
+            id="hero-typewriter"
+            data-prefix={`${t(lang, 'v2.hero.greeting')} `}
+            data-name={`${firstName}.`}
+            data-alias="rubenitx."
+          >
             {t(lang, 'v2.hero.greeting')}{' '}
-            <span class="text-[color:var(--blue-bright)] font-extrabold">{profile.name.split(' ')[0].toLowerCase()}</span>
+            <span class="text-[color:var(--blue-bright)] font-extrabold">{firstName}</span>
             <span class="text-[color:var(--fg-2)] font-normal">.</span>
           </span>
           <span class="intro-cursor text-[color:var(--cyan)] font-light animate-pulse" aria-hidden="true">|</span>
