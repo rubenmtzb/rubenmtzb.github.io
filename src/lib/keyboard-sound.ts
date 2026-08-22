@@ -24,6 +24,9 @@ const WAVE_FLOOR = 2
  * con la misma vara —que es lo que las hace comparables entre teclados— y se
  * recalcula sola si mañana entra otra muestra.
  */
+/** Trazo de la envolvente, con la ganancia común a todas las muestras. */
+export type Waveform = ReturnType<typeof createWaveform>
+
 export function createWaveform(allPeaks: number[][]) {
   /* La ganancia sale del conjunto y no de cada toma: es lo que hace que las
      alturas de dos teclados se puedan comparar entre sí. */

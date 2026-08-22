@@ -22,7 +22,7 @@
  * sale del contenido —si no hay apuntes, no hay nadie asomado— y nunca al
  * revés.
  */
-import { clock, dbfs } from '../../../lib/keyboard-sound'
+import { clock, dbfs, type Waveform } from '../../../lib/keyboard-sound'
 import { localizer, type KeyboardBuild } from '../../../lib/content'
 import { keyboardCopy } from '../../../i18n/keyboards'
 import type { Lang } from '../../../i18n/ui'
@@ -30,8 +30,7 @@ import type { Lang } from '../../../i18n/ui'
 interface Props {
   build: KeyboardBuild
   lang: Lang
-  /** Trazo de la envolvente. Lo calcula el explorador con la ganancia común. */
-  wave: { height: number, path: (peaks: number[]) => string, width: (peaks: number[]) => number }
+  wave: Waveform
 }
 const { build, lang, wave } = Astro.props
 const pick = localizer(lang)

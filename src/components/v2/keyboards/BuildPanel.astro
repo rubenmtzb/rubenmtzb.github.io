@@ -9,6 +9,7 @@
 import BuildModel from './BuildModel.astro'
 import SoundSample from './SoundSample.astro'
 import { MODEL_LAYOUTS, modelKeys } from '../../../lib/keyboard-layouts'
+import type { Waveform } from '../../../lib/keyboard-sound'
 import { buildDisplayStatus, localizer, type KeyboardBuild } from '../../../lib/content'
 import { keyboardCopy } from '../../../i18n/keyboards'
 import type { Lang } from '../../../i18n/ui'
@@ -16,8 +17,7 @@ import type { Lang } from '../../../i18n/ui'
 interface Props {
   build: KeyboardBuild
   lang: Lang
-  /** Trazo de la envolvente, con la ganancia común a todas las muestras. */
-  wave: { height: number, path: (peaks: number[]) => string, width: (peaks: number[]) => number }
+  wave: Waveform
 }
 const { build, lang, wave } = Astro.props
 const pick = localizer(lang)
@@ -121,14 +121,14 @@ const keys = modelKeys(MODEL_LAYOUTS[build.layout])
       <SoundSample build={build} lang={lang} wave={wave} />
 
       {build.specs.length > 0 && (
-        <div class="bx-parts-head"><span>{copy.sheet}</span></div>
-      )}
-      {build.specs.length > 0 && (
-        <dl class="bx-sheet">
-          {build.specs.map((spec) => (
-            <div><dt>{pick(spec.label)}</dt><dd>{pick(spec.value)}</dd></div>
-          ))}
-        </dl>
+        <>
+          <div class="bx-parts-head"><span>{copy.sheet}</span></div>
+          <dl class="bx-sheet">
+            {build.specs.map((spec) => (
+              <div><dt>{pick(spec.label)}</dt><dd>{pick(spec.value)}</dd></div>
+            ))}
+          </dl>
+        </>
       )}
     </aside>
   </div>

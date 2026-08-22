@@ -93,8 +93,8 @@ function createCarousel({
   show(0)
 }
 
-export /* ---------------- Carrusel Spotlight de Proyectos ---------------- */
-function initProjectCarousel() {
+/* ---------------- Carrusel Spotlight de Proyectos ---------------- */
+export function initProjectCarousel() {
   const carousel = document.getElementById('project-carousel')
   if (!carousel) return
 
@@ -117,8 +117,8 @@ function initProjectCarousel() {
   })
 }
 
-export /* ---------------- Slider de Formación Académica (Timeline) ---------------- */
-function initEducationSlider() {
+/* ---------------- Slider de Formación Académica (Timeline) ---------------- */
+export function initEducationSlider() {
   const stage = document.getElementById('edu-slider-stage')
   if (!stage) return
 
@@ -135,8 +135,8 @@ function initEducationSlider() {
   })
 }
 
-export /* ---------------- Slider / Showcase de Certificaciones ---------------- */
-function initCertsSlider() {
+/* ---------------- Slider / Showcase de Certificaciones ---------------- */
+export function initCertsSlider() {
   const stage = document.getElementById('certs-stage')
   if (!stage) return
 
