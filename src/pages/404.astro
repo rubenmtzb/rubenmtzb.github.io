@@ -2,35 +2,40 @@
 /**
  * 404 personalizado. GitHub Pages sirve /404.html para cualquier ruta
  * inexistente: es la única pieza de routing que el hosting sí ofrece.
- * No entra en el sitemap y va noindex.
+ *
+ * No es una URL del sitio, así que no está en la colección `pages`, no entra
+ * en el sitemap y no emite hreflang. Como el hosting sirve el mismo fichero
+ * para las rutas de los dos idiomas, se escribe en el idioma por defecto.
  */
+import BaseLayout from '../layouts/BaseLayout.astro'
 import Icon from '../components/Icon.astro'
+import { cvPath, homePath } from '../lib/content'
+import { DEFAULT_LANG } from '../i18n/ui'
 import '../styles/v2.css'
 ---
-<!doctype html>
-<html lang="en">
-  <head>
+
+<BaseLayout lang={DEFAULT_LANG}>
+  <Fragment slot="head">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>404 — Rubén Martínez Bernabe</title>
     <meta name="robots" content="noindex, follow" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
-  </head>
-  <body>
-    <main class="mx-auto flex min-h-dvh max-w-2xl flex-col justify-center px-6">
-      <p class="t-index">404</p>
-      <h1 class="t-display mt-4">This route does not resolve.</h1>
-      <p class="t-lead mt-5 max-w-none">
-        The page you were looking for is not here. It may have moved, or the link may be out of date.
-      </p>
-      <p class="mt-8 flex flex-wrap gap-3">
-        <a href="/" class="btn btn-primary">
-          <Icon name="arrowLeft" class="h-4 w-4" />Home
-        </a>
-        <a href="/cv/" class="btn btn-ghost">CV</a>
-        <a href="/v1/" class="btn btn-ghost">Documentary version</a>
-      </p>
-    </main>
-  </body>
-</html>
+  </Fragment>
+
+  <main id="main" class="mx-auto flex min-h-dvh max-w-2xl flex-col justify-center px-6">
+    <p class="t-index">404</p>
+    <h1 class="t-display mt-4">This route does not resolve.</h1>
+    <p class="t-lead mt-5 max-w-none">
+      The page you were looking for is not here. It may have moved, or the link may be out of date.
+    </p>
+    <p class="mt-8 flex flex-wrap gap-3">
+      <a href={homePath(DEFAULT_LANG)} class="btn btn-primary">
+        <Icon name="arrowLeft" class="h-4 w-4" />Home
+      </a>
+      <a href={cvPath(DEFAULT_LANG)} class="btn btn-ghost">CV</a>
+      <a href="/v1/" class="btn btn-ghost">Documentary version</a>
+    </p>
+  </main>
+</BaseLayout>

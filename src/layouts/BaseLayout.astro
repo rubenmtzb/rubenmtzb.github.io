@@ -1,29 +1,48 @@
 ---
+/**
+ * Esqueleto único del documento.
+ *
+ * Las cuatro superficies del sitio —V1, V2, ficha de proyecto y CV— son
+ * distintas por dentro, pero por fuera son el mismo documento: doctype, idioma,
+ * cabecera, precarga de fuentes, marca de cliente y salto al contenido. Eso
+ * vivía copiado en cada layout, así que un arreglo de cabecera había que
+ * acordarse de aplicarlo cuatro veces.
+ *
+ * La hoja de estilo no se importa aquí a propósito: cada superficie trae la
+ * suya y son excluyentes. Importarla en el esqueleto metería el CSS de la V1
+ * en las páginas de la V2 y al revés.
+ */
 import Seo from '../components/Seo.astro'
 import FontPreload from '../components/FontPreload.astro'
 import Enhancement from '../components/Enhancement.astro'
 import { t, type Lang } from '../i18n/ui'
-import '../styles/global.css'
 
 interface Props {
-  pageKey: string
   lang: Lang
+  /**
+   * Página con metadata propia en la colección `pages`. La 404 no la tiene:
+   * no es una URL del sitio sino el documento que sirve el hosting cuando
+   * ninguna lo es, así que aporta su cabecera por el slot `head`.
+   */
+  pageKey?: string
   pageType?: 'WebPage' | 'ProfilePage'
+  /** La V1 es solo monoespaciada: no carga Archivo, así que no la precarga. */
+  displayFont?: boolean
   bodyClass?: string
 }
 
-const { pageKey, lang, pageType = 'WebPage', bodyClass = '' } = Astro.props
+const { lang, pageKey, pageType = 'WebPage', displayFont = true, bodyClass } = Astro.props
 ---
 
 <!doctype html>
 <html lang={lang}>
   <head>
-    <Seo pageKey={pageKey} lang={lang} pageType={pageType} />
-    <FontPreload display={false} />
+    {pageKey ? <Seo pageKey={pageKey} lang={lang} pageType={pageType} /> : <slot name="head" />}
+    <FontPreload display={displayFont} />
     <Enhancement />
   </head>
-  <body class={`bg-[#030712] font-mono text-slate-100 ${bodyClass}`}>
-    <a class="skip-link no-print" href="#main">{t(lang, 'nav.skip')}</a>
+  <body class={bodyClass}>
+    <a class="skip-link" href="#main">{t(lang, 'nav.skip')}</a>
     <slot />
   </body>
 </html>
