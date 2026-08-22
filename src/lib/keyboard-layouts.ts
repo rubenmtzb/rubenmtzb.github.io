@@ -175,7 +175,7 @@ const percent = (value: number) => `${Number(value.toFixed(4))}%`
 export const keyClass = (index: number) => `bx-k${index}`
 
 /** Nombre de un modelo. Es el mismo vocabulario que valida el esquema. */
-export type LayoutName = keyof typeof MODEL_LAYOUTS
+type LayoutName = keyof typeof MODEL_LAYOUTS
 type Layout = typeof MODEL_LAYOUTS[LayoutName]
 
 const layoutGeometry = (name: LayoutName, layout: Layout) => {

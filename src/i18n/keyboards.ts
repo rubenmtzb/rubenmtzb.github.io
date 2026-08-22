@@ -115,6 +115,6 @@ const ES: typeof EN = {
   noAudio: 'Tu navegador no puede reproducir esta muestra.',
 }
 
-export type KeyboardCopy = typeof EN
+type KeyboardCopy = typeof EN
 
 export const keyboardCopy = (lang: Lang): KeyboardCopy => (lang === 'es' ? ES : EN)
