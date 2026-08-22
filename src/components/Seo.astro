@@ -1,5 +1,6 @@
 ---
 import { abs, buildJsonLd, getCluster, getPage } from '../lib/content'
+import { LOCALE_TAGS } from '../site.config'
 import type { Lang } from '../i18n/ui'
 
 interface Props {
@@ -15,9 +16,9 @@ const cluster = await getCluster(pageKey)
 const canonical = abs(page.path)
 
 /**
- * Invariante del clúster: todos los miembros emiten el MISMO conjunto
- * hreflang, se incluyen a sí mismos y declaran x-default. Se genera desde
- * los datos, así que no puede divergir entre páginas del mismo clúster.
+ * Cluster invariant: every member emits the SAME hreflang set, includes itself
+ * and declares x-default. It is generated from the data, so it cannot diverge
+ * between pages of the same cluster.
  */
 const alternates = cluster.alternates.map((a) => ({ lang: a.lang, href: abs(a.path) }))
 const xDefault = abs(cluster.xDefault)
@@ -30,7 +31,22 @@ const jsonLd = await buildJsonLd({
   pageDescription: page.description,
 })
 
-const ogLocale = lang === 'es' ? 'es_ES' : 'en_US'
+const ogLocale = LOCALE_TAGS[lang]
+
+/*
+ * `profile` describes a person, so only the pages that are about Rubén qualify.
+ * The case study and the CV used to declare the same as the home page, and a
+ * case study is nobody's profile.
+ */
+const ogType = pageType === 'ProfilePage' ? 'profile' : 'website'
+
+/*
+ * The `<` is escaped. In an inline block, a `</script>` inside any string of the
+ * content — the dash in a "C# <-> Java" is enough — would close the tag early
+ * and break the JSON-LD. `\u003c` is a valid JSON escape, so what a search
+ * engine reads is exactly the same data.
+ */
+const structuredData = JSON.stringify(jsonLd).replaceAll('<', '\\u003c')
 ---
 
 <meta charset="utf-8" />
@@ -44,9 +60,9 @@ const ogLocale = lang === 'es' ? 'es_ES' : 'en_US'
 <link rel="canonical" href={canonical} />
 {
   /*
-   * hreflang solo en páginas indexables. Google lo ignora en páginas con
-   * noindex, y declararlo hacia una URL no indexable es un error de
-   * configuración: la preview y una eventual V1 en noindex no lo emiten.
+   * hreflang on indexable pages only. Google ignores it on noindex pages, and
+   * declaring it towards a non-indexable URL is a configuration error: the
+   * preview and an eventual noindex V1 do not emit it.
    */
   page.indexable && (
     <>
@@ -56,7 +72,7 @@ const ogLocale = lang === 'es' ? 'es_ES' : 'en_US'
   )
 }
 
-<meta property="og:type" content="profile" />
+<meta property="og:type" content={ogType} />
 <meta property="og:site_name" content="rubenitx.me" />
 <meta property="og:locale" content={ogLocale} />
 <meta property="og:url" content={canonical} />
@@ -72,9 +88,16 @@ const ogLocale = lang === 'es' ? 'es_ES' : 'en_US'
 <meta name="twitter:image" content={abs(page.ogImage)} />
 <meta name="twitter:image:alt" content={page.ogImageAlt} />
 
-<link rel="icon" type="image/png" href="/avatar.png" />
-<link rel="apple-touch-icon" href="/avatar.png" />
+<!--
+  The vector icon weighs 883 bytes and works at any size; the PNG stays as a
+  fallback for browsers that do not accept SVG in the tab. Both slots used to
+  point at the full portrait: 24 kB on every page to paint sixteen square
+  pixels.
+-->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+<link rel="apple-touch-icon" href="/icon-192.png" />
 <link rel="manifest" href="/manifest.json" />
 <meta name="theme-color" content="#030712" />
 
-<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+<script type="application/ld+json" set:html={structuredData} is:inline />

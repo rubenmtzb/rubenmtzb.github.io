@@ -1,37 +1,51 @@
 /**
- * Modo Juego — Killua Platformer (Godspeed ⚡ / Kanmuru)
+ * Game Mode — Killua Platformer (Godspeed ⚡ / Kanmuru)
  *
- * Principios:
- *   · Cámara con zona muerta y scroll inmediato, independiente del smooth-scroll del portfolio.
- *   · Simulación limitada a 60 FPS y normalizada en el tiempo para monitores de alta frecuencia.
- *   · Plataformas DOM deduplicadas y efectos acotados para no convertir el easter egg en una carga.
- *   · Aislamiento de teclado total: Las teclas solo controlan a Killua; el ratón mantiene 100% de interacción web.
- *   · Físicas calibradas y controladas con animaciones retro de Killua (Idle, Pasos 1 y 2, Salto, Godspeed).
- *   · Diálogos con bocadillos de cómic/manga y efectos sonoros retro estilo sintetizador (Voice Chirps).
- *   · Habilidad Definitiva: MODO KANMURU / GODSPEED (Aura azul neón pura, relámpagos e imán de orbes).
+ * Principles:
+ *   · Dead-zone camera with immediate scrolling, independent of the portfolio's smooth scroll.
+ *   · Simulation capped at 60 FPS and normalised over time for high-refresh monitors.
+ *   · Deduplicated DOM platforms and bounded effects, so the easter egg never becomes a burden.
+ *   · Total keyboard isolation: keys only drive Killua; the mouse keeps 100% of the web interaction.
+ *   · Calibrated physics driven by Killua's retro animations (idle, steps 1 and 2, jump, Godspeed).
+ *   · Comic/manga speech bubbles and retro synthesiser sound effects (voice chirps).
+ *   · Ultimate ability: KANMURU / GODSPEED MODE (pure neon-blue aura, lightning and orb magnet).
+ *
+ * What lives elsewhere, and why the drawing does not:
+ *   The arithmetic (`game/physics`), the levels (`game/levels`) and the
+ *   synthesiser (`game/audio`) were pulled out because each one can be reasoned
+ *   about — and, in the first case, tested — without a canvas. The drawing code
+ *   stays here on purpose: every routine paints into this canvas, with this
+ *   camera and this frame's state, so moving it out would only trade a long file
+ *   for a wide interface passing the same six variables around. The split that
+ *   pays for itself is the one between calculating and painting, and that one is
+ *   already made: the loop simulates, `paintFrame` only reads.
  */
 
-const W = 28
-const H = 62
+import {
+  BODY,
+  PHYSICS,
+  clampToStage,
+  cutJump,
+  LEDGE_INSET,
+  landsOn,
+  nextVelocityX,
+  nextVelocityY,
+} from './game/physics'
+import { createGameAudio, type BleepMood } from './game/audio'
+import {
+  LEVELS,
+  type ComicBubble,
+  type CustomLedge,
+  type MovingLedge,
+  type Rect,
+  type SectionOrb,
+} from './game/levels'
+
+const W = BODY.width
+const H = BODY.height
 const BLOCK_H = 8
 
-// Físicas calibradas y cómodas
-const GRAVITY = 0.40
-const JUMP_FORCE = -8.8
-const DOUBLE_JUMP_FORCE = -8.4
-const JUMP_CUT = 0.45
-const MAX_RUN = 3.0
-const MAX_RUN_GODSPEED = 4.4
-const ACCEL_GROUND = 0.52
-const ACCEL_AIR = 0.28
-const FRICTION_GROUND = 0.85
-const FRICTION_AIR = 0.94
-const MAX_FALL = 9.0
-const FAST_FALL = 12.0
-const COYOTE_MS = 140
-const BUFFER_MS = 140
-
-// Habilidad Definitiva: Modo Godspeed (Kanmuru / Aura Eléctrica)
+// Ultimate ability: Godspeed mode (Kanmuru / electric aura)
 const GODSPEED_DURATION = 4500
 const GODSPEED_COOLDOWN = 7500
 const FRAME_MS = 1000 / 60
@@ -40,75 +54,6 @@ const MAX_TRAIL = 28
 const MAX_SPARKS = 72
 const MAX_SHOCKWAVES = 4
 
-type Rect = { x: number; y: number; w: number; isCustom?: boolean }
-type MovingLedge = { x: number; y: number; w: number; originX: number; range: number; speed: number; dir: number }
-type CustomLedge = { x: number; y: number; w: number; alpha: number }
-type SectionOrb = {
-  id: string
-  name: string
-  x: number
-  y: number
-  taken: boolean
-  seed: number
-}
-
-type OrbTarget = {
-  selector?: string
-  fallbackRatio: { x: number; y: number }
-  name: { es: string; en: string }
-}
-
-type LevelConfig = {
-  level: number
-  title: { es: string; en: string }
-  sub: { es: string; en: string }
-  targets: OrbTarget[]
-}
-
-type ComicBubble = {
-  text: string
-  startTime: number
-  duration: number
-  mood?: 'normal' | 'alert' | 'godspeed' | 'success'
-}
-
-// Niveles curados de calidad y fluidez
-const LEVELS: LevelConfig[] = [
-  {
-    level: 1,
-    title: { es: 'NIVEL 1: Hunter Exam', en: 'LEVEL 1: Hunter Exam' },
-    sub: { es: 'Supera las pruebas iniciales en Identidad y Experiencia.', en: 'Pass the initial trials across Identity & Experience.' },
-    targets: [
-      { selector: '#identity', fallbackRatio: { x: 0.25, y: 0.05 }, name: { es: 'Identidad', en: 'Identity' } },
-      { selector: '.hero-tech-chip', fallbackRatio: { x: 0.68, y: 0.12 }, name: { es: 'Tech Stack', en: 'Tech Stack' } },
-      { selector: '#work .job-panel', fallbackRatio: { x: 0.35, y: 0.26 }, name: { es: 'Experiencia Profesional', en: 'Work Experience' } },
-      { selector: '#project-carousel', fallbackRatio: { x: 0.72, y: 0.32 }, name: { es: 'Showcase Técnico', en: 'Technical Showcase' } },
-    ],
-  },
-  {
-    level: 2,
-    title: { es: 'NIVEL 2: Greed Island', en: 'LEVEL 2: Greed Island' },
-    sub: { es: 'Navega sobre plataformas móviles entre Proyectos y Archivo.', en: 'Ride moving platforms across Projects & Archive.' },
-    targets: [
-      { selector: '#work', fallbackRatio: { x: 0.25, y: 0.22 }, name: { es: 'Entrada Greed Island', en: 'Greed Island Entry' } },
-      { selector: '#project-deck .project-grid-card:nth-of-type(1)', fallbackRatio: { x: 0.30, y: 0.40 }, name: { es: 'Proyecto Destacado (Izq)', en: 'Featured Project (Left)' } },
-      { selector: '#project-deck .project-grid-card:nth-of-type(2)', fallbackRatio: { x: 0.70, y: 0.46 }, name: { es: 'Proyecto Destacado (Der)', en: 'Featured Project (Right)' } },
-      { selector: '#archive .moment-card:nth-of-type(1)', fallbackRatio: { x: 0.48, y: 0.65 }, name: { es: 'Outside the Code', en: 'Outside the Code' } },
-    ],
-  },
-  {
-    level: 3,
-    title: { es: 'NIVEL 3: Godspeed Master', en: 'LEVEL 3: Godspeed Master' },
-    sub: { es: 'Recorrido completo hasta el final del portfolio desatando el aura eléctrica.', en: 'Full traversal all the way to Contact with electric aura.' },
-    targets: [
-      { selector: '#identity', fallbackRatio: { x: 0.25, y: 0.08 }, name: { es: 'Arranque Godspeed', en: 'Godspeed Start' } },
-      { selector: '#project-carousel', fallbackRatio: { x: 0.75, y: 0.38 }, name: { es: 'Showcase de Proyectos', en: 'Projects Showcase' } },
-      { selector: '.profile-workbench', fallbackRatio: { x: 0.30, y: 0.52 }, name: { es: 'Educación & Skills', en: 'Education & Skills' } },
-      { selector: '#archive', fallbackRatio: { x: 0.70, y: 0.68 }, name: { es: 'Archivo Visual', en: 'Visual Archive' } },
-      { selector: '#contact .contact-signal', fallbackRatio: { x: 0.50, y: 0.88 }, name: { es: 'Meta Final & Contacto ⚡', en: 'Final Goal & Contact ⚡' } },
-    ],
-  },
-]
 
 export function startGameMode(onExit: () => void) {
   const originalScrollY = window.scrollY
@@ -149,109 +94,9 @@ export function startGameMode(onExit: () => void) {
   const spriteJump = new Image(); spriteJump.src = '/killua-jump.png'
   const spriteGodspeed = new Image(); spriteGodspeed.src = '/killua-godspeed.png'
 
-  // Audio Web API
-  let audioCtx: AudioContext | null = null
-  const getAudio = () => {
-    if (!audioCtx) {
-      const AudioClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
-      audioCtx = new AudioClass()
-    }
-    if (audioCtx.state === 'suspended') audioCtx.resume()
-    return audioCtx
-  }
+  const audio = createGameAudio()
+  const { playBoltSound, playDoubleJumpSound, playGodspeedSound, playVoiceBleep } = audio
 
-  const playBoltSound = () => {
-    try {
-      const ac = getAudio()
-      const now = ac.currentTime
-      const osc = ac.createOscillator()
-      const gain = ac.createGain()
-      osc.type = 'sawtooth'
-      osc.frequency.setValueAtTime(540, now)
-      osc.frequency.exponentialRampToValueAtTime(1450, now + 0.12)
-      gain.gain.setValueAtTime(0.18, now)
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15)
-      osc.connect(gain)
-      gain.connect(ac.destination)
-      osc.start(now)
-      osc.stop(now + 0.16)
-    } catch { /* Audio opcional */ }
-  }
-
-  const playDoubleJumpSound = () => {
-    try {
-      const ac = getAudio()
-      const now = ac.currentTime
-      const osc = ac.createOscillator()
-      const gain = ac.createGain()
-      osc.type = 'triangle'
-      osc.frequency.setValueAtTime(320, now)
-      osc.frequency.exponentialRampToValueAtTime(880, now + 0.16)
-      gain.gain.setValueAtTime(0.2, now)
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18)
-      osc.connect(gain)
-      gain.connect(ac.destination)
-      osc.start(now)
-      osc.stop(now + 0.2)
-    } catch { /* Audio opcional */ }
-  }
-
-  const playGodspeedSound = () => {
-    try {
-      const ac = getAudio()
-      const now = ac.currentTime
-      const osc = ac.createOscillator()
-      const gain = ac.createGain()
-      osc.type = 'sawtooth'
-      osc.frequency.setValueAtTime(180, now)
-      osc.frequency.exponentialRampToValueAtTime(1200, now + 0.42)
-      gain.gain.setValueAtTime(0.26, now)
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.48)
-      osc.connect(gain)
-      gain.connect(ac.destination)
-      osc.start(now)
-      osc.stop(now + 0.5)
-
-      const osc2 = ac.createOscillator()
-      const gain2 = ac.createGain()
-      osc2.type = 'sine'
-      osc2.frequency.setValueAtTime(90, now)
-      osc2.frequency.linearRampToValueAtTime(45, now + 0.58)
-      gain2.gain.setValueAtTime(0.28, now)
-      gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.58)
-      osc2.connect(gain2)
-      gain2.connect(ac.destination)
-      osc2.start(now)
-      osc2.stop(now + 0.6)
-    } catch { /* Audio opcional */ }
-  }
-
-  const playVoiceBleep = (mood: 'normal' | 'alert' | 'godspeed' | 'success' = 'normal') => {
-    try {
-      const ac = getAudio()
-      const now = ac.currentTime
-      const blipCount = mood === 'godspeed' ? 5 : mood === 'alert' ? 4 : 3
-      const baseFreq = mood === 'godspeed' ? 640 : mood === 'alert' ? 560 : 480
-
-      for (let i = 0; i < blipCount; i++) {
-        const startTime = now + i * 0.05
-        const osc = ac.createOscillator()
-        const gain = ac.createGain()
-        osc.type = 'triangle'
-        const freq = baseFreq + (i % 2 === 0 ? 70 : -35) + (Math.random() * 30 - 15)
-        osc.frequency.setValueAtTime(freq, startTime)
-        osc.frequency.exponentialRampToValueAtTime(freq * 1.12, startTime + 0.038)
-
-        gain.gain.setValueAtTime(0.09, startTime)
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.042)
-
-        osc.connect(gain)
-        gain.connect(ac.destination)
-        osc.start(startTime)
-        osc.stop(startTime + 0.045)
-      }
-    } catch { /* Audio opcional */ }
-  }
 
   let currentLevelIdx = 0
   let status: 'playing' | 'level_clear' | 'dead' | 'won' = 'playing'
@@ -272,7 +117,7 @@ export function startGameMode(onExit: () => void) {
   let lastIdleSpeechTime = 0
   let lastMoveTime = performance.now()
 
-  const say = (text: string, duration = 2800, mood: 'normal' | 'alert' | 'godspeed' | 'success' = 'normal') => {
+  const say = (text: string, duration = 2800, mood: BleepMood = 'normal') => {
     currentBubble = {
       text,
       startTime: performance.now(),
@@ -298,7 +143,7 @@ export function startGameMode(onExit: () => void) {
     sy: 1,
   }
 
-  // ── CÁMARA SILKY-SMOOTH (CERO TEMBLORES Y LOCKSTEP) ──
+  // ── SILKY-SMOOTH CAMERA (ZERO JITTER, LOCKSTEP) ──
   let cameraY = window.scrollY
   let targetCameraY = window.scrollY
   let cameraInspectionActive = false
@@ -306,7 +151,7 @@ export function startGameMode(onExit: () => void) {
   let descentAnimationUntil = -9999
   let scrollDirection = 0
 
-  // Pre-cálculo de plataformas del DOM (cero layout thrashing en el loop de animación)
+  // Pre-computed DOM platforms (zero layout thrashing inside the animation loop)
   const cacheDomPlatforms = () => {
     const list: Rect[] = []
     const seen = new Set<string>()
@@ -343,7 +188,7 @@ export function startGameMode(onExit: () => void) {
   const sparks: Array<{ x: number; y: number; vx: number; vy: number; life: number; color?: string }> = []
   const shockwaves: Array<{ x: number; y: number; r: number; maxR: number; a: number; color?: string }> = []
 
-  // Cargar nivel y construir arquitectura de plataformas limpias y dinámicas
+  // Load the level and build a clean, dynamic platform architecture
   const loadLevel = (idx: number) => {
     keys.clear()
     currentLevelIdx = idx
@@ -368,7 +213,7 @@ export function startGameMode(onExit: () => void) {
     const firstTargetSafeY = Math.min(docHeight - 160, Math.max(300, h * 0.38))
     cacheDomPlatforms()
 
-    // 1. Ubicar orbes en los objetivos clave
+    // 1. Place the orbs on the key targets
     orbs = cfg.targets.map((tgt, i) => {
       let targetX = Math.round(w * tgt.fallbackRatio.x)
       let targetY = Math.round(docHeight * tgt.fallbackRatio.y)
@@ -395,7 +240,7 @@ export function startGameMode(onExit: () => void) {
       .map((orb, index) => ({ ...orb, id: `target-${index}` }))
     totalOrbsInLevel = orbs.length
 
-    // Spawn Killua cerca del primer orbe
+    // Spawn Killua near the first orb
     const firstOrb = orbs[0]
     const startY = firstOrb ? Math.max(70, firstOrb.y - 110) : 100
     const startX = firstOrb ? Math.round(Math.max(80, Math.min(w - 80, firstOrb.x > w / 2 ? firstOrb.x - 80 : firstOrb.x + 80))) : Math.round(w / 2)
@@ -414,10 +259,10 @@ export function startGameMode(onExit: () => void) {
     document.documentElement.scrollTop = appliedScrollY
     previousFrame = performance.now()
 
-    // Plataforma inicial segura
+    // Safe starting platform
     customLedges.push({ x: Math.round(startX - 65), y: startY, w: 130, alpha: 1 })
 
-    // 2. Plataforma base garantizada bajo cada orbe
+    // 2. Guaranteed base platform under every orb
     orbs.forEach((orb) => {
       customLedges.push({
         x: Math.max(20, Math.min(w - 125, orb.x - 55)),
@@ -427,14 +272,14 @@ export function startGameMode(onExit: () => void) {
       })
     })
 
-    // 3. Escaleras y plataformas móviles fluidas entre orbes consecutivos
+    // 3. Smooth staircases and moving platforms between consecutive orbs
     for (let i = 0; i < orbs.length - 1; i++) {
       const oA = orbs[i]
       const oB = orbs[i + 1]
       const dy = oB.y - oA.y
       const dx = oB.x - oA.x
 
-      // Más apoyos fijos y menos plataformas móviles: el recorrido prima fluidez sobre dificultad.
+      // More fixed footholds and fewer moving platforms: the route favours flow over difficulty.
       const numSteps = Math.max(2, Math.min(8, Math.ceil(Math.abs(dy) / 120)))
       const stepY = dy / (numSteps + 1)
       const stepX = dx / (numSteps + 1)
@@ -458,7 +303,7 @@ export function startGameMode(onExit: () => void) {
         }
       }
 
-      // 1 repisa lateral de rescate bien posicionada por tramo
+      // One well-placed side rescue ledge per stretch
       const rescueY = Math.round(oA.y + 36 + dy * 0.5)
       if (i % 2 === 0) {
         customLedges.push({ x: 25, y: rescueY, w: 85, alpha: 0.85 })
@@ -484,7 +329,7 @@ export function startGameMode(onExit: () => void) {
     renderUI()
   }
 
-  // Habilidad Definitiva Godspeed
+  // Godspeed ultimate ability
   const triggerGodspeed = () => {
     if (status !== 'playing') return
     const now = performance.now()
@@ -514,11 +359,11 @@ export function startGameMode(onExit: () => void) {
     say(isSpanish ? '¡KANMURU: Velocidad del Rayo! ⚡' : 'KANMURU: Lightning Speed! ⚡', 3000, 'godspeed')
   }
 
-  // Doble Salto en el aire
+  // Mid-air double jump
   const executeAirJump = () => {
     if (status !== 'playing' || me.jumpsLeft <= 0) return
     const isGodspeed = performance.now() < godspeedActiveUntil
-    me.vy = isGodspeed ? JUMP_FORCE * 1.15 : DOUBLE_JUMP_FORCE
+    me.vy = isGodspeed ? PHYSICS.jumpForce * 1.15 : PHYSICS.doubleJumpForce
     me.jumpsLeft--
     me.sx = 0.75
     me.sy = 1.35
@@ -552,7 +397,7 @@ export function startGameMode(onExit: () => void) {
   const requestJump = () => {
     if (status !== 'playing') return
     const now = performance.now()
-    const canUseGroundJump = me.grounded || now - me.lastGround < COYOTE_MS
+    const canUseGroundJump = me.grounded || now - me.lastGround < PHYSICS.coyoteMs
     me.lastJump = now
     if (!canUseGroundJump && me.jumpsLeft > 0) {
       me.lastJump = -9999
@@ -560,7 +405,7 @@ export function startGameMode(onExit: () => void) {
     }
   }
 
-  // Bajar / Atravesar plataforma
+  // Drop down / fall through a platform
   const triggerDropThrough = () => {
     if (status !== 'playing') return
     descentAnimationStartedAt = performance.now()
@@ -569,7 +414,7 @@ export function startGameMode(onExit: () => void) {
     dropThroughUntil = performance.now() + 240
     me.currentMovingLedge = null
     if (!me.grounded) {
-      me.vy = Math.min(me.vy + 6, FAST_FALL)
+      me.vy = Math.min(me.vy + 6, PHYSICS.fastFall)
     } else {
       me.grounded = false
       me.y += 6
@@ -607,11 +452,11 @@ export function startGameMode(onExit: () => void) {
           class="gm-hud-super ${isGodspeedActive ? 'is-active' : godspeedReady ? 'is-ready' : 'opacity-60'}"
           title="${isSpanish ? 'Modo Godspeed (Aura Eléctrica)' : 'Godspeed Mode (Electric Aura)'}"
         >
-          <span>⚡ ${isGodspeedActive ? (isSpanish ? `AURA (${remainingActive}s)` : `AURA (${remainingActive}s)`) : 'GODSPEED'}</span>
+          <span>⚡ ${isGodspeedActive ? `AURA (${remainingActive}s)` : 'GODSPEED'}</span>
           <span class="text-[0.62rem] opacity-80">${isGodspeedActive ? '⚡' : godspeedReady ? '[Q / F]' : `(${remainingCd}s)`}</span>
         </button>
 
-        <button type="button" class="gm-exit-btn" id="gm-exit" aria-label="Exit Game">✕ ${isSpanish ? 'Salir' : 'Exit'}</button>
+        <button type="button" class="gm-exit-btn" id="gm-exit" aria-label="${isSpanish ? 'Salir del juego' : 'Exit game'}">✕ ${isSpanish ? 'Salir' : 'Exit'}</button>
       </div>
 
       ${status === 'level_clear' ? `
@@ -644,7 +489,7 @@ export function startGameMode(onExit: () => void) {
       ${status === 'won' ? `
         <div class="gm-modal-overlay">
           <div class="gm-modal gm-modal-win">
-            <h3 class="gm-modal-title text-[color:var(--cyan)]">⚡ ${isSpanish ? '¡Godspeed Master Alcanzado!' : 'Godspeed Master Achieved!'}</h3>
+            <h3 class="gm-modal-title text-[color:var(--cyan)]">⚡ ${isSpanish ? '¡Maestría Godspeed alcanzada!' : 'Godspeed Master Achieved!'}</h3>
             <p class="gm-modal-sub">${isSpanish ? '¡Has completado todos los 3 niveles del portfolio con Killua!' : 'You mastered all 3 portfolio levels with Killua!'}</p>
             <div class="gm-modal-actions">
               <button type="button" id="gm-play-again" class="btn btn-primary text-sm">${isSpanish ? 'Jugar desde el inicio' : 'Play from start'}</button>
@@ -661,7 +506,7 @@ export function startGameMode(onExit: () => void) {
           <button type="button" id="gm-btn-down" class="gm-touch-btn" aria-label="Down">▼</button>
         </div>
         <div class="flex gap-2">
-          <button type="button" id="gm-btn-godspeed" class="gm-touch-btn !bg-[color:var(--blue-bright)]/25 !border-[color:var(--cyan)] text-[color:var(--cyan)]" aria-label="Godspeed Aura">⚡</button>
+          <button type="button" id="gm-btn-godspeed" class="gm-touch-btn !bg-[color:var(--blue-bright)]/25 !border-[color:var(--cyan)] text-[color:var(--cyan)]" aria-label="${isSpanish ? 'Aura Godspeed' : 'Godspeed aura'}">⚡</button>
           <button type="button" id="gm-btn-jump" class="gm-touch-btn gm-touch-jump" aria-label="Jump">▲ ${isSpanish ? 'Saltar' : 'Jump'}</button>
         </div>
       </div>
@@ -756,7 +601,7 @@ export function startGameMode(onExit: () => void) {
     ctx.restore()
   }
 
-  // Renderizado de Killua
+  // Killua's rendering
   const drawKillua = (px: number, py: number, now: number) => {
     const isGodspeed = now < godspeedActiveUntil
     const isMoving = me.grounded && Math.abs(me.vx) > 0.35
@@ -788,7 +633,7 @@ export function startGameMode(onExit: () => void) {
       activeSprite = stepIdx === 0 ? spriteRun1 : spriteRun2
     }
 
-    // Aura Eléctrica Azul Neón y Cian
+    // Neon blue and cyan electric aura
     if (isGodspeed) {
       ctx.save()
       const auraPulse = 0.92 + Math.sin(now * 0.012) * 0.08
@@ -843,7 +688,7 @@ export function startGameMode(onExit: () => void) {
     ctx.restore()
   }
 
-  // Bocadillos de Cómic / Manga
+  // Comic / manga speech bubbles
   const drawSpeechBubble = (px: number, py: number, now: number) => {
     if (!currentBubble) return
 
@@ -952,7 +797,7 @@ export function startGameMode(onExit: () => void) {
     ctx.restore()
   }
 
-  // Brújula de radar para orbes fuera de pantalla
+  // Radar compass for off-screen orbs
   const drawRadarBeacon = (orb: SectionOrb, sy: number, index: number, now: number) => {
     const screenX = orb.x
     const screenY = orb.y - sy
@@ -1033,6 +878,158 @@ export function startGameMode(onExit: () => void) {
   let previousFrame = performance.now()
   let appliedScrollY = Math.round(cameraY)
 
+  /**
+   * Paints the frame.
+   *
+   * Nothing in here changes the game's state: the simulation has already
+   * finished by the time it is called, so this block only reads. Splitting it
+   * out lets the frame read as what it is — first it is computed, then it is
+   * drawn — instead of as four hundred lines where the two alternate.
+   */
+  const paintFrame = (now: number, frameScale: number, isGodspeed: boolean) => {
+  // Use a rounded cameraY for perfect 1:1 sync on screen
+  const sy = Math.round(cameraY)
+
+  // Draw the fixed platforms
+  customLedges.forEach((ledge) => {
+    const ly = ledge.y - sy
+    if (ly > -20 && ly < h + 20) drawLedge(ledge.x, ly, ledge.w, ledge.alpha)
+  })
+
+  // Draw the moving platforms
+  movingLedges.forEach((ml) => {
+    const ly = ml.y - sy
+    if (ly > -20 && ly < h + 20) drawLedge(ml.x, ly, ml.w, 1, true)
+  })
+
+  // Draw the shockwaves
+  for (let i = shockwaves.length - 1; i >= 0; i--) {
+    const sw = shockwaves[i]
+    sw.r += 3.5 * frameScale
+    sw.a -= 0.05 * frameScale
+    if (sw.a <= 0 || sw.r >= sw.maxR) { shockwaves.splice(i, 1); continue }
+    ctx.save()
+    ctx.strokeStyle = sw.color === '#00d4ff'
+      ? `rgba(0, 212, 255, ${sw.a.toFixed(3)})`
+      : `rgba(111, 227, 255, ${sw.a.toFixed(3)})`
+    ctx.lineWidth = 2.5
+    ctx.beginPath()
+    ctx.arc(sw.x, sw.y - sy, sw.r, 0, Math.PI * 2)
+    ctx.stroke()
+    ctx.restore()
+  }
+
+  // Draw the motion trail
+  for (let i = trail.length - 1; i >= 0; i--) {
+    const tr = trail[i]
+    tr.a -= (tr.isGodspeed ? 0.04 : 0.06) * frameScale
+    if (tr.a <= 0) { trail.splice(i, 1); continue }
+    const ty = tr.y - sy
+    if (ty < -40 || ty > h + 40) continue
+    ctx.fillStyle = tr.isGodspeed
+      ? `rgba(0, 212, 255, ${tr.a.toFixed(3)})`
+      : `rgba(111, 227, 255, ${tr.a.toFixed(3)})`
+    ctx.fillRect(tr.x - 2, ty - 2, 4, 4)
+  }
+
+  // Draw the sparks
+  for (let i = sparks.length - 1; i >= 0; i--) {
+    const sp = sparks[i]
+    sp.x += sp.vx * frameScale
+    sp.y += sp.vy * frameScale
+    sp.vy += 0.12 * frameScale
+    sp.life -= 0.04 * frameScale
+    if (sp.life <= 0) { sparks.splice(i, 1); continue }
+    ctx.fillStyle = sp.color || `rgba(111, 227, 255, ${sp.life.toFixed(3)})`
+    ctx.fillRect(sp.x, sp.y - sy, 2.5, 2.5)
+  }
+
+  // Draw and collect the bolts
+  const t = now * 0.003
+  const activeOrb = orbs.find((orb) => !orb.taken)
+  orbs.forEach((orb, i) => {
+    if (orb.taken || orb !== activeOrb) return
+
+    if (isGodspeed && status === 'playing') {
+      const kx = me.x + W / 2
+      const ky = me.y + H / 2
+      const dist = Math.hypot(orb.x - kx, orb.y - ky)
+      if (dist < 240) {
+        const magnetEase = 1 - Math.pow(0.93, frameScale)
+        orb.x += (kx - orb.x) * magnetEase
+        orb.y += (ky - orb.y) * magnetEase
+      }
+    }
+
+    const oy = orb.y - sy
+    if (oy >= -60 && oy <= h + 60) {
+      drawBolt(orb, sy, t, i)
+    } else {
+      drawRadarBeacon(orb, sy, i, now)
+    }
+
+    if (status === 'playing' && Math.abs(me.x + W / 2 - orb.x) < 40 && Math.abs(me.y + H / 2 - orb.y) < 44) {
+      orb.taken = true
+      got++
+      playBoltSound()
+      updateProgressHud()
+
+      const remaining = totalOrbsInLevel - got
+      if (remaining === 1) {
+        say(isSpanish ? '¡Solo queda un rayo más! ⚡' : 'Only one bolt left! ⚡', 2400, 'alert')
+      } else if (remaining > 1) {
+        say(isSpanish ? `¡Rayo capturado! (${got}/${totalOrbsInLevel}) ⚡` : `Bolt captured! (${got}/${totalOrbsInLevel}) ⚡`, 1800, 'success')
+      }
+
+      for (let s = 0; s < 12; s++) {
+        sparks.push({
+          x: orb.x,
+          y: orb.y,
+          vx: (Math.random() - 0.5) * 8,
+          vy: (Math.random() - 0.5) * 8,
+          life: 1,
+          color: '#00d4ff',
+        })
+      }
+
+      if (got === totalOrbsInLevel) {
+        keys.clear()
+        if (currentLevelIdx < LEVELS.length - 1) {
+          status = 'level_clear'
+          say(isSpanish ? '¡Nivel completado! ¡Pan comido! ⚡' : 'Level cleared! Piece of cake! ⚡', 3500, 'success')
+        } else {
+          status = 'won'
+          say(isSpanish ? '¡Maestría Godspeed alcanzada! ⚡' : 'Godspeed Master Achieved! ⚡', 4000, 'godspeed')
+        }
+        renderUI()
+      }
+    }
+  })
+
+  // Electric guide trail towards the next orb
+  const nextTargetOrb = orbs.find((o) => !o.taken)
+  if (nextTargetOrb && Math.random() < 0.08 * frameScale) {
+    const kx = me.x + W / 2
+    const ky = me.y + H / 2
+    const angle = Math.atan2(nextTargetOrb.y - ky, nextTargetOrb.x - kx)
+    sparks.push({
+      x: kx + (Math.random() - 0.5) * 8,
+      y: ky + (Math.random() - 0.5) * 8,
+      vx: Math.cos(angle) * (2.5 + Math.random() * 2),
+      vy: Math.sin(angle) * (2.5 + Math.random() * 2),
+      life: 0.7,
+      color: 'rgba(0, 212, 255, 0.95)',
+    })
+  }
+
+  // Draw Killua and the comic bubble
+  const py = me.y - sy
+  if (py > -H && py < h + H) {
+    drawKillua(me.x, py, now)
+    drawSpeechBubble(me.x, py, now)
+  }
+  }
+
   const loop = (frameNow: number) => {
     if (!alive) return
     const elapsed = frameNow - previousFrame
@@ -1049,7 +1046,7 @@ export function startGameMode(onExit: () => void) {
     me.frame += frameScale
     updateGodspeedHud(now)
 
-    // Actualizar plataformas móviles
+    // Update the moving platforms
     movingLedges.forEach((ml) => {
       const deltaX = ml.speed * ml.dir * frameScale
       ml.x += deltaX
@@ -1072,24 +1069,17 @@ export function startGameMode(onExit: () => void) {
         lastMoveTime = now
       }
 
-      const currentMaxRun = isGodspeed ? MAX_RUN_GODSPEED : MAX_RUN
-      const accel = me.grounded ? (isGodspeed ? ACCEL_GROUND * 1.3 : ACCEL_GROUND) : ACCEL_AIR
+      me.vx = nextVelocityX(me.vx, {
+        left, right, grounded: me.grounded, godspeed: isGodspeed, frameScale,
+      })
+      if (left) me.face = -1
+      else if (right) me.face = 1
 
-      if (left) {
-        me.vx = Math.max(me.vx - accel * frameScale, -currentMaxRun)
-        me.face = -1
-      } else if (right) {
-        me.vx = Math.min(me.vx + accel * frameScale, currentMaxRun)
-        me.face = 1
-      } else {
-        me.vx *= Math.pow(me.grounded ? FRICTION_GROUND : FRICTION_AIR, frameScale)
-      }
-
-      // Salto desde el suelo
-      const canCoyote = now - me.lastGround < COYOTE_MS
-      const buffered = now - me.lastJump < BUFFER_MS
+      // Jump from the ground
+      const canCoyote = now - me.lastGround < PHYSICS.coyoteMs
+      const buffered = now - me.lastJump < PHYSICS.bufferMs
       if (buffered && canCoyote) {
-        me.vy = isGodspeed ? JUMP_FORCE * 1.15 : JUMP_FORCE
+        me.vy = isGodspeed ? PHYSICS.jumpForce * 1.15 : PHYSICS.jumpForce
         me.grounded = false
         me.currentMovingLedge = null
         me.lastJump = -9999
@@ -1107,19 +1097,16 @@ export function startGameMode(onExit: () => void) {
         }
       }
 
-      if (!jumpHeld && me.vy < 0 && me.vy > JUMP_FORCE * 0.9) me.vy *= JUMP_CUT
-
-      // Gravedad
-      const fallLimit = fastFallHeld ? FAST_FALL : MAX_FALL
-      me.vy = Math.min(me.vy + (isGodspeed && jumpHeld && me.vy > 0 ? GRAVITY * 0.5 : GRAVITY) * frameScale, fallLimit)
+      me.vy = cutJump(me.vy, jumpHeld)
+      me.vy = nextVelocityY(me.vy, { godspeed: isGodspeed, jumpHeld, fastFallHeld, frameScale })
       me.x += me.vx * frameScale
       me.y += me.vy * frameScale
 
-      // Límites de pantalla suaves
-      if (me.x < 0) { me.x = 0; me.vx = 0 }
-      if (me.x + W > w) { me.x = w - W; me.vx = 0 }
+      const bounded = clampToStage(me.x, me.vx, w)
+      me.x = bounded.x
+      me.vx = bounded.vx
 
-      // Colisiones de plataformas optimizadas (memoria en lugar de DOM queries continuas)
+      // Optimised platform collisions (memory instead of continuous DOM queries)
       const dropping = now < dropThroughUntil
       const wasAir = !me.grounded
       me.grounded = false
@@ -1127,9 +1114,7 @@ export function startGameMode(onExit: () => void) {
       if (me.vy >= 0 && !dropping) {
         let landedOnMoving = false
         for (const ml of movingLedges) {
-          const bottom = me.y + H
-          const prev = bottom - me.vy * frameScale
-          if (me.x + W > ml.x + 2 && me.x < ml.x + ml.w - 2 && prev <= ml.y + 6 && bottom >= ml.y - 2) {
+          if (landsOn(me, ml, frameScale, LEDGE_INSET.moving)) {
             me.y = ml.y - H
             me.vy = 0
             me.grounded = true
@@ -1149,11 +1134,9 @@ export function startGameMode(onExit: () => void) {
 
         if (!landedOnMoving) {
           me.currentMovingLedge = null
-          // Comprobar plataformas personalizadas
+          // Check the custom platforms
           for (const p of customLedges) {
-            const bottom = me.y + H
-            const prev = bottom - me.vy * frameScale
-            if (me.x + W > p.x + 3 && me.x < p.x + p.w - 3 && prev <= p.y + 6 && bottom >= p.y - 2) {
+            if (landsOn(me, p, frameScale, LEDGE_INSET.custom)) {
               me.y = p.y - H
               me.vy = 0
               me.grounded = true
@@ -1169,14 +1152,14 @@ export function startGameMode(onExit: () => void) {
             }
           }
 
-          // Comprobar plataformas del DOM pre-cacheadas
+          // Check the pre-cached DOM platforms
           if (!me.grounded) {
             for (const p of cachedDomPlatforms) {
               const bottom = me.y + H
               const prev = bottom - me.vy * frameScale
               if (p.y < prev - 8) continue
               if (p.y > bottom + 8) break
-              if (me.x + W > p.x + 4 && me.x < p.x + p.w - 4 && prev <= p.y + 6 && bottom >= p.y - 2) {
+              if (landsOn(me, p, frameScale, LEDGE_INSET.dom)) {
                 me.y = p.y - H
                 me.vy = 0
                 me.grounded = true
@@ -1204,7 +1187,7 @@ export function startGameMode(onExit: () => void) {
       me.sx += (1 - me.sx) * squashEase
       me.sy += (1 - me.sy) * squashEase
 
-      // Caída al vacío segura
+      // Safe fall into the void
       if (me.y > deathY && me.vy > 0) {
         status = 'dead'
         keys.clear()
@@ -1212,7 +1195,7 @@ export function startGameMode(onExit: () => void) {
         renderUI()
       }
 
-      // Estela de velocidad
+      // Speed trail
       if (isGodspeed || Math.abs(me.vx) > 1.6 || Math.abs(me.vy) > 3.5) {
         if (trail.length >= MAX_TRAIL) trail.shift()
         trail.push({
@@ -1223,9 +1206,9 @@ export function startGameMode(onExit: () => void) {
         })
       }
 
-      // ── SEGUIMIENTO DE CÁMARA SILKY-SMOOTH POR ESTANTES (CERO TEMBLOR) ──
-      // Durante saltos normales dentro de la sección, la cámara no se mueve.
-      // Solo actualiza target cuando Killua cruza holgadamente los límites superior/inferior.
+      // ── SILKY-SMOOTH SHELF-BY-SHELF CAMERA TRACKING (ZERO JITTER) ──
+      // During ordinary jumps inside a section the camera does not move.
+      // It only updates its target once Killua clears the upper/lower bounds.
       if (!cameraInspectionActive) {
         const screenY = me.y - cameraY
         if (screenY < h * 0.22) {
@@ -1248,7 +1231,7 @@ export function startGameMode(onExit: () => void) {
         }
       }
 
-      // Si el siguiente objetivo queda atrás, se recupera delante del jugador.
+      // If the next target ends up behind, it is recovered ahead of the player.
       const missedOrbAbove = orbs.find((orb) => !orb.taken)
       if (missedOrbAbove && missedOrbAbove.y < me.y - 240) {
         missedOrbAbove.x = Math.max(70, Math.min(w - 90, me.x + W / 2))
@@ -1291,154 +1274,14 @@ export function startGameMode(onExit: () => void) {
       }
     }
 
-    // Usar cameraY redondeada para sincronía perfecta 1:1 en pantalla
-    const sy = Math.round(cameraY)
-
-    // Dibujar plataformas fijas
-    customLedges.forEach((ledge) => {
-      const ly = ledge.y - sy
-      if (ly > -20 && ly < h + 20) drawLedge(ledge.x, ly, ledge.w, ledge.alpha)
-    })
-
-    // Dibujar plataformas móviles
-    movingLedges.forEach((ml) => {
-      const ly = ml.y - sy
-      if (ly > -20 && ly < h + 20) drawLedge(ml.x, ly, ml.w, 1, true)
-    })
-
-    // Dibujar ondas de choque
-    for (let i = shockwaves.length - 1; i >= 0; i--) {
-      const sw = shockwaves[i]
-      sw.r += 3.5 * frameScale
-      sw.a -= 0.05 * frameScale
-      if (sw.a <= 0 || sw.r >= sw.maxR) { shockwaves.splice(i, 1); continue }
-      ctx.save()
-      ctx.strokeStyle = sw.color === '#00d4ff'
-        ? `rgba(0, 212, 255, ${sw.a.toFixed(3)})`
-        : `rgba(111, 227, 255, ${sw.a.toFixed(3)})`
-      ctx.lineWidth = 2.5
-      ctx.beginPath()
-      ctx.arc(sw.x, sw.y - sy, sw.r, 0, Math.PI * 2)
-      ctx.stroke()
-      ctx.restore()
-    }
-
-    // Dibujar estela de movimiento
-    for (let i = trail.length - 1; i >= 0; i--) {
-      const tr = trail[i]
-      tr.a -= (tr.isGodspeed ? 0.04 : 0.06) * frameScale
-      if (tr.a <= 0) { trail.splice(i, 1); continue }
-      const ty = tr.y - sy
-      if (ty < -40 || ty > h + 40) continue
-      ctx.fillStyle = tr.isGodspeed
-        ? `rgba(0, 212, 255, ${tr.a.toFixed(3)})`
-        : `rgba(111, 227, 255, ${tr.a.toFixed(3)})`
-      ctx.fillRect(tr.x - 2, ty - 2, 4, 4)
-    }
-
-    // Dibujar chispas
-    for (let i = sparks.length - 1; i >= 0; i--) {
-      const sp = sparks[i]
-      sp.x += sp.vx * frameScale
-      sp.y += sp.vy * frameScale
-      sp.vy += 0.12 * frameScale
-      sp.life -= 0.04 * frameScale
-      if (sp.life <= 0) { sparks.splice(i, 1); continue }
-      ctx.fillStyle = sp.color || `rgba(111, 227, 255, ${sp.life.toFixed(3)})`
-      ctx.fillRect(sp.x, sp.y - sy, 2.5, 2.5)
-    }
-
-    // Dibujar y recolectar rayos
-    const t = now * 0.003
-    const activeOrb = orbs.find((orb) => !orb.taken)
-    orbs.forEach((orb, i) => {
-      if (orb.taken || orb !== activeOrb) return
-
-      if (isGodspeed && status === 'playing') {
-        const kx = me.x + W / 2
-        const ky = me.y + H / 2
-        const dist = Math.hypot(orb.x - kx, orb.y - ky)
-        if (dist < 240) {
-          const magnetEase = 1 - Math.pow(0.93, frameScale)
-          orb.x += (kx - orb.x) * magnetEase
-          orb.y += (ky - orb.y) * magnetEase
-        }
-      }
-
-      const oy = orb.y - sy
-      if (oy >= -60 && oy <= h + 60) {
-        drawBolt(orb, sy, t, i)
-      } else {
-        drawRadarBeacon(orb, sy, i, now)
-      }
-
-      if (status === 'playing' && Math.abs(me.x + W / 2 - orb.x) < 40 && Math.abs(me.y + H / 2 - orb.y) < 44) {
-        orb.taken = true
-        got++
-        playBoltSound()
-        updateProgressHud()
-
-        const remaining = totalOrbsInLevel - got
-        if (remaining === 1) {
-          say(isSpanish ? '¡Solo queda un rayo más! ⚡' : 'Only one bolt left! ⚡', 2400, 'alert')
-        } else if (remaining > 1) {
-          say(isSpanish ? `¡Rayo capturado! (${got}/${totalOrbsInLevel}) ⚡` : `Bolt captured! (${got}/${totalOrbsInLevel}) ⚡`, 1800, 'success')
-        }
-
-        for (let s = 0; s < 12; s++) {
-          sparks.push({
-            x: orb.x,
-            y: orb.y,
-            vx: (Math.random() - 0.5) * 8,
-            vy: (Math.random() - 0.5) * 8,
-            life: 1,
-            color: '#00d4ff',
-          })
-        }
-
-        if (got === totalOrbsInLevel) {
-          keys.clear()
-          if (currentLevelIdx < LEVELS.length - 1) {
-            status = 'level_clear'
-            say(isSpanish ? '¡Nivel completado! ¡Pan comido! ⚡' : 'Level cleared! Piece of cake! ⚡', 3500, 'success')
-          } else {
-            status = 'won'
-            say(isSpanish ? '¡Godspeed Master Alcanzado! ⚡' : 'Godspeed Master Achieved! ⚡', 4000, 'godspeed')
-          }
-          renderUI()
-        }
-      }
-    })
-
-    // Rastro guía eléctrico hacia el próximo orbe
-    const nextTargetOrb = orbs.find((o) => !o.taken)
-    if (nextTargetOrb && Math.random() < 0.08 * frameScale) {
-      const kx = me.x + W / 2
-      const ky = me.y + H / 2
-      const angle = Math.atan2(nextTargetOrb.y - ky, nextTargetOrb.x - kx)
-      sparks.push({
-        x: kx + (Math.random() - 0.5) * 8,
-        y: ky + (Math.random() - 0.5) * 8,
-        vx: Math.cos(angle) * (2.5 + Math.random() * 2),
-        vy: Math.sin(angle) * (2.5 + Math.random() * 2),
-        life: 0.7,
-        color: 'rgba(0, 212, 255, 0.95)',
-      })
-    }
-
-    // Dibujar Killua y Bocadillo de Cómic
-    const py = me.y - sy
-    if (py > -H && py < h + H) {
-      drawKillua(me.x, py, now)
-      drawSpeechBubble(me.x, py, now)
-    }
+    paintFrame(now, frameScale, isGodspeed)
 
     if (sparks.length > MAX_SPARKS) sparks.splice(0, sparks.length - MAX_SPARKS)
     if (shockwaves.length > MAX_SHOCKWAVES) shockwaves.splice(0, shockwaves.length - MAX_SHOCKWAVES)
     raf = requestAnimationFrame(loop)
   }
 
-  // ── AISLAMIENTO DE TECLADO Y CONTROL EXCLUSIVO DEL JUEGO ──
+  // ── KEYBOARD ISOLATION AND EXCLUSIVE GAME CONTROL ──
   if (document.activeElement && document.activeElement !== document.body) {
     ;(document.activeElement as HTMLElement).blur()
   }
@@ -1486,17 +1329,17 @@ export function startGameMode(onExit: () => void) {
       return
     }
 
-    // Habilidad Definitiva Godspeed (Q / R / F)
+    // Godspeed ultimate ability (Q / R / F)
     if (['KeyQ', 'KeyR', 'KeyF'].includes(e.code)) {
       triggerGodspeed()
     }
 
-    // Bajar / Fast Fall (S / Flecha Abajo)
+    // Drop down / fast fall (S / Arrow Down)
     if (['ArrowDown', 'KeyS'].includes(e.code)) {
       triggerDropThrough()
     }
 
-    // Salto / Doble Salto (Espacio, W, Flecha Arriba, Shift, E)
+    // Jump / double jump (Space, W, Arrow Up, Shift, E)
     if (['Space', 'ArrowUp', 'KeyW', 'ShiftLeft', 'ShiftRight', 'KeyE', 'KeyK'].includes(e.code)) {
       requestJump()
     }
@@ -1557,7 +1400,7 @@ export function startGameMode(onExit: () => void) {
     trail.length = 0
     sparks.length = 0
     shockwaves.length = 0
-    if (audioCtx && audioCtx.state !== 'closed') void audioCtx.close()
+    audio.close()
     canvas.remove()
     ui.remove()
     document.documentElement.scrollTop = originalScrollY

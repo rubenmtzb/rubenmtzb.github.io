@@ -2,25 +2,25 @@ export interface TechMeta {
   color: string
   glow: string
   icon?: string
-  /** Página oficial de la tecnología. Excluyente con `anchor`. */
+  /** The technology's official page. Mutually exclusive with `anchor`. */
   url?: string
   /**
-   * Conceptos sin marca que se explican en el propio sitio: se guarda el id
-   * de la sección, no una URL, porque el destino cambia con el idioma y la
-   * chip aparece también en páginas donde esa sección no existe.
+   * Brandless concepts explained on the site itself: the section's id is stored
+   * rather than a URL, because the destination changes with the language and
+   * the chip also shows up on pages where that section does not exist.
    */
   anchor?: string
 }
 
 /**
- * Registro único de tecnologías: color de marca, resplandor, logotipo y enlace
- * a la página oficial. Lo consumen las mismas chips en hero, proyectos,
- * experiencia, formación y certificaciones, así que una tecnología repetida
- * conserva siempre el mismo color y el mismo destino.
+ * The single technology registry: brand colour, glow, logo and link to the
+ * official page. The same chips consume it in the hero, projects, experience,
+ * education and certifications, so a repeated technology always keeps the same
+ * colour and the same destination.
  *
- * Cuando no existe marca (SQL, DevOps, CI/CD, redes, hardware, IA, LLMs,
- * ingeniería de prompts) se usa un glifo propio de dos tonos —color del
- * concepto más el cian del sitio— y el enlace apunta a la referencia canónica.
+ * Where no brand exists (SQL, DevOps, CI/CD, networking, hardware, AI, LLMs,
+ * prompt engineering) a two-tone glyph of its own is used — the concept's
+ * colour plus the site's cyan — and the link points at the canonical reference.
  */
 export const TECH: Record<string, TechMeta> = {
   Java: {
@@ -95,7 +95,7 @@ export const TECH: Record<string, TechMeta> = {
     glow: 'rgba(247, 223, 30, 0.3)',
     url: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript',
   },
-  /* ES6+ es JavaScript moderno: mismo logotipo y color, enlace a la norma. */
+  /* ES6+ is modern JavaScript: same logo and colour, link to the standard. */
   'ES6+': {
     icon: '/icons/javascript.svg',
     color: '#f7df1e',

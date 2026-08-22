@@ -1,0 +1,129 @@
+---
+/**
+ * A build's cover in the gallery.
+ *
+ * The whole card is the target — photo, title and button all open the same
+ * build — except for the carousel's controls, which change photo without
+ * leaving the gallery. Which is which is decided by the explorer reading
+ * `data-bx-open`.
+ *
+ * Every photograph downloads up front rather than on display: the carousel is
+ * paged with the arrows, and an image that only starts coming down the moment it
+ * is asked for arrives late, and the gap shows. Since the block lives behind a
+ * tab and far below the fold, the download carries `fetchpriority="low"`, so it
+ * happens with the connection already free and takes no bandwidth away from
+ * whatever is on screen.
+ */
+import { Picture } from 'astro:assets'
+import { buildDisplayStatus, localizer, twoDigits, type KeyboardBuild } from '../../../lib/content'
+import { keyboardCopy } from '../../../i18n/keyboards'
+import type { Lang } from '../../../i18n/ui'
+
+interface Props { build: KeyboardBuild; index: number; lang: Lang }
+const { build, index, lang } = Astro.props
+const pick = localizer(lang)
+const copy = keyboardCopy(lang)
+
+/** With a single photograph there is nothing to page: no arrows, no dots, no counter. */
+const hasCarousel = build.photos.length > 1
+
+/**
+ * The photographic cover's cuts.
+ *
+ * The card never exceeds ~500 px wide — two columns inside the panel, a single
+ * one below 34rem — so the ladder covers up to 3x density and stops there:
+ * asking for the 1490 px original for a 340 px card meant spending a megabyte on
+ * pixels the screen cannot show.
+ */
+const PHOTO_WIDTHS = [420, 680, 1020, 1360]
+
+/** It never asks the pipeline for a cut larger than each photograph's original. */
+const photoWidths = (intrinsic: number) => {
+  const fitting = PHOTO_WIDTHS.filter((width) => width <= intrinsic)
+  return fitting.length > 0 ? fitting : [intrinsic]
+}
+
+/**
+ * The largest cut ever served, which is also the fallback `src`. Declaring the
+ * original here forced the pipeline to generate an extra full-size cut no screen
+ * ever asked for: same appearance, one file fewer.
+ */
+const photoWidth = (intrinsic: number) => photoWidths(intrinsic).at(-1) ?? intrinsic
+---
+
+<li>
+  <article class={`bx-build-card is-${buildDisplayStatus(build)}`} data-bx-open={build.key}>
+    <div
+      class="bx-card-visual"
+      data-bx-card-carousel
+      tabindex="0"
+      role="region"
+      aria-roledescription="carousel"
+      aria-label={`${copy.cover}: ${build.name}`}
+    >
+      {build.photos.map((photo, photoIndex) => (
+        <figure
+          class="bx-card-slide"
+          data-bx-card-slide={photoIndex}
+          data-bx-card-label={pick(photo.label)}
+          aria-hidden={photoIndex === 0 ? 'false' : 'true'}
+          hidden={photoIndex !== 0}
+        >
+          <Picture
+            src={photo.image}
+            formats={['avif']}
+            fallbackFormat="webp"
+            widths={photoWidths(photo.image.width)}
+            width={photoWidth(photo.image.width)}
+            quality={82}
+            sizes="(max-width: 544px) calc(100vw - 4rem), (max-width: 1024px) 44vw, 340px"
+            alt={pick(photo.alt)}
+            loading="eager"
+            fetchpriority="low"
+            decoding="async"
+            draggable="false"
+            class="bx-card-photo"
+          />
+        </figure>
+      ))}
+      <span class="bx-card-pointer-light" aria-hidden="true"></span>
+      <span class="bx-card-index">{copy.buildNumber(twoDigits(index + 1))}</span>
+      <span class="bx-card-authentic"><i></i>{copy.status[buildDisplayStatus(build)]}</span>
+      {hasCarousel && (
+        <button class="bx-card-nav bx-card-prev" type="button" data-bx-card-prev aria-label={copy.previous}>‹</button>
+      )}
+      {hasCarousel && (
+        <button class="bx-card-nav bx-card-next" type="button" data-bx-card-next aria-label={copy.next}>›</button>
+      )}
+      <span class="bx-card-photo-meta">
+        <span data-bx-card-caption>{pick(build.photos[0].label)}</span>
+        {hasCarousel && (
+          <b data-bx-card-counter>01 / {twoDigits(build.photos.length)}</b>
+        )}
+      </span>
+      {hasCarousel && (
+        <span class="bx-card-pagination" role="group" aria-label={`${build.photos.length} ${copy.images}`}>
+          {build.photos.map((photo, photoIndex) => (
+            <button
+              type="button"
+              data-bx-card-dot={photoIndex}
+              aria-label={`${copy.goTo} ${photoIndex + 1}: ${pick(photo.label)}`}
+              aria-current={photoIndex === 0 ? 'true' : 'false'}
+            ></button>
+          ))}
+        </span>
+      )}
+    </div>
+    <div class="bx-card-copy">
+      <span class="bx-card-id">
+        <strong>{build.name}</strong>
+        <small>{pick(build.summary)}</small>
+      </span>
+      <span class="bx-card-meta">
+        <button class="bx-inspect" type="button" data-bx-open={build.key}>
+          {build.status === 'complete' ? copy.inspect : copy.openDraft} <b aria-hidden="true">→</b>
+        </button>
+      </span>
+    </div>
+  </article>
+</li>

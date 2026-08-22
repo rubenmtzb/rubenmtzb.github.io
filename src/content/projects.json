@@ -108,7 +108,7 @@
     "domains": [],
     "github": "https://github.com/rubenmtzb",
     "image": "./../assets/projects/financial-architecture.png",
-    "imageAlt": "Portada del caso de estudio de Arquitectura Financiera Desacoplada, con un gráfico de saldo agregado y el stack: Java, Spring Boot, React, Docker, PostgreSQL.",
+    "imageAlt": "Portada del caso de estudio de Arquitectura Financiera Desacoplada, con un gráfico de saldo agregado y las tecnologías: Java, Spring Boot, React, Docker y PostgreSQL.",
     "deep": null
   },
   {
@@ -136,9 +136,9 @@
     "key": "portfolio",
     "lang": "es",
     "order": 3,
-    "title": "Portfolio Personal",
+    "title": "Portafolio Personal",
     "eyebrow": "Aplicación Web",
-    "description": "Este mismo portfolio. Construido con Astro como HTML estático, con simulación de partículas ASCII de Killua, carrusel 3D y una única fuente de verdad para todo el contenido.",
+    "description": "Este mismo portafolio. Construido con Astro como HTML estático, con simulación de partículas ASCII de Killua, carrusel 3D y una única fuente de verdad para todo el contenido.",
     "status": "Activo en rubenitx.me",
     "badge": "live",
     "featured": false,
@@ -148,7 +148,7 @@
     "link": "https://rubenitx.me",
     "github": "https://github.com/rubenmtzb/rubenmtzb.github.io",
     "image": "./../assets/projects/portfolio.png",
-    "imageAlt": "Portada del proyecto Portfolio Personal, con una ventana de terminal ejecutando los comandos de build y despliegue en producción.",
+    "imageAlt": "Portada del proyecto Portafolio Personal, con una ventana de terminal ejecutando los comandos de compilación y despliegue en producción.",
     "deep": null
   },
   {
@@ -172,7 +172,7 @@
     "key": "coming-soon",
     "lang": "es",
     "order": 4,
-    "title": "Coming Soon",
+    "title": "Próximamente",
     "eyebrow": "En Desarrollo",
     "description": "Un nuevo proyecto está tomando forma. La arquitectura se está definiendo antes de su primera versión pública.",
     "status": "En planificación",

@@ -1,15 +1,15 @@
 /**
- * Retrato ASCII — pieza visual interactiva del hero.
+ * ASCII portrait — the hero's interactive visual piece.
  *
- * Cada carácter es una partícula viva que entra desde el espacio,
- * respira orgánicamente, produce destellos eléctricos sutiles
- * (estilo Killua) y responde al cursor o toque apartándose con física elástica.
+ * Every character is a living particle that flies in from space, breathes
+ * organically, throws subtle electric sparks (Killua style) and reacts to
+ * cursor or touch by pulling away with elastic physics.
  *
- * Totalmente responsive para móviles, tablets y monitores grandes.
+ * Fully responsive across phones, tablets and large monitors.
  */
 
 const CHARS = ' .:-=+*#%@'.split('')
-/** Puntero "en ninguna parte": lo bastante lejos para no repeler ninguna partícula. */
+/** A pointer "nowhere": far enough away to repel no particle at all. */
 const OFFSCREEN = -9999
 const ACCENT_BASE = [91, 155, 255] as const // --blue-bright
 const ACCENT_GLOW = [111, 227, 255] as const // --cyan
@@ -35,10 +35,10 @@ type ParticleRaw = {
 
 const memoryCache: Record<number, ParticleRaw[]> = {}
 
-/** Cuerpo del glifo según el lado del retrato. Lo usan el muestreo y el pintado. */
+/** The glyph's weight by side of the portrait. Used by both sampling and painting. */
 const fontFor = (size: number) => (size <= 230 ? 4.8 : size <= 280 ? 5.4 : size <= 320 ? 6.2 : 7.2)
 
-export const sizeFor = (w: number) => {
+const sizeFor = (w: number) => {
   if (w <= 400) return Math.min(210, Math.round(w - 56))
   if (w <= 520) return 230
   if (w <= 768) return 260
@@ -59,6 +59,35 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
   let ready = false
   const pointer = { x: OFFSCREEN, y: OFFSCREEN, tx: OFFSCREEN, ty: OFFSCREEN, active: false }
 
+  /*
+   * The pointer is recorded in window coordinates and translated into portrait
+   * coordinates inside the loop. Measuring the canvas's box on every
+   * `pointermove` forced a layout recalculation far more often than the browser
+   * ever paints; now it is measured once per frame, which is the only rate at
+   * which the result can be seen.
+   */
+  let pending: { x: number, y: number } | null = null
+
+  const resolvePointer = () => {
+    if (!pending) return
+    const rect = canvas.getBoundingClientRect()
+    pointer.tx = ((pending.x - rect.left) / rect.width) * size
+    pointer.ty = ((pending.y - rect.top) / rect.height) * size
+    /*
+     * On entering the portrait the cursor has no useful previous position: it
+     * comes from outside the canvas. Anchoring it to the first point keeps the
+     * interpolation from dragging the repulsion all the way from OFFSCREEN and
+     * makes the void appear under the pointer, including when entering from
+     * below or from a side.
+     */
+    if (!pointer.active) {
+      pointer.x = pointer.tx
+      pointer.y = pointer.ty
+    }
+    pointer.active = true
+    pending = null
+  }
+
   const createParticlesFromRaw = (raw: ParticleRaw[]) => {
     return raw.map((p) => ({
       x: p.x + (Math.random() - 0.5) * (size * 0.7),
@@ -76,7 +105,7 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
     }))
   }
 
-  /* ---------- Muestreo de la imagen ---------- */
+  /* ---------- Image sampling ---------- */
   const build = (img: HTMLImageElement) => {
     if (memoryCache[size]) {
       particles = createParticlesFromRaw(memoryCache[size])
@@ -91,7 +120,7 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
     const octx = off.getContext('2d')
     if (!octx) return
 
-    // Encaje manteniendo proporción
+    // Fit while preserving the aspect ratio
     const scale = 0.94
     const aspect = img.width / img.height
     let dh = size * scale
@@ -111,7 +140,7 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
         if (data[i + 3] < 128) continue
         const b = (data[i] + data[i + 1] + data[i + 2]) / 765
 
-        // Curva para destacar pelo y silueta
+        // A curve that brings out the hair and the silhouette
         if (b < 0.34) continue
         const norm = (b - 0.34) / 0.66
         const weight = norm ** 1.4
@@ -150,6 +179,7 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
 
+    resolvePointer()
     pointer.x += (pointer.tx - pointer.x) * 0.18
     pointer.y += (pointer.ty - pointer.y) * 0.18
 
@@ -163,7 +193,7 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
       const settling = age < 3
       const alive = pointer.active || settling
 
-      // Pulso orgánico y destellos eléctricos sutiles
+      // Organic pulse and subtle electric sparks
       const breath = alive ? Math.sin(t * 2.2 + p.shimmer) * 0.1 : Math.sin(t * 1.2 + p.shimmer) * 0.05
       const sparkle = p.isSparkle && alive ? Math.max(0, Math.sin(t * 6 + p.shimmer * 2)) * 0.35 : 0
       p.cur = Math.max(0, Math.min(1, p.alpha * eased + breath + sparkle))
@@ -172,7 +202,7 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
         p.x = p.tx
         p.y = p.ty
       } else {
-        // Repulsión elástica del puntero
+        // Elastic repulsion from the pointer
         if (pointer.active) {
           const dx = p.x - pointer.x
           const dy = p.y - pointer.y
@@ -185,7 +215,7 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
           }
         }
 
-        // Atracción a la posición original
+        // Attraction back to the original position
         const move = Math.min(age / 2.2, 1)
         const pull = 0.015 + (1 - (1 - move) ** 3) * 0.085
         p.vx += (p.tx - p.x) * pull
@@ -220,9 +250,9 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
   }
 
   /*
-   * Se anima solo si está a la vez en pantalla y en una pestaña activa.
-   * Hacen falta las dos condiciones: volver a la pestaña no debe reanudar
-   * un canvas que entretanto quedó fuera de la ventana.
+   * It only animates while it is both on screen and in an active tab. Both
+   * conditions are needed: returning to the tab must not resume a canvas that
+   * meanwhile scrolled out of the viewport.
    */
   let onScreen = true
   const sync = () => {
@@ -237,26 +267,23 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
     }
   }
 
-  /* ---------- Entradas de ratón y táctil ---------- */
-  const toLocal = (clientX: number, clientY: number) => {
-    const r = canvas.getBoundingClientRect()
-    pointer.tx = ((clientX - r.left) / r.width) * size
-    pointer.ty = ((clientY - r.top) / r.height) * size
-    pointer.active = true
-  }
+  /* ---------- Mouse and touch input ---------- */
 
   const releasePointer = () => {
+    pending = null
     pointer.active = false
     pointer.tx = OFFSCREEN
     pointer.ty = OFFSCREEN
   }
 
-  canvas.addEventListener('pointermove', (e) => toLocal(e.clientX, e.clientY))
-  canvas.addEventListener('pointerleave', releasePointer)
+  const trackAt = (x: number, y: number) => { pending = { x, y } }
+
+  canvas.addEventListener('pointermove', (e) => trackAt(e.clientX, e.clientY), { passive: true })
+  canvas.addEventListener('pointerleave', releasePointer, { passive: true })
   canvas.addEventListener('touchmove', (e) => {
-    if (e.touches.length > 0) toLocal(e.touches[0].clientX, e.touches[0].clientY)
+    if (e.touches.length > 0) trackAt(e.touches[0].clientX, e.touches[0].clientY)
   }, { passive: true })
-  canvas.addEventListener('touchend', releasePointer)
+  canvas.addEventListener('touchend', releasePointer, { passive: true })
 
   const img = new Image()
   img.decoding = 'async'
@@ -266,7 +293,7 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
     canvas.style.width = `${size}px`
     canvas.style.height = `${size}px`
     if (reduce) {
-      // Sin movimiento: un único fotograma con las partículas ya asentadas.
+      // Motion off: a single frame with the particles already settled.
       draw()
       return
     }
@@ -288,7 +315,12 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
       size = next
       canvas.style.width = `${size}px`
       canvas.style.height = `${size}px`
-      if (img.complete) build(img)
+      if (!img.complete) return
+      build(img)
+      /* With the loop stopped — "reduce motion" — nobody is going to repaint the
+         portrait at the new size, so the rebuild goes unpainted and the browser
+         scales the previous bitmap. One frame is enough. */
+      if (!running) draw()
     }, 100)
   })
 

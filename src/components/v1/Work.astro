@@ -3,6 +3,7 @@ import Section from './Section.astro'
 import Icon from '../Icon.astro'
 import { casePath, formatDuration, formatPeriod, getExperience, getProjects } from '../../lib/content'
 import { t, type Lang } from '../../i18n/ui'
+import { localizedTerm } from '../../i18n/terms'
 
 interface Props { lang: Lang }
 const { lang } = Astro.props
@@ -74,10 +75,10 @@ const PROJECT_ICON: Record<string, 'microscope' | 'lock' | 'globe'> = {
                   {(item.tech.length > 0 || item.practices.length > 0) && (
                     <ul class="mt-5 flex flex-wrap gap-2">
                       {item.tech.map((tag) => (
-                        <li class="rounded-full border border-green-500/30 bg-green-500/10 px-3 py-1 text-xs text-green-300">{tag}</li>
+                        <li class="rounded-full border border-green-500/30 bg-green-500/10 px-3 py-1 text-xs text-green-300">{localizedTerm(tag, lang)}</li>
                       ))}
                       {item.practices.map((tag) => (
-                        <li class="rounded-full border border-cyan-400/25 bg-cyan-400/5 px-3 py-1 text-xs text-cyan-200">{tag}</li>
+                        <li class="rounded-full border border-cyan-400/25 bg-cyan-400/5 px-3 py-1 text-xs text-cyan-200">{localizedTerm(tag, lang)}</li>
                       ))}
                     </ul>
                   )}
@@ -140,10 +141,10 @@ const PROJECT_ICON: Record<string, 'microscope' | 'lock' | 'globe'> = {
 
           <ul class="mt-6 flex flex-wrap gap-2">
             {project.tech.map((tech) => (
-              <li class="rounded-full border border-green-500/30 bg-green-500/10 px-3 py-1 text-xs text-green-300">{tech}</li>
+              <li class="rounded-full border border-green-500/30 bg-green-500/10 px-3 py-1 text-xs text-green-300">{localizedTerm(tech, lang)}</li>
             ))}
             {project.domains.map((d) => (
-              <li class="rounded-full border border-purple-400/25 bg-purple-500/10 px-3 py-1 text-xs text-purple-200">{d}</li>
+              <li class="rounded-full border border-purple-400/25 bg-purple-500/10 px-3 py-1 text-xs text-purple-200">{localizedTerm(d, lang)}</li>
             ))}
           </ul>
 

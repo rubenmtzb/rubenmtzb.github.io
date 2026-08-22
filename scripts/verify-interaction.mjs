@@ -1,19 +1,20 @@
 #!/usr/bin/env node
 /**
- * Verificación de la capa de interacción.
+ * Verification of the interaction layer.
  *
- * verify-dist.mjs comprueba que el HTML de build es correcto SIN JavaScript.
- * Aquí se comprueba lo contrario: se ejecuta el bundle real contra ese mismo
- * HTML, con el mínimo de APIs de navegador simuladas, y se afirma que la
- * interacción hace lo que debe.
+ * verify-dist.mjs checks that the built HTML is correct WITHOUT JavaScript. Here
+ * the opposite is checked: the real bundle is executed against that same HTML,
+ * with the bare minimum of browser APIs simulated, and the interaction is
+ * asserted to do what it should.
  *
- * Se pasa por las dos portadas, porque buena parte del script elige textos
- * según `document.documentElement.lang` y un fallo ahí solo se ve en una.
+ * Both language home pages are put through it, because a good part of the script
+ * picks copy by `document.documentElement.lang` and a fault there only shows on
+ * one of them.
  *
- * No sustituye a un navegador —no hay layout, ni canvas, ni audio— pero sí
- * cubre lo que se puede romper al reorganizar el script: que arranque entero,
- * que los carruseles avancen con un único elemento activo, que las pestañas
- * cambien de panel y que el teclado registre aciertos, fallos y borrados.
+ * It is no substitute for a browser — there is no layout, no canvas and no audio
+ * — but it does cover what reorganising the script can break: that it boots in
+ * full, that the carousels advance with a single active element, that the tabs
+ * switch panels, and that the keyboard records hits, misses and deletions.
  */
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
@@ -22,14 +23,46 @@ import { parseHTML } from 'linkedom'
 
 const DIST = 'dist'
 const PAGES = [
-  { file: 'index.html', lang: 'en', soundOff: 'Sound disabled', soundOn: 'Sound enabled' },
-  { file: 'es/index.html', lang: 'es', soundOff: 'Sonido desactivado', soundOn: 'Sonido activado' },
+  {
+    file: 'index.html',
+    lang: 'en',
+    soundOff: 'Sound disabled',
+    soundOn: 'Sound enabled',
+    speedTrialLabel: 'Speed Trial',
+    speedTrialStarts: [
+      'lightning never',
+      'assassination techniques',
+      'distributed systems',
+      'mechanical switches',
+      'hunter license',
+      'typesafe functional',
+      'nobody can',
+      'always keep',
+    ],
+  },
+  {
+    file: 'es/index.html',
+    lang: 'es',
+    soundOff: 'Sonido desactivado',
+    soundOn: 'Sonido activado',
+    speedTrialLabel: 'Prueba de velocidad',
+    speedTrialStarts: [
+      'los rayos',
+      'las tecnicas',
+      'los sistemas',
+      'los interruptores',
+      'la licencia de',
+      'las arquitecturas',
+      'nadie reacciona',
+      'manten tu',
+    ],
+  },
 ]
 
 const bundleName = readdirSync(join(DIST, '_astro'))
   .find((f) => f.startsWith('V2Layout') && f.endsWith('.js'))
 if (!bundleName) {
-  console.error('✗ no hay bundle de la V2 en dist/_astro: ¿se ha construido el sitio?')
+  console.error('✗ no V2 bundle in dist/_astro: has the site been built?')
   process.exit(1)
 }
 const bundleUrl = pathToFileURL(join(process.cwd(), DIST, '_astro', bundleName)).href
@@ -38,26 +71,34 @@ let pass = 0
 let fail = 0
 
 /**
- * Ejecuta el bundle contra una página y devuelve las herramientas para
- * interrogar el DOM resultante. Cada llamada monta un entorno nuevo y salta
- * la caché de módulos, para que las dos portadas no compartan estado.
+ * Runs the bundle against a page and returns the tools for interrogating the
+ * resulting DOM. Every call builds a fresh environment and bypasses the module
+ * cache, so the two home pages share no state.
  */
 async function run(page, runIndex) {
   const { window, document } = parseHTML(readFileSync(join(DIST, page.file), 'utf8'))
 
-  /* APIs de navegador que linkedom no trae. Los temporizadores y los
-     fotogramas se tragan a propósito: interesa el estado inmediato tras cada
-     interacción, no las animaciones. El audio y el canvas fallan a propósito
-     para ejercitar los caminos degradados. */
+  /* Browser APIs linkedom does not ship. Timers and frames are swallowed on
+     purpose: what matters is the immediate state after each interaction, not the
+     animations. Audio and canvas fail on purpose, to exercise the degraded
+     paths. */
   const noop = () => {}
+  /*
+   * Intervals are recorded instead of discarded. They still never fire on their
+   * own — what matters is still the immediate state after each interaction — but
+   * this way a test can exhaust the speed trial's clock by hand, which is the
+   * only way to reach the end of a round without typing the whole phrase.
+   */
+  const intervals = new Map()
+  let nextIntervalId = 1
   Object.assign(window, {
     matchMedia: () => ({ matches: false, addEventListener: noop, removeEventListener: noop }),
     requestAnimationFrame: () => 0,
     cancelAnimationFrame: noop,
     setTimeout: () => 0,
-    setInterval: () => 0,
+    setInterval: (fn) => { intervals.set(nextIntervalId, fn); return nextIntervalId++ },
     clearTimeout: noop,
-    clearInterval: noop,
+    clearInterval: (id) => { intervals.delete(id) },
     getComputedStyle: () => ({ gap: '24px' }),
     IntersectionObserver: class {
       constructor(callback) { this.callback = callback }
@@ -65,7 +106,7 @@ async function run(page, runIndex) {
       unobserve() {} disconnect() {}
     },
     ResizeObserver: class { observe() {} disconnect() {} },
-    AudioContext: class { constructor() { throw new Error('sin salida de audio en Node') } },
+    AudioContext: class { constructor() { throw new Error('no audio output in Node') } },
     Image: class { set src(_value) {} get complete() { return false } },
     devicePixelRatio: 1,
     innerWidth: 1440,
@@ -75,10 +116,25 @@ async function run(page, runIndex) {
   })
   for (const canvas of document.querySelectorAll('canvas')) canvas.getContext = () => null
 
-  /* linkedom fija event.target al objeto del despacho y no deja
-     sobrescribirlo, pero en un navegador un keydown apunta al elemento con
-     foco. Se capturan los listeners de window y se invocan con un evento
-     propio, que es la única forma de reproducir aquí ese detalle. */
+  /* linkedom plays nothing. It is given the minimum output the sound bench
+     needs — play, pause and a playhead — so it can be checked here that only one
+     sample plays at a time and that scrubbing moves the position. The duration
+     comes from the markup, which is where the player itself reads it from while
+     the file has not been downloaded. */
+  for (const audio of document.querySelectorAll('audio')) {
+    let head = 0
+    Object.defineProperties(audio, {
+      duration: { get: () => Number(audio.closest('[data-duration]')?.dataset.duration ?? 0) },
+      currentTime: { get: () => head, set: (value) => { head = value } },
+    })
+    audio.play = () => { audio.dispatchEvent(new window.Event('play')) }
+    audio.pause = () => { audio.dispatchEvent(new window.Event('pause')) }
+  }
+
+  /* linkedom pins event.target to the dispatching object and will not let it be
+     overwritten, but in a browser a keydown points at the focused element. The
+     window listeners are captured and invoked with an event of our own, which is
+     the only way to reproduce that detail here. */
   const keyListeners = []
   const addEventListener = window.addEventListener.bind(window)
   window.addEventListener = (type, handler, opts) => {
@@ -103,7 +159,7 @@ async function run(page, runIndex) {
     clearInterval: window.clearInterval,
   })
 
-  // El sufijo salta la caché de módulos de Node: cada página parte de cero.
+  // The suffix bypasses Node's module cache: every page starts from scratch.
   await import(`${bundleUrl}?run=${runIndex}`)
 
   const el = (id) => document.getElementById(id)
@@ -115,16 +171,21 @@ async function run(page, runIndex) {
       const ev = new window.Event(type, { bubbles: true, cancelable: true })
       Object.assign(ev, init)
       node.dispatchEvent(ev)
+      return ev
     },
     key(type, { target = document.body, ...rest }) {
       const ev = { type, target, preventDefault: noop, stopPropagation: noop, repeat: false, ...rest }
       for (const l of keyListeners) if (l.type === type) l.handler(ev)
     },
+    /** Runs the live intervals for as many ticks as asked for. */
+    tick(times = 1) {
+      for (let i = 0; i < times; i++) for (const fn of [...intervals.values()]) fn()
+    },
   }
 }
 
 function suite(page, dom) {
-  const { el, all, fire, key, document } = dom
+  const { el, all, fire, key, tick, document } = dom
   const check = (cond, msg) => {
     if (cond) { pass++; console.log(`  ✓ ${msg}`) }
     else { fail++; console.error(`  ✗ ${msg}`) }
@@ -133,19 +194,19 @@ function suite(page, dom) {
   console.log(`\n· Revelado (${page.lang})`)
   const reveals = all('.reveal')
   check(reveals.length > 0 && reveals.every((r) => r.classList.contains('is-in')),
-    `las ${reveals.length} secciones .reveal quedan visibles`)
+    `all ${reveals.length} .reveal sections end up visible`)
 
-  console.log('\n· Navegación móvil')
+  console.log('\n· Mobile navigation')
   const mobileNav = el('mobile-nav')
   const mobileLinks = mobileNav ? [...mobileNav.querySelectorAll('[data-nav]')] : []
-  check(mobileLinks.length === 4, 'el menú compacto conserva las cuatro áreas')
+  check(mobileLinks.length === 4, 'the compact menu keeps all four areas')
   if (mobileNav && mobileLinks[0]) {
     mobileNav.open = true
     fire(mobileLinks[0], 'click')
-    check(mobileNav.open === false, 'el menú compacto se cierra al navegar')
+    check(mobileNav.open === false, 'the compact menu closes on navigating')
   }
 
-  console.log('\n· Carruseles')
+  console.log('\n· Carousels')
   const carousels = [
     { name: 'proyectos', slides: '.project-slide', next: 'proj-next', dots: '[data-dot-index]' },
     { name: 'formación', slides: '.edu-slide', next: 'edu-next', dots: '[data-edu-dot]', counter: 'edu-counter' },
@@ -157,108 +218,567 @@ function suite(page, dom) {
     const activeCount = () => slides.filter((s) => s.classList.contains('is-active')).length
 
     check(slides.length > 1 && activeCount() === 1 && activeIndex() === 0,
-      `${c.name}: ${slides.length} slides, arranca en el primero y solo uno activo`)
+      `${c.name}: ${slides.length} slides, starts on the first with only one active`)
 
     fire(el(c.next), 'click')
-    check(activeCount() === 1 && activeIndex() === 1, `${c.name}: "siguiente" avanza sin dejar dos activos`)
+    check(activeCount() === 1 && activeIndex() === 1, `${c.name}: "next" advances without leaving two active`)
 
     const dots = all(c.dots)
     const activeDots = dots.filter((d) => d.classList.contains('is-active'))
     check(activeDots.length === 1 && dots.indexOf(activeDots[0]) === 1,
-      `${c.name}: el indicador acompaña al slide`)
+      `${c.name}: the indicator follows the slide`)
 
     if (c.counter) {
       const expected = `02 / ${String(slides.length).padStart(2, '0')}`
-      check(el(c.counter).textContent === expected, `${c.name}: contador "${el(c.counter).textContent}"`)
+      check(el(c.counter).textContent === expected, `${c.name}: counter "${el(c.counter).textContent}"`)
     }
 
     for (let i = 1; i < slides.length; i++) fire(el(c.next), 'click')
-    check(activeIndex() === 0, `${c.name}: da la vuelta al llegar al final`)
+    check(activeIndex() === 0, `${c.name}: wraps around on reaching the end`)
   }
 
-  console.log('\n· Pestañas de experiencia')
+  console.log('\n· Draggable personal photos')
+  const momentCard = document.querySelector('.moment-card')
+  const momentImage = momentCard?.querySelector('.moment-img')
+  const momentReset = el('moments-reset-btn')
+  const momentOrigin = momentCard?.style.transform
+  check(momentCard && momentImage?.getAttribute('draggable') === 'false',
+    'the photographs explicitly disable the native drag')
+  const nativeDrag = fire(momentImage, 'dragstart')
+  check(nativeDrag.defaultPrevented, 'the deck cancels any native dragstart that reaches an image')
+  fire(momentImage, 'pointerdown', {
+    pointerId: 7,
+    pointerType: 'mouse',
+    button: 0,
+    clientX: 100,
+    clientY: 100,
+  })
+  fire(momentCard, 'pointermove', {
+    pointerId: 7,
+    pointerType: 'mouse',
+    clientX: 112,
+    clientY: 108,
+  })
+  check(momentCard.classList.contains('is-dragging') && momentCard.style.transform !== momentOrigin,
+    'dragging from the photo itself moves the whole card')
+  fire(momentCard, 'pointerup', {
+    pointerId: 7,
+    pointerType: 'mouse',
+    clientX: 112,
+    clientY: 108,
+  })
+  check(!momentCard.classList.contains('is-dragging'), 'releasing ends the gesture without leaving the card captured')
+  fire(momentReset, 'click')
+  check(momentCard.style.transform === momentOrigin
+    && !momentCard.classList.contains('is-dragging', 'is-flying'),
+  'rearranging keeps the original reset after dragging a photo')
+
+  console.log('\n· Experience tabs')
   const jobTabs = all('.job-tab')
   const jobPanels = all('.job-panel')
-  check(jobPanels.filter((p) => p.classList.contains('is-active')).length === 1, 'arranca con un panel activo')
+  check(jobPanels.filter((p) => p.classList.contains('is-active')).length === 1, 'it starts with one active panel')
   fire(jobTabs[1], 'click')
   check(jobPanels[1].classList.contains('is-active') && !jobPanels[0].classList.contains('is-active'),
-    'al pulsar la segunda empresa cambia el panel')
+    'pressing the second company switches the panel')
   check(jobTabs[1].getAttribute('aria-selected') === 'true' && jobTabs[0].getAttribute('aria-selected') === 'false',
-    'aria-selected sigue al estado visual')
+    'aria-selected follows the visual state')
   const linkedExperienceChips = all('#job-panels a.project-tech-chip')
   const contextualExperienceChips = all('#job-panels span.project-tech-label')
-  check(linkedExperienceChips.length > 0, 'las tecnologías reconocidas conservan logo, color y enlace')
+  check(linkedExperienceChips.length > 0, 'recognised technologies keep their logo, colour and link')
   check(
     contextualExperienceChips.length > 0
       && contextualExperienceChips.every((chip) => chip.querySelector('.project-tech-marker') && !chip.closest('a')),
-    'los conceptos sin enlace mantienen el mismo patrón visual',
+    'concepts with no link keep the same visual pattern',
   )
 
-  console.log('\n· Workbench de perfil')
+  console.log('\n· Profile workbench')
   const files = all('[data-profile-tab]')
   const panels = all('[data-profile-panel]')
   fire(files[1], 'click')
-  check(panels[1].hidden === false && panels[0].hidden === true, 'cambiar de fichero cambia el panel')
-  check(el('profile-tab-label').textContent === 'engineering.md', 'la etiqueta de la pestaña se actualiza')
+  check(panels[1].hidden === false && panels[0].hidden === true, 'changing file changes the panel')
+  check(
+    el('profile-tab-label').textContent === (page.lang === 'es' ? 'ingenieria.md' : 'engineering.md'),
+    'the tab label updates',
+  )
 
-  console.log('\n· Titular con máquina de escribir')
+  /*
+   * The placeholder lists the accepted commands, so exactly those get typed: if
+   * any of them opened a different panel, the box would be promising something
+   * it does not deliver.
+   */
+  const runCommand = (value) => {
+    el('profile-command-input').value = value
+    fire(el('profile-command'), 'submit')
+    return el('profile-tab-label').textContent
+  }
+  const advertised = el('profile-command-input').getAttribute('placeholder')
+  const commands = advertised.replace(/^[^:]*:\s*/, '').split(',').map((c) => c.trim())
+  const expected = page.lang === 'es'
+    ? ['identidad.json', 'ingenieria.md', 'aprendizaje.log']
+    : ['identity.json', 'engineering.md', 'learning.log']
+  check(commands.length === 3, `the placeholder advertises three commands ("${advertised}")`)
+  commands.forEach((commandText, index) => {
+    check(runCommand(commandText) === expected[index],
+      `"${commandText}" opens ${expected[index]}`)
+  })
+  fire(files[0], 'click')
+
+  console.log('\n· Typewriter headline')
   const typed = el('hero-typewriter')
-  check(typed.childNodes.length === 2, 'el titular queda como dos nodos estables (texto + nombre)')
-  check(typed.textContent.trim() === '', 'empieza vacío y se escribe con temporizadores')
+  check(typed.childNodes.length === 2, 'the headline is left as two stable nodes (text + name)')
+  check(typed.textContent.trim() === '', 'it starts empty and gets typed out by timers')
 
   console.log('\n· Speed trial')
   const spans = () => all('#monkey-words .monkey-char')
-  check(spans().length > 20, `la frase se pinta carácter a carácter (${spans().length} spans)`)
-  check(spans().filter((s) => s.classList.contains('current')).length === 1, 'hay exactamente un cursor')
+  check(spans().length > 20, `the phrase is painted character by character (${spans().length} spans)`)
+  check(spans().filter((s) => s.classList.contains('current')).length === 1, 'there is exactly one cursor')
 
   const quote = spans().map((s) => s.textContent).join('')
+  check(
+    page.speedTrialStarts.some((start) => quote.startsWith(start)),
+    `the trial phrase matches the ${page.lang} language ("${quote}")`,
+  )
+  check(
+    el('kb-tab-speed').textContent.includes(page.speedTrialLabel),
+    `the speed mode uses the ${page.lang} label ("${el('kb-tab-speed').textContent.trim()}")`,
+  )
   key('keydown', { code: 'KeyX', key: quote[0], target: el('monkey-box') })
-  check(spans()[0].classList.contains('correct'), 'la primera letra correcta se marca como acertada')
-  check(spans()[1].classList.contains('current'), 'el cursor avanza')
+  check(spans()[0].classList.contains('correct'), 'the first correct letter is marked as a hit')
+  check(spans()[1].classList.contains('current'), 'the cursor advances')
   key('keydown', { code: 'KeyZ', key: '±', target: el('monkey-box') })
-  check(spans()[1].classList.contains('incorrect'), 'una letra errónea se marca como fallo')
+  check(spans()[1].classList.contains('incorrect'), 'a wrong letter is marked as a miss')
   key('keydown', { code: 'Backspace', key: 'Backspace', target: el('monkey-box') })
   check(spans()[1].classList.contains('current') && !spans()[1].classList.contains('incorrect'),
-    'el retroceso limpia la marca y devuelve el cursor')
+    'backspace clears the mark and moves the cursor back')
 
-  // El teclado dibujado comparte la tabla de teclas con el físico.
+  // The drawn keyboard shares its key mapping with the physical one.
   const drawnKey = (code) => document.querySelector(`#kb [data-code="${code}"]`)
   const before = spans().filter((s) => s.classList.contains('correct')).length
   fire(drawnKey(`Key${quote[1].toUpperCase()}`) ?? drawnKey('KeyA'), 'mousedown')
   check(spans().filter((s) => s.classList.contains('correct')).length === before + 1,
-    'pulsar una tecla dibujada cuenta igual que el teclado físico')
+    'pressing a drawn key counts the same as the physical keyboard')
 
-  console.log('\n· Modo libre')
+  /*
+   * Once time is up the score is final. Without that closure, typing on
+   * restarted the clock: the countdown went negative and the origin of the WPM
+   * calculation moved, so what had already been typed stopped counting.
+   */
+  const marked = () => spans().filter((s) => s.classList.contains('correct') || s.classList.contains('incorrect')).length
+  tick(30)
+  check(el('kb-timer').textContent === '⏱️ 0s', `the countdown reaches zero ("${el('kb-timer').textContent}")`)
+  const atEnd = marked()
+  key('keydown', { code: 'KeyQ', key: quote[atEnd] ?? 'a', target: el('monkey-box') })
+  check(marked() === atEnd, 'once the round is over the board stops accepting keystrokes')
+  tick(5)
+  check(el('kb-timer').textContent === '⏱️ 0s', 'and the clock does not carry on into negative numbers')
+
+  fire(el('monkey-restart-btn'), 'click')
+  check(el('kb-timer').textContent === '⏱️ 30s' && marked() === 0, 'restarting returns the round to zero')
+  key('keydown', { code: 'KeyW', key: spans()[0].textContent, target: el('monkey-box') })
+  check(spans()[0].classList.contains('correct'), 'and it counts what gets typed once more')
+
+  console.log('\n· Free play')
   fire(el('kb-tab-sim'), 'click')
-  check(el('kb-free-mode-wrap').classList.contains('hidden') === false, 'la pestaña muestra el sandbox')
+  check(el('kb-free-mode-wrap').classList.contains('hidden') === false, 'the tab shows the sandbox')
   key('keydown', { code: 'KeyH', key: 'h', target: el('free-sim-box') })
   key('keydown', { code: 'KeyI', key: 'i', target: el('free-sim-box') })
-  check(el('free-sim-text').textContent === 'hi', `el texto libre se acumula ("${el('free-sim-text').textContent}")`)
-  check(el('kb-free-count').textContent === '2', 'el contador de pulsaciones sube')
-  check(el('kb-free-last-key').textContent === '[ I ]', `última tecla "${el('kb-free-last-key').textContent}"`)
-  // El Enter físico inserta un espacio; la tecla dibujada escribe su glifo.
+  check(el('free-sim-text').textContent === 'hi', `the free text accumulates ("${el('free-sim-text').textContent}")`)
+  check(el('kb-free-count').textContent === '2', 'the keystroke counter goes up')
+  check(el('kb-free-last-key').textContent === '[ I ]', `last key "${el('kb-free-last-key').textContent}"`)
+  // The physical Enter inserts a space; the drawn key writes its glyph.
   key('keydown', { code: 'Enter', key: 'Enter', target: el('free-sim-box') })
-  check(el('free-sim-text').textContent === 'hi ', 'Enter en el teclado físico inserta un espacio')
+  check(el('free-sim-text').textContent === 'hi ', 'Enter on the physical keyboard inserts a space')
   fire(drawnKey('Enter'), 'mousedown')
-  check(el('free-sim-text').textContent === 'hi ⏎', 'la tecla dibujada escribe su propio glifo')
+  check(el('free-sim-text').textContent === 'hi ⏎', 'the drawn key writes its own glyph')
   fire(el('free-sim-clear-btn'), 'click')
   check(el('free-sim-text').textContent === '' && el('kb-free-count').textContent === '0',
-    'limpiar deja el sandbox a cero')
+    'clearing returns the sandbox to zero')
 
-  console.log('\n· Controles de teclado')
+  console.log('\n· Keyboard controls')
   fire(el('kb-switch-type'), 'click')
-  check(el('kb-switch-type').textContent === 'Clicky (Crisp)', `rota el perfil de switch ("${el('kb-switch-type').textContent}")`)
-  check(el('kb-free-sound-pill').textContent.includes('Clicky'), 'la píldora del sandbox refleja el perfil')
+  check(el('kb-switch-type').textContent === 'Clicky (Crisp)', `it cycles the switch profile ("${el('kb-switch-type').textContent}")`)
+  check(el('kb-free-sound-pill').textContent.includes('Clicky'), 'the sandbox pill reflects the profile')
   fire(el('kb-sound-toggle'), 'click')
-  check(el('kb-sound-label').textContent === page.soundOff, `el toggle usa i18n ("${el('kb-sound-label').textContent}")`)
+  check(el('kb-sound-label').textContent === page.soundOff, `the toggle uses i18n ("${el('kb-sound-label').textContent}")`)
   fire(el('kb-sound-toggle'), 'click')
-  check(el('kb-sound-label').textContent === page.soundOn, 'y vuelve al estado inicial')
+  check(el('kb-sound-label').textContent === page.soundOn, 'and it returns to the initial state')
 
-  console.log('\n· Contacto')
-  check(el('copy-mail').hidden === false, 'el botón de copiar email lo revela el JS')
-  check(el('copy-mail').textContent.trim().startsWith('📋'), 'el botón conserva su icono tras montarlo')
-  check(el('local-time').textContent.includes('Barcelona'), `el reloj se rellena ("${el('local-time').textContent}")`)
-  check(/^UTC[+-]\d+$/.test(el('local-offset').textContent), `el desfase se deriva de la zona ("${el('local-offset').textContent}")`)
+  console.log('\n· Build archive')
+  fire(el('kb-tab-photos'), 'click')
+  check(el('kb-panel-photos').classList.contains('hidden') === false && el('kb-panel-interactive').classList.contains('hidden'),
+    'the photos tab opens the archive and hides the speed trial')
+
+  const buildGallery = document.querySelector('[data-bx-gallery]')
+  const buildViewer = document.querySelector('[data-bx-viewer]')
+  const buildRoot = document.querySelector('[data-kb-build-explorer]')
+  const buildOpen = document.querySelector('[data-bx-open]')
+  const buildClose = document.querySelector('[data-bx-close]')
+  const buildCards = [...document.querySelectorAll('.bx-build-card')]
+  const firstBuildCarousel = document.querySelector('[data-bx-card-carousel]')
+  const buildCardPrevious = firstBuildCarousel.querySelector('[data-bx-card-prev]')
+  const buildCardNext = firstBuildCarousel.querySelector('[data-bx-card-next]')
+  const buildCardCounter = firstBuildCarousel.querySelector('[data-bx-card-counter]')
+  const buildCardSlides = [...firstBuildCarousel.querySelectorAll('[data-bx-card-slide]')]
+  const buildCardDots = [...firstBuildCarousel.querySelectorAll('[data-bx-card-dot]')]
+  const hhkbBuildOpen = document.querySelector('[data-bx-open="hhkb-professional-hybrid-type-s"]')
+  const hhkbCarousel = hhkbBuildOpen.closest('.bx-build-card').querySelector('[data-bx-card-carousel]')
+  const evoBuildOpen = document.querySelector('[data-bx-open="evo75"]')
+  const evoCarousel = evoBuildOpen.closest('.bx-build-card').querySelector('[data-bx-card-carousel]')
+  const evoSlides = [...evoCarousel.querySelectorAll('[data-bx-card-slide]')]
+  const evoImages = [...evoCarousel.querySelectorAll('img')]
+  const evoNext = evoCarousel.querySelector('[data-bx-card-next]')
+  const evoPrevious = evoCarousel.querySelector('[data-bx-card-prev]')
+  const evoCounter = evoCarousel.querySelector('[data-bx-card-counter]')
+  const evoDots = [...evoCarousel.querySelectorAll('[data-bx-card-dot]')]
+  const corneBuildOpen = document.querySelector('[data-bx-open="corne-v4"]')
+  const corneCard = corneBuildOpen.closest('.bx-build-card')
+  const corneCarousel = corneBuildOpen.closest('.bx-build-card').querySelector('[data-bx-card-carousel]')
+  const buildAssembled = document.querySelector('[data-bx-assembled-view]')
+  const buildExplode = document.querySelector('[data-bx-explode]')
+  const firstBuildPart = document.querySelector('[data-bx-part-button]')
+  const firstBuildLayer = document.querySelector('[data-bx-part="keycaps"]')
+  const buildStage = document.querySelector('[data-bx-stage]')
+  const buildModel = document.querySelector('[data-bx-model]')
+  const neoPanel = document.querySelector('[data-bx-build="neo65"]')
+  const otherBuildPanels = [...document.querySelectorAll('[data-bx-build]:not([data-bx-build="neo65"])')]
+
+  check(buildOpen && buildViewer?.hidden === true, 'the gallery holds the Neo65 and the viewer starts closed')
+  check(neoPanel.querySelectorAll('.bx-model-key').length === 67
+    && neoPanel.querySelectorAll('.bx-key-art').length === 13
+    && neoPanel.querySelectorAll('.bx-model-key small').length === 12,
+  'the Neo65 reproduces its 67 keycaps, novelties and double legends')
+  check(otherBuildPanels.every((panel) =>
+    panel.querySelector('.bx-key-art, .is-neo-blue, .is-neo-red') === null),
+  'the Neo65 colorway and novelties do not leak into the other models')
+  check(buildCards.length === 4
+    && buildCards.filter((card) => card.classList.contains('is-complete')).length === 3
+    && buildCards.filter((card) => card.classList.contains('is-in-progress')).length === 1
+    && buildCards.filter((card) => card.classList.contains('is-scaffold')).length === 0
+    && buildCards.filter((card) => card.classList.contains('is-planning')).length === 0,
+  'the archive presents three finished builds and the Corne V4 in progress')
+  const archiveStatus = buildRoot.querySelector('[data-bx-status]').textContent.toUpperCase()
+  check(archiveStatus.includes(page.lang === 'es' ? '04 MONTAJES' : '04 BUILDS')
+    && archiveStatus.includes(page.lang === 'es' ? '03 COMPLETOS' : '03 COMPLETED'),
+  'the header distinguishes the total builds from the finished ones')
+  check(corneCard.classList.contains('is-in-progress')
+    && corneCard.textContent.includes(page.lang === 'es' ? 'EN CONSTRUCCIÓN' : 'BUILD IN PROGRESS')
+    && !corneCard.textContent.includes(page.lang === 'es' ? 'MONTAJE REAL' : 'REAL BUILD'),
+  'the Corne card states that the physical build is still in progress')
+  check(hhkbCarousel.querySelectorAll('[data-bx-card-slide]').length === 1
+    && hhkbCarousel.querySelector('[data-bx-card-prev]') === null
+    && hhkbCarousel.querySelector('[data-bx-card-next]') === null
+    && hhkbCarousel.querySelector('[data-bx-card-dot]') === null,
+  'the HHKB uses its single real photo with no redundant carousel controls')
+  check(evoSlides.length === 2
+    && evoImages.length === 2
+    && evoImages.every((image, index) => image.getAttribute('src').includes(`evo${index + 1}.`))
+    && evoImages.every((image) => image.getAttribute('alt').includes('EVO75')),
+  'the EVO75 replaces the Neo65 placeholders with its two real photographs')
+  fire(evoNext, 'click')
+  check(evoSlides[0].hidden && !evoSlides[1].hidden
+    && evoCounter.textContent === '02 / 02'
+    && evoDots[1].getAttribute('aria-current') === 'true'
+    && evoCarousel.textContent.includes(page.lang === 'es' ? 'PESO TRASERO' : 'REAR WEIGHT'),
+  'the EVO75 carousel walks the assembled view and the rear weight')
+  fire(evoPrevious, 'click')
+  check(!evoSlides[0].hidden && evoCounter.textContent === '01 / 02',
+    'the EVO75 returns to its assembled photograph without enlarging the image')
+  check(corneCarousel.querySelectorAll('[data-bx-card-slide]').length === 1
+    && corneCarousel.querySelectorAll('img').length === 1
+    && corneCarousel.querySelector('img').getAttribute('src').includes('corne.')
+    && corneCarousel.querySelector('img').getAttribute('alt').includes('Corne V4')
+    && corneCarousel.querySelector('[data-bx-card-prev]') === null
+    && corneCarousel.querySelector('[data-bx-card-next]') === null,
+  'the Corne V4 uses its single real photograph with no redundant controls')
+  fire(buildCardNext, 'click')
+  check(buildCardSlides.length === 2 && buildCardSlides[0].hidden && !buildCardSlides[1].hidden
+    && buildCardCounter.textContent === '02 / 02' && buildCardDots[1].getAttribute('aria-current') === 'true',
+  'the cover walks both new photographs and updates its accessible state')
+  fire(buildCardPrevious, 'click')
+  check(!buildCardSlides[0].hidden && buildCardCounter.textContent === '01 / 02',
+    'the previous arrow returns to the Neo65 main image')
+  check(document.querySelector('[data-bx-photo-view]') === null,
+    'the detail view does not duplicate the photographs in a third mode')
+  fire(buildOpen, 'click')
+  check(buildGallery.hidden === true && buildViewer.hidden === false, 'opening the Neo65 enters the viewer')
+  check(buildAssembled.getAttribute('aria-pressed') === 'true' && buildRoot.style.getPropertyValue('--spread') === '0',
+    'the build enters straight into the assembled view')
+  fire(buildExplode, 'click')
+  check(buildRoot.classList.contains('is-exploded') && buildExplode.getAttribute('aria-pressed') === 'true',
+    'the explode control pulls the layers apart and updates its accessible state')
+
+  fire(firstBuildLayer, 'pointerdown', { pointerType: 'mouse', button: 0, pointerId: 1, clientX: 100, clientY: 100 })
+  fire(buildStage, 'pointerup', { pointerId: 1, clientX: 100, clientY: 100 })
+  check(firstBuildPart.getAttribute('aria-pressed') === 'true', 'a short click on a layer pins it')
+  fire(firstBuildPart, 'click')
+
+  const modelStyle = buildModel.getAttribute('style')
+  fire(firstBuildLayer, 'pointerdown', { pointerType: 'mouse', button: 0, pointerId: 2, clientX: 100, clientY: 100 })
+  fire(buildStage, 'pointermove', { pointerId: 2, clientX: 145, clientY: 78 })
+  fire(buildStage, 'pointerup', { pointerId: 2, clientX: 145, clientY: 78 })
+  check(buildModel.getAttribute('style') !== modelStyle && !buildStage.classList.contains('is-dragging'),
+    'dragging from a layer orbits and releases the pointer when it ends')
+  check(firstBuildPart.getAttribute('aria-pressed') === 'false', 'orbiting does not accidentally pin the layer')
+  check(fire(buildStage, 'selectstart').defaultPrevented, 'the viewer blocks the native selection during the interaction')
+
+  fire(firstBuildPart, 'click')
+  check(buildRoot.classList.contains('has-active') && firstBuildPart.getAttribute('aria-pressed') === 'true',
+    'selecting a part isolates it and keeps its control pressed')
+
+  /*
+   * The parts list is a compact index and does not show the spec: the model's
+   * chip shows it when a layer is selected. When the `<small>` that held it
+   * disappeared from the markup, the chip went blank with nothing to say so,
+   * which is why it is checked here that the data really arrives.
+   */
+  const chipSpec = () => document.querySelector('[data-bx-build]:not([hidden]) [data-bx-chip-spec]').textContent.trim()
+  const chipLabel = () => document.querySelector('[data-bx-build]:not([hidden]) [data-bx-chip-label]').textContent.trim()
+  const openParts = [...document.querySelectorAll('[data-bx-build]:not([hidden]) [data-bx-part-button]')]
+  check(openParts.every((part) => (part.dataset.bxPartSpec ?? '').trim().length > 0),
+    `all ${openParts.length} parts of the build carry their spec in the markup`)
+  const named = openParts.find((part) => part !== firstBuildPart) ?? firstBuildPart
+  fire(named, 'click')
+  check(chipSpec() === named.dataset.bxPartSpec && chipLabel() === named.querySelector('strong').textContent,
+    `the chip describes the selected part ("${chipLabel()} — ${chipSpec()}")`)
+  fire(named, 'click')
+
+  const buildRange = document.querySelector('[data-bx-range]')
+  const buildRangeOut = document.querySelector('[data-bx-range-out]')
+  buildRange.value = '40'
+  fire(buildRange, 'input')
+  check(buildRoot.style.getPropertyValue('--spread') === '0.4' && buildRangeOut.textContent === '40%',
+    'the slider pulls the layers apart continuously')
+  check(buildExplode.getAttribute('aria-pressed') === 'false' && buildAssembled.getAttribute('aria-pressed') === 'false',
+    'at half explode no preset declares itself active')
+  check(el('kb-panel-photos').querySelector('[data-bx-status]').textContent.includes('40%'),
+    'the status label says where the explode currently stands')
+
+  fire(buildAssembled, 'click')
+  const beforeOrbit = buildModel.getAttribute('style')
+  fire(buildStage, 'keydown', { key: 'ArrowRight' })
+  check(buildModel.getAttribute('style') !== beforeOrbit, 'the arrow keys orbit the model without a mouse')
+  fire(buildStage, 'keydown', { key: 'PageUp' })
+  check(Number(buildRoot.style.getPropertyValue('--spread')) > 0, 'page down pulls the layers apart from the keyboard')
+
+  fire(buildRoot, 'keydown', { key: 'Escape' })
+  check(buildGallery.hidden === false && buildViewer.hidden === true, 'Escape leaves the viewer')
+
+  fire(buildOpen, 'click')
+  fire(buildClose, 'click')
+  check(buildGallery.hidden === false && buildViewer.hidden === true && !buildRoot.classList.contains('is-exploded'),
+    'returning to the gallery resets the viewer')
+  check(buildRoot.style.getPropertyValue('--spread') === '0' && !buildRoot.classList.contains('has-active'),
+    'and leaves the explode and the isolation at zero')
+
+  fire(hhkbBuildOpen, 'click')
+  const hhkbPanel = document.querySelector('[data-bx-build="hhkb-professional-hybrid-type-s"]')
+  const hhkbPartIds = [...hhkbPanel.querySelectorAll('[data-bx-part]')]
+    .map((part) => part.getAttribute('data-bx-part'))
+  check(hhkbPanel.hidden === false
+    && hhkbPanel.getAttribute('data-layout') === 'hhkb'
+    && hhkbPartIds.length === 7
+    && ['keycaps', 'sliders', 'housing', 'domes', 'springs', 'pcb', 'case'].every((id) => hhkbPartIds.includes(id)),
+  'the HHKB uses the seven real layers of its Topre architecture')
+  check(hhkbPanel.querySelectorAll('.bx-model-key').length === 60
+    && hhkbPanel.querySelectorAll('.bx-topre-slider').length === 60
+    && hhkbPanel.querySelectorAll('.bx-topre-dome').length === 60
+    && hhkbPanel.querySelectorAll('.bx-topre-spring').length === 60
+    && hhkbPanel.querySelectorAll('.bx-cap-pad').length === 60,
+  'the HHKB model depicts its 60 keys, sliders, domes, springs and capacitive pads')
+  const hhkbLegends = [...hhkbPanel.querySelectorAll('.bx-model-key > span')]
+  check(hhkbPanel.querySelectorAll('.bx-model-key.is-wasabi').length === 38
+    && hhkbPanel.querySelectorAll('.bx-model-key.is-snow').length === 22
+    && hhkbLegends.length === 12
+    && hhkbLegends.every((legend) => legend.parentElement.classList.contains('is-snow')),
+  'the HHKB keeps 38 Wasabi keycaps, 22 Snow, and leaves everything blank but the number row')
+  check(hhkbPanel.querySelectorAll('.bx-model-key small').length === 12
+    && hhkbPanel.querySelectorAll('.bx-key-function').length === 12
+    && hhkbPanel.querySelector('.bx-key-function').textContent === 'F1'
+    && [...hhkbPanel.querySelectorAll('.bx-key-function')].at(-1).textContent === 'F12'
+    && [...document.querySelectorAll('[data-bx-build]:not([data-layout="hhkb"])')]
+      .every((panel) => panel.querySelector('.bx-key-function') === null),
+  'the twelve marked keys carry symbol and F1–F12 function on the HHKB alone')
+  check(hhkbPanel.querySelector('.bx-prototype-note') === null
+    && hhkbPanel.querySelector('.bx-detail-status')
+    && hhkbPanel.querySelectorAll('.bx-model-key.is-wasabi').length > 0
+    && (hhkbPanel.textContent.includes('hand-lubed') || hhkbPanel.textContent.includes('lubricadas a mano')),
+  'the detail presents the finished build, the Snow/Wasabi mix and the hand lubing')
+  fire(buildClose, 'click')
+
+  fire(evoBuildOpen, 'click')
+  const evoPanel = document.querySelector('[data-bx-build="evo75"]')
+  const evoPartIds = [...evoPanel.querySelectorAll('[data-bx-part]')]
+    .map((part) => part.getAttribute('data-bx-part'))
+  check(evoPanel.hidden === false
+    && evoPanel.getAttribute('data-layout') === 'evo75'
+    && evoPartIds.length === 10
+    && ['keycaps', 'top-case', 'switches', 'plate', 'mount', 'pcb', 'dampening', 'battery', 'bottom-case', 'weight']
+      .every((id) => evoPartIds.includes(id)),
+  'the EVO75 uses ten layers of its own stock architecture')
+  check(evoPanel.querySelectorAll('.bx-model-key').length === 80
+    && evoPanel.querySelectorAll('.bx-switch').length === 80
+    && evoPanel.querySelectorAll('.bx-socket').length === 80
+    && evoPanel.querySelectorAll('.bx-evo-leaf').length === 8
+    && evoPanel.querySelectorAll('.bx-evo-cell').length === 2,
+  'the EVO75 model depicts 80 keys, switches and sockets, eight feet and two batteries')
+  check(evoPanel.querySelector('.bx-prototype-note') === null
+    && evoPanel.querySelectorAll('.bx-model-key.is-evo-red').length === 3
+    && evoPanel.querySelectorAll('.bx-evo-grille').length === 2
+    && (evoPanel.textContent.includes('factory preassembled') || evoPanel.textContent.includes('premontado de fábrica'))
+    /* The internal pairing stopped being an unknown: the one actually fitted is
+       named, and the alternative is no longer offered as if it were still open. */
+    && evoPanel.textContent.includes('Neo Rye')
+    && (evoPanel.textContent.includes('polypropylene') || evoPanel.textContent.includes('polipropileno'))
+    && !/unrecorded|no registrad|Amber/i.test(evoPanel.textContent),
+  'the EVO75 detail keeps the real colorway, states the factory condition and names the fitted pairing')
+  fire(buildClose, 'click')
+
+  fire(corneBuildOpen, 'click')
+  const cornePanel = document.querySelector('[data-bx-build="corne-v4"]')
+  const cornePartIds = [...cornePanel.querySelectorAll('[data-bx-part]')]
+    .map((part) => part.getAttribute('data-bx-part'))
+  check(cornePanel.hidden === false
+    && cornePanel.getAttribute('data-layout') === 'corne'
+    && cornePartIds.length === 8
+    && ['keycaps', 'switches', 'plate', 'pcb', 'interconnect', 'spacers', 'bottom-case', 'feet']
+      .every((id) => cornePartIds.includes(id)),
+  'the Corne V4 uses the eight parts of its own wired split architecture')
+  check(cornePanel.querySelectorAll('.bx-model-key').length === 42
+    && cornePanel.querySelectorAll('.bx-switch').length === 42
+    && cornePanel.querySelectorAll('.bx-socket').length === 42
+    && cornePanel.querySelectorAll('.bx-corne-mcu').length === 2
+    && cornePanel.querySelectorAll('.bx-corne-standoff').length === 8
+    && cornePanel.querySelectorAll('.bx-corne-foot').length === 8,
+  'the Corne model depicts 42 keys, two RP2040s, eight standoffs and eight feet')
+  check(cornePanel.querySelector('.bx-prototype-note') === null
+    && cornePanel.querySelector('.bx-corne-cable')
+    && cornePanel.textContent.includes(page.lang === 'es' ? 'EN CONSTRUCCIÓN' : 'BUILD IN PROGRESS')
+    && (cornePanel.textContent.includes('no batteries') || cornePanel.textContent.includes('no lleva baterías'))
+    && (cornePanel.textContent.includes('Direct GPIO') || cornePanel.textContent.includes('GPIO directo')),
+  'the Corne detail documents TRRS, direct matrix and the absence of native wireless')
+  fire(buildClose, 'click')
+
+  console.log('\n· Sound samples')
+  const clipRow = (clip) => document.querySelector(`[data-bx-clip="${clip}"]`)
+  const clipPart = (clip, sel) => clipRow(clip).querySelector(sel)
+  const played = (clip) => clipRow(clip).style.getPropertyValue('--played')
+  const neoToggle = clipPart('neo65', '[data-bx-clip-toggle]')
+  const hhkbToggle = clipPart('hhkb', '[data-bx-clip-toggle]')
+  const neoSeek = clipPart('neo65', '[data-bx-clip-seek]')
+  const neoAudio = clipPart('neo65', '[data-bx-clip-audio]')
+  const neoNow = clipPart('neo65', '[data-bx-clip-now]')
+
+  check(document.querySelectorAll('[data-bx-clip]').length === 3
+    && [...document.querySelectorAll('[data-bx-clip]')].every((c) => c.closest('[data-bx-build]'))
+    && played('neo65') === '0.00%' && neoNow.textContent === '0:00',
+    'every build carries its sample inside its card, and starts at zero')
+
+  fire(neoToggle, 'click')
+  check(clipRow('neo65').classList.contains('is-playing')
+    && neoToggle.getAttribute('aria-label') === neoToggle.dataset.pause,
+    'pressing plays the sample and the button switches to offering pause')
+
+  fire(hhkbToggle, 'click')
+  check(clipRow('hhkb').classList.contains('is-playing')
+    && !clipRow('neo65').classList.contains('is-playing')
+    && neoToggle.getAttribute('aria-label') === neoToggle.dataset.play,
+    'starting another sample stops the previous one: they are compared one at a time')
+
+  fire(hhkbToggle, 'click')
+  check(!clipRow('hhkb').classList.contains('is-playing'),
+    'pressing again pauses the sample that was playing')
+
+  neoSeek.value = '500'
+  fire(neoSeek, 'input')
+  check(played('neo65') === '50.00%'
+    && neoNow.textContent === '0:05'
+    && Math.abs(neoAudio.currentTime - 5.385) < 0.01
+    && neoSeek.getAttribute('aria-valuetext') === '0:05',
+    'dragging the playhead moves playback, waveform and time together')
+
+  fire(neoToggle, 'click')
+  fire(neoAudio, 'ended')
+  check(!clipRow('neo65').classList.contains('is-playing')
+    && played('neo65') === '0.00%'
+    && neoAudio.currentTime === 0,
+    'when the sample ends the row switches off and returns to the start')
+
+  check(clipPart('neo65', 'source').getAttribute('type') === 'audio/mp4'
+    && clipRow('neo65').querySelectorAll('source').length === 2,
+    'every sample offers AAC first and MP3 as a fallback')
+
+  fire(neoToggle, 'click')
+  fire(buildClose, 'click')
+  check(!clipRow('neo65').classList.contains('is-playing'),
+    'leaving the build silences its sample: a keyboard nobody is looking at stops playing')
+
+  fire(neoToggle, 'click')
+  fire(evoBuildOpen, 'click')
+  check(!clipRow('neo65').classList.contains('is-playing'),
+    'switching build silences it too')
+  fire(buildClose, 'click')
+
+  console.log('\n· Mascot note')
+  const quipRow = clipRow('neo65').closest('[data-bx-build]')
+  const quip = quipRow.querySelector('[data-bx-quip]')
+  const quipPoke = quip.querySelector('[data-bx-quip-next]')
+  const quipText = quip.querySelector('[data-bx-quip-text]')
+  const quipLines = JSON.parse(quipPoke.dataset.quips)
+
+  check(quipLines.length >= 2 && quipLines.includes(quipText.textContent),
+    'the mascot starts by saying one of its notes')
+
+  const saidFirst = quipText.textContent
+  fire(quipPoke, 'click')
+  check(quipText.textContent !== saidFirst && quipLines.includes(quipText.textContent),
+    'pressing it moves to the next note, and it stays its own')
+
+  const quipAudio = quipRow.querySelector('[data-bx-clip-audio]')
+  fire(quipAudio, 'play')
+  check(quip.classList.contains('is-listening')
+    && quipText.textContent === quipPoke.dataset.listen,
+    'when the sample plays it falls quiet and starts listening')
+
+  fire(quipAudio, 'pause')
+  check(!quip.classList.contains('is-listening') && quipLines.includes(quipText.textContent),
+    'on stopping it goes back to its note')
+
+  /* The Corne has neither a take nor notes: it is the control proving the
+     ornament depends on the content and does not just show up. */
+  check(document.querySelector('[data-bx-build="corne-v4"] [data-bx-quip]') === null
+    && document.querySelectorAll('[data-bx-quip]').length === 3,
+    'the mascot peeks out on the three recorded builds and on no other')
+
+  console.log('\n· Card as target')
+  const neoCard = document.querySelector('[data-bx-open="neo65"].bx-build-card')
+  const neoCardPhoto = neoCard.querySelector('.bx-card-photo, .bx-card-slide')
+  const neoCardTitle = neoCard.querySelector('.bx-card-id strong')
+
+  fire(neoCardPhoto, 'click')
+  check(buildViewer.hidden === false && document.querySelector('[data-bx-build="neo65"]').hidden === false,
+    'pressing the photograph opens the build, without going through the button')
+  fire(buildClose, 'click')
+
+  fire(neoCardTitle, 'click')
+  check(buildViewer.hidden === false && document.querySelector('[data-bx-build="neo65"]').hidden === false,
+    'pressing the title enters too')
+  fire(buildClose, 'click')
+
+  /* The carousel's controls stay its own: they move the photo and open nothing. */
+  const evoCardNext = evoCarousel.querySelector('[data-bx-card-next]')
+  fire(evoCardNext, 'click')
+  check(buildViewer.hidden === true && evoCounter.textContent.trim() === '02 / 02',
+    'the carousel arrow changes photo without opening the build')
+
+  fire(evoCarousel.querySelector('[data-bx-card-dot="0"]'), 'click')
+  check(buildViewer.hidden === true && evoCounter.textContent.trim() === '01 / 02',
+    'the carousel dots do not open the build either')
+
+  console.log('\n· Contact')
+  check(el('copy-mail').hidden === false, 'the copy-email button is revealed by the JS')
+  check(el('copy-mail').textContent.trim().startsWith('📋'), 'the button keeps its icon after mounting')
+  check(el('local-time').textContent.includes('Barcelona'), `the clock fills in ("${el('local-time').textContent}")`)
+  check(/^UTC[+-]\d+$/.test(el('local-offset').textContent), `the offset is derived from the zone ("${el('local-offset').textContent}")`)
 }
 
 for (const [i, page] of PAGES.entries()) {
@@ -267,7 +787,7 @@ for (const [i, page] of PAGES.entries()) {
   try {
     dom = await run(page, i)
     pass++
-    console.log('\n· Arranque\n  ✓ el bundle se ejecuta entero sin lanzar')
+    console.log('\n· Boot\n  ✓ the bundle runs all the way through without throwing')
   } catch (err) {
     fail++
     console.error(`\n· Arranque\n  ✗ el bundle lanzó: ${err.message}`)
@@ -278,7 +798,7 @@ for (const [i, page] of PAGES.entries()) {
 
 console.log(`\n${'─'.repeat(52)}`)
 if (fail === 0) {
-  console.log(`✅ ${pass} comprobaciones de interacción superadas`)
+  console.log(`✅ ${pass} interaction checks passed`)
   process.exit(0)
 }
 console.error(`❌ ${fail} fallo(s) sobre ${pass + fail}`)

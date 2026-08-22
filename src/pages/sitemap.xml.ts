@@ -3,19 +3,19 @@ import { abs } from '../lib/content'
 import { DEFAULT_LANG } from '../i18n/ui'
 
 /**
- * Sitemap generado en la URL histórica /sitemap.xml.
+ * Sitemap generated at the historical URL /sitemap.xml.
  *
- * Se genera aquí en lugar de con @astrojs/sitemap por dos razones:
- * la integración produce `sitemap-index.xml`, que abandonaría una URL que
- * ya existía; y aquí el conjunto sale directamente de las páginas marcadas
- * como indexables, así que no puede desviarse del contrato SEO.
+ * It is generated here instead of with @astrojs/sitemap for two reasons: the
+ * integration produces `sitemap-index.xml`, which would abandon a URL that
+ * already existed; and here the set comes straight from the pages marked as
+ * indexable, so it cannot drift away from the SEO contract.
  *
- * Solo existe este sitemap: no hay un segundo que pueda contradecirlo.
+ * This is the only sitemap: there is no second one that could contradict it.
  */
 export const GET = async () => {
   const pages = (await getCollection('pages')).map((e) => e.data).filter((p) => p.indexable)
 
-  // Agrupa por clúster para emitir las alternativas lingüísticas de cada URL.
+  // Groups by cluster so each URL can emit its language alternatives.
   const clusters = new Map<string, typeof pages>()
   for (const page of pages) {
     clusters.set(page.key, [...(clusters.get(page.key) ?? []), page])

@@ -1,0 +1,37 @@
+/* ---------------- GITHUB OCTOCAT ANIMATION & SOCIAL ICONS ---------------- */
+@keyframes octocat-wave {
+  0%, 100% { transform: rotate(0deg); }
+  20%, 60% { transform: rotate(-24deg); }
+  40%, 80% { transform: rotate(12deg); }
+}
+
+.icon-github .github-arm {
+  transform-origin: 9px 18px;
+  transition: transform 0.2s ease;
+}
+
+a:hover .icon-github .github-arm,
+button:hover .icon-github .github-arm,
+.icon-github:hover .github-arm {
+  animation: octocat-wave 560ms ease-in-out infinite;
+}
+
+a:hover .icon-github,
+button:hover .icon-github {
+  color: var(--cyan) !important;
+  filter: drop-shadow(0 0 8px rgba(111, 227, 255, 0.5));
+}
+
+.icon-linkedin, .icon-globe, .icon-mail {
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), color 0.25s ease, filter 0.25s ease;
+}
+a:hover .icon-linkedin {
+  color: var(--blue-bright) !important;
+  transform: translateY(-2px) scale(1.1);
+  filter: drop-shadow(0 0 8px rgba(91, 155, 255, 0.6));
+}
+a:hover .icon-mail {
+  color: var(--cyan) !important;
+  transform: translateY(-2px) scale(1.1);
+  filter: drop-shadow(0 0 8px rgba(111, 227, 255, 0.6));
+}

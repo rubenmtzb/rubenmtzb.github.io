@@ -1,17 +1,17 @@
 ---
 import Section from './Section.astro'
 import Icon from '../Icon.astro'
-import { getProfile } from '../../lib/content'
+import { cvPath, cvPdfPath, getProfile } from '../../lib/content'
 import { t, type Lang } from '../../i18n/ui'
 
 interface Props { lang: Lang }
 const { lang } = Astro.props
 
 const profile = await getProfile(lang)
-const cvPath = lang === 'es' ? '/es/cv/' : '/cv/'
-const pdfHref = lang === 'es' ? '/cv/CV_RubenMartinez_ES.pdf' : '/cv/CV_RubenMartinez_EN.pdf'
+const cvHref = cvPath(lang)
+const pdfHref = cvPdfPath(lang)
 
-/** Los métodos salen de profile: no se repiten enlaces dentro de la sección. */
+/** The methods come from profile: no links are repeated inside the section. */
 const methods = [
   { label: t(lang, 'contact.email'), display: profile.email, href: `mailto:${profile.email}`, icon: 'mail' as const, desc: t(lang, 'contact.emailDesc') },
   ...profile.socials.map((s) => ({
@@ -63,7 +63,7 @@ const methods = [
       {t(lang, 'contact.send')}
     </a>
 
-    {/* Resume deja de ser sección: pasa a recurso y CTA hacia /cv/. */}
+    {/* Resume stops being a section: it becomes a resource and a CTA towards /cv/. */}
     <div class="reveal mt-14 w-full rounded-2xl border border-green-500/20 bg-black/40 p-6 text-left backdrop-blur-sm sm:p-8">
       <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -80,7 +80,7 @@ const methods = [
             {t(lang, 'contact.cvDownload')}
           </a>
           <a
-            href={cvPath}
+            href={cvHref}
             class="inline-flex items-center justify-center gap-2 rounded-full border border-green-400/30 px-6 py-3 text-sm font-semibold text-green-200 transition hover:border-green-300/45 hover:bg-green-500/10"
           >
             <Icon name="eye" class="h-4 w-4" />

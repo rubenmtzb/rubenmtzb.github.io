@@ -1,0 +1,406 @@
+/* ---------------- KEYBOARD CONTROL CONSOLE ---------------- */
+.kb-console-card {
+  background: var(--ink-800);
+  border: 1px solid var(--line);
+  box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.7);
+}
+.kb-mode-pill {
+  position: relative;
+  overflow: hidden;
+  color: var(--fg-3);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.kb-mode-pill:hover {
+  color: var(--fg);
+  background: rgba(255, 255, 255, 0.03);
+}
+.kb-mode-pill.active {
+  color: var(--cyan) !important;
+  background: var(--ink-800) !important;
+  border-color: rgba(111, 227, 255, 0.4) !important;
+  box-shadow: 0 0 12px rgba(111, 227, 255, 0.25) !important;
+}
+
+/*
+ * The three modes share the reaction — the border lights up, the tab lifts a
+ * hair — and part ways in the gesture: each animates what it actually does. The
+ * ornament lives on a layer of its own beneath the text, pointer-transparent and
+ * hidden from assistive reading: the tab is still a `tab` and nothing more.
+ */
+.kb-mode-pill {
+  transition: color 0.25s ease, background 0.25s ease, border-color 0.25s ease,
+    box-shadow 0.25s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.kb-mode-pill:hover,
+.kb-mode-pill:focus-visible {
+  border-color: rgba(111, 227, 255, 0.45);
+  box-shadow: 0 0 16px -4px rgba(111, 227, 255, 0.5);
+  transform: translateY(-1px);
+}
+.kb-mode-pill > span {
+  position: relative;
+  z-index: 1;
+}
+/* The label lights up without taking more room: the tab's width does not move. */
+.kb-mode-pill > span:last-child {
+  transition: color 0.25s ease, text-shadow 0.25s ease;
+}
+.kb-mode-pill:hover > span:last-child,
+.kb-mode-pill:focus-visible > span:last-child {
+  color: var(--cyan);
+  text-shadow: 0 0 10px rgba(111, 227, 255, 0.55);
+}
+.kb-pill-fx {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* ---- Speed Trial: la descarga ---- */
+.kb-bolt {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2rem;
+  height: 2rem;
+  color: var(--cyan);
+  opacity: 0;
+  filter: drop-shadow(0 0 7px var(--cyan));
+  transform: translate(-50%, -50%) rotate(-9deg) scale(0.8);
+}
+/* It strikes, flickers like an arc and rests before falling again. */
+@keyframes kb-strike {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(-9deg) scale(0.8);
+  }
+  6% {
+    opacity: 0.38;
+    transform: translate(-50%, -50%) rotate(-9deg) scale(1.1);
+  }
+  10% {
+    opacity: 0.12;
+  }
+  16% {
+    opacity: 0.3;
+    transform: translate(-50%, -50%) rotate(-9deg) scale(1);
+  }
+  30% {
+    opacity: 0.2;
+  }
+  46% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(-9deg) scale(1.05);
+  }
+}
+/* The flash the discharge leaves on the tab. */
+@keyframes kb-flash {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translateX(-120%) skewX(-18deg);
+  }
+  8% {
+    opacity: 0.85;
+  }
+  34% {
+    opacity: 0;
+    transform: translateX(120%) skewX(-18deg);
+  }
+}
+.kb-mode-pill.is-speed .kb-pill-fx::before {
+  content: '';
+  position: absolute;
+  inset: 0 -30%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(111, 227, 255, 0.28),
+    rgba(190, 240, 255, 0.5),
+    rgba(111, 227, 255, 0.28),
+    transparent
+  );
+  opacity: 0;
+}
+.kb-mode-pill.is-speed:hover .kb-bolt,
+.kb-mode-pill.is-speed:focus-visible .kb-bolt {
+  animation: kb-strike 1.9s cubic-bezier(0.3, 0, 0.2, 1) infinite;
+}
+.kb-mode-pill.is-speed:hover .kb-pill-fx::before,
+.kb-mode-pill.is-speed:focus-visible .kb-pill-fx::before {
+  animation: kb-flash 1.9s cubic-bezier(0.3, 0, 0.2, 1) infinite;
+}
+
+/* ---- Free Sim: the row being typed ---- */
+.kb-mode-pill.is-sim .kb-pill-fx b {
+  position: absolute;
+  bottom: 0.32rem;
+  width: 0.34rem;
+  height: 0.34rem;
+  border-radius: 1.5px;
+  background: var(--cyan);
+  opacity: 0.16;
+  transform-origin: bottom center;
+}
+.kb-mode-pill.is-sim .kb-pill-fx b:nth-child(1) { left: calc(50% - 1.05rem); }
+.kb-mode-pill.is-sim .kb-pill-fx b:nth-child(2) { left: calc(50% - 0.53rem); }
+.kb-mode-pill.is-sim .kb-pill-fx b:nth-child(3) { left: calc(50% - 0.17rem); }
+.kb-mode-pill.is-sim .kb-pill-fx b:nth-child(4) { left: calc(50% + 0.35rem); }
+.kb-mode-pill.is-sim .kb-pill-fx b:nth-child(5) { left: calc(50% + 0.87rem); }
+/* Each key drops and lights up; the offset makes the wave run left to right. */
+@keyframes kb-keypress {
+  0%,
+  62%,
+  100% {
+    opacity: 0.16;
+    transform: translateY(0) scaleY(1);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(2px) scaleY(0.6);
+    box-shadow: 0 0 8px var(--cyan);
+  }
+  30% {
+    opacity: 0.42;
+    transform: translateY(0) scaleY(1);
+  }
+}
+.kb-mode-pill.is-sim:hover .kb-pill-fx b,
+.kb-mode-pill.is-sim:focus-visible .kb-pill-fx b {
+  animation: kb-keypress 1.5s ease-out infinite;
+}
+.kb-mode-pill.is-sim:hover .kb-pill-fx b:nth-child(2),
+.kb-mode-pill.is-sim:focus-visible .kb-pill-fx b:nth-child(2) { animation-delay: 0.09s; }
+.kb-mode-pill.is-sim:hover .kb-pill-fx b:nth-child(3),
+.kb-mode-pill.is-sim:focus-visible .kb-pill-fx b:nth-child(3) { animation-delay: 0.18s; }
+.kb-mode-pill.is-sim:hover .kb-pill-fx b:nth-child(4),
+.kb-mode-pill.is-sim:focus-visible .kb-pill-fx b:nth-child(4) { animation-delay: 0.27s; }
+.kb-mode-pill.is-sim:hover .kb-pill-fx b:nth-child(5),
+.kb-mode-pill.is-sim:focus-visible .kb-pill-fx b:nth-child(5) { animation-delay: 0.36s; }
+
+/* ---- Build Photos: the viewfinder that frames and shoots ---- */
+.kb-mode-pill.is-photos .kb-pill-fx b {
+  position: absolute;
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 1px solid var(--cyan);
+  opacity: 0;
+}
+.kb-mode-pill.is-photos .kb-pill-fx b:nth-child(1) { top: 0.3rem; left: 0.3rem; border-width: 1px 0 0 1px; }
+.kb-mode-pill.is-photos .kb-pill-fx b:nth-child(2) { top: 0.3rem; right: 0.3rem; border-width: 1px 1px 0 0; }
+.kb-mode-pill.is-photos .kb-pill-fx b:nth-child(3) { bottom: 0.3rem; left: 0.3rem; border-width: 0 0 1px 1px; }
+.kb-mode-pill.is-photos .kb-pill-fx b:nth-child(4) { bottom: 0.3rem; right: 0.3rem; border-width: 0 1px 1px 0; }
+/* The corners come in from outside and stay: the frame is set. */
+@keyframes kb-frame {
+  0% {
+    opacity: 0;
+    transform: translate(var(--kb-fx), var(--kb-fy)) scale(0.7);
+  }
+  100% {
+    opacity: 0.85;
+    transform: translate(0, 0) scale(1);
+  }
+}
+/* One flash, fired once per approach. */
+@keyframes kb-shutter {
+  0% { opacity: 0; }
+  22% { opacity: 0.5; }
+  100% { opacity: 0; }
+}
+.kb-mode-pill.is-photos .kb-pill-fx::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 90% at 50% 50%, rgba(214, 244, 255, 0.55), transparent 62%);
+  opacity: 0;
+}
+.kb-mode-pill.is-photos:hover .kb-pill-fx b,
+.kb-mode-pill.is-photos:focus-visible .kb-pill-fx b {
+  animation: kb-frame 0.34s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.kb-mode-pill.is-photos .kb-pill-fx b:nth-child(1) { --kb-fx: -5px; --kb-fy: -5px; }
+.kb-mode-pill.is-photos .kb-pill-fx b:nth-child(2) { --kb-fx: 5px; --kb-fy: -5px; }
+.kb-mode-pill.is-photos .kb-pill-fx b:nth-child(3) { --kb-fx: -5px; --kb-fy: 5px; }
+.kb-mode-pill.is-photos .kb-pill-fx b:nth-child(4) { --kb-fx: 5px; --kb-fy: 5px; }
+.kb-mode-pill.is-photos:hover .kb-pill-fx b:nth-child(2),
+.kb-mode-pill.is-photos:focus-visible .kb-pill-fx b:nth-child(2) { animation-delay: 0.04s; }
+.kb-mode-pill.is-photos:hover .kb-pill-fx b:nth-child(3),
+.kb-mode-pill.is-photos:focus-visible .kb-pill-fx b:nth-child(3) { animation-delay: 0.08s; }
+.kb-mode-pill.is-photos:hover .kb-pill-fx b:nth-child(4),
+.kb-mode-pill.is-photos:focus-visible .kb-pill-fx b:nth-child(4) { animation-delay: 0.12s; }
+.kb-mode-pill.is-photos:hover .kb-pill-fx::before,
+.kb-mode-pill.is-photos:focus-visible .kb-pill-fx::before {
+  animation: kb-shutter 0.5s ease-out 0.16s 1;
+}
+
+/* The icon accompanies the gesture without stealing the show. */
+.kb-mode-pill > span:first-of-type {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.kb-mode-pill.is-speed:hover > span:first-of-type,
+.kb-mode-pill.is-speed:focus-visible > span:first-of-type { transform: scale(1.18); }
+.kb-mode-pill.is-sim:hover > span:first-of-type,
+.kb-mode-pill.is-sim:focus-visible > span:first-of-type { transform: translateY(-1px) scale(1.1); }
+.kb-mode-pill.is-photos:hover > span:first-of-type,
+.kb-mode-pill.is-photos:focus-visible > span:first-of-type { transform: scale(1.12) rotate(-4deg); }
+
+/*
+ * With reduced motion the state change stays — border, colour, glow — and the
+ * gesture goes: the information never depended on the animation.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .kb-mode-pill,
+  .kb-mode-pill > span,
+  .kb-mode-pill .kb-pill-fx b,
+  .kb-mode-pill .kb-pill-fx::before,
+  .kb-bolt {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+    transform: none !important;
+  }
+  .kb-mode-pill.is-photos:hover .kb-pill-fx b,
+  .kb-mode-pill.is-photos:focus-visible .kb-pill-fx b { opacity: 0.85; }
+}
+/* ---------------- DYNAMIC MECHANICAL KEYBOARD & MONKEYTYPE SPEED TRIAL ---------------- */
+#monkey-words {
+  user-select: none;
+  line-height: 1.8;
+  word-break: break-word;
+}
+.monkey-word {
+  display: inline-block;
+  margin-right: 0.6em;
+  margin-bottom: 0.25em;
+  white-space: nowrap;
+}
+.monkey-char {
+  color: #4b5563;
+  transition: color 0.05s ease;
+  position: relative;
+  display: inline-block;
+}
+.monkey-char.correct {
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+}
+.monkey-char.incorrect {
+  color: #fb7185;
+  background: rgba(244, 63, 94, 0.25);
+  border-radius: 2px;
+}
+.monkey-char.current {
+  color: var(--cyan);
+}
+.monkey-char.current::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10%;
+  bottom: 10%;
+  width: 2px;
+  background: var(--cyan);
+  border-radius: 1px;
+  animation: monkeyCaret 0.8s infinite;
+  pointer-events: none;
+}
+@keyframes monkeyCaret {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+#kb-wpm,
+#kb-acc,
+#kb-combo,
+#kb-timer {
+  font-variant-numeric: tabular-nums;
+  display: inline-block;
+}
+
+.kb {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.9rem;
+  background: var(--ink-700);
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 25px 60px -35px rgba(0, 0, 0, 0.9);
+}
+.kb-row {
+  display: flex;
+  gap: 0.35rem;
+}
+.kb-key {
+  flex: 1 1 0;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1 / 1;
+  max-height: 2.6rem;
+  background: var(--ink-800);
+  border: 1px solid var(--line);
+  border-bottom-width: 3px;
+  border-radius: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--fg-3);
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.06s ease, box-shadow 0.3s ease;
+}
+.kb-key:hover {
+  border-color: var(--cyan);
+  color: var(--fg);
+  box-shadow: 0 0 10px rgba(111, 227, 255, 0.25);
+}
+.kb-key.is-down {
+  background: var(--blue);
+  color: #fff;
+  border-color: var(--cyan);
+  border-bottom-width: 1px;
+  transform: translateY(2px);
+  box-shadow: 0 0 16px rgba(111, 227, 255, 0.6), inset 0 0 8px rgba(255, 255, 255, 0.3);
+  transition-duration: 0.04s;
+}
+
+/* ---------------- HHKB LAYOUT SKIN (purely visual, same key logic) ---------------- */
+.kb-hhkb {
+  position: relative;
+  padding-top: 1.5rem;
+  border-radius: 0.6rem 0.6rem 1.1rem 1.1rem;
+}
+.kb-brand {
+  position: absolute;
+  top: 0.55rem;
+  left: 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--fg-3);
+  opacity: 0.55;
+}
+.kb-hhkb .kb-key {
+  border-radius: 0.22rem;
+  border-bottom-width: 2px;
+}
+.kb-key-named {
+  position: relative;
+}
+.kb-key-named span {
+  position: absolute;
+  left: 0.3rem;
+  bottom: 0.22rem;
+  font-size: 0.5rem;
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
+  color: inherit;
+}
+.kb-key-named.is-down span {
+  color: #fff;
+}

@@ -1,0 +1,142 @@
+/* ---------------- CONTACT SIGNAL ---------------- */
+.contact-signal {
+  isolation: isolate;
+}
+.contact-signal-glow {
+  z-index: -1;
+  background:
+    radial-gradient(circle at 12% 50%, rgba(111, 227, 255, 0.11), transparent 22rem),
+    radial-gradient(circle at 92% 0%, rgba(91, 155, 255, 0.08), transparent 18rem);
+}
+.contact-singularity {
+  min-height: 9rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+}
+.contact-handshake {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 10.5rem;
+  height: 4.5rem;
+}
+.contact-handshake-node {
+  display: grid;
+  position: relative;
+  z-index: 2;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 0.45rem;
+  background: var(--ink-900);
+  color: var(--fg-2);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  transition: border-color 0.35s ease, color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
+}
+.handshake-core {
+  border-color: rgba(111, 227, 255, 0.55);
+  color: var(--cyan);
+  box-shadow: 0 0 1rem rgba(111, 227, 255, 0.12);
+}
+.contact-handshake-link {
+  position: absolute;
+  z-index: 1;
+  left: 2.25rem;
+  width: 1.25rem;
+  height: 1px;
+  background: var(--line);
+}
+.link-out {
+  top: 1.4rem;
+}
+.link-back {
+  bottom: 1.4rem;
+  left: 5.75rem;
+}
+.contact-handshake-link::after {
+  content: '';
+  position: absolute;
+  right: -0.1rem;
+  top: -0.16rem;
+  width: 0.36rem;
+  height: 0.36rem;
+  border-top: 1px solid var(--fg-3);
+  border-right: 1px solid var(--fg-3);
+  transform: rotate(45deg);
+}
+.contact-handshake-packet {
+  position: absolute;
+  top: -1rem;
+  left: 0;
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  font-size: 0.48rem;
+  opacity: 0;
+  white-space: nowrap;
+}
+.handshake-idea { margin-right: 1.25rem; }
+.handshake-core { margin-right: 1.25rem; }
+.contact-horizon-label {
+  color: var(--fg-3);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.13em;
+  text-align: center;
+  text-transform: uppercase;
+}
+.contact-signal:hover .contact-handshake-node {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  box-shadow: 0 0 1.1rem rgba(111, 227, 255, 0.22);
+}
+.contact-signal:hover .handshake-core {
+  transform: scale(1.12);
+}
+.contact-signal:hover .link-out,
+.contact-signal:hover .link-back {
+  background: rgba(111, 227, 255, 0.62);
+}
+.contact-signal:hover .contact-handshake-link::after {
+  border-color: var(--cyan);
+}
+.contact-signal:hover .link-out .contact-handshake-packet {
+  animation: handshakeSend 1.5s ease-in-out infinite;
+}
+.contact-signal:hover .link-back .contact-handshake-packet {
+  animation: handshakeReply 1.5s ease-in-out infinite 0.65s;
+}
+@keyframes handshakeSend {
+  15% { opacity: 1; }
+  75% { opacity: 1; }
+  100% { transform: translateX(0.9rem); opacity: 0; }
+}
+@keyframes handshakeReply {
+  15% { opacity: 1; }
+  75% { opacity: 1; }
+  100% { transform: translateX(0.9rem); opacity: 0; }
+}
+.contact-email-route {
+  overflow-wrap: anywhere;
+}
+.contact-type-cursor {
+  display: inline-block;
+  margin-left: 0.08em;
+  color: var(--cyan);
+  animation: contactCursorBlink 0.9s steps(1, end) infinite;
+}
+@keyframes contactCursorBlink {
+  50% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .contact-type-cursor {
+    animation: none;
+  }
+  .contact-handshake-packet {
+    animation: none;
+  }
+}

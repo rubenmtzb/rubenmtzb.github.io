@@ -1,33 +1,57 @@
 ---
+/**
+ * The document's single skeleton.
+ *
+ * The site's four surfaces — V1, V2, case study and CV — differ on the inside,
+ * but from the outside they are the same document: doctype, language, head,
+ * font preload, client marker and skip link. That used to be copied into every
+ * layout, so a fix to the head had to be remembered four times over.
+ *
+ * The stylesheet is deliberately not imported here: each surface brings its own
+ * and they are mutually exclusive. Importing it in the skeleton would drag the
+ * V1's CSS into the V2's pages and the other way round.
+ */
 import Seo from '../components/Seo.astro'
+import FontPreload from '../components/FontPreload.astro'
+import Enhancement from '../components/Enhancement.astro'
 import { t, type Lang } from '../i18n/ui'
-import '../styles/global.css'
 
 interface Props {
-  pageKey: string
   lang: Lang
+  /**
+   * A page with its own metadata in the `pages` collection. The 404 has none:
+   * it is not a URL of the site but the document the hosting serves when no URL
+   * matches, so it contributes its head through the `head` slot.
+   */
+  pageKey?: string
   pageType?: 'WebPage' | 'ProfilePage'
+  /** The V1 is monospace only: it does not load Archivo, so it does not preload it. */
+  displayFont?: boolean
   bodyClass?: string
 }
 
-const { pageKey, lang, pageType = 'WebPage', bodyClass = '' } = Astro.props
+const { lang, pageKey, pageType = 'WebPage', displayFont = true, bodyClass } = Astro.props
+
+/*
+ * Either the page has metadata in the collection, or it brings its own through
+ * the slot. With neither, the document would ship without charset, without a
+ * title and without a canonical, and nobody notices that until it is already
+ * published: this stops the build, which is while it can still be fixed.
+ */
+if (!pageKey && !Astro.slots.has('head')) {
+  throw new Error('BaseLayout: the page needs `pageKey` or content in the `head` slot')
+}
 ---
 
 <!doctype html>
 <html lang={lang}>
   <head>
-    <Seo pageKey={pageKey} lang={lang} pageType={pageType} />
-    <!--
-      Marca JS antes del primer paint. El revelado solo se activa si esta
-      clase existe, de modo que sin JavaScript el contenido queda visible
-      y nunca sale del build con opacity:0.
-    -->
-    <script is:inline>
-      document.documentElement.classList.add('js')
-    </script>
+    {pageKey ? <Seo pageKey={pageKey} lang={lang} pageType={pageType} /> : <slot name="head" />}
+    <FontPreload display={displayFont} />
+    <Enhancement />
   </head>
-  <body class={`bg-[#030712] font-mono text-slate-100 ${bodyClass}`}>
-    <a class="skip-link no-print" href="#main">{t(lang, 'nav.skip')}</a>
+  <body class={bodyClass}>
+    <a class="skip-link" href="#main">{t(lang, 'nav.skip')}</a>
     <slot />
   </body>
 </html>

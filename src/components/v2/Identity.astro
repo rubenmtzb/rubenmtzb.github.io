@@ -10,9 +10,10 @@ const { lang, cvPath } = Astro.props
 const profile = await getProfile(lang)
 
 /**
- * Las seis tecnologías del hero. El color, el icono y el enlace salen de TECH.
- * Todas son marcas con logotipo y sitio propio: si alguna dejara de tenerlos
- * el build falla aquí, en lugar de emitir una chip rota o un enlace vacío.
+ * The hero's six technologies. Colour, icon and link all come from TECH. Every
+ * one of them is a brand with a logo and a site of its own: if any stopped
+ * having them the build fails here, instead of emitting a broken chip or an
+ * empty link.
  */
 const HERO_TECH = ['Java', 'Spring Boot', 'React', 'TypeScript', 'Docker', 'Python'] as const
 const mainTech = HERO_TECH.map((name) => {
@@ -30,7 +31,7 @@ const ICONS = { LinkedIn: 'linkedin', GitHub: 'github' } as const
   <div class="shell">
     <div class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-10 lg:gap-14 pt-24 pb-12 sm:pt-28 sm:pb-16 lg:pt-32 lg:pb-16 min-h-[60vh]">
 
-      <!-- Retrato ASCII del Avatar (Centrado, compacto y 100% responsive) -->
+      <!-- The avatar's ASCII portrait (centred, compact and fully responsive) -->
       <figure class="reveal m-0 shrink-0 flex justify-center order-1 md:order-2" style="--i:1">
         <div class="ascii-card relative rounded-2xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-3 sm:p-4 shadow-xl">
           <div class="ascii-stage">
@@ -42,7 +43,7 @@ const ICONS = { LinkedIn: 'linkedin', GitHub: 'github' } as const
         </div>
       </figure>
 
-      <!-- Bloque de texto e introducción -->
+      <!-- Text block and introduction -->
       <div class="flex flex-col items-center text-center md:items-start md:text-left max-w-lg order-2 md:order-1">
         <!-- Badge de disponibilidad sutil -->
         <div class="reveal inline-flex items-center gap-2 rounded-full border border-[color:var(--line)] bg-[color:var(--ink-800)] px-3 py-1 text-xs">
@@ -53,7 +54,7 @@ const ICONS = { LinkedIn: 'linkedin', GitHub: 'github' } as const
           <span class="t-meta text-[0.68rem] text-[color:var(--fg-2)]">{t(lang, 'v2.hero.status')}</span>
         </div>
 
-        <!-- Título con animación typewriter alternante: rubén <-> rubenitx -->
+        <!-- Headline with an alternating typewriter animation: rubén <-> rubenitx -->
         <h1 class="reveal mt-3.5 text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-[color:var(--fg)]">
           <span id="hero-typewriter">
             {t(lang, 'v2.hero.greeting')}{' '}
@@ -64,14 +65,14 @@ const ICONS = { LinkedIn: 'linkedin', GitHub: 'github' } as const
         </h1>
 
         <p class="reveal mt-2 text-base sm:text-lg font-medium text-[color:var(--fg-2)]" style="--i:1">
-          {profile.jobTitle} — {profile.locality}, {lang === 'es' ? 'España' : 'Spain'}
+          {profile.jobTitle} — {profile.locality}, {t(lang, 'v2.contact.country')}
         </p>
 
         <p class="reveal mt-3 text-sm leading-relaxed text-[color:var(--fg-3)] max-w-md" style="--i:2">
           {profile.headline}
         </p>
 
-        <!-- Chips de tecnologías principales interactivos y con glow -->
+        <!-- Interactive, glowing chips for the main technologies -->
         <ul class="reveal mt-4 flex flex-wrap justify-center md:justify-start items-center gap-2" style="--i:3">
           {mainTech.map((tech) => (
             <li>
@@ -81,7 +82,7 @@ const ICONS = { LinkedIn: 'linkedin', GitHub: 'github' } as const
                 rel="noopener noreferrer"
                 class="hero-tech-chip"
                 style={`--chip-color: ${tech.color}; --chip-glow: ${tech.glow};`}
-                aria-label={`${tech.name} — ${lang === 'es' ? 'sitio oficial' : 'official site'}`}
+                aria-label={`${tech.name} — ${t(lang, 'v2.chip.officialSite')}`}
               >
                 <img
                   src={tech.icon}
@@ -97,18 +98,18 @@ const ICONS = { LinkedIn: 'linkedin', GitHub: 'github' } as const
           ))}
         </ul>
 
-        <!-- Botones de acción y contacto -->
+        <!-- Action and contact buttons -->
         <div class="reveal mt-6 flex flex-wrap justify-center md:justify-start items-center gap-3" style="--i:4">
           <a href={`mailto:${profile.email}`} class="btn btn-primary text-xs sm:text-sm !py-2 !px-4">
             <Icon name="mail" class="h-3.5 w-3.5" />
-            {lang === 'es' ? '¡Escríbeme!' : 'Say hi!'}
+            {t(lang, 'v2.hero.sayHi')}
           </a>
           <a href={cvPath} class="btn btn-ghost text-xs sm:text-sm !py-2 !px-4">
             {t(lang, 'v2.hero.cv')}
           </a>
         </div>
 
-        <!-- Enlaces a redes y trigger del juego -->
+        <!-- Social links and the game's trigger -->
         <ul class="reveal mt-5 flex items-center justify-center md:justify-start gap-4" style="--i:5">
           {profile.socials.map((s) => (
             <li>

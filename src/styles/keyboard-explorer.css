@@ -1,0 +1,40 @@
+/**
+ * Keyboard build explorer.
+ *
+ * A separate sheet rather than the component's `<style>`, deliberately, for two
+ * reasons.
+ *
+ * The first is weight: scoped CSS forces Astro to mark every element of the
+ * template with a `data-astro-cid-*` attribute, and the layered model is around
+ * 2,700 elements per page. That was seventy-odd kilobytes of HTML dedicated to
+ * repeating the same identifier.
+ *
+ * The second is structure: with the sheet outside, the view can be split across
+ * the components it belongs to — card, panel, model, sound sample — without the
+ * styling being orphaned as it crosses a component's boundary, which is exactly
+ * what scoping prevents.
+ *
+ * The whole vocabulary is prefixed `bx-` and appears in no other sheet, so the
+ * scoping was not avoiding any real collision.
+ */
+
+/* ============================================================
+   SHEET INDEX
+
+   One file per block of the explorer. The order is the cascade's: the container
+   opens because everything else rests on it, and the three architectures —
+   Topre, stock and wired split — come after the generic model because they
+   specialise it. Reordering this list changes what you see.
+   ============================================================ */
+
+@import './keyboard-explorer/shell.css';
+@import './keyboard-explorer/gallery.css';
+@import './keyboard-explorer/quip.css';
+@import './keyboard-explorer/sound.css';
+@import './keyboard-explorer/viewer.css';
+@import './keyboard-explorer/model.css';
+@import './keyboard-explorer/hhkb.css';
+@import './keyboard-explorer/evo75.css';
+@import './keyboard-explorer/corne.css';
+@import './keyboard-explorer/scrub.css';
+@import './keyboard-explorer/specs.css';

@@ -1,43 +1,25 @@
 /**
- * Mejora progresiva de la V1. Sustituye por completo a Framer Motion.
+ * The V1's progressive enhancement. A full replacement for Framer Motion.
  *
- * Todo lo que hay aquí es opcional: el HTML de build ya es funcional y
- * navegable sin JavaScript. Si este fichero no se ejecuta, se pierde la
- * animación, no el contenido.
+ * Everything here is optional: the built HTML is already functional and
+ * navigable without JavaScript. If this file never runs, the animation is lost,
+ * not the content.
  */
+
+import { revealOnScroll } from './reveal'
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-/* ---------- Revelado al hacer scroll ---------- */
-function initReveal() {
-  const targets = document.querySelectorAll<HTMLElement>('.reveal')
-  if (reduceMotion || !('IntersectionObserver' in window)) {
-    targets.forEach((el) => el.classList.add('is-in'))
-    return
-  }
-  const io = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue
-        entry.target.classList.add('is-in')
-        io.unobserve(entry.target)
-      }
-    },
-    { rootMargin: '0px 0px -10% 0px', threshold: 0.05 },
-  )
-  targets.forEach((el) => io.observe(el))
-}
-
-/* ---------- Menú móvil ----------
-   El markup existe siempre. Aquí solo se oculta y se alterna, de modo que
-   sin JavaScript queda desplegado y los enlaces siguen siendo usables.   */
+/* ---------- Mobile menu ----------
+   The markup always exists. All that happens here is hiding and toggling, so
+   without JavaScript it stays open and the links remain usable.           */
 function initMobileMenu() {
   const toggle = document.getElementById('menu-toggle')
   const menu = document.getElementById('mobile-menu')
   if (!toggle || !menu) return
 
   const openLabel = toggle.getAttribute('aria-label') ?? ''
-  // La etiqueta de cierre viaja en un data-attribute para no duplicar i18n.
+  // The close label travels in a data attribute so i18n is not duplicated.
   const closeLabel = toggle.dataset.closeLabel ?? openLabel
 
   menu.hidden = true
@@ -64,9 +46,9 @@ function initMobileMenu() {
   })
 }
 
-/* ---------- Scroll-spy y píldora activa ----------
-   La píldora sustituye al layoutId de Framer Motion: un único elemento
-   absoluto cuya posición y anchura se fijan aquí; la transición es CSS.  */
+/* ---------- Scroll-spy and active pill ----------
+   The pill replaces Framer Motion's layoutId: a single absolute element whose
+   position and width are set here; the transition is pure CSS.           */
 function initScrollSpy() {
   const nav = document.getElementById('site-nav')
   const container = document.getElementById('nav-links')
@@ -75,7 +57,11 @@ function initScrollSpy() {
   const mobileLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-nav-mobile]'))
   if (links.length === 0) return
 
-  const ids = links.map((l) => l.dataset.nav).filter((id): id is string => Boolean(id))
+  /* The sections are resolved once: the scroll loop only measures. */
+  const sections = [...new Set(links.map((l) => l.dataset.nav).filter((id): id is string => Boolean(id)))]
+    .map((id) => ({ id, el: document.getElementById(id) }))
+    .filter((section): section is { id: string, el: HTMLElement } => section.el !== null)
+
   let activeId = ''
   let navigating = false
   let frame: number | null = null
@@ -114,6 +100,19 @@ function initScrollSpy() {
 
   const sync = () => {
     frame = null
+
+    /* Measure before writing: changing the bar's class invalidated the style
+       and the first measurement had to recalculate the whole layout.      */
+    let next = sections[0]?.id ?? ''
+    if (!navigating) {
+      const line = window.innerHeight * 0.25
+      for (const section of sections) {
+        if (section.el.getBoundingClientRect().top <= line) next = section.id
+      }
+      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 100
+      if (window.scrollY > 100 && atBottom) next = sections[sections.length - 1]?.id ?? next
+    }
+
     if (nav) {
       const scrolled = window.scrollY > 24
       nav.classList.toggle('bg-black/70', scrolled)
@@ -123,15 +122,6 @@ function initScrollSpy() {
       nav.classList.toggle('bg-black/20', !scrolled)
     }
     if (navigating) return
-
-    const line = window.innerHeight * 0.25
-    let next = ids[0]
-    for (const id of ids) {
-      const el = document.getElementById(id)
-      if (el && el.getBoundingClientRect().top <= line) next = id
-    }
-    const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 100
-    if (window.scrollY > 100 && atBottom) next = ids[ids.length - 1]
     setActive(next)
   }
 
@@ -140,8 +130,8 @@ function initScrollSpy() {
     frame = window.requestAnimationFrame(sync)
   }
 
-  // Durante el scroll suave de un clic, el spy se pausa para que el
-  // indicador no parpadee entre secciones intermedias.
+  // During a click's smooth scroll the spy pauses, so the indicator does not
+  // flicker across the sections it passes through.
   for (const link of [...links, ...mobileLinks]) {
     link.addEventListener('click', () => {
       const id = link.dataset.nav ?? link.dataset.navMobile
@@ -161,7 +151,7 @@ function initScrollSpy() {
   schedule()
 }
 
-initReveal()
+revealOnScroll({ reduce: reduceMotion, rootMargin: '0px 0px -10% 0px', threshold: 0.05 })
 initMobileMenu()
 initScrollSpy()
 

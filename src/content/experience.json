@@ -33,16 +33,16 @@
     "mode": "Presencial",
     "start": "2022-09",
     "end": null,
-    "summary": "Desarrollo full-stack con Java y Spring Boot en el backend y React con TypeScript en el frontend. APIs REST para la comunicación entre servicios, procesos batch y customización de portales Liferay.",
+    "summary": "Desarrollo integral con Java y Spring Boot en el backend y React con TypeScript en el frontend. APIs REST para la comunicación entre servicios, procesos por lotes y personalización de portales Liferay.",
     "bullets": [
-      "Desarrollo full-stack con Java + Spring Boot en backend y React + TypeScript en frontend.",
+      "Desarrollo integral con Java + Spring Boot en backend y React + TypeScript en frontend.",
       "Diseño e implementación de APIs REST para comunicación entre servicios.",
-      "Desarrollo de procesos batch para automatización del tratamiento de datos.",
-      "Customización de portales Liferay y desarrollo de portlets.",
-      "Despliegues containerizados con Docker."
+      "Desarrollo de procesos por lotes para automatización del tratamiento de datos.",
+      "Personalización de portales Liferay y desarrollo de portlets.",
+      "Despliegues en contenedores con Docker."
     ],
     "tech": ["Java", "Spring Boot", "React", "TypeScript", "Liferay", "Docker", "MySQL"],
-    "practices": ["APIs REST", "Procesamiento Batch"],
+    "practices": ["APIs REST", "Procesamiento por lotes"],
     "domains": []
   },
   {
@@ -117,11 +117,11 @@
     "mode": "Remoto",
     "start": "2021-10",
     "end": "2022-05",
-    "summary": "Responsabilidad end-to-end del desarrollo del portal de investigación \"The Mutational Landscape of SARS-CoV-2\", desde la concepción del diseño hasta el despliegue en producción. Trabajo interdisciplinar entre ingeniería de software y bioinformática.",
+    "summary": "Responsabilidad integral sobre el desarrollo del portal de investigación \"The Mutational Landscape of SARS-CoV-2\", desde la concepción del diseño hasta el despliegue en producción. Trabajo interdisciplinar entre ingeniería de software y bioinformática.",
     "bullets": [
-      "Desarrollo end-to-end del portal de investigación \"The Mutational Landscape of SARS-CoV-2\".",
+      "Desarrollo integral del portal de investigación \"The Mutational Landscape of SARS-CoV-2\".",
       "Colaboración interdisciplinar entre ingeniería de software y bioinformática.",
-      "Ownership del ciclo completo: diseño, desarrollo, pruebas y despliegue en producción."
+      "Responsabilidad sobre el ciclo completo: diseño, desarrollo, pruebas y despliegue en producción."
     ],
     "tech": ["TypeScript", "PHP", "Python", "D3.js"],
     "practices": ["Visualización de datos"],
@@ -154,7 +154,7 @@
     "summary": "Soporte técnico y mantenimiento de sistemas e infraestructura informática.",
     "bullets": ["Soporte técnico y apoyo en el mantenimiento de infraestructura informática."],
     "tech": [],
-    "practices": ["Soporte IT", "Sistemas", "Redes"],
+    "practices": ["Soporte técnico", "Sistemas", "Redes"],
     "domains": []
   }
 ]

@@ -1,0 +1,132 @@
+/* ---------------- Layered 3D model ---------------- */
+.bx-model {
+  --rx: 56deg;
+  --rz: -29deg;
+  /* The framing widens and the model drops as the stack comes apart. */
+  --fit: calc(var(--fit-base, .64) - .06 * var(--spread));
+  --zoom: 1;
+  --offset-y: calc(42px * var(--spread));
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 502px;
+  height: 172px;
+  transform-style: preserve-3d;
+  transform: translate(-50%, calc(-50% + var(--offset-y))) scale(calc(var(--fit) * var(--zoom))) rotateX(var(--rx)) rotateZ(var(--rz));
+  opacity: 1;
+  transition: transform .5s cubic-bezier(.22, 1, .36, 1), opacity .35s ease;
+}
+.bx-stage.is-dragging .bx-model, .kb-build-explorer.is-scrubbing .bx-model { transition: none; }
+.bx-layer {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  /* A single expression interpolates between assembled and exploded. */
+  transform: translateZ(calc(var(--z) + (var(--ze) - var(--z)) * var(--spread)));
+  transition: transform .82s cubic-bezier(.32, 1.22, .4, 1);
+  transition-delay: var(--delay);
+  cursor: pointer;
+}
+/* With the slider in hand the motion follows the finger, with no bounce. */
+.kb-build-explorer.is-scrubbing .bx-layer { transition: none; transition-delay: 0ms; }
+/*
+ * The skin is the painted part; the layer only places it in the stack. The
+ * dimming and the highlight live here because `filter` and `opacity` group the
+ * element and flatten its children's 3D: applied to the layer, they squashed the
+ * counter-rotated label hanging off it.
+ */
+.bx-skin {
+  position: absolute;
+  inset: 0;
+  border-radius: 9px;
+  transform-style: preserve-3d;
+  transition: filter .25s ease, opacity .25s ease;
+}
+.kb-build-explorer.has-active .bx-layer:not(.is-active) .bx-skin { filter: brightness(.52) saturate(.6); opacity: .64; }
+.kb-build-explorer .bx-layer.is-active .bx-skin { filter: brightness(1.18) saturate(1.08); }
+
+/* Floating label: it appears with the explode, as on a technical exploded view. */
+.bx-layer-tag {
+  position: absolute;
+  left: calc(100% + 30px);
+  top: 50%;
+  padding: 3px 6px;
+  border: 1px solid rgba(111, 227, 255, .3);
+  border-radius: 3px;
+  background: rgba(6, 10, 18, .86);
+  color: var(--cyan);
+  font: 700 8px/1 var(--font-mono);
+  letter-spacing: .1em;
+  white-space: nowrap;
+  opacity: 0;
+  /*
+   * It lifts off its layer as the stack opens — otherwise the layer above covers
+   * it — and counter-rotates to always face front: it undoes the model's two
+   * rotations in reverse order.
+   */
+  transform: translateY(-50%) translateZ(calc(30px * var(--spread))) rotateZ(calc(var(--rz) * -1)) rotateX(calc(var(--rx) * -1));
+  transition: opacity .3s ease, border-color .25s ease, background .25s ease, color .25s ease, box-shadow .25s ease;
+  pointer-events: none;
+}
+/* Leader line to the part's edge, as on an exploded-view drawing. */
+.bx-layer-tag::before {
+  content: '';
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  width: 26px;
+  height: 1px;
+  background: linear-gradient(to left, rgba(111, 227, 255, .5), transparent);
+}
+.kb-build-explorer.is-spread .bx-layer-tag { opacity: .9; }
+/*
+ * With one part in focus the other labels recede, but stay legible: what tells
+ * them apart is how much they weigh, not whether they can be read at all.
+ */
+.kb-build-explorer.has-active .bx-layer:not(.is-active) .bx-layer-tag { opacity: .45; }
+.kb-build-explorer.has-active .bx-layer.is-active .bx-layer-tag {
+  opacity: 1;
+  border-color: var(--cyan);
+  background: rgba(8, 17, 28, .95);
+  color: #eaf9ff;
+  box-shadow: 0 0 0 1px rgba(111, 227, 255, .3), 0 0 16px -3px var(--cyan);
+}
+.kb-build-explorer.has-active .bx-layer.is-active .bx-layer-tag::before {
+  background: linear-gradient(to left, var(--cyan), transparent);
+}
+
+.bx-weight { background: linear-gradient(155deg, #2b3550, #141a2c); box-shadow: inset 0 1px rgba(255, 255, 255, .12), 0 7px 0 #0d1220, 0 14px 22px rgba(0, 0, 0, .58); }
+.bx-weight-strip { position: absolute; inset: 14px 18%; border: 1px solid rgba(255, 244, 205, .38); border-radius: 5px; background: linear-gradient(135deg, rgba(255,255,255,.25), transparent 25%), repeating-linear-gradient(112deg, rgba(255,255,255,.06) 0 1px, transparent 1px 4px), linear-gradient(135deg, #c9a24a, #756f87 42%, #3f6f83 76%, #6e9176); box-shadow: inset 0 0 12px rgba(255, 255, 255, .14), 0 3px 5px rgba(0, 0, 0, .35); }
+.bx-case { border: 10px solid #161c28; background: repeating-linear-gradient(105deg, rgba(255,255,255,.03) 0 1px, transparent 1px 5px), linear-gradient(155deg, #4a5468, #2b3242); box-shadow: inset 0 1px rgba(255,255,255,.26), inset 0 0 0 1px rgba(8,13,24,.45), inset 0 0 24px rgba(0, 0, 0, .6), 0 5px 0 #151a25, 0 11px 0 #0e131c, 0 21px 20px rgba(0, 0, 0, .5); }
+.bx-case-well { position: absolute; inset: 9px; border: 2px solid rgba(13, 18, 31, .5); border-radius: 5px; }
+.bx-case-mark { position: absolute; right: 17px; bottom: 11px; color: rgba(255, 255, 255, .2); font: 700 10px/1 var(--font-mono); letter-spacing: .2em; }
+.bx-foam, .bx-pcb, .bx-plate { inset: 17px; }
+.bx-foam { background: radial-gradient(circle at 30% 25%, rgba(255,255,255,.055) 0 1px, transparent 1.5px), repeating-linear-gradient(125deg, #1d2026 0 4px, #14171c 4px 8px); background-size: 8px 8px, auto; box-shadow: inset 0 1px rgba(255,255,255,.06), 0 3px 0 #11141a, 0 7px 0 #090b0f, 0 11px 12px rgba(0,0,0,.4); }
+.bx-pcb { background-color: #e6eaef; background-image: linear-gradient(28deg, transparent 20%, rgba(113,132,151,.25) 20% 20.5%, transparent 20.5% 48%, rgba(113,132,151,.18) 48% 48.5%, transparent 48.5%), radial-gradient(#8d98a4 1px, transparent 1px); background-size: 72px 32px, 9px 9px; box-shadow: inset 0 1px rgba(255,255,255,.85), inset 0 0 0 1px rgba(68,79,91,.32), 0 3px 0 #c5cbd3, 0 6px 0 #9ea6b0, 0 10px 12px rgba(0,0,0,.35); }
+.bx-plate { background-color: #24282f; background-image: repeating-linear-gradient(115deg, rgba(255,255,255,.035) 0 1px, transparent 1px 5px), linear-gradient(150deg, rgba(255,255,255,.08), transparent 45%); box-shadow: inset 0 1px rgba(255,255,255,.16), inset 0 0 0 1px #343942, 0 3px 0 #191c22, 0 7px 0 #0e1116, 0 11px 14px rgba(0,0,0,.42); }
+
+/*
+ * `--x`, `--y`, `--w` and, where there is one, `--kr` are set by the model's
+ * geometry sheet; `--row-h` is set by its panel. Everything else derives from
+ * those: a key does not need to be handed five pre-multiplied heights.
+ */
+.bx-model-key, .bx-cutout, .bx-socket, .bx-switch {
+  position: absolute;
+  left: calc(var(--x) + .35%);
+  top: calc(var(--y) + 1.4%);
+  width: calc(var(--w) - .7%);
+  height: calc(var(--row-h) - 2.8%);
+  rotate: var(--kr, 0deg);
+}
+.bx-cutout { background: #070a10; border: 1px solid rgba(0,0,0,.82); border-radius: 1px; transform: scale(.58); box-shadow: inset 0 3px 3px #000, 0 1px rgba(255,255,255,.08); }
+.bx-socket { height: calc(var(--row-h) * .6); top: calc(var(--y) + var(--row-h) * .2); background: linear-gradient(145deg, #30343b, #111318); border: 1px solid #080a0d; border-radius: 2px; transform: scale(.62); box-shadow: inset 0 1px rgba(255,255,255,.18), 0 2px 0 #080a0d, 0 4px 4px rgba(0,0,0,.28); }
+.bx-circuit { position: absolute; height: 1px; background: #a8b1ba; transform-origin: left; opacity: .7; }
+.bx-circuit-a { width: 58%; left: 20%; top: 40%; transform: rotate(18deg); }
+.bx-circuit-b { width: 42%; left: 35%; top: 63%; transform: rotate(-14deg); }
+.bx-switch { display: grid; place-items: center; height: calc(var(--row-h) * .8); top: calc(var(--y) + var(--row-h) * .1); transform: scale(.56); transform-style: preserve-3d; border: 1px solid rgba(87,94,104,.55); border-radius: 2px; background: linear-gradient(145deg, #fbfcfd, #d5d9df 58%, #b8bec7); box-shadow: inset 0 1px rgba(255,255,255,.95), inset 0 -2px rgba(111,119,130,.18), 0 2px 0 #c8cdd4, 0 5px 0 #9ca3ad, 0 8px 0 #777f8a, 0 12px 9px rgba(0, 0, 0, .5); }
+.bx-switch::before { content: ''; position: absolute; inset: 18%; border: 1px solid rgba(75,84,96,.35); border-radius: 1px; background: linear-gradient(145deg, rgba(255,255,255,.82), rgba(194,201,210,.6)); box-shadow: inset 0 1px rgba(255,255,255,.85), 0 2px 2px rgba(0,0,0,.18); }
+.bx-switch::after { content: ''; position: absolute; left: 13%; right: 13%; bottom: -22%; height: 24%; border-radius: 0 0 2px 2px; background: linear-gradient(180deg, #9ca4ae, #747d88); box-shadow: 0 2px 3px rgba(0,0,0,.35); }
+.bx-switch b { position: relative; z-index: 2; width: 42%; aspect-ratio: 1; border: 1px solid rgba(146,154,164,.62); border-radius: 1px; background: linear-gradient(145deg, #ffffff, #e8ebee 56%, #ccd2d9); box-shadow: inset 0 1px rgba(255,255,255,.95), 0 2px 0 #d2d7dd, 0 5px 0 #adb4bc, 0 7px 5px rgba(0,0,0,.32); }
+.bx-switch b::before, .bx-switch b::after { content: ''; position: absolute; background: rgba(126,134,145,.5); border-radius: 1px; }
+.bx-switch b::before { left: 22%; right: 22%; top: 43%; height: 14%; }
+.bx-switch b::after { top: 22%; bottom: 22%; left: 43%; width: 14%; }

@@ -1,0 +1,76 @@
+/* ---------------- TYPOGRAPHY AND CURSOR ---------------- */
+.intro-cursor {
+  display: inline-block;
+  animation: blinkCursor 1s step-end infinite;
+  margin-left: 2px;
+}
+@keyframes blinkCursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.t-display {
+  font-size: clamp(1.8rem, 4.5vw, 3.4rem);
+  line-height: 1.02;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.t-h2 {
+  font-size: clamp(1.4rem, 2.8vw, 2.2rem);
+  line-height: 1.1;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.t-h3 {
+  font-size: clamp(1.1rem, 1.8vw, 1.4rem);
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+}
+
+.t-body {
+  font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+  line-height: 1.6;
+  color: var(--fg-2);
+  max-width: var(--measure);
+}
+
+.t-lead {
+  font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+  line-height: 1.5;
+  color: var(--fg-2);
+  max-width: 38ch;
+}
+
+.t-meta {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  font-weight: 500;
+}
+
+.t-index {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  color: var(--blue-bright);
+  font-variant-numeric: tabular-nums;
+}
+
+.rule-head {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+.rule-head::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}

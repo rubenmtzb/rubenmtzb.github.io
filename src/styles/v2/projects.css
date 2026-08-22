@@ -1,0 +1,225 @@
+/* ---------------- CARRUSEL SPOTLIGHT DE PROYECTOS ---------------- */
+.project-carousel {
+  position: relative;
+}
+.project-slide {
+  --project-pointer-x: 50%;
+  --project-pointer-y: 50%;
+  isolation: isolate;
+  overflow: hidden;
+}
+.project-cover {
+  display: block;
+  image-rendering: auto;
+}
+.project-coming-soon {
+  background:
+    linear-gradient(135deg, rgba(111, 227, 255, 0.11) 1px, transparent 1px),
+    linear-gradient(45deg, rgba(91, 155, 255, 0.08) 1px, transparent 1px),
+    radial-gradient(circle at 50% 50%, rgba(111, 227, 255, 0.13), transparent 40%),
+    var(--ink-950);
+  background-size: 1.5rem 1.5rem, 1.5rem 1.5rem, auto, auto;
+}
+.project-pointer-light {
+  z-index: 1;
+  background: radial-gradient(
+    circle 18rem at var(--project-pointer-x) var(--project-pointer-y),
+    rgba(111, 227, 255, 0.12),
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.project-cover-scrim {
+  z-index: 2;
+  background:
+    linear-gradient(180deg, rgba(4, 8, 16, 0.68) 0%, transparent 28%),
+    linear-gradient(0deg, rgba(4, 8, 16, 0.92) 0%, rgba(4, 8, 16, 0.2) 38%, transparent 64%);
+  transition: opacity 0.6s ease;
+}
+.project-cover-title {
+  text-wrap: balance;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.project-slide:hover .project-pointer-light,
+.project-slide:focus-within .project-pointer-light {
+  opacity: 1;
+}
+.project-slide:hover .project-cover-scrim,
+.project-slide:focus-within .project-cover-scrim {
+  opacity: 0.92;
+}
+.project-slide:hover .project-cover-title,
+.project-slide:focus-within .project-cover-title {
+  transform: translateY(-0.2rem);
+}
+html.js .project-slide {
+  display: none;
+}
+html.js .project-slide.is-active {
+  display: flex;
+  animation: slideFadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Flechas laterales flotantes sobre la zona visual central. */
+.proj-nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 30;
+  width: 2.75rem;
+  height: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: rgba(10, 15, 28, 0.7);
+  border: 1px solid var(--line);
+  color: var(--fg-2);
+  font-size: 1.5rem;
+  line-height: 1;
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+.proj-nav-arrow:hover {
+  background: rgba(10, 15, 28, 0.95);
+  border-color: var(--cyan);
+  color: var(--cyan);
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 0 16px rgba(111, 227, 255, 0.35);
+}
+.proj-prev-arrow {
+  left: 1rem;
+}
+.proj-next-arrow {
+  right: 1rem;
+}
+/* On mobile the touch swipe already pages the carousel; the arrows do not fit without overlapping the text. */
+@media (max-width: 639px) {
+  .proj-nav-arrow {
+    display: none;
+  }
+  .proj-bar-indicator {
+    position: relative;
+  }
+  .proj-bar-indicator::before {
+    content: '';
+    position: absolute;
+    inset: -0.8rem -0.45rem;
+  }
+}
+
+/* Bottom bar indicators, software showcase style */
+/*
+ * The pressable area grows; the visible stroke does not.
+ *
+ * The indicator is three pixels tall — six for the timer's — which is exactly
+ * what it has to be to read as a thin bar. As a target, however, it was nearly
+ * impossible to hit with a finger. The pseudo-element extends the sensitive zone
+ * above and below without taking up space in the layout, so the block still
+ * looks pixel-for-pixel the same.
+ */
+.proj-bar-indicator {
+  position: relative;
+  height: 3px;
+  width: 20px;
+  border-radius: 2px;
+  background: var(--ink-700);
+  border: 1px solid var(--line-soft);
+  cursor: pointer;
+  transition: width 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.proj-bar-indicator::after {
+  content: '';
+  position: absolute;
+  inset: -11px -2px;
+}
+.proj-bar-indicator.is-active {
+  width: 34px;
+  background: var(--cyan);
+  border-color: var(--cyan);
+  box-shadow: 0 0 10px rgba(111, 227, 255, 0.7);
+}
+
+@media (min-width: 640px) {
+  .proj-bar-indicator {
+    width: 28px;
+  }
+  .proj-bar-indicator.is-active {
+    width: 46px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-cover,
+  .project-pointer-light,
+  .project-cover-title,
+  .project-cover-scrim,
+  .proj-nav-arrow,
+  .proj-bar-indicator {
+    transition: none;
+  }
+  html.js .project-slide.is-active {
+    animation: none;
+  }
+}
+
+html:not(.js) .project-slide {
+  display: flex !important;
+  margin-bottom: 2.5rem;
+  border-bottom: 1px solid var(--line-soft);
+  padding-bottom: 2.5rem;
+}
+html:not(.js) #proj-dots,
+html:not(.js) #proj-prev,
+html:not(.js) #proj-next {
+  display: none;
+}
+
+.project-deck-viewport {
+  overflow: hidden;
+}
+.project-deck-track {
+  display: flex;
+  gap: 1.5rem;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+.project-grid-card {
+  flex: 0 0 100%;
+  min-width: 0;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.project-grid-card:hover {
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.8), 0 0 20px -8px rgba(91, 155, 255, 0.2);
+}
+.project-deck-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line-soft);
+}
+.project-deck .slider-nav-arrow:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+  pointer-events: none;
+}
+@media (min-width: 640px) {
+  .project-grid-card {
+    flex-basis: calc((100% - 1.5rem) / 2);
+  }
+}
+@media (min-width: 1024px) {
+  .project-grid-card {
+    flex-basis: calc((100% - 3rem) / 3);
+  }
+}

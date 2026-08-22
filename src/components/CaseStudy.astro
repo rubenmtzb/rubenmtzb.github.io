@@ -1,33 +1,49 @@
 ---
 import Icon from './Icon.astro'
 import TechChip from './v2/TechChip.astro'
-import { getExperience, getProjects, formatPeriod } from '../lib/content'
+import { getExperience, getProjects, formatPeriod, localePath } from '../lib/content'
 import { t, type Lang } from '../i18n/ui'
 
 /**
- * Ficha de proyecto en profundidad.
+ * In-depth case study.
  *
- * Comparte hoja de estilos con la V2, así que usa su vocabulario:
- * los tokens --ink/--line/--fg y las clases tipográficas t-*. Las chips
- * de stack son el mismo componente que en la portada, no una píldora
- * paralela que pudiera divergir de color o de enlace.
+ * It shares a stylesheet with the V2, so it speaks the V2's vocabulary: the
+ * --ink/--line/--fg tokens and the t-* typographic classes. The stack chips are
+ * the same component as on the home page, not a parallel pill that could drift
+ * in colour or in destination.
  */
 interface Props { lang: Lang; projectKey: string }
 const { lang, projectKey } = Astro.props
 
 const project = (await getProjects(lang)).find((p) => p.key === projectKey)
-if (!project) throw new Error(`Ficha: no existe el proyecto "${projectKey}"`)
+if (!project) throw new Error(`Case study: no such project "${projectKey}"`)
 
-/** El puesto desde el que se construyó, si lo hubo. */
+/** The role it was built from, where there was one. */
 const role = (await getExperience(lang)).find((e) => e.company === project.deep?.partnerName)
-const backPath = lang === 'es' ? '/es/#work' : '/#work'
+/**
+ * Back to the home page.
+ *
+ * The case study is linked from two places — the featured carousel and the grid
+ * — and each announces itself with `?from=`. That parameter cannot be read while
+ * generating the page: the site is static and the case study is rendered once,
+ * so the built link points at the career area, which is correct whichever place
+ * the visitor came from. The script below refines it in the browser, where the
+ * parameter does exist; without JavaScript the link still leads somewhere right.
+ */
+const backPath = localePath('/#work', lang)
+
+/** The two accepted origins, already resolved to the page's language. */
+const BACK_TARGETS = {
+  'project-carousel': localePath('/#project-carousel', lang),
+  'project-deck': localePath('/#project-deck', lang),
+}
 
 const CARD = 'rounded-xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-5'
 const CARD_LABEL = 't-meta text-[0.62rem] text-[color:var(--fg-3)]'
 ---
 
 <article class="mx-auto w-full max-w-3xl px-5 pb-24 pt-28 sm:px-8 sm:pt-36">
-  <a href={backPath} class="inline-flex items-center gap-2 text-sm text-[color:var(--fg-3)] transition hover:text-[color:var(--fg)]">
+  <a id="case-back" href={backPath} class="inline-flex items-center gap-2 text-sm text-[color:var(--fg-3)] transition hover:text-[color:var(--fg)]">
     <Icon name="arrowLeft" class="h-4 w-4" />
     {t(lang, 'v2.case.back')}
   </a>
@@ -111,3 +127,13 @@ const CARD_LABEL = 't-meta text-[0.62rem] text-[color:var(--fg-3)]'
     )
   }
 </article>
+
+<!--
+  Only an origin that is on the list is accepted: the value comes from the URL,
+  so it is never written into the link as-is.
+-->
+<script is:inline define:vars={{ targets: BACK_TARGETS }}>
+  const from = new URLSearchParams(window.location.search).get('from')
+  const back = document.getElementById('case-back')
+  if (back && from && Object.hasOwn(targets, from)) back.href = targets[from]
+</script>

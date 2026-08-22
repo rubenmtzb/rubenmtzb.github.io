@@ -8,12 +8,19 @@ import Background from '../components/v1/Background.astro'
 import Contact from '../components/v1/Contact.astro'
 import Footer from '../components/v1/Footer.astro'
 import type { Lang } from '../i18n/ui'
+import '../styles/global.css'
 
 interface Props { lang: Lang }
 const { lang } = Astro.props
 ---
 
-<BaseLayout pageKey="v1" lang={lang} pageType="ProfilePage" bodyClass="relative min-h-screen w-full overflow-x-hidden">
+<BaseLayout
+  lang={lang}
+  pageKey="v1"
+  pageType="ProfilePage"
+  displayFont={false}
+  bodyClass="bg-[#030712] font-mono text-slate-100 relative min-h-screen w-full overflow-x-hidden"
+>
   <div
     class="grid-move pointer-events-none fixed inset-0 z-0 opacity-[0.06]"
     style="background-image:linear-gradient(rgba(0,255,136,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,136,.12) 1px,transparent 1px);background-size:40px 40px"

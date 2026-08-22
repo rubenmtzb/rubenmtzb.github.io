@@ -1,0 +1,131 @@
+/* ---------------- MOMENTS CARDS (DESPLAZABLES Y VOLTEABLES 3D) ---------------- */
+.moments-deck-wrap {
+  width: 100%;
+  position: relative;
+  perspective: 1400px;
+}
+
+.moments-stage {
+  position: relative;
+  width: 100%;
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1400px;
+  touch-action: pan-y;
+}
+
+.moment-card {
+  position: absolute;
+  width: 250px;
+  height: 340px;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  border-radius: 1.1rem;
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.7);
+  will-change: transform;
+}
+
+.moment-card:hover {
+  z-index: 50 !important;
+}
+
+.moment-card.is-dragging,
+.moment-card.is-flying {
+  cursor: grabbing !important;
+  z-index: 60 !important;
+}
+
+.moment-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(0.2, 0.85, 0.4, 1.15);
+  border-radius: 1.1rem;
+}
+
+.moment-card:hover .moment-card-inner {
+  transform: rotateY(180deg);
+}
+.moment-card.is-flipped .moment-card-inner {
+  transform: rotateY(180deg);
+}
+
+.moment-card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 1.1rem;
+  overflow: hidden;
+}
+
+.moment-card-front {
+  background: var(--ink-800);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(91, 155, 255, 0.08);
+}
+
+.moment-card:hover .moment-card-front {
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.9), 0 0 20px rgba(111, 227, 255, 0.2), inset 0 0 0 1px var(--cyan);
+}
+
+.moment-card-back {
+  transform: rotateY(180deg);
+  background: var(--ink-900);
+}
+
+.moment-card-front > picture {
+  position: absolute;
+  inset: -1px;
+  display: block;
+  line-height: 0;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.moment-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+}
+
+@media only screen and (max-width: 768px) {
+  .moment-card {
+    width: 210px;
+    height: 290px;
+  }
+  .moments-stage {
+    min-height: 340px;
+  }
+}
+@media (max-width: 400px) {
+  .moment-card {
+    width: 180px;
+    height: 248px;
+  }
+  .moments-stage {
+    min-height: 290px;
+  }
+}
+
+html:not(.js) .moments-stage {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+  min-height: auto;
+}
+
+html:not(.js) .moment-card {
+  position: static;
+  width: 100%;
+  height: 320px;
+  transform: none !important;
+}
