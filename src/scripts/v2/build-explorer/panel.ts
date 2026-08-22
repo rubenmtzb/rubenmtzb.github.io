@@ -31,13 +31,21 @@ export function createBuildPanel(panel: HTMLElement, root: HTMLElement) {
   const partButtons = all<HTMLButtonElement>('[data-bx-part-button]')
   const partLayers = all('[data-bx-part]')
 
-  /** Ficha de cada pieza, leída del propio listado: el texto vive en el HTML. */
+  /*
+   * Ficha de cada pieza, leída del propio listado.
+   *
+   * La especificación llega por atributo y no buscando una etiqueta dentro del
+   * botón: cuando la lista pasó a ser un índice compacto, el `<small>` que la
+   * contenía desapareció y el chip se quedaba en blanco al elegir cualquier
+   * capa. El dato que el modelo necesita no puede depender de cómo se decida
+   * maquetar la fila.
+   */
   const partDetails = new Map(partButtons.map((button, index) => [
     button.dataset.bxPartButton ?? '',
     {
       index: pad(index + 1),
       label: button.querySelector('strong')?.textContent ?? '',
-      spec: button.querySelector('small')?.textContent ?? '',
+      spec: button.dataset.bxPartSpec ?? '',
     },
   ]))
 

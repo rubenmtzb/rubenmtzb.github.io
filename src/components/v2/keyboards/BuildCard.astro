@@ -86,7 +86,7 @@ const photoWidth = (intrinsic: number) => photoWidths(intrinsic).at(-1) ?? intri
         </figure>
       ))}
       <span class="bx-card-pointer-light" aria-hidden="true"></span>
-      <span class="bx-card-index">BUILD {twoDigits(index + 1)}</span>
+      <span class="bx-card-index">{copy.buildNumber(twoDigits(index + 1))}</span>
       <span class="bx-card-authentic"><i></i>{copy.status[buildDisplayStatus(build)]}</span>
       {hasCarousel && (
         <button class="bx-card-nav bx-card-prev" type="button" data-bx-card-prev aria-label={copy.previous}>‹</button>

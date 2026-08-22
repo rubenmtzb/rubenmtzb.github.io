@@ -51,13 +51,13 @@ const wave = createWaveform(builds.map((build) => build.sound?.peaks ?? []))
 
   <header class="bx-header">
     <div>
-      <span class="bx-kicker">LABORATORY // BUILD ARCHIVE</span>
+      <span class="bx-kicker">{copy.laboratory}</span>
       <h4>{copy.title}</h4>
     </div>
     <span class="bx-status">
       <i></i>
       <span data-bx-status>
-        {twoDigits(builds.length)} BUILDS // {twoDigits(completeBuilds)} COMPLETE
+        {copy.archiveSummary(twoDigits(builds.length), twoDigits(completeBuilds))}
       </span>
     </span>
   </header>
@@ -83,5 +83,20 @@ const wave = createWaveform(builds.map((build) => build.sound?.peaks ?? []))
     </div>
 
     {builds.map((build) => <BuildPanel build={build} lang={lang} wave={wave} />)}
+
+    <nav class="bx-build-navigation" aria-label={copy.buildNavigation}>
+      <button type="button" data-bx-build-prev class="bx-build-nav-button" aria-label={copy.previousBuild}>
+        <span aria-hidden="true">←</span>
+        <span>{copy.previousBuild}</span>
+      </button>
+      <button type="button" data-bx-close class="bx-build-nav-all">
+        <span aria-hidden="true">⊞</span>
+        <span>{copy.allBuilds}</span>
+      </button>
+      <button type="button" data-bx-build-next class="bx-build-nav-button bx-build-nav-next" aria-label={copy.nextBuild}>
+        <span>{copy.nextBuild}</span>
+        <span aria-hidden="true">→</span>
+      </button>
+    </nav>
   </div>
 </div>

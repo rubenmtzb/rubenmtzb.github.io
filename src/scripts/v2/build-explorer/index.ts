@@ -54,7 +54,9 @@ export function initKeyboardBuildExplorer() {
 
   const gallery = root.querySelector<HTMLElement>('[data-bx-gallery]')
   const viewer = root.querySelector<HTMLElement>('[data-bx-viewer]')
-  const closeButton = root.querySelector<HTMLButtonElement>('[data-bx-close]')
+  const closeButtons = [...root.querySelectorAll<HTMLButtonElement>('[data-bx-close]')]
+  const previousBuildButton = root.querySelector<HTMLButtonElement>('[data-bx-build-prev]')
+  const nextBuildButton = root.querySelector<HTMLButtonElement>('[data-bx-build-next]')
   const assembledButton = root.querySelector<HTMLButtonElement>('[data-bx-assembled-view]')
   const explodeButton = root.querySelector<HTMLButtonElement>('[data-bx-explode]')
   const status = root.querySelector<HTMLElement>('[data-bx-status]')
@@ -68,6 +70,7 @@ export function initKeyboardBuildExplorer() {
     if (key) panels.set(key, createBuildPanel(element, root))
   }
   if (panels.size === 0) return
+  const buildKeys = [...panels.keys()]
 
   const archivedLabel = status?.textContent ?? ''
   let active: BuildPanel | null = null
@@ -130,10 +133,20 @@ export function initKeyboardBuildExplorer() {
     panel.setSpread(0)
     panel.resetCamera()
     setViewMode('assembled')
-    closeButton?.focus()
+    closeButtons[0]?.focus()
   }
 
-  closeButton?.addEventListener('click', showGallery)
+  closeButtons.forEach((button) => button.addEventListener('click', showGallery))
+  previousBuildButton?.addEventListener('click', () => {
+    if (!active) return
+    const index = buildKeys.indexOf(activeKey)
+    openBuild(buildKeys[(index - 1 + buildKeys.length) % buildKeys.length])
+  })
+  nextBuildButton?.addEventListener('click', () => {
+    if (!active) return
+    const index = buildKeys.indexOf(activeKey)
+    openBuild(buildKeys[(index + 1) % buildKeys.length])
+  })
   assembledButton?.addEventListener('click', () => setViewMode('assembled'))
   explodeButton?.addEventListener('click', () => setViewMode('exploded'))
 

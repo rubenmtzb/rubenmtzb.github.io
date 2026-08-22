@@ -11,6 +11,7 @@ import SoundSample from './SoundSample.astro'
 import type { Waveform } from '../../../lib/keyboard-sound'
 import { buildDisplayStatus, localizer, twoDigits, type KeyboardBuild } from '../../../lib/content'
 import { keyboardCopy } from '../../../i18n/keyboards'
+import { localizedTerm } from '../../../i18n/terms'
 import type { Lang } from '../../../i18n/ui'
 
 interface Props {
@@ -21,6 +22,15 @@ interface Props {
 const { build, lang, wave } = Astro.props
 const pick = localizer(lang)
 const copy = keyboardCopy(lang)
+/**
+ * Ficha de una pieza. La lista es un índice compacto y no la muestra, así que
+ * viaja en un atributo de datos: es lo que lee el chip del modelo al elegir la
+ * capa, y de ahí sale también el nombre accesible del botón. Una sola fuente
+ * para los tres sitios.
+ */
+const partSpec = (part: KeyboardBuild['parts'][number]) =>
+  build.status === 'complete' ? pick(part.spec) : copy.prototypePart
+
 ---
 
 <div
@@ -76,7 +86,7 @@ const copy = keyboardCopy(lang)
     </div>
 
     <aside class="bx-specs">
-      <span class="bx-kicker">{build.name.toUpperCase()} // ARCHIVE</span>
+      <span class="bx-kicker">{build.name.toUpperCase()} // {copy.archiveLabel}</span>
       <h5>{build.name}</h5>
       <span class="bx-detail-status"><i></i>{copy.status[buildDisplayStatus(build)]}</span>
       <p>{pick(build.summary)}</p>
@@ -88,12 +98,17 @@ const copy = keyboardCopy(lang)
       <ol class="bx-parts">
         {build.parts.map((part, index) => (
           <li>
-            <button type="button" data-bx-part-button={part.id} aria-pressed="false">
+            <button
+              type="button"
+              data-bx-part-button={part.id}
+              data-bx-part-spec={partSpec(part)}
+              aria-pressed="false"
+              aria-label={`${twoDigits(index + 1)} · ${pick(part.label)}: ${partSpec(part)}`}
+            >
               <span class="bx-part-index">{twoDigits(index + 1)}</span>
               <i style={`--swatch:${part.color}`}></i>
               <span>
                 <strong>{pick(part.label)}</strong>
-                <small>{build.status === 'complete' ? pick(part.spec) : copy.prototypePart}</small>
               </span>
             </button>
             {build.status === 'complete' && part.source && (
@@ -102,10 +117,11 @@ const copy = keyboardCopy(lang)
                 href={part.source.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={`${copy.source} ${pick(part.label)}: ${part.source.label}`}
+                aria-label={`${copy.source} ${pick(part.label)}: ${localizedTerm(part.source.label, lang)}`}
+                title={`${copy.source}: ${localizedTerm(part.source.label, lang)}`}
               >
                 <i aria-hidden="true"></i>
-                <span>{part.source.label}</span>
+                <span>{localizedTerm(part.source.label, lang)}</span>
                 <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M7 17 17 7"></path><path d="M8 7h9v9"></path>
                 </svg>

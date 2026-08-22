@@ -13,10 +13,17 @@
 import type { Lang } from './ui'
 
 const EN = {
+  laboratory: 'Laboratory // Build archive',
+  archiveSummary: (total: string, complete: string) => `${total} builds // ${complete} completed`,
+  buildNumber: (number: string) => `Build ${number}`,
+  archiveLabel: 'Archive',
   intro: 'A growing archive: completed builds, models in preparation and the next keyboard at concept stage.',
   inspect: 'Inspect',
   openDraft: 'Open draft',
   allBuilds: 'All builds',
+  buildNavigation: 'Build navigation',
+  previousBuild: 'Previous build',
+  nextBuild: 'Next build',
   view: 'Keyboard view',
   assembled: 'Assembled',
   exploded: 'Exploded',
@@ -58,16 +65,23 @@ const EN = {
 }
 
 const ES: typeof EN = {
-  intro: 'Un archivo en crecimiento: builds terminados, modelos en preparación y el próximo teclado en fase de concepto.',
+  laboratory: 'Laboratorio // Archivo de montajes',
+  archiveSummary: (total: string, complete: string) => `${total} montajes // ${complete} completos`,
+  buildNumber: (number: string) => `Montaje ${number}`,
+  archiveLabel: 'Archivo',
+  intro: 'Un archivo en crecimiento: montajes terminados, modelos en preparación y el próximo teclado en fase de concepto.',
   inspect: 'Inspeccionar',
   openDraft: 'Abrir borrador',
-  allBuilds: 'Todos los builds',
+  allBuilds: 'Todos los montajes',
+  buildNavigation: 'Navegación entre montajes',
+  previousBuild: 'Montaje anterior',
+  nextBuild: 'Montaje siguiente',
   view: 'Vista del teclado',
   assembled: 'Montado',
-  exploded: 'Explotado',
+  exploded: 'Explosionado',
   separation: 'Separación',
   model: 'Modelo interactivo por capas',
-  cover: 'Portada fotográfica del build',
+  cover: 'Portada fotográfica del montaje',
   previous: 'Imagen anterior',
   next: 'Imagen siguiente',
   goTo: 'Ir a la imagen',
@@ -76,9 +90,9 @@ const ES: typeof EN = {
   pieces: 'piezas',
   sheet: 'Ficha técnica',
   source: 'Dónde conseguir',
-  title: 'Fotos de mis builds',
+  title: 'Fotos de mis montajes',
   status: {
-    complete: 'BUILD REAL',
+    complete: 'MONTAJE REAL',
     'in-progress': 'EN CONSTRUCCIÓN',
     scaffold: 'CAPAS EN PREP.',
     planning: 'EN PROCESO',
@@ -97,7 +111,7 @@ const ES: typeof EN = {
   seek: 'Posición dentro de la muestra',
   typing: 'Tecleo',
   soundPending: 'SIN TOMA',
-  soundPendingNote: 'Se grabará cuando el build esté montado',
+  soundPendingNote: 'Se grabará cuando el montaje esté terminado',
   noAudio: 'Tu navegador no puede reproducir esta muestra.',
 }
 
