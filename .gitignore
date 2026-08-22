@@ -29,11 +29,22 @@ dist-ssr
 # Material personal original: nunca entra al repositorio.
 # Las versiones WebP optimizadas de src/assets/personal-web/ sí se versionan
 # para que el build estático sea reproducible fuera del equipo local.
-*.jpeg
+#
+# Cada extensión se escribe en minúscula y en mayúscula a propósito. macOS
+# resuelve rutas sin distinguir mayúsculas, así que en este equipo `*.JPG`
+# parecía cubrir también los `.jpg`; en un sistema de ficheros sensible a
+# mayúsculas —cualquier Linux, empezando por el runner de CI— no los cubre,
+# y los originales entrarían al repositorio sin que nadie se diera cuenta.
+*.jpg
 *.JPG
+*.jpeg
+*.JPEG
+*.heic
+*.HEIC
+*.mov
 *.MOV
 *.mp4
-*.heic
+*.MP4
 # Tomas de sonido sin cortar, en la raíz del proyecto. Los cortes servidos
 # viven en public/keyboards/sound/ y sí se versionan.
 /*.m4a
