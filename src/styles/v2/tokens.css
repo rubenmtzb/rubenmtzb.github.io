@@ -66,6 +66,17 @@
   /* Velo bajo el texto que se superpone a una fotografía: sombra dura y negra
      para que el titular se lea sobre cualquier imagen. */
   --scrim: 0 0 0;
+  /*
+   * Este verde NO es `--live-strong`, aunque debería serlo. Es el hexadecimal
+   * clásico de emerald-500 (#10b981) que el marcado llevaba escrito a mano,
+   * mientras que Tailwind v4 sirve el mismo nombre en oklch. Pintados dan
+   * rgb(16,185,129) y rgb(0,188,125): dieciséis puntos de diferencia en el
+   * canal rojo, poco pero real.
+   *
+   * Se conserva para no mover un píxel al nombrarlo. Unificarlo con
+   * `--live-strong` es una línea, y la decisión de si ese cambio se ve o no
+   * es de quien mira el diseño, no de quien mira el código.
+   */
   --live-legacy-rgb: 16 185 129;
 
   --measure: 68ch;
