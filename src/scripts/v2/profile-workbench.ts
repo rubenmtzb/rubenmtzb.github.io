@@ -40,7 +40,7 @@ export function initProfileWorkbench() {
   const command = document.getElementById('profile-command') as HTMLFormElement | null
   const input = document.getElementById('profile-command-input') as HTMLInputElement | null
   const names: Record<string, string> = Object.fromEntries(
-    PANELS.map((panel) => [panel.id, isSpanish ? panel.file.es : panel.file.en]),
+    PANELS.map((panel) => [panel.id, isSpanish() ? panel.file.es : panel.file.en]),
   )
 
   const select = (tab: string) => {
