@@ -50,14 +50,23 @@ async function run(page, runIndex) {
      interacción, no las animaciones. El audio y el canvas fallan a propósito
      para ejercitar los caminos degradados. */
   const noop = () => {}
+  /*
+   * Los intervalos se anotan en lugar de tirarse. Siguen sin dispararse solos
+   * —lo que interesa sigue siendo el estado inmediato tras cada interacción—
+   * pero así una prueba puede agotar a mano el cronómetro del test de
+   * velocidad, que es la única forma de llegar al final de una ronda sin
+   * teclear la frase entera.
+   */
+  const intervals = new Map()
+  let nextIntervalId = 1
   Object.assign(window, {
     matchMedia: () => ({ matches: false, addEventListener: noop, removeEventListener: noop }),
     requestAnimationFrame: () => 0,
     cancelAnimationFrame: noop,
     setTimeout: () => 0,
-    setInterval: () => 0,
+    setInterval: (fn) => { intervals.set(nextIntervalId, fn); return nextIntervalId++ },
     clearTimeout: noop,
-    clearInterval: noop,
+    clearInterval: (id) => { intervals.delete(id) },
     getComputedStyle: () => ({ gap: '24px' }),
     IntersectionObserver: class {
       constructor(callback) { this.callback = callback }
@@ -136,11 +145,15 @@ async function run(page, runIndex) {
       const ev = { type, target, preventDefault: noop, stopPropagation: noop, repeat: false, ...rest }
       for (const l of keyListeners) if (l.type === type) l.handler(ev)
     },
+    /** Hace correr los intervalos vivos el número de tics que se pida. */
+    tick(times = 1) {
+      for (let i = 0; i < times; i++) for (const fn of [...intervals.values()]) fn()
+    },
   }
 }
 
 function suite(page, dom) {
-  const { el, all, fire, key, document } = dom
+  const { el, all, fire, key, tick, document } = dom
   const check = (cond, msg) => {
     if (cond) { pass++; console.log(`  ✓ ${msg}`) }
     else { fail++; console.error(`  ✗ ${msg}`) }
@@ -279,6 +292,26 @@ function suite(page, dom) {
   fire(drawnKey(`Key${quote[1].toUpperCase()}`) ?? drawnKey('KeyA'), 'mousedown')
   check(spans().filter((s) => s.classList.contains('correct')).length === before + 1,
     'pulsar una tecla dibujada cuenta igual que el teclado físico')
+
+  /*
+   * Agotado el tiempo, el marcador es definitivo. Sin este cierre, seguir
+   * tecleando volvía a arrancar el cronómetro: la cuenta atrás entraba en
+   * negativo y el origen del cálculo de WPM se movía, así que lo ya escrito
+   * dejaba de contar.
+   */
+  const marked = () => spans().filter((s) => s.classList.contains('correct') || s.classList.contains('incorrect')).length
+  tick(30)
+  check(el('kb-timer').textContent === '⏱️ 0s', `la cuenta atrás llega a cero ("${el('kb-timer').textContent}")`)
+  const atEnd = marked()
+  key('keydown', { code: 'KeyQ', key: quote[atEnd] ?? 'a', target: el('monkey-box') })
+  check(marked() === atEnd, 'terminada la ronda, el tablero deja de aceptar pulsaciones')
+  tick(5)
+  check(el('kb-timer').textContent === '⏱️ 0s', 'y el cronómetro no sigue bajando a negativo')
+
+  fire(el('monkey-restart-btn'), 'click')
+  check(el('kb-timer').textContent === '⏱️ 30s' && marked() === 0, 'reiniciar devuelve la ronda a cero')
+  key('keydown', { code: 'KeyW', key: spans()[0].textContent, target: el('monkey-box') })
+  check(spans()[0].classList.contains('correct'), 'y vuelve a contar lo que se teclea')
 
   console.log('\n· Modo libre')
   fire(el('kb-tab-sim'), 'click')

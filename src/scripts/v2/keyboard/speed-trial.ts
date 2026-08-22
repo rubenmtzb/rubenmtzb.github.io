@@ -46,6 +46,15 @@ export function createSpeedTrial({ announce }: { announce: (text: string) => voi
   let isRunning = false
   let timerInterval: number | null = null
   let remainingSec = ROUND_SECONDS
+  /*
+   * La ronda ha terminado y el marcador es definitivo.
+   *
+   * Sin esto, seguir tecleando después de que se acabara el tiempo volvía a
+   * arrancar el cronómetro: la cuenta atrás bajaba a números negativos y el
+   * origen del cálculo de WPM se movía, así que las pulsaciones anteriores
+   * dejaban de contar. Hasta reiniciar, el tablero no acepta nada.
+   */
+  let over = false
 
   /*
    * Los <span> de cada carácter se guardan al pintarlos. Antes cada
@@ -86,6 +95,7 @@ export function createSpeedTrial({ announce }: { announce: (text: string) => voi
 
   const finish = () => {
     isRunning = false
+    over = true
     if (timerInterval) clearInterval(timerInterval)
     const elapsedMinutes = Math.max(0.1, (performance.now() - startTime) / 60000)
     const finalWpm = wpmSince(elapsedMinutes)
@@ -131,6 +141,7 @@ export function createSpeedTrial({ announce }: { announce: (text: string) => voi
     totalTyped = 0
     combo = 0
     isRunning = false
+    over = false
     remainingSec = ROUND_SECONDS
     if (timerInterval) clearInterval(timerInterval)
 
@@ -155,7 +166,7 @@ export function createSpeedTrial({ announce }: { announce: (text: string) => voi
     element: box,
     restart,
     type(inputChar: string) {
-      if (charIndex >= targetChars.length) return
+      if (over) return
       startIfNeeded()
 
       const expected = targetChars[charIndex]
@@ -184,7 +195,7 @@ export function createSpeedTrial({ announce }: { announce: (text: string) => voi
       if (charIndex >= targetChars.length) finish()
     },
     backspace() {
-      if (charIndex === 0) return
+      if (over || charIndex === 0) return
       charSpans[charIndex]?.classList.remove('current')
       charIndex--
       const prevCharEl = charSpans[charIndex]
