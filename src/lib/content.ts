@@ -3,7 +3,7 @@ import { SITE, STACK_GROUPS, type StackGroup } from '../site.config'
 import { DEFAULT_LANG, t, type Lang } from '../i18n/ui'
 
 /* ------------------------------------------------------------------ */
-/* Acceso a colecciones                                                */
+/* Collection access                                                  */
 /* ------------------------------------------------------------------ */
 
 const byLang = <T extends { data: { lang: Lang } }>(entries: T[], lang: Lang) =>
@@ -15,7 +15,7 @@ const byOrder = <T extends { data: { order: number } }>(entries: T[]) =>
 export async function getProfile(lang: Lang) {
   const all = await getCollection('profile')
   const entry = byLang(all, lang)[0]
-  if (!entry) throw new Error(`profile: falta la entrada para "${lang}"`)
+  if (!entry) throw new Error(`profile: no entry for "${lang}"`)
   return entry.data
 }
 
@@ -35,7 +35,7 @@ export async function getCerts(lang: Lang) {
   return byOrder(byLang(await getCollection('certs'), lang)).map((e) => e.data)
 }
 
-/** Devuelve el stack agrupado por función y ordenado dentro de cada grupo. */
+/** The stack grouped by function and sorted within each group. */
 export async function getStackByGroup() {
   const all = (await getCollection('stack')).map((e) => e.data)
   const grouped = new Map<StackGroup, typeof all>()
@@ -49,9 +49,9 @@ export async function getStackByGroup() {
 }
 
 /**
- * Builds de teclado, en orden de montaje. El contenido es bilingüe dentro
- * de cada build (una sola imagen, dos textos), así que aquí solo se ordena:
- * la resolución del idioma la hace el componente con `pick`.
+ * Keyboard builds, in assembly order. The content is bilingual inside each
+ * build — one image, two texts — so all this does is sort them: resolving the
+ * language is the view's job, through `localizer`.
  */
 export async function getKeyboards() {
   const builds = byOrder(await getCollection('keyboards')).map((entry) => entry.data)
@@ -61,9 +61,9 @@ export async function getKeyboards() {
     if (build.parts.length > 0) return build
 
     /*
-     * Sin piezas y sin plantilla el modelo no se puede dibujar, y la vista
-     * accede a `parts[0]` sin preguntar. Que falle aquí, con el nombre del
-     * build delante, en lugar de con un "undefined" a mitad del renderizado.
+     * With no parts and no template the model cannot be drawn, and the view
+     * reaches for `parts[0]` without asking. Fail here, with the build's name
+     * in the message, instead of on an "undefined" halfway through rendering.
      */
     if (!build.modelTemplate) {
       throw new Error(`Keyboard "${build.key}" has no parts and no model template to borrow them from`)
@@ -78,26 +78,26 @@ export async function getKeyboards() {
   })
 }
 
-/** Un build del archivo, ya resuelto: el tipo que reciben los componentes. */
+/** A build from the archive, already resolved: what the components receive. */
 export type KeyboardBuild = Awaited<ReturnType<typeof getKeyboards>>[number]
 export type KeyboardPart = KeyboardBuild['parts'][number]
 
 /**
- * Estado que muestra la ficha.
+ * The status the card shows.
  *
- * El montaje físico puede seguir en curso aunque el modelo por capas ya esté
- * documentado, y es eso lo que hay que enseñar: un teclado a medio montar no
- * es un "build real" por mucho que su despiece esté completo.
+ * The physical assembly can still be under way even when the layered model is
+ * fully documented, and that is what has to be shown: a half-built keyboard is
+ * not a "real build" however complete its exploded view may be.
  */
 export const buildDisplayStatus = (build: KeyboardBuild) =>
   build.buildInProgress ? 'in-progress' : build.status
 
 /**
- * Resuelve un par {en, es} al idioma pedido.
+ * Resolves an {en, es} pair to the requested language.
  *
- * El contenido bilingüe dentro de una misma entrada —una foto con dos pies,
- * una pieza con dos descripciones— se resuelve en la vista y no en la carga,
- * porque la imagen es la misma y solo cambia el texto.
+ * Bilingual content inside a single entry — one photo with two captions, one
+ * part with two descriptions — is resolved in the view and not at load time,
+ * because the asset is the same and only the text changes.
  */
 export const localizer = (lang: Lang) =>
   <T,>(pair: { en: T, es: T }): T => (lang === 'es' ? pair.es : pair.en)
@@ -105,18 +105,18 @@ export const localizer = (lang: Lang) =>
 export async function getPage(key: string, lang: Lang) {
   const all = await getCollection('pages')
   const entry = all.find((e) => e.data.key === key && e.data.lang === lang)
-  if (!entry) throw new Error(`pages: falta "${key}" en "${lang}"`)
+  if (!entry) throw new Error(`pages: "${key}" is missing in "${lang}"`)
   return entry.data
 }
 
 /**
- * Clúster hreflang: todas las versiones lingüísticas de la misma página.
- * Todos los miembros emiten un conjunto idéntico que se incluye a sí mismo.
+ * hreflang cluster: every language version of the same page. All members emit
+ * an identical set that includes themselves.
  */
 export async function getCluster(key: string) {
   const all = await getCollection('pages')
   const members = all.filter((e) => e.data.key === key).map((e) => e.data)
-  if (members.length === 0) throw new Error(`pages: clúster "${key}" vacío`)
+  if (members.length === 0) throw new Error(`pages: cluster "${key}" is empty`)
   return {
     alternates: members.map((m) => ({ lang: m.lang, path: m.path })),
     xDefault: members.find((m) => m.lang === DEFAULT_LANG)?.path ?? members[0].path,
@@ -124,59 +124,59 @@ export async function getCluster(key: string) {
 }
 
 /**
- * La otra versión lingüística de la misma página, que es lo que alimenta el
- * selector de idioma. Cuatro componentes lo resolvían por su cuenta con un
- * `find(...)!`; si el clúster quedara incompleto, el build se paraba con un
- * "undefined" en lugar de decir qué falta.
+ * The other language version of the same page, which is what feeds the language
+ * switcher. Four components used to work it out on their own with a `find(...)!`;
+ * if the cluster were ever incomplete the build stopped on an "undefined"
+ * instead of naming what was missing.
  */
 export async function getAlternate(key: string, lang: Lang) {
   const { alternates } = await getCluster(key)
   const other = alternates.find((a) => a.lang !== lang)
-  if (!other) throw new Error(`pages: el clúster "${key}" no tiene alternativa a "${lang}"`)
+  if (!other) throw new Error(`pages: cluster "${key}" has no alternative to "${lang}"`)
   return other
 }
 
 export const abs = (path: string) => new URL(path, SITE).href
 
 /**
- * La misma ruta en el idioma pedido.
+ * The same path in the requested language.
  *
- * La gramática de URLs deja el idioma por defecto en la raíz y prefija el
- * resto con su código, así que la traducción de una ruta es mecánica. Estaba
- * escrita a mano en media docena de componentes —cada uno con su propio
- * ternario contra `'es'`— y basta con que uno se olvide del prefijo para
- * mandar a un lector castellano a la versión inglesa sin que nada falle.
+ * The URL grammar leaves the default locale at the root and prefixes the rest
+ * with their code, so translating a path is mechanical. It used to be written
+ * by hand in half a dozen components — each with its own ternary against
+ * `'es'` — and one forgotten prefix is enough to send a Spanish reader to the
+ * English version without anything failing.
  */
 export const localePath = (path: string, lang: Lang) =>
   (lang === DEFAULT_LANG ? path : `/${lang}${path}`)
 
-/** Ruta del CV en el idioma dado. La enlazan la V1, la V2 y el propio CV. */
+/** The CV path in the given language. V1, V2 and the CV itself all link to it. */
 export const cvPath = (lang: Lang) => localePath('/cv/', lang)
 
-/** Ruta de la portada en el idioma dado. */
+/** The home path in the given language. */
 export const homePath = (lang: Lang) => localePath('/', lang)
 
 /**
- * PDF del CV. Los dos ficheros viven en `public/cv/` y no llevan prefijo de
- * idioma: es el nombre del fichero el que distingue la versión.
+ * The CV as a PDF. Both files live in `public/cv/` and carry no locale prefix:
+ * the filename is what tells the two versions apart.
  */
 export const cvPdfPath = (lang: Lang) =>
   `/cv/CV_RubenMartinez_${lang === 'es' ? 'ES' : 'EN'}.pdf`
 
 /**
- * Proyectos con ficha propia. La V1 y la V2 enlazan a la misma página, así
- * que el mapa vive aquí: si mañana hay una segunda ficha, se añade una vez.
+ * Projects with a case study of their own. V1 and V2 link to the same page, so
+ * the map lives here: a second case study is added once, not twice.
  */
 const CASE_PATHS: Record<string, string> = { 'sars-cov-2': '/work/sars-cov-2/' }
 
-/** Ruta de la ficha en el idioma dado, o null si el proyecto no tiene ficha. */
+/** The case study path in the given language, or null if the project has none. */
 export function casePath(projectKey: string, lang: Lang): string | null {
   const path = CASE_PATHS[projectKey]
   return path ? localePath(path, lang) : null
 }
 
 /* ------------------------------------------------------------------ */
-/* Fechas — la antigüedad nunca se escribe a mano                      */
+/* Dates — seniority is never written by hand                         */
 /* ------------------------------------------------------------------ */
 
 const toDate = (ym: string) => {
@@ -185,9 +185,8 @@ const toDate = (ym: string) => {
 }
 
 /**
- * Numeración de dos dígitos: "01 / 04". La comparten los contadores de los
- * carruseles y los índices del archivo de teclados, que la escribían cada uno
- * por su cuenta.
+ * Two-digit numbering: "01 / 04". Shared by the carousel counters and by the
+ * keyboard archive's indices, each of which used to write it out on its own.
  */
 export const twoDigits = (value: number) => String(value).padStart(2, '0')
 
@@ -207,8 +206,8 @@ export function formatPeriod(start: string, end: string | null, lang: Lang) {
 }
 
 /**
- * Duración en años y meses, calculada en build. Nunca hay una cifra
- * escrita a mano en el contenido: si el sitio se reconstruye, se actualiza.
+ * Duration in years and months, computed at build time. No figure is ever
+ * hand-written in the content: rebuild the site and it updates itself.
  */
 export function formatDuration(start: string, end: string | null, lang: Lang) {
   const from = toDate(start)
@@ -224,15 +223,14 @@ export function formatDuration(start: string, end: string | null, lang: Lang) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Antigüedad derivada — reutilizable, no una excepción del CV         */
+/* Derived seniority — reusable, not a special case for the CV        */
 /* ------------------------------------------------------------------ */
 
 type Period = { start: string; end: string | null }
 
 /**
- * Meses cubiertos por un conjunto de periodos, fusionando solapamientos.
- * Genérico: sirve para la antigüedad en un puesto, para la trayectoria
- * completa o para cualquier subconjunto que se le pase.
+ * Months covered by a set of periods, merging any overlap. Generic on purpose:
+ * it serves tenure in one role, the whole career, or any subset handed to it.
  */
 function coveredMonths(periods: Period[]): number {
   if (periods.length === 0) return 0
@@ -254,14 +252,14 @@ function coveredMonths(periods: Period[]): number {
   return total
 }
 
-/** Antigüedad en el puesto actual: el que no tiene fecha de fin. */
+/** Tenure in the current role: the one with no end date. */
 export function tenureMonths(entries: Period[]): number {
   return coveredMonths(entries.filter((e) => e.end === null))
 }
 
 /**
- * Frase de antigüedad en años, redondeando a la baja y marcando el "+".
- * Se recalcula en cada build: nunca hay una cifra escrita a mano.
+ * Seniority as a phrase in years, rounding down and marking the "+".
+ * Recomputed on every build: no figure is ever hand-written.
  */
 export function formatYears(months: number, lang: Lang): string {
   const years = Math.floor(months / 12)
@@ -272,19 +270,19 @@ export function formatYears(months: number, lang: Lang): string {
   const noun = t(lang, years === 1 ? 'time.year' : 'time.years')
 
   /*
-   * En el aniversario exacto, "más de N años" es falso: 48 meses son
-   * exactamente 4 años, no más. El inglés no tiene el problema porque
-   * "4+" significa "4 o más" y sigue siendo cierto.
+   * On the exact anniversary, "más de N años" is false: 48 months are exactly
+   * 4 years, not more. English does not have the problem because "4+" means
+   * "4 or more" and stays true.
    */
   if (lang !== 'es') return `${years}+ ${noun}`
   return months % 12 === 0 ? `${years} ${noun}` : `más de ${years} ${noun}`
 }
 
-/** Sustituye el token {years} en cualquier texto del modelo de contenido. */
+/** Substitutes the {years} token in any text from the content model. */
 export const withYears = (text: string, phrase: string) => text.replaceAll('{years}', phrase)
 
 /* ------------------------------------------------------------------ */
-/* JSON-LD — generado, nunca escrito a mano                            */
+/* JSON-LD — generated, never hand-written                            */
 /* ------------------------------------------------------------------ */
 
 const PERSON_ID = `${SITE}/#person`
@@ -299,8 +297,8 @@ type JsonLdArgs = {
 }
 
 /**
- * Una única entidad Person en todo el sitio, con @id estable.
- * Todas las páginas la referencian; ninguna la redefine.
+ * A single Person entity across the whole site, with a stable @id.
+ * Every page references it; none redefines it.
  */
 export async function buildJsonLd({ lang, pageUrl, pageType, pageName, pageDescription }: JsonLdArgs) {
   const profile = await getProfile(lang)
@@ -331,9 +329,9 @@ export async function buildJsonLd({ lang, pageUrl, pageType, pageName, pageDescr
     sameAs: profile.socials.map((s) => s.href),
     ...(current ? { worksFor: { '@type': 'Organization', name: current.company } } : {}),
     /*
-     * Una entidad por centro, no por titulación: Instituto la Guineueta
-     * aparecía dos veces porque de allí salen DAW y SMX. Las dos
-     * titulaciones siguen listadas por separado en Background y en el CV.
+     * One entity per institution, not per degree: Instituto la Guineueta showed
+     * up twice because both DAW and SMX come from there. The two degrees are
+     * still listed separately in Background and on the CV.
      */
     alumniOf: [...new Set(education.map((e) => e.institution))].map((name) => ({
       '@type': 'EducationalOrganization',

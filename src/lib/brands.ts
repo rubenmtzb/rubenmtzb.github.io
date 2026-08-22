@@ -1,23 +1,23 @@
 /**
- * Registro de marcas emisoras: logotipo e identidad de color.
+ * Registry of issuing brands: logo and colour identity.
  *
- * Vive junto al registro de tecnologías y por la misma razón: la identidad
- * visual de una marca es un dato del sitio, no del componente que la pinta.
- * Estaba dentro de About.astro mezclada con el resumen de cada certificación,
- * que es contenido y ahora sale de la colección tipada.
+ * It lives next to the technology registry and for the same reason: a brand's
+ * visual identity is a fact about the site, not about the component that paints
+ * it. It used to sit inside About.astro mixed with each certification's summary,
+ * which is content and now comes from the typed collection.
  */
 
 export interface CertBrand {
-  /** Ruta al logotipo. Sin él se pinta el glifo neutro. */
+  /** Path to the logo. Without one, the neutral glyph is painted instead. */
   logo?: string
-  /** Fondo, texto, borde y resplandor de la píldora del emisor. */
+  /** Background, text, border and glow of the issuer pill. */
   bg: string
   text: string
   border: string
   glow: string
 }
 
-/** Aspecto de una marca todavía sin identidad propia en el registro. */
+/** How a brand looks while it has no identity of its own in the registry. */
 const NEUTRAL_BRAND: CertBrand = {
   bg: 'rgba(91, 155, 255, 0.12)',
   text: '#5b9bff',
@@ -56,13 +56,13 @@ const CERT_BRANDS: Record<string, CertBrand> = {
   },
 }
 
-/** Marca de una certificación, o la neutra si todavía no tiene la suya. */
+/** A certification's brand, or the neutral one while it has none. */
 export const certBrand = (key: string): CertBrand => CERT_BRANDS[key] ?? NEUTRAL_BRAND
 
 /**
- * Logotipo del centro de estudios. Instituto la Guineueta —DAW y SMX— no
- * tiene logotipo verificable, así que no entra: sin entrada se pinta el
- * icono genérico de titulación.
+ * The institution's logo. Instituto la Guineueta — DAW and SMX — has no
+ * verifiable logo, so it stays out: with no entry, the generic degree icon is
+ * painted instead.
  */
 const INSTITUTION_LOGOS: Record<string, string> = {
   uoc: '/icons/uoc.svg',

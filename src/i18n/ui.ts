@@ -1,12 +1,12 @@
 import { DEFAULT_LANG, type Lang } from '../site.config'
 
-/* El vocabulario cerrado vive en site.config. Aquí se reexporta lo que el
-   sitio pide por su nombre de i18n, que es donde lo busca: el idioma de una
-   página y cuál es el de por defecto. La lista completa solo la necesita el
-   esquema de contenido, y esa la coge de la fuente. */
+/* The closed vocabulary lives in site.config. What gets re-exported here is
+   what the site asks for by its i18n name, which is where it looks for it: a
+   page's language and which one is the default. Only the content schema needs
+   the full list, and it takes that from the source. */
 export { DEFAULT_LANG, type Lang }
 
-/** Las cinco áreas de la V1. El orden es el orden del documento. */
+/** The V1's five areas. The order is the document's order. */
 export const NAV = [
   { id: 'home', en: 'Home', es: 'Inicio' },
   { id: 'about', en: 'About', es: 'Sobre mí' },
@@ -15,7 +15,7 @@ export const NAV = [
   { id: 'contact', en: 'Contact', es: 'Contacto' },
 ] as const
 
-/** Las cuatro áreas navegables de la V2. Identity es el propio inicio. */
+/** The V2's four navigable areas. Identity is the top of the page itself. */
 export const V2_NAV = [
   { id: 'work', key: 'v2.nav.work' },
   { id: 'about', key: 'v2.nav.about' },
@@ -24,13 +24,13 @@ export const V2_NAV = [
 ] as const
 
 /**
- * Anclas heredadas de las 10 superficies anteriores. Se emiten como alias
- * vacíos dentro del área que las absorbe, para que ningún enlace entrante
- * quede sin destino tras el intercambio de la Fase 5.
+ * Anchors inherited from the previous 10 surfaces. They are emitted as empty
+ * aliases inside the area that absorbs them, so that no incoming link is left
+ * without a destination after the Phase 5 swap.
  *
- * Cada lista contiene solo anclas heredadas: el id propio de la sección
- * nunca se repite aquí, o la página saldría con dos elementos con el mismo
- * id, que es HTML inválido.
+ * Each list holds inherited anchors only: the section's own id is never
+ * repeated here, or the page would ship two elements with the same id, which is
+ * invalid HTML.
  */
 export const V2_ANCHOR_ALIASES: Record<string, string[]> = {
   identity: ['home', 'stack'],
@@ -56,10 +56,9 @@ export const ui = {
     'nav.skip': 'Skip to content',
 
     /*
-     * Etiquetas que solo existen para la tecnología asistiva. Estaban
-     * escritas en castellano dentro del componente, así que un lector de
-     * pantalla anunciaba "Historial de empresas" en mitad de una página
-     * declarada en inglés.
+     * Labels that exist only for assistive technology. They used to be written
+     * in Spanish inside the component, so a screen reader announced "Historial
+     * de empresas" in the middle of a page declared as English.
      */
     'a11y.mainNav': 'Main',
     'a11y.brandHome': 'Home',

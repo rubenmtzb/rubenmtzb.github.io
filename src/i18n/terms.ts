@@ -14,15 +14,15 @@ const SPANISH_TERMS: Record<string, string> = {
   Leadership: 'Liderazgo',
   'Team Management': 'Gestión de equipos',
   Operations: 'Operaciones',
-  /* Rótulos de las referencias de una pieza: dónde se compra o dónde se lee. */
+  /* Labels for a part's references: where to buy it or where to read about it. */
   'Topre switch': 'Interruptor Topre',
   'Topre patent': 'Patente de Topre',
   'Corne build guide': 'Guía de montaje de Corne',
 }
 
 /**
- * Localiza conceptos editoriales usados también como claves técnicas. Los
- * nombres propios de tecnologías se devuelven intactos.
+ * Localises editorial concepts that double as technical keys. Proper names of
+ * technologies are returned untouched.
  */
 export function localizedTerm(term: string, lang: Lang): string {
   return lang === 'es' ? (SPANISH_TERMS[term] ?? term) : term
@@ -33,14 +33,13 @@ const CANONICAL_TERMS = new Map(
 )
 
 /**
- * Devuelve el término en su forma canónica inglesa, que es la clave con la que
- * los registros del sitio —el de tecnologías, sin ir más lejos— indexan cada
- * concepto.
+ * Returns the term in its canonical English form, which is the key the site's
+ * registries — the technology one, for a start — index every concept by.
  *
- * Hace falta porque las entradas castellanas del contenido escriben la etiqueta
- * ya traducida. Sin este paso, "Ingeniería de prompts" no encontraba su ficha y
- * la versión española perdía en silencio el logotipo y el enlace que la inglesa
- * sí mostraba.
+ * It is needed because the Spanish rows of the content write the tag already
+ * translated. Without this step "Ingeniería de prompts" never found its entry,
+ * and the Spanish version silently lost the logo and the link the English one
+ * kept.
  */
 export function canonicalTerm(term: string): string {
   return CANONICAL_TERMS.get(term) ?? term

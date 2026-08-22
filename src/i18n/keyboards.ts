@@ -1,14 +1,14 @@
 /**
- * Textos del explorador de builds de teclado.
+ * Copy for the keyboard build explorer.
  *
- * Están fuera de `ui.ts` porque no son vocabulario del sitio sino de una sola
- * vista, y tienen forma propia: el rótulo del estado de un build se busca por
- * el estado, no por una clave plana.
+ * It lives outside `ui.ts` because it is not the site's vocabulary but a single
+ * view's, and it has a shape of its own: a build's status label is looked up by
+ * status, not by a flat key.
  *
- * Los dos idiomas se declaran como dos objetos y no como una ristra de
- * ternarios. Así se leen en paralelo —que es como se revisa una traducción— y
- * el castellano está tipado contra el inglés: olvidar una cadena es un error
- * de tipos, no una frase que aparece en el idioma equivocado.
+ * The two languages are declared as two objects rather than a run of ternaries.
+ * That way they read side by side — which is how a translation gets reviewed —
+ * and the Spanish is typed against the English: forgetting a string is a type
+ * error, not a sentence that shows up in the wrong language.
  */
 import type { Lang } from './ui'
 
@@ -39,7 +39,7 @@ const EN = {
   sheet: 'Spec sheet',
   source: 'Where to get',
   title: 'My build photos',
-  /** Rótulo del estado de un build. La clave es el estado que muestra la ficha. */
+  /** A build's status label. The key is the status the card displays. */
   status: {
     complete: 'REAL BUILD',
     'in-progress': 'BUILD IN PROGRESS',

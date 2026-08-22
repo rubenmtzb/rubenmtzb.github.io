@@ -3,22 +3,22 @@ import { file } from 'astro/loaders'
 import { LANGS, STACK_GROUPS, STACK_TIERS } from './site.config'
 
 /**
- * Fuente única de verdad.
+ * Single source of truth.
  *
- * V1, /cv/, JSON-LD, metadata y textos localizados salen todos de aquí.
- * Ninguna información equivalente puede vivir duplicada en componentes.
+ * V1, /cv/, JSON-LD, metadata and localised copy all come from here. No
+ * equivalent piece of information may live duplicated inside a component.
  *
- * Convención de id: `<lang>:<key>`. `key` es estable entre idiomas y es lo
- * que empareja las versiones lingüísticas; el build falla si una key existe
- * en un idioma y no en el otro (ver scripts/verify-dist.mjs y checkPairs).
+ * Id convention: `<lang>:<key>`. `key` is stable across languages and is what
+ * pairs the two versions up; the build fails if a key exists in one language
+ * and not in the other (see scripts/verify-dist.mjs and checkPairs).
  */
 
 const lang = z.enum(LANGS)
 
-/** ISO corta: YYYY-MM. Permite calcular duraciones en build sin ambigüedad. */
+/** Short ISO: YYYY-MM. It allows durations to be computed at build time unambiguously. */
 const yearMonth = z
   .string()
-  .regex(/^\d{4}-\d{2}$/, 'Debe ser YYYY-MM')
+  .regex(/^\d{4}-\d{2}$/, 'Must be YYYY-MM')
 
 const link = z.object({
   label: z.string().min(1),
@@ -31,16 +31,16 @@ const profile = defineCollection({
     key: z.literal('ruben'),
     lang,
     name: z.string().min(1),
-    /** Título real del puesto. Va a Person.jobTitle. */
+    /** The real job title. Feeds Person.jobTitle. */
     jobTitle: z.string().min(1),
-    /** Posicionamiento de marca. Nunca sustituye a jobTitle. */
+    /** Brand positioning. It never replaces jobTitle. */
     positioning: z.string().min(1),
     locality: z.string().min(1),
     region: z.string().min(1),
     country: z.string().length(2),
     email: z.string().email(),
-    /** Dos niveles desde una única fuente. */
-    /** Frase de posicionamiento de la V2, escrita desde cero. */
+    /** Two levels from a single source. */
+    /** The V2's positioning line, written from scratch. */
     headline: z.string().min(1),
     bioShort: z.string().min(1),
     bioLong: z.string().min(1),
@@ -56,7 +56,7 @@ const profile = defineCollection({
     contactHeadline: z.string().min(1),
     contactSubheadline: z.string().min(1),
     languages: z.array(z.object({ name: z.string(), level: z.string() })).min(1),
-    /** Solo /cv/. */
+    /** /cv/ only. */
     cvOnly: z.object({
       availability: z.string().min(1),
       referencesNote: z.string().min(1),
@@ -85,11 +85,11 @@ const experience = defineCollection({
     location: z.string().optional(),
     mode: z.string().optional(),
     start: yearMonth,
-    /** null = puesto actual; la duración se calcula en build. */
+    /** null = current role; the duration is computed at build time. */
     end: yearMonth.nullable(),
-    /** Resumen corto: es lo que muestra Work en la V1. */
+    /** Short summary: what Work displays on the V1. */
     summary: z.string().min(1),
-    /** Detalle granular: lo consume /cv/, no la V1. */
+    /** Granular detail: consumed by /cv/, not by the V1. */
     bullets: z.array(z.string().min(1)).min(1),
     tech: z.array(z.string()).default([]),
     practices: z.array(z.string()).default([]),
@@ -110,17 +110,17 @@ const projects = defineCollection({
       status: z.string().min(1),
       badge: z.enum(['live', 'private', 'coming-soon']),
       featured: z.boolean().default(false),
-      /** Aparece en /cv/ como proyecto propio, nunca como experiencia. */
+      /** Shows up on /cv/ as a project of its own, never as experience. */
       inCv: z.boolean().default(false),
       tech: z.array(z.string()).default([]),
       domains: z.array(z.string()).default([]),
       link: z.string().url().optional(),
       github: z.string().url().optional(),
-      /** Portada real del proyecto. Optimizada vía astro:assets, no un string suelto. */
+      /** The project's real cover. Optimised via astro:assets, not a loose string. */
       image: image().optional(),
       imageAlt: z.string().optional(),
       publication: link.optional(),
-      /** Profundidad que antes vivía en la sección Research. */
+      /** Depth that used to live in the Research section. */
       deep: z
         .object({
           highlights: z.array(z.string().min(1)).min(1),
@@ -147,9 +147,9 @@ const education = defineCollection({
     start: yearMonth,
     end: yearMonth.nullable(),
     /**
-     * Etiqueta visible del periodo. Existe porque las fuentes originales
-     * daban solo años para los ciclos formativos: se muestra lo que se sabe
-     * y `start`/`end` quedan para ordenar, sin inventar meses.
+     * Visible label for the period. It exists because the original sources gave
+     * only years for the vocational degrees: what is known gets shown, and
+     * `start`/`end` are left to sort by, without inventing months.
      */
     periodLabel: z.string().min(1),
     inProgress: z.boolean().default(false),
@@ -171,7 +171,7 @@ const certs = defineCollection({
     order: z.number().int(),
     title: z.string().min(1),
     issuer: z.string().min(1),
-    /** Qué acredita, en una frase. Vivía escrito dentro de About.astro. */
+    /** What it certifies, in one sentence. Used to be written inside About.astro. */
     summary: z.string().min(1),
     date: yearMonth,
     credentialId: z.string().optional(),
@@ -183,9 +183,9 @@ const certs = defineCollection({
 })
 
 /**
- * Activo con etiquetas cortas localizadas: un solo fichero por elemento,
- * no ficheros paralelos por idioma. `tier` refleja la clasificación por
- * evidencia acordada en la reconciliación.
+ * An asset with short localised labels: one file per item, not parallel files
+ * per language. `tier` reflects the evidence-based classification agreed during
+ * the reconciliation.
  */
 const stack = defineCollection({
   loader: file('src/content/stack.json'),
@@ -201,12 +201,12 @@ const stack = defineCollection({
 })
 
 /**
- * Archivo personal de la V2. Activo con etiquetas cortas localizadas:
- * un fichero por fotografía, no ficheros paralelos por idioma — la imagen
- * es la misma y solo cambian alt y caption.
+ * The V2's personal archive. An asset with short localised labels: one file per
+ * photograph, not parallel files per language — the image is the same and only
+ * alt and caption change.
  *
- * `alt` es obligatorio. `location` se localiza y se guarda a nivel de ciudad: la
- * coordenada nunca entra, ni en el texto ni en el fichero.
+ * `alt` is mandatory. `location` is localised and kept at city level: the
+ * coordinate never comes in, neither in the text nor in the file.
  */
 const personal = defineCollection({
   loader: file('src/content/personal.json'),
@@ -225,16 +225,16 @@ const personal = defineCollection({
 })
 
 /**
- * Archivo de teclados montados a mano.
+ * Archive of hand-built keyboards.
  *
- * El explorador de builds era markup: la foto, el orden de montaje, los
- * colores del modelo y la ficha técnica estaban escritos dentro del
- * componente. Aquí cada build es un dato, así que añadir el segundo teclado
- * es una entrada más en este fichero y no una cirugía sobre el HTML.
+ * The build explorer used to be markup: the photo, the assembly order, the
+ * model's colours and the spec sheet were written inside the component. Here
+ * each build is data, so adding the second keyboard is one more entry in this
+ * file and not surgery on the HTML.
  *
- * `z` y `exploded` son la altura de la capa en el modelo 3D, montada y
- * separada, en píxeles del propio modelo. El orden de la lista es el orden
- * real de ensamblaje, de arriba abajo.
+ * `z` and `exploded` are the layer's height in the 3D model, assembled and
+ * pulled apart, in the model's own pixels. The list's order is the real
+ * assembly order, top to bottom.
  */
 const keyboards = defineCollection({
   loader: file('src/content/keyboards.json'),
@@ -244,12 +244,12 @@ const keyboards = defineCollection({
       order: z.number().int(),
       name: z.string().min(1),
       status: z.enum(['complete', 'scaffold', 'planning']).default('complete'),
-      /** El montaje físico puede seguir en curso aunque el modelo ya esté documentado. */
+      /** The physical build can still be in progress even once the model is documented. */
       buildInProgress: z.boolean().default(false),
       layout: z.enum(['ansi65', 'hhkb', 'evo75', 'corne']).default('ansi65'),
-      /** Build del que toma las capas mientras se prepara su modelo definitivo. */
+      /** The build it borrows its layers from while its own model is being prepared. */
       modelTemplate: z.string().min(1).optional(),
-      /** Resumen de una línea: tamaño, montaje y conexión. */
+      /** One-line summary: size, mounting style and connection. */
       summary: z.object({ en: z.string().min(1), es: z.string().min(1) }),
       photos: z
         .array(
@@ -266,12 +266,12 @@ const keyboards = defineCollection({
             id: z.string().min(1),
             label: z.object({ en: z.string().min(1), es: z.string().min(1) }),
             spec: z.object({ en: z.string().min(1), es: z.string().min(1) }),
-            /** Muestra de color del listado y tinte de la capa en el modelo. */
+            /** The listing's colour swatch and the layer's tint in the model. */
             color: z.string().regex(/^#[0-9a-f]{6}$/i),
             /**
-             * De dónde sale la pieza: tienda, ficha del fabricante o reseña.
-             * Sin él, la fila no muestra enlace. El rótulo es un nombre
-             * propio, así que no se traduce.
+             * Where the part comes from: shop, manufacturer page or review.
+             * Without it the row shows no link. The label is a proper name, so
+             * it is not translated.
              */
             source: z.object({ label: z.string().min(1), href: z.string().url() }).optional(),
             z: z.number(),
@@ -280,33 +280,33 @@ const keyboards = defineCollection({
         )
         .default([]),
       /**
-       * Muestra de sonido del build.
+       * The build's sound sample.
        *
-       * Las tres tomas se cortan igual: los mismos tres chasquidos de dedos
-       * al principio, normalizados al mismo pico de referencia, y a partir
-       * de ahí el tecleo. Lo que cambia entre una muestra y otra es el
-       * teclado, así que los niveles se pueden comparar entre sí.
+       * The three takes are cut the same way: the same three finger snaps at
+       * the start, normalised to the same reference peak, and the typing from
+       * there on. What changes between one sample and the next is the keyboard,
+       * so the levels can be compared with each other.
        *
-       * Sin este bloque el build sale en el banco como pendiente de grabar.
+       * Without this block the build shows up on the bench as not yet recorded.
        */
       sound: z
         .object({
-          /** Nombre del fichero en /keyboards/sound/, sin extensión. */
+          /** The file's name under /keyboards/sound/, without extension. */
           clip: z.string().min(1),
           duration: z.number().positive(),
-          /** Segundo en el que entra el tecleo: antes solo va la referencia. */
+          /** The second the typing starts: before it there is only the reference. */
           typingFrom: z.number().nonnegative(),
-          /** RMS del tecleo en dBFS, medido después de los chasquidos. */
+          /** RMS of the typing in dBFS, measured after the snaps. */
           level: z.number().negative(),
-          /** Cómo suena, en una línea. */
+          /** How it sounds, in one line. */
           character: z.object({ en: z.string().min(1), es: z.string().min(1) }),
           /**
-           * Apuntes de la mascota sobre por qué este build suena así.
+           * The mascot's notes on why this build sounds the way it does.
            *
-           * Solo lo llevan los teclados montados buscando el silencio, que son
-           * los que tienen algo que contar al respecto. Sin este bloque la
-           * ficha no asoma a nadie: el adorno depende del contenido, no al
-           * revés. Las dos listas han de tener el mismo número de apuntes.
+           * Only the keyboards built chasing silence carry them, since they are
+           * the ones with something to say about it. Without this block nobody
+           * peeks out of the card: the ornament depends on the content, not the
+           * other way round. Both lists must hold the same number of notes.
            */
           quips: z
             .object({
@@ -314,18 +314,18 @@ const keyboards = defineCollection({
               es: z.array(z.string().min(1)).min(2),
             })
             .refine((q) => q.en.length === q.es.length, {
-              message: 'quips: cada apunte necesita sus dos idiomas',
+              message: 'quips: every note needs both of its languages',
             })
             .optional(),
           /**
-           * Envolvente ya calculada en build: una altura 0–100 por barra, en
-           * escala de decibelios y con el mismo suelo para las tres muestras.
-           * Se dibuja tal cual, así que el cliente no decodifica nada.
+           * Envelope already computed at build time: one 0–100 height per bar,
+           * on a decibel scale and with the same floor for all three samples.
+           * It is drawn as-is, so the browser decodes nothing.
            */
           peaks: z.array(z.number().int().min(0).max(100)).length(160),
         })
         .optional(),
-      /** Ficha técnica del panel lateral. Pares etiqueta/valor, en orden. */
+      /** Spec sheet for the side panel. Label/value pairs, in order. */
       specs: z
         .array(
           z.object({
@@ -337,13 +337,13 @@ const keyboards = defineCollection({
     }),
 })
 
-/** Metadata SEO por página e idioma. Un título y una descripción únicos. */
+/** SEO metadata per page and language. One unique title and description. */
 const pages = defineCollection({
   loader: file('src/content/pages.json'),
   schema: z.object({
     key: z.string().min(1),
     lang,
-    /** Ruta con barra inicial y final. Debe coincidir con la URL generada. */
+    /** Path with leading and trailing slash. It must match the generated URL. */
     path: z.string().regex(/^\/([a-z0-9/-]*\/)?$/),
     title: z.string().min(1).max(70),
     description: z.string().min(50).max(180),

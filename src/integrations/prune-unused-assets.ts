@@ -4,31 +4,30 @@ import { fileURLToPath } from 'node:url'
 import type { AstroIntegration } from 'astro'
 
 /**
- * Poda de los originales que el empaquetado emite pero nadie pide.
+ * Pruning of the originals the bundler emits but nobody requests.
  *
- * Cada imagen de `src/assets/` entra en el grafo como un módulo, así que
- * Vite copia el fichero original a `_astro/` además de los cortes que
- * `astro:assets` genera de verdad. El HTML solo enlaza los cortes: el
- * original se queda en el artefacto de despliegue sin que ninguna página lo
- * llegue a pedir jamás — más de 20 MB en este sitio, todo en fotografías
- * que ya viajan optimizadas por otro lado.
+ * Every image under `src/assets/` enters the graph as a module, so Vite copies
+ * the original file into `_astro/` on top of the cuts `astro:assets` actually
+ * generates. The HTML only links the cuts: the original stays in the deployment
+ * artifact without a single page ever asking for it — over 20 MB on this site,
+ * all of it photographs that already travel optimised by another route.
  *
- * Al terminar el build se recogen todos los nombres de fichero citados en
- * la salida de texto —HTML, CSS, JS, sitemap, manifest— y se borra de
- * `_astro/` la imagen que no cita nadie.
+ * Once the build finishes, every file name quoted in the textual output — HTML,
+ * CSS, JS, sitemap, manifest — is collected, and any image nobody quotes is
+ * deleted from `_astro/`.
  *
- * Tres cercos deliberados para que esto no pueda borrar de más:
- *   1. Solo mira dentro del directorio de assets generados. Lo que viene de
- *      `public/` se copia tal cual y no se toca nunca.
- *   2. Solo borra formatos de imagen: el resto de `_astro/` es código.
- *   3. Solo borra si el nombre exacto del fichero no aparece en ninguna
- *      parte de la salida.
+ * Three deliberate fences so this can never delete too much:
+ *   1. It only looks inside the generated assets directory. Anything coming
+ *      from `public/` is copied as-is and never touched.
+ *   2. It only deletes image formats: the rest of `_astro/` is code.
+ *   3. It only deletes when the file's exact name appears nowhere in the
+ *      output.
  */
 
-/** Ficheros donde puede vivir la referencia a un asset. */
+/** Files where a reference to an asset can live. */
 const TEXT_OUTPUT = /\.(html|css|js|mjs|xml|json|txt|webmanifest)$/
 
-/** Solo se poda imagen: el resto de `_astro/` es código y siempre se enlaza. */
+/** Only images are pruned: the rest of `_astro/` is code and is always linked. */
 const PRUNABLE_IMAGE = /\.(png|jpe?g|webp|avif|gif|tiff?|svg)$/i
 
 async function walk(dir: string): Promise<string[]> {
@@ -74,7 +73,7 @@ export default function pruneUnusedAssets(): AstroIntegration {
         }
 
         if (orphans.length > 0) {
-          logger.info(`podados ${orphans.length} originales sin referenciar (${megabytes(bytes)})`)
+          logger.info(`pruned ${orphans.length} unreferenced originals (${megabytes(bytes)})`)
         }
       },
     },

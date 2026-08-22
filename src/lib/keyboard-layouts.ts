@@ -1,13 +1,13 @@
 /**
- * Distribuciones de teclado y geometría del modelo por capas.
+ * Keyboard layouts and the layered model's geometry.
  *
- * Cada modelo se declara una vez, fila a fila, en unidades de tecla: es la
- * misma unidad con la que se describe un teclado real, así que la tabla se
- * puede contrastar con la unidad física sin traducir nada. De ahí salen tanto
- * la lista de teclas que dibuja cada capa como la hoja de posiciones.
+ * Each model is declared once, row by row, in key units: the same unit a real
+ * keyboard is described in, so the layout can be checked against the physical
+ * unit without translating anything. Both the list of keys every layer draws
+ * and the sheet of positions come out of it.
  *
- * Vive fuera del componente porque son datos, no vista: la tabla del EVO75 no
- * cambia porque cambie el marcado que la pinta.
+ * It lives outside the component because it is data, not view: the EVO75's rows
+ * do not change because the markup that paints them changes.
  */
 
 type KeyVariant =
@@ -100,10 +100,10 @@ const ANSI65_ROWS: KeyRow[] = [
 ]
 
 /**
- * Distribución HHKB US de 60 teclas. La mezcla reproduce la unidad real:
- * alfas y espacio Wasabi; fila numérica y modificadores principalmente Snow.
- * El set es blank salvo por las doce teclas numéricas, que llevan símbolo,
- * carácter principal y la función F1–F12 impresa en el frente.
+ * The 60-key HHKB US layout. The mix reproduces the real unit: Wasabi alphas
+ * and spacebar; number row and modifiers mostly Snow. The set is blank except
+ * for the twelve number keys, which carry a symbol, a main character and the
+ * F1–F12 function printed on the front.
  */
 const HHKB_ROWS: KeyRow[] = [
   { keys: [
@@ -130,8 +130,8 @@ const HHKB_ROWS: KeyRow[] = [
 ]
 
 /**
- * Distribución ANSI de 80 teclas del EVO75. Los huecos reproducen la fila F,
- * el bloque de navegación y las flechas separados que aparecen en la unidad.
+ * The EVO75's 80-key ANSI layout. The gaps reproduce the separated F row,
+ * navigation block and arrow cluster the real unit has.
  */
 const EVO75_ROWS: KeyRow[] = [
   { keys: [[1, 'Esc', 'evo-red'], [1, 'F1', 'evo-grey', .75], [1, 'F2', 'evo-grey'], [1, 'F3', 'evo-grey'], [1, 'F4', 'evo-grey'], [1, 'F5', 'evo-grey', .25], [1, 'F6', 'evo-grey'], [1, 'F7', 'evo-grey'], [1, 'F8', 'evo-grey'], [1, 'F9', 'evo-grey', .25], [1, 'F10', 'evo-grey'], [1, 'F11', 'evo-grey'], [1, 'F12', 'evo-grey'], [1, 'Del', 'evo-red', .75]] },
@@ -142,7 +142,7 @@ const EVO75_ROWS: KeyRow[] = [
   { keys: [[1.25, 'Ctrl', 'evo-grey'], [1.25, 'Super', 'evo-grey'], [1.25, 'Alt', 'evo-grey'], [6.25, '', 'evo-white'], [1.25, 'Alt', 'evo-grey'], [1.25, 'Fn', 'evo-grey'], [1, '←', 'evo-grey', .75], [1, '↓', 'evo-grey'], [1, '→', 'evo-grey']] },
 ]
 
-/** Corne estándar 3×6 + 3 por mitad, con stagger y pulgares espejados. */
+/** Standard Corne, 3×6 + 3 per half, with column stagger and mirrored thumbs. */
 const CORNE_ROWS: KeyRow[] = [
   { keys: [[1, '', 'corne-white', 0, .35], [1, '', 'corne-white', 0, .35], [1, '', 'corne-white', 0, .05], [1, '', 'corne-white', 0, -.15], [1, '', 'corne-white', 0, .05], [1, '', 'corne-white', 0, .3], [1, '', 'corne-white', 3.5, .3], [1, '', 'corne-white', 0, .05], [1, '', 'corne-white', 0, -.15], [1, '', 'corne-white', 0, .05], [1, '', 'corne-white', 0, .35], [1, '', 'corne-white', 0, .35]] },
   { keys: [[1, '', 'corne-white', 0, .35], [1, '', 'corne-white', 0, .35], [1, '', 'corne-white', 0, .05], [1, '', 'corne-white', 0, -.15], [1, '', 'corne-white', 0, .05], [1, '', 'corne-white', 0, .3], [1, '', 'corne-white', 3.5, .3], [1, '', 'corne-white', 0, .05], [1, '', 'corne-white', 0, -.15], [1, '', 'corne-white', 0, .05], [1, '', 'corne-white', 0, .35], [1, '', 'corne-white', 0, .35]] },
@@ -168,13 +168,13 @@ export const modelKeys = ({ rows }: Layout) =>
     })
   })
 
-/** Cuatro decimales: sobre un modelo de 502 px son cinco milésimas de píxel. */
+/** Four decimals: on a 502 px model that is five thousandths of a pixel. */
 const percent = (value: number) => `${Number(value.toFixed(4))}%`
 
-/** Nombre estable de la posición: lo comparten todas las capas del modelo. */
+/** The position's stable name: every layer of the model shares it. */
 export const keyClass = (index: number) => `bx-k${index}`
 
-/** Nombre de un modelo. Es el mismo vocabulario que valida el esquema. */
+/** A model's name. The same vocabulary the schema validates against. */
 type LayoutName = keyof typeof MODEL_LAYOUTS
 type Layout = typeof MODEL_LAYOUTS[LayoutName]
 
@@ -191,23 +191,23 @@ const layoutGeometry = (name: LayoutName, layout: Layout) => {
 }
 
 /**
- * Geometría de las teclas, emitida como hoja de estilo y no como atributo
- * `style` por elemento.
+ * The keys' geometry, emitted as a stylesheet rather than as a per-element
+ * `style` attribute.
  *
- * Cada modelo dibuja las mismas teclas en todas sus capas —el hueco de la
- * espuma, el socket de la PCB, el switch, la tecla—, así que la posición de
- * la tecla 12 del EVO75 se repetía idéntica una decena de veces por panel y
- * con toda su precisión en coma flotante. Eran 1.486 atributos y 213 kB de
- * HTML para decir tres números por tecla. Aquí cada posición se escribe una
- * vez por modelo y el elemento se limita a nombrarla.
+ * Every model draws the same keys on all of its layers — the foam cut-out, the
+ * PCB socket, the switch, the keycap — so the position of the EVO75's key 12
+ * repeated identically a dozen times per panel, at full floating-point
+ * precision. That was 1,486 attributes and 213 kB of HTML to state three
+ * numbers per key. Here each position is written once per model and the element
+ * merely names it.
  *
- * Solo viajan los tres valores que distinguen una tecla de otra: la altura de
- * fila es constante dentro de un modelo, así que se declara una vez en el
- * panel y el CSS deriva de ella la altura de la tecla, del switch y del
- * socket en lugar de recibirlas ya multiplicadas.
+ * Only the three values that tell one key from another travel: row height is
+ * constant within a model, so it is declared once on the panel and the CSS
+ * derives the keycap's, the switch's and the socket's heights from it instead
+ * of receiving them pre-multiplied.
  *
- * Solo entran los modelos pedidos: un build que nadie usa no deja reglas
- * sueltas en la página.
+ * Only the requested models come in: a build nobody uses leaves no stray rules
+ * on the page.
  */
 export const keyGeometry = (names: LayoutName[]) =>
   [...new Set(names)].map((name) => layoutGeometry(name, MODEL_LAYOUTS[name])).join('')

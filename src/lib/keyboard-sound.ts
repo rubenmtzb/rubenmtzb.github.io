@@ -1,16 +1,16 @@
 /**
- * Geometría de la envolvente de las muestras de sonido.
+ * Geometry of the sound samples' envelope.
  *
- * La envolvente viaja ya calculada desde el contenido —una altura por barra,
- * en escala de decibelios y con el mismo suelo para las tres tomas— así que
- * aquí solo se convierte en geometría. El cliente no decodifica
- * audio ni mide nada en tiempo real: pinta un trazo y desplaza un recorte
- * por encima conforme avanza la reproducción.
+ * The envelope arrives already computed from the content — one height per bar,
+ * on a decibel scale and with the same floor across all three takes — so all
+ * that happens here is turning it into geometry. The browser decodes no audio
+ * and measures nothing at runtime: it paints a stroke and slides a clip over it
+ * as playback advances.
  *
- * Las 160 barras salen en un único `path` de segmentos verticales en lugar de
- * un elemento por barra. Con el trazo redondeado cada segmento se ve como una
- * barra, y el silencio —un segmento de altura mínima— queda en una línea a
- * media altura en vez de en un hueco.
+ * The 160 bars come out as a single `path` of vertical segments rather than one
+ * element per bar. With a rounded cap each segment reads as a bar, and silence
+ * — a segment of minimum height — lands as a line at mid-height instead of a
+ * gap.
  */
 
 const WAVE_STEP = 3
@@ -18,18 +18,18 @@ const WAVE_HEIGHT = 100
 const WAVE_FLOOR = 2
 
 /**
- * La escala en decibelios deja el pico real por debajo del techo de la caja,
- * así que se estira hasta que la barra más alta lo toca. La ganancia se saca
- * del conjunto de las tomas y no de cada una: las alturas siguen midiéndose
- * con la misma vara —que es lo que las hace comparables entre teclados— y se
- * recalcula sola si mañana entra otra muestra.
+ * The decibel scale leaves the real peak below the box's ceiling, so it is
+ * stretched until the tallest bar touches it. The gain is taken from all the
+ * takes together and not from each one: the heights keep being measured with
+ * the same yardstick — which is what makes them comparable between keyboards —
+ * and it recomputes itself the day another sample arrives.
  */
-/** Trazo de la envolvente, con la ganancia común a todas las muestras. */
+/** The envelope's stroke, with the gain shared by every sample. */
 export type Waveform = ReturnType<typeof createWaveform>
 
 export function createWaveform(allPeaks: number[][]) {
-  /* La ganancia sale del conjunto y no de cada toma: es lo que hace que las
-     alturas de dos teclados se puedan comparar entre sí. */
+  /* The gain comes from the set and not from each take: that is what makes two
+     keyboards' heights comparable with each other. */
   const gain = WAVE_HEIGHT / Math.max(1, ...allPeaks.flat())
 
   return {
@@ -45,9 +45,9 @@ export function createWaveform(allPeaks: number[][]) {
   }
 }
 
-/** El nivel es una medida: se escribe con signo menos, no con guion. */
+/** The level is a measurement: it takes a minus sign, not a hyphen. */
 export const dbfs = (level: number) => `${level.toFixed(1).replace('-', '\u2212')} dBFS`
 
-/** Duración en boca de reloj: los cortes no llegan al minuto, pero da igual. */
+/** Duration as a clock reads it. The clips never reach a minute, but still. */
 export const clock = (seconds: number) =>
   `${Math.floor(seconds / 60)}:${String(Math.round(seconds % 60)).padStart(2, '0')}`

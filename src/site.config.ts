@@ -1,39 +1,38 @@
 /**
- * Constantes compartidas por la configuración de Astro y por el sitio.
+ * Constants shared by the Astro config and by the site itself.
  *
- * Son los datos que tenían que coincidir entre ficheros que no se importaban
- * entre sí, así que estaban escritos dos y tres veces: el dominio vivía a la
- * vez en `astro.config.mjs` y en el generador de URLs absolutas, y la lista de
- * idiomas en `astro.config.mjs`, en el esquema de contenido y en i18n. Nada
- * ataba las copias; bastaba con cambiar una para que el resto mintiera en
- * silencio.
+ * These are the facts that had to agree across files that never imported each
+ * other, so they were written two and three times over: the domain lived both
+ * in `astro.config.mjs` and in the absolute-URL builder, and the locale list
+ * lived in `astro.config.mjs`, in the content schema and in i18n. Nothing tied
+ * the copies together — changing one was enough to leave the rest lying.
  *
- * Este módulo no importa nada a propósito: lo carga el config de Astro antes
- * de que exista `astro:content`, así que no puede depender de él.
+ * This module imports nothing on purpose: the Astro config loads it before
+ * `astro:content` exists, so it cannot depend on it.
  */
 
-/** Dominio canónico. De aquí salen el `site` de Astro y todas las URLs absolutas. */
+/** Canonical domain. Astro's `site` and every absolute URL come from here. */
 export const SITE = 'https://rubenitx.me'
 
-/** Idiomas del sitio. El primero es el que vive en la raíz, sin prefijo. */
+/** The site's locales. The first one lives at the root, with no prefix. */
 export const LANGS = ['en', 'es'] as const
 export type Lang = (typeof LANGS)[number]
 export const DEFAULT_LANG: Lang = LANGS[0]
 
 /**
- * Etiqueta BCP 47 de cada idioma, que es lo que piden Open Graph y compañía.
- * No es texto traducible sino el código del idioma, así que vive con el resto
- * del vocabulario y no en el diccionario de la interfaz.
+ * BCP 47 tag for each locale, which is what Open Graph and friends ask for.
+ * It is not translatable copy but the language code itself, so it lives with
+ * the rest of the vocabulary and not in the UI dictionary.
  */
 export const LOCALE_TAGS: Record<Lang, string> = { en: 'en_US', es: 'es_ES' }
 
 /**
- * Agrupación funcional del stack. El orden es el orden en que se pintan los
- * grupos, tanto en la V1 como en el CV.
+ * Functional grouping of the stack. The order here is the order the groups are
+ * painted in, both on V1 and on the CV.
  */
 export const STACK_GROUPS = ['backend', 'frontend', 'devops', 'data', 'practices'] as const
 export type StackGroup = (typeof STACK_GROUPS)[number]
 
-/** Nivel de evidencia de cada tecnología del stack. */
+/** How much evidence backs each technology in the stack. */
 export const STACK_TIERS = ['actual', 'historica', 'formacion', 'secundaria'] as const
 export type StackTier = (typeof STACK_TIERS)[number]
