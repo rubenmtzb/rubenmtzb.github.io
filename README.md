@@ -213,6 +213,7 @@ rubenmtzb.github.io/
 │   │   ├── v1/                    # Previous version, served at /v1/
 │   │   ├── v2/                    # Current portfolio
 │   │   │   └── keyboards/         # Build explorer: card, panel, model, sound
+│   │   │   └── about/             # Profile, education and certifications
 │   │   └── cv/                    # CV document
 │   ├── i18n/
 │   │   ├── ui.ts                  # Every UI string, in both languages
@@ -238,7 +239,8 @@ rubenmtzb.github.io/
 │       ├── global.css             # V1
 │       ├── v2.css                 # V2 — index of partials; the order is the cascade
 │       ├── v2/                    # One file per block: tokens, header, keyboard, …
-│       └── keyboard-explorer.css  # Build archive
+│       ├── keyboard-explorer.css  # Build archive — index of partials
+│       └── keyboard-explorer/     # One file per block of the archive
 └── astro.config.mjs
 ```
 
