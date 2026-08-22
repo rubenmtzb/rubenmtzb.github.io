@@ -43,6 +43,85 @@ const LEGACY_ANCHORS = ['stack', 'experience', 'projects', 'research', 'educatio
 const NAV_IDS = ['home', 'about', 'work', 'background', 'contact']
 const V2_IDS = ['identity', 'work', 'archive', 'contact']
 
+/**
+ * Términos editoriales que nunca deben cruzar de idioma. Se evitan palabras
+ * genéricas como nombres de tecnologías, cursos o publicaciones: Java,
+ * DevOps, Claude Code in Action y The Mutational Landscape son nombres
+ * propios y deben conservarse.
+ */
+const FORBIDDEN_BY_LANG = {
+  es: [
+    /Outside the Code/i,
+    /About Me/i,
+    /\bHobbies\b/i,
+    /\bShowcase\b/i,
+    /Profile & Mindset/i,
+    /Academic Foundations/i,
+    /Verified Credentials/i,
+    /Credential ID/i,
+    /Under construction/i,
+    /Coming Soon/i,
+    /Laboratory \/\/ Build Archive/i,
+    /\bBuild(?:s)?\b/i,
+    /\bArchive\b/i,
+    /\bStack\b/i,
+    /System Design/i,
+    /Clean Architecture/i,
+    /Smart Contracts/i,
+    /Batch Processing/i,
+    /Data Visualization/i,
+    /Prompt Engineering/i,
+    /\bownership\b/i,
+    /\brecruiters\b/i,
+    /customization/i,
+    /containerized/i,
+    /end-to-end/i,
+    /Full-Stack/i,
+    /\bKeycaps?\b/i,
+    /\bSwitch(?:es)?\b/i,
+    /\bFoam\b/i,
+    /\bCase\b/i,
+    /\bNetworking\b/i,
+    /\bIT Support\b/i,
+  ],
+  en: [
+    /Más allá del código/i,
+    /Sobre mí/i,
+    /\bAficiones\b/i,
+    /Selección destacada/i,
+    /Perfil y mentalidad/i,
+    /Fundamentos académicos/i,
+    /Credenciales verificadas/i,
+    /ID de credencial/i,
+    /En construcción/i,
+    /Próximamente/i,
+    /Laboratorio \/\/ Archivo/i,
+    /\bMontaje(?:s)?\b/i,
+    /\bArchivo\b/i,
+    /\bTecnologías\b/i,
+    /Diseño de sistemas/i,
+    /Arquitectura limpia/i,
+    /Contratos inteligentes/i,
+    /Procesamiento por lotes/i,
+    /Visualización de datos/i,
+    /Ingeniería de prompts/i,
+    /\bEspacio \/ W\b/i,
+    /\bCorreo\b/i,
+    /\bUbicación\b/i,
+    /\bDiapositiva\b/i,
+    /\bEjecutar\b/i,
+    /Red profesional/i,
+    /\bRepositorios\b/i,
+    /\bActualidad\b/i,
+    /En curso/i,
+    /\bEspaña\b/i,
+    /\bLondres\b/i,
+    /Reino Unido/i,
+    /\bRoma\b/i,
+    /\bItalia\b/i,
+  ],
+}
+
 let failures = 0
 let checks = 0
 const fail = (msg) => { failures++; console.error(`  ✗ ${msg}`) }
@@ -223,8 +302,24 @@ for (const page of EXPECTED) {
   const langLink = [...noJs.querySelectorAll('a[rel=alternate][hreflang]')]
   assert(langLink.length >= 1, 'selector de idioma es un enlace real')
 
+  // 13. El texto visible y el accesible pertenecen al idioma de la página.
+  // Los scripts y estilos ya se han retirado para no confundir código interno
+  // con contenido que una persona o un lector de pantalla sí recibe.
+  const accessibleText = [...noJs.querySelectorAll('[aria-label], [title], [placeholder]')]
+    .flatMap((element) => ['aria-label', 'title', 'placeholder'].map((name) => element.getAttribute(name)))
+    .filter(Boolean)
+    .join(' ')
+  const localeSurface = `${text} ${accessibleText}`
+  const leaks = FORBIDDEN_BY_LANG[page.lang]
+    .map((pattern) => localeSurface.match(pattern)?.[0])
+    .filter(Boolean)
+  assert(
+    leaks.length === 0,
+    `contenido y accesibilidad íntegramente en ${page.lang}${leaks.length ? ` — mezclas: ${[...new Set(leaks)].join(', ')}` : ''}`,
+  )
+
   /*
-   * 13. La marca `js` es la que oculta el revelado hasta que hay JavaScript
+   * 14. La marca `js` es la que oculta el revelado hasta que hay JavaScript
    * para devolverlo. Ninguna página puede declararla sin traer también la red
    * que lo revela si el bundle no llega a ejecutarse: sin ella, un fichero
    * perdido deja la portada en blanco.
@@ -262,11 +357,63 @@ for (const c of Object.values(CLUSTERS)) {
   assert(sm.includes(`hreflang="x-default" href="${abs(c.xDefault)}"`), `alternativas x-default para ${c.xDefault}`)
 }
 
+/* ---------- Paridad entre versiones lingüísticas ---------- */
+/*
+ * Las dos versiones de una página cuentan lo mismo en otro idioma, así que
+ * tienen que ofrecer lo mismo: los mismos enlaces, los mismos botones, las
+ * mismas imágenes y los mismos controles. El texto cambia y el reparto de
+ * `<span>` puede cambiar con él —una frase en castellano no tiene las mismas
+ * palabras que en inglés—, pero una acción que existe en una y no en la otra
+ * es siempre un fallo.
+ *
+ * Este contrato nace de uno real: una etiqueta de tecnología escrita ya
+ * traducida en el contenido no encontraba su ficha en el registro, y la versión
+ * castellana perdía en silencio un enlace y un logotipo que la inglesa sí
+ * mostraba. Nada lo detectaba.
+ */
+console.log('\n· Paridad de idiomas')
+const AFFORDANCES = ['a[href]', 'button', 'img', 'input', 'audio', 'picture', 'source', 'svg', 'details', 'form']
+const PAIRS = [
+  ['index.html', 'es/index.html'],
+  ['cv/index.html', 'es/cv/index.html'],
+  ['work/sars-cov-2/index.html', 'es/work/sars-cov-2/index.html'],
+  ['v1/index.html', 'v1/es/index.html'],
+]
+for (const [enFile, esFile] of PAIRS) {
+  const en = parseHTML(read(enFile)).document
+  const es = parseHTML(read(esFile)).document
+  const gaps = AFFORDANCES
+    .map((selector) => ({
+      selector,
+      en: en.querySelectorAll(selector).length,
+      es: es.querySelectorAll(selector).length,
+    }))
+    .filter((count) => count.en !== count.es)
+  assert(
+    gaps.length === 0,
+    `${enFile} y ${esFile} ofrecen lo mismo${gaps.length ? ` — difieren: ${gaps.map((g) => `${g.selector} ${g.en}/${g.es}`).join(', ')}` : ''}`,
+  )
+}
+
 /* ---------- Compatibilidad: URLs y assets que no pueden desaparecer ---------- */
 console.log('\n· Compatibilidad')
 // GitHub Pages sirve /404.html en cualquier ruta inexistente.
 assert(existsSync(join(DIST, '404.html')), '/404.html presente')
-assert(read('404.html').includes('noindex'), 'el 404 va noindex')
+const notFound = read('404.html')
+assert(notFound.includes('noindex'), 'el 404 va noindex')
+assert(
+  notFound.includes('This route does not resolve.')
+    && notFound.includes('Esta ruta no existe.')
+    && notFound.includes("document.documentElement.lang = 'es'"),
+  'el 404 adapta idioma y contenido cuando la ruta pertenece a /es/',
+)
+/* Se comprueban las rutas, no cómo estén escritas: el contrato es que las tres
+   vías de vuelta existan en castellano, no la forma del script que las pone. */
+const spanishRoutes = ["'/es/'", "'/es/cv/'", "'/v1/es/'"].filter((route) => !notFound.includes(route))
+assert(
+  spanishRoutes.length === 0,
+  `el 404 castellano conserva sus tres rutas de recuperación${spanishRoutes.length ? ` — falta ${spanishRoutes.join(', ')}` : ''}`,
+)
 for (const asset of [
   'cv/CV_RubenMartinez_EN.pdf',
   'cv/CV_RubenMartinez_ES.pdf',

@@ -22,8 +22,40 @@ import { parseHTML } from 'linkedom'
 
 const DIST = 'dist'
 const PAGES = [
-  { file: 'index.html', lang: 'en', soundOff: 'Sound disabled', soundOn: 'Sound enabled' },
-  { file: 'es/index.html', lang: 'es', soundOff: 'Sonido desactivado', soundOn: 'Sonido activado' },
+  {
+    file: 'index.html',
+    lang: 'en',
+    soundOff: 'Sound disabled',
+    soundOn: 'Sound enabled',
+    speedTrialLabel: 'Speed Trial',
+    speedTrialStarts: [
+      'lightning never',
+      'assassination techniques',
+      'distributed systems',
+      'mechanical switches',
+      'hunter license',
+      'typesafe functional',
+      'nobody can',
+      'always keep',
+    ],
+  },
+  {
+    file: 'es/index.html',
+    lang: 'es',
+    soundOff: 'Sonido desactivado',
+    soundOn: 'Sonido activado',
+    speedTrialLabel: 'Prueba de velocidad',
+    speedTrialStarts: [
+      'los rayos',
+      'las tecnicas',
+      'los sistemas',
+      'los interruptores',
+      'la licencia de',
+      'las arquitecturas',
+      'nadie reacciona',
+      'manten tu',
+    ],
+  },
 ]
 
 const bundleName = readdirSync(join(DIST, '_astro'))
@@ -264,7 +296,32 @@ function suite(page, dom) {
   const panels = all('[data-profile-panel]')
   fire(files[1], 'click')
   check(panels[1].hidden === false && panels[0].hidden === true, 'cambiar de fichero cambia el panel')
-  check(el('profile-tab-label').textContent === 'engineering.md', 'la etiqueta de la pestaña se actualiza')
+  check(
+    el('profile-tab-label').textContent === (page.lang === 'es' ? 'ingenieria.md' : 'engineering.md'),
+    'la etiqueta de la pestaña se actualiza',
+  )
+
+  /*
+   * El marcador de posición enumera los comandos aceptados, así que se teclean
+   * exactamente esos: si alguno abriera otro panel, la caja estaría prometiendo
+   * algo que no cumple.
+   */
+  const runCommand = (value) => {
+    el('profile-command-input').value = value
+    fire(el('profile-command'), 'submit')
+    return el('profile-tab-label').textContent
+  }
+  const advertised = el('profile-command-input').getAttribute('placeholder')
+  const commands = advertised.replace(/^[^:]*:\s*/, '').split(',').map((c) => c.trim())
+  const expected = page.lang === 'es'
+    ? ['identidad.json', 'ingenieria.md', 'aprendizaje.log']
+    : ['identity.json', 'engineering.md', 'learning.log']
+  check(commands.length === 3, `el marcador anuncia tres comandos ("${advertised}")`)
+  commands.forEach((commandText, index) => {
+    check(runCommand(commandText) === expected[index],
+      `"${commandText}" abre ${expected[index]}`)
+  })
+  fire(files[0], 'click')
 
   console.log('\n· Titular con máquina de escribir')
   const typed = el('hero-typewriter')
@@ -277,6 +334,14 @@ function suite(page, dom) {
   check(spans().filter((s) => s.classList.contains('current')).length === 1, 'hay exactamente un cursor')
 
   const quote = spans().map((s) => s.textContent).join('')
+  check(
+    page.speedTrialStarts.some((start) => quote.startsWith(start)),
+    `la frase de prueba corresponde al idioma ${page.lang} ("${quote}")`,
+  )
+  check(
+    el('kb-tab-speed').textContent.includes(page.speedTrialLabel),
+    `el modo de velocidad usa la etiqueta ${page.lang} ("${el('kb-tab-speed').textContent.trim()}")`,
+  )
   key('keydown', { code: 'KeyX', key: quote[0], target: el('monkey-box') })
   check(spans()[0].classList.contains('correct'), 'la primera letra correcta se marca como acertada')
   check(spans()[1].classList.contains('current'), 'el cursor avanza')
@@ -392,12 +457,13 @@ function suite(page, dom) {
     && buildCards.filter((card) => card.classList.contains('is-scaffold')).length === 0
     && buildCards.filter((card) => card.classList.contains('is-planning')).length === 0,
   'el archivo presenta tres builds terminados y el Corne V4 en construcción')
-  check(buildRoot.querySelector('[data-bx-status]').textContent.includes('04 BUILDS')
-    && buildRoot.querySelector('[data-bx-status]').textContent.includes('03 COMPLETE'),
+  const archiveStatus = buildRoot.querySelector('[data-bx-status]').textContent.toUpperCase()
+  check(archiveStatus.includes(page.lang === 'es' ? '04 MONTAJES' : '04 BUILDS')
+    && archiveStatus.includes(page.lang === 'es' ? '03 COMPLETOS' : '03 COMPLETED'),
   'la cabecera distingue el total de builds de los ya terminados')
   check(corneCard.classList.contains('is-in-progress')
     && corneCard.textContent.includes(page.lang === 'es' ? 'EN CONSTRUCCIÓN' : 'BUILD IN PROGRESS')
-    && !corneCard.textContent.includes(page.lang === 'es' ? 'BUILD REAL' : 'REAL BUILD'),
+    && !corneCard.textContent.includes(page.lang === 'es' ? 'MONTAJE REAL' : 'REAL BUILD'),
   'la tarjeta Corne comunica que el montaje físico sigue en construcción')
   check(hhkbCarousel.querySelectorAll('[data-bx-card-slide]').length === 1
     && hhkbCarousel.querySelector('[data-bx-card-prev]') === null
@@ -459,6 +525,23 @@ function suite(page, dom) {
   fire(firstBuildPart, 'click')
   check(buildRoot.classList.contains('has-active') && firstBuildPart.getAttribute('aria-pressed') === 'true',
     'seleccionar una pieza la aísla y mantiene pulsado su control')
+
+  /*
+   * La lista de piezas es un índice compacto y no enseña la especificación: la
+   * enseña el chip del modelo al elegir la capa. Cuando el `<small>` que la
+   * contenía desapareció del marcado, el chip se quedó en blanco sin que nada
+   * lo dijera, así que aquí se comprueba que el dato llega de verdad.
+   */
+  const chipSpec = () => document.querySelector('[data-bx-build]:not([hidden]) [data-bx-chip-spec]').textContent.trim()
+  const chipLabel = () => document.querySelector('[data-bx-build]:not([hidden]) [data-bx-chip-label]').textContent.trim()
+  const openParts = [...document.querySelectorAll('[data-bx-build]:not([hidden]) [data-bx-part-button]')]
+  check(openParts.every((part) => (part.dataset.bxPartSpec ?? '').trim().length > 0),
+    `las ${openParts.length} piezas del build llevan su especificación en el marcado`)
+  const named = openParts.find((part) => part !== firstBuildPart) ?? firstBuildPart
+  fire(named, 'click')
+  check(chipSpec() === named.dataset.bxPartSpec && chipLabel() === named.querySelector('strong').textContent,
+    `el chip describe la pieza elegida ("${chipLabel()} — ${chipSpec()}")`)
+  fire(named, 'click')
 
   const buildRange = document.querySelector('[data-bx-range]')
   const buildRangeOut = document.querySelector('[data-bx-range-out]')
