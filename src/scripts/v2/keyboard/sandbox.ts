@@ -1,12 +1,13 @@
-/* Modo libre: terminal de escritura y telemetría. */
-import { say } from '../dom'
-
 /**
- * Segundo modo del bloque de teclados: se escribe libremente y se ve el
+ * Modo libre: pizarra de escritura y telemetría.
+ *
+ * Segundo modo del bloque de teclados: se escribe libremente y se ven el
  * texto, las pulsaciones y una cadencia instantánea. No comparte estado con
  * el test de velocidad, así que se gobierna a sí mismo y solo expone las
  * cuatro cosas que el teclado necesita de él.
  */
+import { say } from '../dom'
+
 export function createFreeSandbox({ onEveryTenKeys, announce }: {
   onEveryTenKeys: () => void
   announce: (text: string) => void

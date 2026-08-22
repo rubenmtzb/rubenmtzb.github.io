@@ -12,7 +12,7 @@ const BX_TILT = { min: 24, max: 78, home: 56 }
 const BX_SPIN = { min: -84, max: 24, home: -29 }
 const BX_ZOOM = { min: .68, max: 1.65 }
 
-/** Un build abierto: sus elementos y el estado de su cámara y su despiece. */
+/** Lo que el explorador puede pedirle a un build abierto. */
 export type BuildPanel = ReturnType<typeof createBuildPanel>
 
 export function createBuildPanel(panel: HTMLElement, root: HTMLElement) {

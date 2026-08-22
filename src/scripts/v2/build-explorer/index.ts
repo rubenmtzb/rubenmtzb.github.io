@@ -37,7 +37,6 @@ export function initKeyboardBuildExplorer() {
       dots.forEach((dot, dotIndex) => dot.setAttribute('aria-current', String(dotIndex === index)))
       if (caption) caption.textContent = slides[index].dataset.bxCardLabel ?? ''
       if (counter) counter.textContent = `${pad(index + 1)} / ${pad(slides.length)}`
-
     }
 
     previous?.addEventListener('click', () => show(index - 1))
