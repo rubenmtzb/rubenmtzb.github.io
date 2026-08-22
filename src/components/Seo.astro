@@ -38,6 +38,14 @@ const ogLocale = lang === 'es' ? 'es_ES' : 'en_US'
  * portada, y una ficha de proyecto no es el perfil de nadie.
  */
 const ogType = pageType === 'ProfilePage' ? 'profile' : 'website'
+
+/*
+ * El `<` va escapado. En un bloque en línea, un `</script>` dentro de
+ * cualquier cadena del contenido —el guion de un "C# <-> Java" basta— cerraría
+ * la etiqueta antes de tiempo y partiría el JSON-LD. `\u003c` es un escape
+ * válido de JSON, así que lo que lee un buscador es exactamente el mismo dato.
+ */
+const structuredData = JSON.stringify(jsonLd).replaceAll('<', '\\u003c')
 ---
 
 <meta charset="utf-8" />
@@ -91,4 +99,4 @@ const ogType = pageType === 'ProfilePage' ? 'profile' : 'website'
 <link rel="manifest" href="/manifest.json" />
 <meta name="theme-color" content="#030712" />
 
-<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+<script type="application/ld+json" set:html={structuredData} is:inline />
