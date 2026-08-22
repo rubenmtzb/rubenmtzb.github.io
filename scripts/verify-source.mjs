@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
- * Convenciones que solo se ven en la fuente.
+ * Conventions that are only visible in the source.
  *
- * Los otros dos verificadores miran lo que sale del build. Este mira cómo está
- * escrito lo que entra, porque hay reglas que no dejan rastro en el HTML: dos
- * caminos distintos para traducir producen exactamente la misma página, y aun
- * así uno de los dos sobra.
+ * The other two verifiers look at what comes out of the build. This one looks at
+ * how what goes in is written, because some rules leave no trace in the HTML:
+ * two different routes to translating produce exactly the same page, and one of
+ * the two is still redundant.
  *
- * Cada regla de aquí nace de un desvío real, no de un gusto.
+ * Every rule here was born from a real drift, not from a preference.
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
@@ -31,14 +31,14 @@ const sources = (dir, ext) => {
   return out
 }
 
-/* ---------- El idioma se resuelve en el diccionario, no en la vista ---------- */
+/* ---------- Language is resolved in the dictionary, not in the view ---------- */
 /*
- * Llegó a haber ochenta y cuatro `lang === 'es' ? … : …` repartidos por el
- * marcado, conviviendo con `t(lang, clave)`. Las dos vías funcionaban, así que
- * nada las separaba salvo el criterio de quien tocara el fichero ese día, y la
- * mitad de las frases quedaba fuera del diccionario donde se revisan.
+ * There were at one point eighty-four `lang === 'es' ? … : …` scattered through
+ * the markup, living alongside `t(lang, key)`. Both routes worked, so nothing
+ * separated them beyond the judgement of whoever touched the file that day, and
+ * half the sentences ended up outside the dictionary where they get reviewed.
  */
-console.log('\n· Idioma')
+console.log('\n· Language')
 const views = sources('src/components', ['.astro'])
   .concat(sources('src/layouts', ['.astro']), sources('src/pages', ['.astro']))
 const inlineLang = views
@@ -46,16 +46,16 @@ const inlineLang = views
   .filter((entry) => entry.hits > 0)
 assert(
   inlineLang.length === 0,
-  `ninguna vista decide el idioma por su cuenta${
-    inlineLang.length ? ` — lo hacen: ${inlineLang.map((e) => `${e.file} (${e.hits})`).join(', ')}` : ''
+  `no view decides the language on its own${
+    inlineLang.length ? ` — these do: ${inlineLang.map((e) => `${e.file} (${e.hits})`).join(', ')}` : ''
   }`,
 )
 
-/* ---------- Las dos tablas del diccionario describen lo mismo ---------- */
+/* ---------- Both tables of the dictionary describe the same thing ---------- */
 /*
- * `ui.ts` se escribe a mano y crece por los dos lados. Una clave que solo
- * exista en un idioma compila igual —el tipo sale de la tabla inglesa— pero
- * revienta al pedirla desde la otra portada.
+ * `ui.ts` is written by hand and grows on both sides. A key that exists in only
+ * one language still compiles — the type comes from the English side — but
+ * blows up when it is asked for from the other language's page.
  */
 const ui = readFileSync('src/i18n/ui.ts', 'utf8')
 const tables = [...ui.matchAll(/^ {2}(en|es): \{$/gm)].map((m) => ({ lang: m[1], at: m.index }))
@@ -67,19 +67,19 @@ const onlyEn = [...enKeys].filter((k) => !esKeys.has(k))
 const onlyEs = [...esKeys].filter((k) => !enKeys.has(k))
 assert(
   onlyEn.length === 0 && onlyEs.length === 0,
-  `las ${enKeys.size} claves existen en los dos idiomas${
-    onlyEn.length ? ` — solo en inglés: ${onlyEn.join(', ')}` : ''
-  }${onlyEs.length ? ` — solo en castellano: ${onlyEs.join(', ')}` : ''}`,
+  `all ${enKeys.size} keys exist in both languages${
+    onlyEn.length ? ` — English only: ${onlyEn.join(', ')}` : ''
+  }${onlyEs.length ? ` — Spanish only: ${onlyEs.join(', ')}` : ''}`,
 )
 
-/* ---------- Ninguna clave del diccionario sobra ---------- */
+/* ---------- No key in the dictionary is redundant ---------- */
 /*
- * Una entrada que ya no pide nadie se queda ahí pidiendo traducción cada vez
- * que se revisa el idioma. Se cuentan también los accesos calculados
- * —`about.group.${g}`— por su prefijo.
+ * An entry nobody asks for any more sits there demanding a translation every
+ * time the language gets reviewed. Computed accesses — `about.group.${g}` — are
+ * counted too, by their prefix.
  */
-/* De `ui.ts` cuenta todo menos las dos tablas: las claves que nombra `V2_NAV`
-   son consumo real, las de las tablas son la declaración. */
+/* From `ui.ts` everything counts except the two tables: the keys `V2_NAV` names
+   are real consumption, the tables' keys are the declaration. */
 const uiOutsideTables = ui.slice(0, tables[0].at)
 const consumers = sources('src', ['.astro', '.ts'])
   .filter((f) => !f.endsWith('i18n/ui.ts'))
@@ -91,21 +91,21 @@ const unused = [...enKeys].filter((key) => {
   const prefix = key.slice(0, key.lastIndexOf('.') + 1)
   return !consumers.includes(`\`${prefix}$`)
 })
-assert(unused.length === 0, `ninguna clave sin consumidor${unused.length ? ` — sobran: ${unused.join(', ')}` : ''}`)
+assert(unused.length === 0, `no key without a consumer${unused.length ? ` — redundant: ${unused.join(', ')}` : ''}`)
 
-/* ---------- El color de la V2 sale de la paleta ---------- */
+/* ---------- The V2's colour comes from the palette ---------- */
 /*
- * La V2 tiene su paleta en `styles/v2/tokens.css`, pero no tenía colores de
- * estado, así que cada componente elegía el de Tailwind que le sonaba bien:
- * `emerald-400` aquí, `amber-500` allá, y `rgba(111,227,255,.2)` escrito a
- * mano donde hacía falta cian con alfa. Cuarenta y cuatro decisiones sueltas
- * y ningún sitio donde cambiarlas de una vez.
+ * The V2 has its palette in `styles/v2/tokens.css`, but it had no status
+ * colours, so each component picked whichever Tailwind one sounded right:
+ * `emerald-400` here, `amber-500` there, and `rgba(111,227,255,.2)` written by
+ * hand wherever cyan with alpha was needed. Forty-four loose decisions and
+ * nowhere to change them all at once.
  *
- * Las utilidades de Tailwind siguen siendo el vehículo —`text-[color:var(…)]`—
- * pero el valor tiene que venir de un token. La V1 queda fuera: es la versión
- * documental y tiene su propia identidad en verde.
+ * Tailwind's utilities are still the vehicle — `text-[color:var(…)]` — but the
+ * value has to come from a token. The V1 stays out: it is the documentary
+ * version and has an identity of its own, in green.
  */
-console.log('\n· Color')
+console.log('\n· Colour')
 const STOCK_COLOURS = /\b(?:text|bg|border|from|via|to|shadow|ring|fill|stroke|decoration|outline|accent|caret|divide)-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\d{2,3}\b/g
 const RAW_COLOURS = /(?:class|style)(?::list)?=[""'`{][^""'`]*?(#[0-9a-fA-F]{3,8}\b|rgba?\([\d\s.,]+\))/g
 
@@ -118,12 +118,12 @@ const improvised = sources('src/components/v2', ['.astro']).flatMap((file) => {
 })
 assert(
   improvised.length === 0,
-  `ningún color de la V2 se improvisa fuera de la paleta${improvised.length ? ` — lo hacen: ${improvised.join('; ')}` : ''}`,
+  `no V2 colour is improvised outside the palette${improvised.length ? ` — these do: ${improvised.join('; ')}` : ''}`,
 )
 
 console.log(`\n${'─'.repeat(52)}`)
 if (failures > 0) {
-  console.error(`❌ ${failures} desvío(s) sobre ${checks + failures} convenciones`)
+  console.error(`❌ ${failures} deviation(s) across ${checks + failures} conventions`)
   process.exit(1)
 }
-console.log(`✅ ${checks} convenciones de fuente respetadas`)
+console.log(`✅ ${checks} source conventions upheld`)

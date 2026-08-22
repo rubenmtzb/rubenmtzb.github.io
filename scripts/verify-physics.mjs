@@ -1,16 +1,17 @@
 #!/usr/bin/env node
 /**
- * Comprobaciones sobre el movimiento del Modo Juego.
+ * Checks over Game Mode's movement.
  *
- * El platformer es lo único del sitio que ningún verificador tocaba: se dibuja
- * en un canvas, y sin canvas no arranca. Su parte numérica, en cambio, no
- * necesita ni ventana ni lienzo, así que vive aparte y se comprueba aquí.
+ * The platformer was the one thing on the site no verifier touched: it is drawn
+ * on a canvas, and without a canvas it does not start. Its numeric half, on the
+ * other hand, needs neither window nor canvas, so it lives apart and is checked
+ * here.
  *
- * No se comprueba que el juego «se sienta bien» —eso son las constantes, y se
- * calibran jugando— sino que las reglas se cumplan: que la velocidad tenga
- * techo, que el rozamiento no dependa de los hercios del monitor, que soltar
- * el salto lo recorte solo mientras se sube y que un aterrizaje no se cuele
- * entre dos fotogramas.
+ * What is checked is not that the game "feels right" — that is the constants,
+ * and they are calibrated by playing — but that the rules hold: that velocity
+ * has a ceiling, that friction does not depend on the monitor's hertz, that
+ * releasing jump cuts it short only while rising, and that a landing cannot slip
+ * between two frames.
  */
 import {
   BODY,
@@ -34,103 +35,103 @@ const near = (a, b, tol = 1e-9) => Math.abs(a - b) < tol
 const run = (grounded = true, godspeed = false, frameScale = 1) =>
   ({ left: false, right: false, grounded, godspeed, frameScale })
 
-console.log('\n· Carrera')
+console.log('\n· Running')
 check(
   nextVelocityX(0, { ...run(), right: true }) === PHYSICS.accelGround,
-  'arrancar desde parado acelera un paso completo',
+  'starting from a standstill accelerates a full step',
 )
 let vx = 0
 for (let i = 0; i < 200; i++) vx = nextVelocityX(vx, { ...run(), right: true })
-check(vx === PHYSICS.maxRun, `la velocidad tiene techo (${vx})`)
+check(vx === PHYSICS.maxRun, `velocity has a ceiling (${vx})`)
 let vxAura = 0
 for (let i = 0; i < 200; i++) vxAura = nextVelocityX(vxAura, { ...run(true, true), right: true })
-check(vxAura === PHYSICS.maxRunGodspeed && vxAura > vx, 'con el aura el techo es más alto')
+check(vxAura === PHYSICS.maxRunGodspeed && vxAura > vx, 'with the aura the ceiling is higher')
 check(
   nextVelocityX(-1, { ...run(), left: true }) >= -PHYSICS.maxRun,
-  'el techo también aplica hacia la izquierda',
+  'the ceiling applies leftwards too',
 )
 check(
   nextVelocityX(1, { ...run(false), right: true }) - 1 === PHYSICS.accelAir
     && PHYSICS.accelAir < PHYSICS.accelGround,
-  'en el aire se acelera menos que en el suelo',
+  'in the air acceleration is lower than on the ground',
 )
 
-console.log('\n· Rozamiento')
-check(near(nextVelocityX(2, run()), 2 * PHYSICS.frictionGround), 'sin dirección, el suelo frena')
+console.log('\n· Friction')
+check(near(nextVelocityX(2, run()), 2 * PHYSICS.frictionGround), 'with no direction held, the ground slows him down')
 check(
   near(nextVelocityX(2, run(false)), 2 * PHYSICS.frictionAir)
     && PHYSICS.frictionAir > PHYSICS.frictionGround,
-  'el aire frena menos que el suelo',
+  'the air slows him down less than the ground',
 )
 /*
- * La razón de que el rozamiento se eleve a `frameScale` en vez de
- * multiplicarse: dos fotogramas de 60 Hz tienen que dejar la misma velocidad
- * que uno de 30 Hz, o el personaje resbala distinto según el monitor.
+ * The reason friction is raised to `frameScale` instead of multiplied by it: two
+ * 60 Hz frames have to leave the same velocity as one 30 Hz frame, or the
+ * character slides differently depending on the monitor.
  */
 const dosPasos = nextVelocityX(nextVelocityX(3, run()), run())
 const unPasoLargo = nextVelocityX(3, { ...run(true, false, 2) })
-check(near(dosPasos, unPasoLargo), `el frenado no depende de los hercios (${dosPasos.toFixed(6)})`)
+check(near(dosPasos, unPasoLargo), `the slowdown does not depend on hertz (${dosPasos.toFixed(6)})`)
 
-console.log('\n· Salto y caída')
+console.log('\n· Jumping and falling')
 check(
   cutJump(PHYSICS.jumpForce / 2, false) === (PHYSICS.jumpForce / 2) * PHYSICS.jumpCut,
-  'soltar el salto a media subida lo recorta',
+  'releasing jump mid-rise cuts it short',
 )
-check(cutJump(PHYSICS.jumpForce / 2, true) === PHYSICS.jumpForce / 2, 'mantenerlo pulsado no lo recorta')
-check(cutJump(3, false) === 3, 'cayendo no hay nada que recortar')
+check(cutJump(PHYSICS.jumpForce / 2, true) === PHYSICS.jumpForce / 2, 'holding it down does not cut it')
+check(cutJump(3, false) === 3, 'while falling there is nothing to cut')
 check(
   cutJump(PHYSICS.jumpForce, false) === PHYSICS.jumpForce,
-  'el impulso inicial no se recorta: el recorte empieza pasado el arranque',
+  'the initial impulse is not cut: the cut starts once past the launch',
 )
 let vy = 0
 for (let i = 0; i < 200; i++) vy = nextVelocityY(vy, { godspeed: false, jumpHeld: false, fastFallHeld: false, frameScale: 1 })
-check(vy === PHYSICS.maxFall, `la caída tiene velocidad terminal (${vy})`)
+check(vy === PHYSICS.maxFall, `the fall has a terminal velocity (${vy})`)
 let vyFast = 0
 for (let i = 0; i < 200; i++) vyFast = nextVelocityY(vyFast, { godspeed: false, jumpHeld: false, fastFallHeld: true, frameScale: 1 })
-check(vyFast === PHYSICS.fastFall && vyFast > vy, 'pulsar abajo levanta el límite de caída')
+check(vyFast === PHYSICS.fastFall && vyFast > vy, 'holding down raises the falling limit')
 check(
   near(
     nextVelocityY(2, { godspeed: true, jumpHeld: true, fastFallHeld: false, frameScale: 1 }) - 2,
     PHYSICS.gravity / 2,
   ),
-  'con el aura y el salto mantenido, cayendo, la gravedad es la mitad: planea',
+  'with the aura and jump held, while falling, gravity is halved: he glides',
 )
 check(
   near(nextVelocityY(-2, { godspeed: true, jumpHeld: true, fastFallHeld: false, frameScale: 1 }) + 2, PHYSICS.gravity),
-  'pero subiendo la gravedad es la normal',
+  'but while rising gravity is the normal one',
 )
 
-console.log('\n· Límites del escenario')
-check(clampToStage(-5, -3, 800).x === 0 && clampToStage(-5, -3, 800).vx === 0, 'el borde izquierdo detiene')
+console.log('\n· Stage bounds')
+check(clampToStage(-5, -3, 800).x === 0 && clampToStage(-5, -3, 800).vx === 0, 'the left edge stops him')
 check(
   clampToStage(790, 3, 800).x === 800 - BODY.width && clampToStage(790, 3, 800).vx === 0,
-  'el borde derecho detiene',
+  'the right edge stops him',
 )
-check(clampToStage(300, 2, 800).x === 300, 'en medio no toca nada')
+check(clampToStage(300, 2, 800).x === 300, 'in the middle nothing is touched')
 
-console.log('\n· Aterrizaje')
+console.log('\n· Landing')
 const ledge = { x: 100, y: 400, w: 120 }
 const onTop = { x: 140, y: 400 - BODY.height, vy: 4 }
-check(landsOn(onTop, ledge, 1, LEDGE_INSET.moving), 'cayendo sobre la repisa, aterriza')
+check(landsOn(onTop, ledge, 1, LEDGE_INSET.moving), 'falling onto the ledge, he lands')
 check(
   !landsOn({ ...onTop, x: ledge.x + ledge.w }, ledge, 1, LEDGE_INSET.moving),
-  'pasando de largo por el lado, no',
+  'passing by on the side does not count',
 )
 /*
- * El caso que justifica mirar el fotograma anterior: a velocidad alta el
- * cuerpo salta por encima de la plataforma entera en un solo paso.
+ * The case that justifies looking at the previous frame: at high speed the body
+ * jumps clean over the whole platform in a single step.
  */
 const veloz = { x: 140, y: 400 - BODY.height + 30, vy: 40 }
-check(landsOn(veloz, ledge, 1, LEDGE_INSET.moving), 'a velocidad alta el aterrizaje no se cuela entre fotogramas')
+check(landsOn(veloz, ledge, 1, LEDGE_INSET.moving), 'at high speed a landing does not slip between frames')
 check(
   !landsOn({ x: 140, y: 400 - BODY.height + 30, vy: 0 }, ledge, 1, LEDGE_INSET.moving),
-  'pero atravesándola desde abajo sin caer, no aterriza',
+  'but crossing it from below without falling is no landing',
 )
-/* Justo en el punto donde el margen ancho ya no llega y el estrecho sí. */
+/* Exactly at the point where the wide inset no longer reaches and the narrow one does. */
 const borde = { x: ledge.x + ledge.w - LEDGE_INSET.dom, y: 400 - BODY.height, vy: 4 }
 check(
   landsOn(borde, ledge, 1, LEDGE_INSET.moving) && !landsOn(borde, ledge, 1, LEDGE_INSET.dom),
-  'un margen más estricto rechaza el mismo borde: los tres tipos no son intercambiables',
+  'a stricter inset rejects the same edge: the three kinds are not interchangeable',
 )
 
 console.log(`\n${'─'.repeat(52)}`)
@@ -138,4 +139,4 @@ if (fail > 0) {
   console.error(`❌ ${fail} fallo(s) sobre ${pass + fail}`)
   process.exit(1)
 }
-console.log(`✅ ${pass} comprobaciones del movimiento superadas`)
+console.log(`✅ ${pass} movement checks passed`)

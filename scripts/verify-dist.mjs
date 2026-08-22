@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
- * Verificaciones sobre el HTML realmente generado en dist/.
+ * Verifications over the HTML actually generated in dist/.
  *
- * No son tests unitarios: son afirmaciones sobre el build. Si alguna falla,
- * el despliegue se detiene. La comprobación 12 es la que convierte el
- * principio rector —contenido en el HTML de build, no en runtime— en algo
- * verificable en lugar de una intención.
+ * These are not unit tests: they are assertions about the build. If any of them
+ * fails, the deployment stops. Check 12 is the one that turns the guiding
+ * principle — content in the built HTML, not at runtime — into something
+ * verifiable rather than an intention.
  */
 import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
@@ -15,12 +15,12 @@ const DIST = 'dist'
 const SITE = 'https://rubenitx.me'
 
 /**
- * Contrato de URLs tras el intercambio de la Fase 5.
+ * URL contract after the Phase 5 swap.
  *
- * V1 queda en /v1/ con noindex: el análisis de cobertura de la Fase 4
- * no encontró ni una entidad exclusiva suya frente a V2 + CV + fichas.
- * Por eso no emite hreflang ni entra en el sitemap, pero sigue siendo
- * accesible para humanos.
+ * The V1 stays at /v1/ with noindex: Phase 4's coverage analysis did not find a
+ * single entity exclusive to it against V2 + CV + case studies. That is why it
+ * emits no hreflang and stays out of the sitemap, while remaining reachable by
+ * humans.
  */
 const EXPECTED = [
   { path: '/', file: 'index.html', lang: 'en', cluster: 'home', indexable: true, kind: 'v2' },
@@ -44,10 +44,10 @@ const NAV_IDS = ['home', 'about', 'work', 'background', 'contact']
 const V2_IDS = ['identity', 'work', 'archive', 'contact']
 
 /**
- * Términos editoriales que nunca deben cruzar de idioma. Se evitan palabras
- * genéricas como nombres de tecnologías, cursos o publicaciones: Java,
- * DevOps, Claude Code in Action y The Mutational Landscape son nombres
- * propios y deben conservarse.
+ * Editorial terms that must never cross languages. Generic words such as the
+ * names of technologies, courses or publications are left out: Java, DevOps,
+ * Claude Code in Action and The Mutational Landscape are proper names and have
+ * to be preserved.
  */
 const FORBIDDEN_BY_LANG = {
   es: [
@@ -131,7 +131,7 @@ const assert = (cond, msg) => (cond ? ok(msg) : fail(msg))
 const abs = (p) => new URL(p, SITE).href
 const read = (f) => readFileSync(join(DIST, f), 'utf8')
 
-/* ---------- 1. Conjunto de URLs generadas ---------- */
+/* ---------- 1. The set of generated URLs ---------- */
 console.log('\n1 · URLs generadas')
 const htmlFiles = []
 ;(function walk(dir) {
@@ -144,10 +144,10 @@ const htmlFiles = []
 const expectedFiles = EXPECTED.map((e) => e.file).sort()
 assert(
   JSON.stringify(htmlFiles.sort()) === JSON.stringify(expectedFiles),
-  `conjunto exacto: ${expectedFiles.join(', ')}${htmlFiles.length !== expectedFiles.length ? ` — encontrado: ${htmlFiles.join(', ')}` : ''}`,
+  `exact set: ${expectedFiles.join(', ')}${htmlFiles.length !== expectedFiles.length ? ` — found: ${htmlFiles.join(', ')}` : ''}`,
 )
 
-/* ---------- 2-11. Por página ---------- */
+/* ---------- 2-11. Per page ---------- */
 for (const page of EXPECTED) {
   console.log(`\n· ${page.path}`)
   const html = read(page.file)
@@ -155,31 +155,31 @@ for (const page of EXPECTED) {
 
   // 2. Exactamente un H1
   const h1s = document.querySelectorAll('h1')
-  assert(h1s.length === 1, `un único <h1> (encontrados: ${h1s.length})`)
+  assert(h1s.length === 1, `exactly one <h1> (found: ${h1s.length})`)
 
-  // Jerarquía sin saltos
+  // Hierarchy with no skipped levels
   const levels = [...document.querySelectorAll('h1,h2,h3,h4')].map((h) => Number(h.tagName[1]))
   let jump = null
   for (let i = 1; i < levels.length; i++) if (levels[i] - levels[i - 1] > 1) jump = `h${levels[i - 1]}→h${levels[i]}`
-  assert(!jump, `jerarquía de encabezados sin saltos${jump ? ` (${jump})` : ''}`)
+  assert(!jump, `heading hierarchy with no skipped levels${jump ? ` (${jump})` : ''}`)
 
   // 3. lang correcto
   const lang = document.documentElement.getAttribute('lang')
-  assert(lang === page.lang, `<html lang="${page.lang}"> (encontrado: "${lang}")`)
+  assert(lang === page.lang, `<html lang="${page.lang}"> (found: "${lang}")`)
 
   // 4. Canonical absoluto y self-referencing
   const canon = document.querySelector('link[rel=canonical]')?.getAttribute('href')
-  assert(canon === abs(page.path), `canonical self y absoluto (${canon})`)
+  assert(canon === abs(page.path), `canonical is self and absolute (${canon})`)
 
-  // robots coherente con la indexabilidad declarada
+  // robots consistent with the declared indexability
   const robots = document.querySelector('meta[name=robots]')?.getAttribute('content') ?? ''
   assert(
     page.indexable ? robots.includes('index') && !robots.includes('noindex') : robots.includes('noindex'),
     `robots="${robots}"`,
   )
 
-  // 5. hreflang: conjunto idéntico dentro del clúster, se incluye a sí mismo,
-  // x-default. Las páginas no indexables NO deben emitirlo.
+  // 5. hreflang: an identical set within the cluster, self-inclusive, plus
+  // x-default. Non-indexable pages must NOT emit it.
   const alts = [...document.querySelectorAll('link[rel=alternate][hreflang]')].map((l) => [
     l.getAttribute('hreflang'),
     l.getAttribute('href'),
@@ -190,23 +190,23 @@ for (const page of EXPECTED) {
     assert(map.en === abs(cluster.en), `hreflang="en" → ${cluster.en}`)
     assert(map.es === abs(cluster.es), `hreflang="es" → ${cluster.es}`)
     assert(map['x-default'] === abs(cluster.xDefault), `x-default → ${cluster.xDefault}`)
-    assert(map[page.lang] === abs(page.path), 'el clúster se incluye a sí mismo')
+    assert(map[page.lang] === abs(page.path), 'the cluster includes itself')
   } else {
-    assert(alts.length === 0, `sin hreflang por no ser indexable (${alts.length})`)
+    assert(alts.length === 0, `no hreflang, being non-indexable (${alts.length})`)
   }
 
-  // title y description únicos y presentes
+  // A unique title and description, both present
   const title = document.querySelector('title')?.textContent?.trim()
   const desc = document.querySelector('meta[name=description]')?.getAttribute('content')
-  assert(Boolean(title), 'title presente')
-  assert(Boolean(desc) && desc.length >= 50 && desc.length <= 180, `meta description (${desc?.length} car.)`)
+  assert(Boolean(title), 'title present')
+  assert(Boolean(desc) && desc.length >= 50 && desc.length <= 180, `meta description (${desc?.length} chars)`)
 
   // Open Graph y Twitter
   for (const sel of ['meta[property="og:title"]', 'meta[property="og:image"]', 'meta[name="twitter:card"]']) {
-    assert(Boolean(document.querySelector(sel)), `${sel} presente`)
+    assert(Boolean(document.querySelector(sel)), `${sel} present`)
   }
 
-  // 7. JSON-LD: parsea y hay una única entidad Person con @id estable
+  // 7. JSON-LD: it parses and there is a single Person entity with a stable @id
   const ld = document.querySelector('script[type="application/ld+json"]')?.textContent
   let graph = []
   try {
@@ -216,31 +216,31 @@ for (const page of EXPECTED) {
     fail('JSON-LD no parsea')
   }
   const persons = graph.filter((n) => n['@type'] === 'Person')
-  assert(persons.length === 1, `una única entidad Person (encontradas: ${persons.length})`)
-  assert(persons[0]?.['@id'] === `${SITE}/#person`, 'Person con @id estable')
+  assert(persons.length === 1, `exactly one Person entity (found: ${persons.length})`)
+  assert(persons[0]?.['@id'] === `${SITE}/#person`, 'Person with a stable @id')
   assert(
     !graph.some((n) => n['@type'] === 'Person' && n['@id'] !== `${SITE}/#person`),
-    'ningún Person alternativo',
+    'no alternative Person',
   )
 
-  // alumniOf: una entidad por centro, no por titulación
+  // alumniOf: one entity per institution, not per degree
   const alumni = (persons[0]?.alumniOf ?? []).map((a) => a.name)
   assert(
     new Set(alumni).size === alumni.length,
-    `alumniOf sin centros repetidos (${alumni.length} entradas)`,
+    `alumniOf with no repeated institutions (${alumni.length} entries)`,
   )
 
-  // 8. Ningún nodo de contenido con opacity:0 inline
+  // 8. No content node with an inline opacity:0
   const hidden = [...document.querySelectorAll('[style]')].filter((el) =>
     /opacity\s*:\s*0(?![.\d])/.test(el.getAttribute('style') ?? ''),
   )
-  assert(hidden.length === 0, `sin contenido con opacity:0 inline (${hidden.length})`)
+  assert(hidden.length === 0, `no content with an inline opacity:0 (${hidden.length})`)
 
-  // 9. Enlaces internos resuelven a un fichero existente
+  // 9. Internal links resolve to a file that exists
   const broken = []
-  // ...y los que apuntan a un ancla de ESTA misma página tienen destino.
-  // Un "#education" heredado de la portada no llevaba a ninguna parte en
-  // las fichas de proyecto, y nadie se daba cuenta.
+  // ...and those pointing at an anchor on THIS same page have a destination.
+  // An "#education" inherited from the home page led nowhere on the case
+  // studies, and nobody noticed.
   const danglingAnchors = []
   for (const a of document.querySelectorAll('a[href]')) {
     const href = a.getAttribute('href')
@@ -257,54 +257,54 @@ for (const page of EXPECTED) {
     const target = clean.endsWith('/') ? join(DIST, clean, 'index.html') : join(DIST, clean)
     if (!existsSync(target)) broken.push(href)
   }
-  assert(broken.length === 0, `enlaces internos resuelven${broken.length ? ` — rotos: ${broken.join(', ')}` : ''}`)
+  assert(broken.length === 0, `internal links resolve${broken.length ? ` — broken: ${broken.join(', ')}` : ''}`)
   assert(
     danglingAnchors.length === 0,
-    `anclas de la propia página con destino${danglingAnchors.length ? ` — huérfanas: ${[...new Set(danglingAnchors)].join(', ')}` : ''}`,
+    `same-page anchors all have a destination${danglingAnchors.length ? ` — orphaned: ${[...new Set(danglingAnchors)].join(', ')}` : ''}`,
   )
 
-  // 10. Imágenes con alt, width y height
+  // 10. Images with alt, width and height
   const badImgs = [...document.querySelectorAll('img')].filter(
     (i) => i.getAttribute('alt') === null || !i.getAttribute('width') || !i.getAttribute('height'),
   )
-  assert(badImgs.length === 0, `toda <img> con alt, width y height (${badImgs.length} sin ello)`)
+  assert(badImgs.length === 0, `every <img> has alt, width and height (${badImgs.length} without)`)
 
-  // 11. Anclas heredadas y navegación (solo en la home)
+  // 11. Inherited anchors and navigation (home page only)
   if (page.kind === 'v1' || page.kind === 'v2') {
     const missing = LEGACY_ANCHORS.filter((id) => !document.getElementById(id))
-    assert(missing.length === 0, `7 anclas heredadas${missing.length ? ` — faltan: ${missing.join(', ')}` : ''}`)
+    assert(missing.length === 0, `7 inherited anchors${missing.length ? ` — missing: ${missing.join(', ')}` : ''}`)
     const areas = page.kind === 'v1' ? NAV_IDS : V2_IDS
     const navMissing = areas.filter((id) => !document.getElementById(id))
-    assert(navMissing.length === 0, `áreas presentes${navMissing.length ? ` — faltan: ${navMissing.join(', ')}` : ''}`)
+    assert(navMissing.length === 0, `all areas present${navMissing.length ? ` — missing: ${navMissing.join(', ')}` : ''}`)
   }
 
-  // 12. Sin JavaScript: se elimina todo <script> y el contenido debe seguir ahí.
-  // También las hojas de estilo: el CSS nunca fue contenido, y contarlo
-  // dejaría que una regla larga hiciera pasar una página vacía.
+  // 12. Without JavaScript: every <script> is removed and the content must
+  // still be there. Stylesheets too: CSS was never content, and counting it
+  // would let one long rule get an empty page through.
   const { document: noJs } = parseHTML(html)
   noJs.querySelectorAll('script, style').forEach((s) => s.remove())
   const text = noJs.body.textContent.replace(/\s+/g, ' ').trim()
-  // Umbral por tipo: una ficha de proyecto es legítimamente más corta
-  // que la portada, pero ninguna puede quedarse en un esqueleto vacío.
+  // A threshold per type: a case study is legitimately shorter than the home
+  // page, but none of them may be reduced to an empty skeleton.
   const minText = page.kind === 'case' ? 700 : 1500
-  assert(text.length > minText, `contenido presente sin JS (${text.length} caracteres, mínimo ${minText})`)
-  assert(text.includes('Rubén Martínez Bernabe'), 'identidad presente sin JS')
+  assert(text.length > minText, `content present without JS (${text.length} characters, minimum ${minText})`)
+  assert(text.includes('Rubén Martínez Bernabe'), 'identity present without JS')
   const navLinks = [...noJs.querySelectorAll('a[href]')].filter((a) => a.getAttribute('href')?.startsWith('#'))
   if (page.kind === 'v1' || page.kind === 'v2') {
-    assert(navLinks.length >= 3, `navegación operativa sin JS (${navLinks.length} enlaces)`)
+    assert(navLinks.length >= 3, `navigation usable without JS (${navLinks.length} links)`)
   }
-  // El desplegable solo existe en la V1: la V2 muestra las cuatro áreas
-  // siempre en la barra, así que no hay menú que pueda quedarse oculto.
+  // The disclosure exists only on the V1: the V2 always shows the four areas
+  // in the bar, so there is no menu that could stay hidden.
   if (page.kind === 'v1') {
     const menu = noJs.getElementById('mobile-menu')
-    assert(menu && !menu.hasAttribute('hidden'), 'menú móvil visible sin JS')
+    assert(menu && !menu.hasAttribute('hidden'), 'mobile menu visible without JS')
   }
   const langLink = [...noJs.querySelectorAll('a[rel=alternate][hreflang]')]
-  assert(langLink.length >= 1, 'selector de idioma es un enlace real')
+  assert(langLink.length >= 1, 'the language switcher is a real link')
 
-  // 13. El texto visible y el accesible pertenecen al idioma de la página.
-  // Los scripts y estilos ya se han retirado para no confundir código interno
-  // con contenido que una persona o un lector de pantalla sí recibe.
+  // 13. Visible and accessible text both belong to the page's language.
+  // Scripts and styles have already been stripped so internal code is not
+  // mistaken for content a person or a screen reader actually receives.
   const accessibleText = [...noJs.querySelectorAll('[aria-label], [title], [placeholder]')]
     .flatMap((element) => ['aria-label', 'title', 'placeholder'].map((name) => element.getAttribute(name)))
     .filter(Boolean)
@@ -315,63 +315,63 @@ for (const page of EXPECTED) {
     .filter(Boolean)
   assert(
     leaks.length === 0,
-    `contenido y accesibilidad íntegramente en ${page.lang}${leaks.length ? ` — mezclas: ${[...new Set(leaks)].join(', ')}` : ''}`,
+    `content and accessibility entirely in ${page.lang}${leaks.length ? ` — mixed in: ${[...new Set(leaks)].join(', ')}` : ''}`,
   )
 
   /*
-   * 14. La marca `js` es la que oculta el revelado hasta que hay JavaScript
-   * para devolverlo. Ninguna página puede declararla sin traer también la red
-   * que lo revela si el bundle no llega a ejecutarse: sin ella, un fichero
-   * perdido deja la portada en blanco.
+   * 14. The `js` marker is what hides the reveal until there is JavaScript to
+   * bring it back. No page may declare it without also carrying the net that
+   * reveals everything if the bundle never runs: without that, one lost file
+   * leaves the home page blank.
    */
   const marksJs = html.includes("classList.add('js')")
   assert(
     !marksJs || html.includes("classList.contains('enhanced')"),
-    'la marca js viaja con su red de seguridad para el revelado',
+    'the js marker travels with its safety net for the reveal',
   )
 }
 
 /* ---------- 6. Sitemap ---------- */
 console.log('\n6 · Sitemap')
-// El sitemap vive en la URL histórica y es el único que existe: dos
-// sitemaps podrían contradecirse, y robots.txt no puede apuntar a un 404.
-assert(existsSync(join(DIST, 'sitemap.xml')), '/sitemap.xml existe físicamente')
+// The sitemap lives at the historical URL and is the only one that exists: two
+// sitemaps could contradict each other, and robots.txt cannot point at a 404.
+assert(existsSync(join(DIST, 'sitemap.xml')), '/sitemap.xml physically exists')
 
 const otherSitemaps = readdirSync(DIST).filter((f) => /sitemap.*\.xml$/.test(f) && f !== 'sitemap.xml')
-assert(otherSitemaps.length === 0, `no hay sitemaps contradictorios${otherSitemaps.length ? ` — sobra: ${otherSitemaps.join(', ')}` : ''}`)
+assert(otherSitemaps.length === 0, `no contradictory sitemaps${otherSitemaps.length ? ` — redundant: ${otherSitemaps.join(', ')}` : ''}`)
 
 const declared = read('robots.txt').match(/Sitemap:\s*(\S+)/)?.[1]
-assert(declared === abs('/sitemap.xml'), `robots.txt declara ${declared}`)
+assert(declared === abs('/sitemap.xml'), `robots.txt declares ${declared}`)
 const declaredPath = declared ? new URL(declared).pathname.replace(/^\//, '') : ''
-assert(existsSync(join(DIST, declaredPath)), 'el sitemap declarado por robots.txt existe (no 404)')
+assert(existsSync(join(DIST, declaredPath)), 'the sitemap robots.txt declares exists (not a 404)')
 
 const sm = read('sitemap.xml')
 const locs = [...sm.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]).sort()
 const expectedLocs = EXPECTED.filter((e) => e.indexable).map((e) => abs(e.path)).sort()
 assert(
   JSON.stringify(locs) === JSON.stringify(expectedLocs),
-  `contiene exactamente el conjunto indexable (${locs.length} URLs)`,
+  `holds exactly the indexable set (${locs.length} URLs)`,
 )
-assert(!sm.includes('/v1/'), 'la V1 no aparece en el sitemap')
+assert(!sm.includes('/v1/'), 'the V1 does not appear in the sitemap')
 for (const c of Object.values(CLUSTERS)) {
-  assert(sm.includes(`hreflang="x-default" href="${abs(c.xDefault)}"`), `alternativas x-default para ${c.xDefault}`)
+  assert(sm.includes(`hreflang="x-default" href="${abs(c.xDefault)}"`), `x-default alternates for ${c.xDefault}`)
 }
 
-/* ---------- Paridad entre versiones lingüísticas ---------- */
+/* ---------- Parity between language versions ---------- */
 /*
- * Las dos versiones de una página cuentan lo mismo en otro idioma, así que
- * tienen que ofrecer lo mismo: los mismos enlaces, los mismos botones, las
- * mismas imágenes y los mismos controles. El texto cambia y el reparto de
- * `<span>` puede cambiar con él —una frase en castellano no tiene las mismas
- * palabras que en inglés—, pero una acción que existe en una y no en la otra
- * es siempre un fallo.
+ * The two versions of a page tell the same thing in another language, so they
+ * have to offer the same things: the same links, the same buttons, the same
+ * images and the same controls. The text changes and the distribution of
+ * `<span>` may change with it — a Spanish sentence does not hold the same words
+ * as an English one — but an action that exists in one and not in the other is
+ * always a defect.
  *
- * Este contrato nace de uno real: una etiqueta de tecnología escrita ya
- * traducida en el contenido no encontraba su ficha en el registro, y la versión
- * castellana perdía en silencio un enlace y un logotipo que la inglesa sí
- * mostraba. Nada lo detectaba.
+ * This contract was born from a real one: a technology tag written
+ * already-translated in the content could not find its entry in the registry,
+ * and the Spanish version silently lost a link and a logo the English one still
+ * showed. Nothing caught it.
  */
-console.log('\n· Paridad de idiomas')
+console.log('\n· Language parity')
 const AFFORDANCES = ['a[href]', 'button', 'img', 'input', 'audio', 'picture', 'source', 'svg', 'details', 'form']
 const PAIRS = [
   ['index.html', 'es/index.html'],
@@ -391,28 +391,28 @@ for (const [enFile, esFile] of PAIRS) {
     .filter((count) => count.en !== count.es)
   assert(
     gaps.length === 0,
-    `${enFile} y ${esFile} ofrecen lo mismo${gaps.length ? ` — difieren: ${gaps.map((g) => `${g.selector} ${g.en}/${g.es}`).join(', ')}` : ''}`,
+    `${enFile} and ${esFile} offer the same${gaps.length ? ` — they differ: ${gaps.map((g) => `${g.selector} ${g.en}/${g.es}`).join(', ')}` : ''}`,
   )
 }
 
-/* ---------- Compatibilidad: URLs y assets que no pueden desaparecer ---------- */
-console.log('\n· Compatibilidad')
+/* ---------- Compatibility: URLs and assets that cannot disappear ---------- */
+console.log('\n· Compatibility')
 // GitHub Pages sirve /404.html en cualquier ruta inexistente.
-assert(existsSync(join(DIST, '404.html')), '/404.html presente')
+assert(existsSync(join(DIST, '404.html')), '/404.html present')
 const notFound = read('404.html')
-assert(notFound.includes('noindex'), 'el 404 va noindex')
+assert(notFound.includes('noindex'), 'the 404 is noindex')
 assert(
   notFound.includes('This route does not resolve.')
     && notFound.includes('Esta ruta no existe.')
     && notFound.includes("document.documentElement.lang = 'es'"),
-  'el 404 adapta idioma y contenido cuando la ruta pertenece a /es/',
+  'the 404 adapts language and copy when the route belongs to /es/',
 )
-/* Se comprueban las rutas, no cómo estén escritas: el contrato es que las tres
-   vías de vuelta existan en castellano, no la forma del script que las pone. */
+/* The paths are checked, not how they are written: the contract is that the
+   three ways back exist in Spanish, not the shape of the script that sets them. */
 const spanishRoutes = ["'/es/'", "'/es/cv/'", "'/v1/es/'"].filter((route) => !notFound.includes(route))
 assert(
   spanishRoutes.length === 0,
-  `el 404 castellano conserva sus tres rutas de recuperación${spanishRoutes.length ? ` — falta ${spanishRoutes.join(', ')}` : ''}`,
+  `the Spanish 404 keeps its three recovery routes${spanishRoutes.length ? ` — missing ${spanishRoutes.join(', ')}` : ''}`,
 )
 for (const asset of [
   'cv/CV_RubenMartinez_EN.pdf',
@@ -422,30 +422,29 @@ for (const asset of [
   'robots.txt',
   'CNAME',
 ]) {
-  assert(existsSync(join(DIST, asset)), `/${asset} preservado`)
+  assert(existsSync(join(DIST, asset)), `/${asset} preserved`)
 }
 
-/* ---------- Presupuesto de peso ---------- */
+/* ---------- Weight budget ---------- */
 /*
- * Dos techos, y los dos existen porque se rebasaron de verdad.
+ * Three ceilings, and all three exist because they were genuinely breached.
  *
- * El primero: una foto del archivo llegó a servirse como PNG sin pérdida de
- * un megabyte para una tarjeta de 340 px. Ningún corte tiene por qué pesar
- * medio mega; si vuelve a pasar, no se despliega.
+ * The first: an archive photo ended up being served as a one-megabyte lossless
+ * PNG for a 340 px card. No cut has any business weighing half a megabyte; if it
+ * happens again, it does not deploy.
  *
- * El segundo: los modelos 3D escribían la posición de cada tecla en un
- * atributo `style`, repetida en cada capa, y eran 213 kB de HTML. El límite
- * no mide el tamaño de la página —el contenido puede crecer— sino cuánta
- * presentación viaja repetida en el marcado en lugar de vivir en una hoja
- * de estilo.
+ * The second: the 3D models wrote every key's position into a `style` attribute,
+ * repeated on each layer, and that was 213 kB of HTML. The limit does not
+ * measure the page's size — content may get larger — but how much
+ * presentation travels repeated in the markup instead of living in a stylesheet.
  *
- * El tercero: el mismo modelo, con el CSS del componente en ámbito, obligaba
- * a marcar 2.745 elementos con el atributo del ámbito, que eran 66 kB de la
- * portada. Con la hoja fuera del componente el atributo desaparece, y el
- * límite existe para que no vuelva a entrar sin que nadie se dé cuenta: es un
- * atributo que no dice nada y se paga una vez por elemento.
+ * The third: that same model, with the component's CSS scoped, forced 2,745
+ * elements to be marked with the scope attribute, which was 66 kB of the home
+ * page. With the sheet outside the component the attribute disappears, and the
+ * limit exists so it cannot creep back in unnoticed: it is an attribute that
+ * says nothing and is paid for once per element.
  */
-console.log('\n· Presupuesto')
+console.log('\n· Budget')
 const MAX_IMAGE_BYTES = 500 * 1024
 const MAX_INLINE_STYLE_BYTES = 32 * 1024
 const MAX_SCOPE_ATTRIBUTES = 200
@@ -459,8 +458,8 @@ const oversized = existsSync(assetDir)
   : []
 assert(
   oversized.length === 0,
-  `ningún corte de imagen supera ${MAX_IMAGE_BYTES / 1024} kB${
-    oversized.length ? ` — se pasan: ${oversized.map((e) => `${e.f} (${Math.round(e.size / 1024)} kB)`).join(', ')}` : ''
+  `no image cut exceeds ${MAX_IMAGE_BYTES / 1024} kB${
+    oversized.length ? ` — over: ${oversized.map((e) => `${e.f} (${Math.round(e.size / 1024)} kB)`).join(', ')}` : ''
   }`,
 )
 
@@ -471,35 +470,35 @@ for (const page of EXPECTED) {
     .reduce((total, match) => total + match[1].length, 0)
   assert(
     inline <= MAX_INLINE_STYLE_BYTES,
-    `${page.path} lleva ${Math.round(inline / 1024)} kB de estilo en línea (máximo ${MAX_INLINE_STYLE_BYTES / 1024} kB)`,
+    `${page.path} carries ${Math.round(inline / 1024)} kB of inline style (maximum ${MAX_INLINE_STYLE_BYTES / 1024} kB)`,
   )
 
   const scoped = [...html.matchAll(/\sdata-astro-cid-[\w-]+/g)].length
   assert(
     scoped <= MAX_SCOPE_ATTRIBUTES,
-    `${page.path} marca ${scoped} elementos con el atributo de ámbito (máximo ${MAX_SCOPE_ATTRIBUTES})`,
+    `${page.path} marks ${scoped} elements with the scope attribute (maximum ${MAX_SCOPE_ATTRIBUTES})`,
   )
 }
 
-/* ---------- CSS: el estado por defecto del revelado es visible ---------- */
-console.log('\n· Revelado')
+/* ---------- CSS: the reveal's default state is visible ---------- */
+console.log('\n· Reveal')
 const cssDir = join(DIST, '_astro')
 const css = existsSync(cssDir)
   ? readdirSync(cssDir).filter((f) => f.endsWith('.css')).map((f) => readFileSync(join(cssDir, f), 'utf8')).join('')
   : ''
-assert(/\.reveal\{[^}]*opacity:1/.test(css.replace(/\s/g, '')), '.reveal por defecto es opacity:1')
-assert(css.includes('prefers-reduced-motion'), 'prefers-reduced-motion contemplado')
+assert(/\.reveal\{[^}]*opacity:1/.test(css.replace(/\s/g, '')), '.reveal defaults to opacity:1')
+assert(css.includes('prefers-reduced-motion'), 'prefers-reduced-motion accounted for')
 
-/* ---------- Muestras de sonido ---------- */
+/* ---------- Sound samples ---------- */
 /*
- * Cada muestra vive dentro de la ficha de su build, no en un banco aparte:
- * quien entra en un teclado tiene ahí el orden de montaje y el sonido. Se
- * comprueba justamente eso —que el corte cuelgue del panel correcto— además
- * de que los dos formatos existan de verdad en dist. Un corte que se renombra
- * en el JSON y no se sustituye en public/ solo se nota al pulsar play, que es
- * justo lo que no ve nadie al desplegar.
+ * Each sample lives inside its build's card and not on a separate bench: whoever
+ * enters a keyboard has the assembly order and the sound right there. That is
+ * exactly what gets checked — that the clip hangs off the right panel — along
+ * with both formats really existing in dist. A clip renamed in the JSON and not
+ * replaced in public/ only shows up when you press play, which is precisely what
+ * nobody does while deploying.
  */
-console.log('\n· Muestras de sonido')
+console.log('\n· Sound samples')
 const soundBuilds = JSON.parse(readFileSync('src/content/keyboards.json', 'utf8'))
 const withSound = soundBuilds.filter((b) => b.sound)
 
@@ -507,12 +506,12 @@ for (const page of EXPECTED.filter((p) => p.kind === 'v2')) {
   const { document } = parseHTML(read(page.file))
   assert(
     document.querySelectorAll('[data-bx-clip]').length === withSound.length,
-    `${page.path} publica ${withSound.length} muestra(s), una por build grabado`,
+    `${page.path} publishes ${withSound.length} sample(s), one per recorded build`,
   )
-  /* Ninguna muestra puede quedarse suelta en la galería: todas dentro de su ficha. */
+  /* No sample may be left loose in the gallery: every one inside its own card. */
   assert(
     [...document.querySelectorAll('[data-bx-clip]')].every((clip) => clip.closest('[data-bx-build]')),
-    `${page.path} sirve cada muestra dentro del panel de su build`,
+    `${page.path} serves every sample inside its build's panel`,
   )
 
   for (const build of soundBuilds) {
@@ -522,68 +521,68 @@ for (const page of EXPECTED.filter((p) => p.kind === 'v2')) {
     if (!build.sound) {
       assert(
         !row && Boolean(panel?.querySelector('.bx-clip-note')),
-        `${build.name}: sin toma grabada, su ficha lo dice en lugar de callarse`,
+        `${build.name}: with no take recorded, its card says so instead of staying silent`,
       )
       continue
     }
 
     assert(
       row?.dataset.bxClip === build.sound.clip,
-      `${build.name}: su ficha sirve su propio corte (${build.sound.clip})`,
+      `${build.name}: its card serves its own clip (${build.sound.clip})`,
     )
     const sources = [...(row?.querySelectorAll('source') ?? [])].map((el) => el.getAttribute('src'))
     assert(
       sources.length === 2 && sources.every((src) => existsSync(join(DIST, src))),
-      `${build.name}: los dos formatos del corte existen en dist (${sources.join(', ')})`,
+      `${build.name}: both formats of the clip exist in dist (${sources.join(', ')})`,
     )
     assert(
       Number(row?.dataset.duration) === build.sound.duration,
-      `${build.name}: la duración del marcado coincide con la del contenido`,
+      `${build.name}: the markup's duration matches the content's`,
     )
-    /* La onda se dibuja de una vez: una barra por altura declarada. */
+    /* The waveform is drawn in one go: one bar per declared height. */
     const segments = row?.querySelector('.bx-clip-wave path')?.getAttribute('d')?.match(/M/g)?.length ?? 0
     assert(
       segments === build.sound.peaks.length,
-      `${build.name}: la onda dibuja las ${build.sound.peaks.length} barras del contenido`,
+      `${build.name}: the waveform draws the content's ${build.sound.peaks.length} bars`,
     )
-    /* El tramo de referencia va antes del tecleo, nunca más allá. */
+    /* The reference stretch comes before the typing, never past it. */
     const ref = Number((row?.getAttribute('style') ?? '').match(/--ref:([\d.]+)%/)?.[1])
     assert(
       ref > 0 && ref < 100 && Math.abs(ref - (build.sound.typingFrom / build.sound.duration) * 100) < 0.02,
-      `${build.name}: el tramo de referencia marca los chasquidos (${ref}%)`,
+      `${build.name}: the reference stretch marks the snaps (${ref}%)`,
     )
   }
 
-  /* Con `preload="none"` la portada no se lleva ni un byte de audio hasta que
-     alguien pulsa: es lo que permite servir las muestras ya en el HTML. */
+  /* With `preload="none"` the page carries not one byte of audio until somebody
+     presses play: that is what allows serving the samples in the HTML. */
   const players = [...document.querySelectorAll('audio')]
   assert(
     players.length === withSound.length && players.every((el) => el.getAttribute('preload') === 'none'),
-    `${page.path} no precarga ninguna muestra`,
+    `${page.path} preloads no sample at all`,
   )
 
   /*
-   * La mascota solo asoma donde el contenido lo dice. Es un adorno, pero uno
-   * que afirma algo —por qué ese build suena así— y no puede aparecer en un
-   * teclado que no lo haya declarado.
+   * The mascot only peeks out where the content says so. It is an ornament, but
+   * one that claims something — why that build sounds the way it does — and it
+   * cannot show up on a keyboard that never declared it.
    */
   const quipBuilds = soundBuilds.filter((b) => b.sound?.quips)
   assert(
     document.querySelectorAll('[data-bx-quip]').length === quipBuilds.length,
-    `${page.path} asoma la mascota en ${quipBuilds.length} build(s), los montados para el silencio`,
+    `${page.path} shows the mascot on ${quipBuilds.length} build(s), the ones assembled for silence`,
   )
   for (const build of soundBuilds) {
     const panel = document.querySelector(`[data-bx-build="${build.key}"]`)
     const quip = panel?.querySelector('[data-bx-quip]')
     if (!build.sound?.quips) {
-      assert(!quip, `${build.name}: sin apuntes declarados, no asoma nadie`)
+      assert(!quip, `${build.name}: with no notes declared, nobody peeks out`)
       continue
     }
     const lines = build.sound.quips[page.lang]
     const shipped = JSON.parse(quip?.querySelector('[data-bx-quip-next]')?.dataset.quips ?? '[]')
     assert(
       shipped.length === lines.length && shipped.every((line, i) => line === lines[i]),
-      `${build.name}: viajan sus ${lines.length} apuntes en ${page.lang}`,
+      `${build.name}: its ${lines.length} notes travel in ${page.lang}`,
     )
     assert(
       quip?.querySelector('[data-bx-quip-text]')?.textContent?.trim() === lines[0],
@@ -591,20 +590,20 @@ for (const page of EXPECTED.filter((p) => p.kind === 'v2')) {
     )
   }
 
-  /* La tarjeta entera abre el build; el botón sigue siendo el objetivo del teclado. */
+  /* The whole card opens the build; the button remains the keyboard's target. */
   const cards = [...document.querySelectorAll('.bx-build-card')]
   assert(
     cards.length > 0 && cards.every((card) => card.dataset.bxOpen
       && card.querySelector(`button[data-bx-open="${card.dataset.bxOpen}"]`)),
-    `${page.path} deja la tarjeta entera abriendo el build, con su botón dentro`,
+    `${page.path} lets the whole card open the build, with its button inside`,
   )
 }
 
-/* ---------- Resultado ---------- */
+/* ---------- Result ---------- */
 console.log(`\n${'─'.repeat(52)}`)
 if (failures === 0) {
-  console.log(`✅ ${checks} comprobaciones superadas`)
+  console.log(`✅ ${checks} checks passed`)
   process.exit(0)
 }
-console.error(`❌ ${failures} fallo(s) sobre ${checks + failures} comprobaciones`)
+console.error(`❌ ${failures} failure(s) across ${checks + failures} checks`)
 process.exit(1)
