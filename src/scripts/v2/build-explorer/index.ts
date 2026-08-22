@@ -38,8 +38,6 @@ export function initKeyboardBuildExplorer() {
       if (caption) caption.textContent = slides[index].dataset.bxCardLabel ?? ''
       if (counter) counter.textContent = `${pad(index + 1)} / ${pad(slides.length)}`
 
-      const image = slides[index].querySelector<HTMLImageElement>('img')
-      if (image) image.loading = 'eager'
     }
 
     previous?.addEventListener('click', () => show(index - 1))

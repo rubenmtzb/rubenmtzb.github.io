@@ -8,6 +8,20 @@ import { V2_ANCHOR_ALIASES, t, type Lang } from '../../i18n/ui'
 interface Props { lang: Lang }
 const { lang } = Astro.props
 
+/*
+ * Portadas del carrusel.
+ *
+ * Son capturas de 2000 px y el carrusel nunca pasa de ~1100 px, así que se
+ * sirven redimensionadas y en AVIF/WebP. El PNG original sigue siendo el
+ * respaldo, con calidad alta para que las líneas finas y el texto de la
+ * captura no se ensucien.
+ *
+ * Se descargan todas, no solo la primera: pulsar la flecha obligaba a esperar
+ * a que arrancara la descarga de la siguiente, y esa espera se ve. Las que no
+ * están a la vista bajan con prioridad mínima, así que llegan sin disputarle
+ * el ancho de banda a la portada que sí se está mirando.
+ */
+
 const experience = await getExperience(lang)
 const projects = await getProjects(lang)
 
@@ -140,12 +154,6 @@ const badgeLabel = (badge: 'live' | 'private' | 'coming-soon') =>
             aria-label={`${i + 1} / ${projects.length}: ${p.title}`}
             aria-hidden={i === 0 ? 'false' : 'true'}
           >
-            <!--
-              Las portadas son capturas de 2000 px y el carrusel nunca pasa
-              de ~1100 px, así que se sirven redimensionadas y en AVIF/WebP.
-              El PNG original sigue siendo el respaldo, con calidad alta para
-              que las líneas finas y el texto de la captura no se ensucien.
-            -->
             {p.image ? (
               <Picture
                 src={p.image}
@@ -156,8 +164,8 @@ const badgeLabel = (badge: 'live' | 'private' | 'coming-soon') =>
                 width={1600}
                 sizes="(max-width: 1216px) 100vw, 1104px"
                 alt={p.imageAlt || `${p.title} — cover`}
-                loading={i === 0 ? 'eager' : 'lazy'}
-                fetchpriority={i === 0 ? 'high' : 'auto'}
+                loading="eager"
+                fetchpriority={i === 0 ? 'high' : 'low'}
                 decoding="async"
                 class="project-cover absolute inset-0 h-full w-full object-cover"
               />

@@ -26,6 +26,16 @@ const copy = keyboardCopy(lang)
  */
 const PHOTO_WIDTHS = [420, 680, 1020, 1360]
 
+/**
+ * Las seis portadas se descargan desde el principio, no al mostrarse.
+ *
+ * El carrusel de la tarjeta se pasa con las flechas, y una fotografía que
+ * empieza a bajar en el momento en que se pide llega tarde: se ve el hueco.
+ * Como el bloque vive detrás de una pestaña y muy por debajo del pliegue, la
+ * descarga va con prioridad mínima —`fetchpriority="low"`—, así que ocurre con
+ * la conexión ya libre y no le quita ancho de banda a lo que se está viendo.
+ */
+
 /** Nunca pide al pipeline un corte mayor que el original de cada fotografía. */
 const photoWidths = (intrinsic: number) => {
   const fitting = PHOTO_WIDTHS.filter((width) => width <= intrinsic)
@@ -67,7 +77,8 @@ const photoWidth = (intrinsic: number) => photoWidths(intrinsic).at(-1) ?? intri
             quality={82}
             sizes="(max-width: 544px) calc(100vw - 4rem), (max-width: 1024px) 44vw, 340px"
             alt={pick(photo.alt)}
-            loading="lazy"
+            loading="eager"
+            fetchpriority="low"
             decoding="async"
             draggable="false"
             class="bx-card-photo"
