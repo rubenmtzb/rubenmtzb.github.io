@@ -11,25 +11,29 @@
  *   · Habilidad Definitiva: MODO KANMURU / GODSPEED (Aura azul neón pura, relámpagos e imán de orbes).
  */
 
-const W = 28
-const H = 62
-const BLOCK_H = 8
+import {
+  BODY,
+  PHYSICS,
+  clampToStage,
+  cutJump,
+  LEDGE_INSET,
+  landsOn,
+  nextVelocityX,
+  nextVelocityY,
+} from './game/physics'
+import { createGameAudio, type BleepMood } from './game/audio'
+import {
+  LEVELS,
+  type ComicBubble,
+  type CustomLedge,
+  type MovingLedge,
+  type Rect,
+  type SectionOrb,
+} from './game/levels'
 
-// Físicas calibradas y cómodas
-const GRAVITY = 0.40
-const JUMP_FORCE = -8.8
-const DOUBLE_JUMP_FORCE = -8.4
-const JUMP_CUT = 0.45
-const MAX_RUN = 3.0
-const MAX_RUN_GODSPEED = 4.4
-const ACCEL_GROUND = 0.52
-const ACCEL_AIR = 0.28
-const FRICTION_GROUND = 0.85
-const FRICTION_AIR = 0.94
-const MAX_FALL = 9.0
-const FAST_FALL = 12.0
-const COYOTE_MS = 140
-const BUFFER_MS = 140
+const W = BODY.width
+const H = BODY.height
+const BLOCK_H = 8
 
 // Habilidad Definitiva: Modo Godspeed (Kanmuru / Aura Eléctrica)
 const GODSPEED_DURATION = 4500
@@ -40,75 +44,6 @@ const MAX_TRAIL = 28
 const MAX_SPARKS = 72
 const MAX_SHOCKWAVES = 4
 
-type Rect = { x: number; y: number; w: number; isCustom?: boolean }
-type MovingLedge = { x: number; y: number; w: number; originX: number; range: number; speed: number; dir: number }
-type CustomLedge = { x: number; y: number; w: number; alpha: number }
-type SectionOrb = {
-  id: string
-  name: string
-  x: number
-  y: number
-  taken: boolean
-  seed: number
-}
-
-type OrbTarget = {
-  selector?: string
-  fallbackRatio: { x: number; y: number }
-  name: { es: string; en: string }
-}
-
-type LevelConfig = {
-  level: number
-  title: { es: string; en: string }
-  sub: { es: string; en: string }
-  targets: OrbTarget[]
-}
-
-type ComicBubble = {
-  text: string
-  startTime: number
-  duration: number
-  mood?: 'normal' | 'alert' | 'godspeed' | 'success'
-}
-
-// Niveles curados de calidad y fluidez
-const LEVELS: LevelConfig[] = [
-  {
-    level: 1,
-    title: { es: 'NIVEL 1: Examen de Cazador', en: 'LEVEL 1: Hunter Exam' },
-    sub: { es: 'Supera las pruebas iniciales en Identidad y Experiencia.', en: 'Pass the initial trials across Identity & Experience.' },
-    targets: [
-      { selector: '#identity', fallbackRatio: { x: 0.25, y: 0.05 }, name: { es: 'Identidad', en: 'Identity' } },
-      { selector: '.hero-tech-chip', fallbackRatio: { x: 0.68, y: 0.12 }, name: { es: 'Tecnologías', en: 'Tech Stack' } },
-      { selector: '#work .job-panel', fallbackRatio: { x: 0.35, y: 0.26 }, name: { es: 'Experiencia Profesional', en: 'Work Experience' } },
-      { selector: '#project-carousel', fallbackRatio: { x: 0.72, y: 0.32 }, name: { es: 'Muestra técnica', en: 'Technical Showcase' } },
-    ],
-  },
-  {
-    level: 2,
-    title: { es: 'NIVEL 2: Greed Island', en: 'LEVEL 2: Greed Island' },
-    sub: { es: 'Navega sobre plataformas móviles entre Proyectos y Archivo.', en: 'Ride moving platforms across Projects & Archive.' },
-    targets: [
-      { selector: '#work', fallbackRatio: { x: 0.25, y: 0.22 }, name: { es: 'Entrada Greed Island', en: 'Greed Island Entry' } },
-      { selector: '#project-deck .project-grid-card:nth-of-type(1)', fallbackRatio: { x: 0.30, y: 0.40 }, name: { es: 'Proyecto Destacado (Izq)', en: 'Featured Project (Left)' } },
-      { selector: '#project-deck .project-grid-card:nth-of-type(2)', fallbackRatio: { x: 0.70, y: 0.46 }, name: { es: 'Proyecto Destacado (Der)', en: 'Featured Project (Right)' } },
-      { selector: '#archive .moment-card:nth-of-type(1)', fallbackRatio: { x: 0.48, y: 0.65 }, name: { es: 'Más allá del código', en: 'Outside the Code' } },
-    ],
-  },
-  {
-    level: 3,
-    title: { es: 'NIVEL 3: Maestro Godspeed', en: 'LEVEL 3: Godspeed Master' },
-    sub: { es: 'Recorrido completo hasta el final del portfolio desatando el aura eléctrica.', en: 'Full traversal all the way to Contact with electric aura.' },
-    targets: [
-      { selector: '#identity', fallbackRatio: { x: 0.25, y: 0.08 }, name: { es: 'Arranque Godspeed', en: 'Godspeed Start' } },
-      { selector: '#project-carousel', fallbackRatio: { x: 0.75, y: 0.38 }, name: { es: 'Muestra de proyectos', en: 'Projects Showcase' } },
-      { selector: '.profile-workbench', fallbackRatio: { x: 0.30, y: 0.52 }, name: { es: 'Educación y habilidades', en: 'Education & Skills' } },
-      { selector: '#archive', fallbackRatio: { x: 0.70, y: 0.68 }, name: { es: 'Archivo Visual', en: 'Visual Archive' } },
-      { selector: '#contact .contact-signal', fallbackRatio: { x: 0.50, y: 0.88 }, name: { es: 'Meta Final & Contacto ⚡', en: 'Final Goal & Contact ⚡' } },
-    ],
-  },
-]
 
 export function startGameMode(onExit: () => void) {
   const originalScrollY = window.scrollY
@@ -149,109 +84,9 @@ export function startGameMode(onExit: () => void) {
   const spriteJump = new Image(); spriteJump.src = '/killua-jump.png'
   const spriteGodspeed = new Image(); spriteGodspeed.src = '/killua-godspeed.png'
 
-  // Audio Web API
-  let audioCtx: AudioContext | null = null
-  const getAudio = () => {
-    if (!audioCtx) {
-      const AudioClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
-      audioCtx = new AudioClass()
-    }
-    if (audioCtx.state === 'suspended') audioCtx.resume()
-    return audioCtx
-  }
+  const audio = createGameAudio()
+  const { playBoltSound, playDoubleJumpSound, playGodspeedSound, playVoiceBleep } = audio
 
-  const playBoltSound = () => {
-    try {
-      const ac = getAudio()
-      const now = ac.currentTime
-      const osc = ac.createOscillator()
-      const gain = ac.createGain()
-      osc.type = 'sawtooth'
-      osc.frequency.setValueAtTime(540, now)
-      osc.frequency.exponentialRampToValueAtTime(1450, now + 0.12)
-      gain.gain.setValueAtTime(0.18, now)
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15)
-      osc.connect(gain)
-      gain.connect(ac.destination)
-      osc.start(now)
-      osc.stop(now + 0.16)
-    } catch { /* Audio opcional */ }
-  }
-
-  const playDoubleJumpSound = () => {
-    try {
-      const ac = getAudio()
-      const now = ac.currentTime
-      const osc = ac.createOscillator()
-      const gain = ac.createGain()
-      osc.type = 'triangle'
-      osc.frequency.setValueAtTime(320, now)
-      osc.frequency.exponentialRampToValueAtTime(880, now + 0.16)
-      gain.gain.setValueAtTime(0.2, now)
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18)
-      osc.connect(gain)
-      gain.connect(ac.destination)
-      osc.start(now)
-      osc.stop(now + 0.2)
-    } catch { /* Audio opcional */ }
-  }
-
-  const playGodspeedSound = () => {
-    try {
-      const ac = getAudio()
-      const now = ac.currentTime
-      const osc = ac.createOscillator()
-      const gain = ac.createGain()
-      osc.type = 'sawtooth'
-      osc.frequency.setValueAtTime(180, now)
-      osc.frequency.exponentialRampToValueAtTime(1200, now + 0.42)
-      gain.gain.setValueAtTime(0.26, now)
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.48)
-      osc.connect(gain)
-      gain.connect(ac.destination)
-      osc.start(now)
-      osc.stop(now + 0.5)
-
-      const osc2 = ac.createOscillator()
-      const gain2 = ac.createGain()
-      osc2.type = 'sine'
-      osc2.frequency.setValueAtTime(90, now)
-      osc2.frequency.linearRampToValueAtTime(45, now + 0.58)
-      gain2.gain.setValueAtTime(0.28, now)
-      gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.58)
-      osc2.connect(gain2)
-      gain2.connect(ac.destination)
-      osc2.start(now)
-      osc2.stop(now + 0.6)
-    } catch { /* Audio opcional */ }
-  }
-
-  const playVoiceBleep = (mood: 'normal' | 'alert' | 'godspeed' | 'success' = 'normal') => {
-    try {
-      const ac = getAudio()
-      const now = ac.currentTime
-      const blipCount = mood === 'godspeed' ? 5 : mood === 'alert' ? 4 : 3
-      const baseFreq = mood === 'godspeed' ? 640 : mood === 'alert' ? 560 : 480
-
-      for (let i = 0; i < blipCount; i++) {
-        const startTime = now + i * 0.05
-        const osc = ac.createOscillator()
-        const gain = ac.createGain()
-        osc.type = 'triangle'
-        const freq = baseFreq + (i % 2 === 0 ? 70 : -35) + (Math.random() * 30 - 15)
-        osc.frequency.setValueAtTime(freq, startTime)
-        osc.frequency.exponentialRampToValueAtTime(freq * 1.12, startTime + 0.038)
-
-        gain.gain.setValueAtTime(0.09, startTime)
-        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.042)
-
-        osc.connect(gain)
-        gain.connect(ac.destination)
-        osc.start(startTime)
-        osc.stop(startTime + 0.045)
-      }
-    } catch { /* Audio opcional */ }
-  }
 
   let currentLevelIdx = 0
   let status: 'playing' | 'level_clear' | 'dead' | 'won' = 'playing'
@@ -272,7 +107,7 @@ export function startGameMode(onExit: () => void) {
   let lastIdleSpeechTime = 0
   let lastMoveTime = performance.now()
 
-  const say = (text: string, duration = 2800, mood: 'normal' | 'alert' | 'godspeed' | 'success' = 'normal') => {
+  const say = (text: string, duration = 2800, mood: BleepMood = 'normal') => {
     currentBubble = {
       text,
       startTime: performance.now(),
@@ -518,7 +353,7 @@ export function startGameMode(onExit: () => void) {
   const executeAirJump = () => {
     if (status !== 'playing' || me.jumpsLeft <= 0) return
     const isGodspeed = performance.now() < godspeedActiveUntil
-    me.vy = isGodspeed ? JUMP_FORCE * 1.15 : DOUBLE_JUMP_FORCE
+    me.vy = isGodspeed ? PHYSICS.jumpForce * 1.15 : PHYSICS.doubleJumpForce
     me.jumpsLeft--
     me.sx = 0.75
     me.sy = 1.35
@@ -552,7 +387,7 @@ export function startGameMode(onExit: () => void) {
   const requestJump = () => {
     if (status !== 'playing') return
     const now = performance.now()
-    const canUseGroundJump = me.grounded || now - me.lastGround < COYOTE_MS
+    const canUseGroundJump = me.grounded || now - me.lastGround < PHYSICS.coyoteMs
     me.lastJump = now
     if (!canUseGroundJump && me.jumpsLeft > 0) {
       me.lastJump = -9999
@@ -569,7 +404,7 @@ export function startGameMode(onExit: () => void) {
     dropThroughUntil = performance.now() + 240
     me.currentMovingLedge = null
     if (!me.grounded) {
-      me.vy = Math.min(me.vy + 6, FAST_FALL)
+      me.vy = Math.min(me.vy + 6, PHYSICS.fastFall)
     } else {
       me.grounded = false
       me.y += 6
@@ -1072,24 +907,17 @@ export function startGameMode(onExit: () => void) {
         lastMoveTime = now
       }
 
-      const currentMaxRun = isGodspeed ? MAX_RUN_GODSPEED : MAX_RUN
-      const accel = me.grounded ? (isGodspeed ? ACCEL_GROUND * 1.3 : ACCEL_GROUND) : ACCEL_AIR
-
-      if (left) {
-        me.vx = Math.max(me.vx - accel * frameScale, -currentMaxRun)
-        me.face = -1
-      } else if (right) {
-        me.vx = Math.min(me.vx + accel * frameScale, currentMaxRun)
-        me.face = 1
-      } else {
-        me.vx *= Math.pow(me.grounded ? FRICTION_GROUND : FRICTION_AIR, frameScale)
-      }
+      me.vx = nextVelocityX(me.vx, {
+        left, right, grounded: me.grounded, godspeed: isGodspeed, frameScale,
+      })
+      if (left) me.face = -1
+      else if (right) me.face = 1
 
       // Salto desde el suelo
-      const canCoyote = now - me.lastGround < COYOTE_MS
-      const buffered = now - me.lastJump < BUFFER_MS
+      const canCoyote = now - me.lastGround < PHYSICS.coyoteMs
+      const buffered = now - me.lastJump < PHYSICS.bufferMs
       if (buffered && canCoyote) {
-        me.vy = isGodspeed ? JUMP_FORCE * 1.15 : JUMP_FORCE
+        me.vy = isGodspeed ? PHYSICS.jumpForce * 1.15 : PHYSICS.jumpForce
         me.grounded = false
         me.currentMovingLedge = null
         me.lastJump = -9999
@@ -1107,17 +935,14 @@ export function startGameMode(onExit: () => void) {
         }
       }
 
-      if (!jumpHeld && me.vy < 0 && me.vy > JUMP_FORCE * 0.9) me.vy *= JUMP_CUT
-
-      // Gravedad
-      const fallLimit = fastFallHeld ? FAST_FALL : MAX_FALL
-      me.vy = Math.min(me.vy + (isGodspeed && jumpHeld && me.vy > 0 ? GRAVITY * 0.5 : GRAVITY) * frameScale, fallLimit)
+      me.vy = cutJump(me.vy, jumpHeld)
+      me.vy = nextVelocityY(me.vy, { godspeed: isGodspeed, jumpHeld, fastFallHeld, frameScale })
       me.x += me.vx * frameScale
       me.y += me.vy * frameScale
 
-      // Límites de pantalla suaves
-      if (me.x < 0) { me.x = 0; me.vx = 0 }
-      if (me.x + W > w) { me.x = w - W; me.vx = 0 }
+      const bounded = clampToStage(me.x, me.vx, w)
+      me.x = bounded.x
+      me.vx = bounded.vx
 
       // Colisiones de plataformas optimizadas (memoria en lugar de DOM queries continuas)
       const dropping = now < dropThroughUntil
@@ -1127,9 +952,7 @@ export function startGameMode(onExit: () => void) {
       if (me.vy >= 0 && !dropping) {
         let landedOnMoving = false
         for (const ml of movingLedges) {
-          const bottom = me.y + H
-          const prev = bottom - me.vy * frameScale
-          if (me.x + W > ml.x + 2 && me.x < ml.x + ml.w - 2 && prev <= ml.y + 6 && bottom >= ml.y - 2) {
+          if (landsOn(me, ml, frameScale, LEDGE_INSET.moving)) {
             me.y = ml.y - H
             me.vy = 0
             me.grounded = true
@@ -1151,9 +974,7 @@ export function startGameMode(onExit: () => void) {
           me.currentMovingLedge = null
           // Comprobar plataformas personalizadas
           for (const p of customLedges) {
-            const bottom = me.y + H
-            const prev = bottom - me.vy * frameScale
-            if (me.x + W > p.x + 3 && me.x < p.x + p.w - 3 && prev <= p.y + 6 && bottom >= p.y - 2) {
+            if (landsOn(me, p, frameScale, LEDGE_INSET.custom)) {
               me.y = p.y - H
               me.vy = 0
               me.grounded = true
@@ -1176,7 +997,7 @@ export function startGameMode(onExit: () => void) {
               const prev = bottom - me.vy * frameScale
               if (p.y < prev - 8) continue
               if (p.y > bottom + 8) break
-              if (me.x + W > p.x + 4 && me.x < p.x + p.w - 4 && prev <= p.y + 6 && bottom >= p.y - 2) {
+              if (landsOn(me, p, frameScale, LEDGE_INSET.dom)) {
                 me.y = p.y - H
                 me.vy = 0
                 me.grounded = true
@@ -1557,7 +1378,7 @@ export function startGameMode(onExit: () => void) {
     trail.length = 0
     sparks.length = 0
     shockwaves.length = 0
-    if (audioCtx && audioCtx.state !== 'closed') void audioCtx.close()
+    audio.close()
     canvas.remove()
     ui.remove()
     document.documentElement.scrollTop = originalScrollY
