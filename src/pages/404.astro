@@ -9,7 +9,6 @@
  */
 import BaseLayout from '../layouts/BaseLayout.astro'
 import Icon from '../components/Icon.astro'
-import { cvPath, homePath } from '../lib/content'
 import { DEFAULT_LANG } from '../i18n/ui'
 import '../styles/v2.css'
 ---
@@ -31,10 +30,10 @@ import '../styles/v2.css'
       The page you were looking for is not here. It may have moved, or the link may be out of date.
     </p>
     <p class="mt-8 flex flex-wrap gap-3">
-      <a href={homePath(DEFAULT_LANG)} class="btn btn-primary">
+      <a href="/" class="btn btn-primary">
         <Icon name="arrowLeft" class="h-4 w-4" />Home
       </a>
-      <a href={cvPath(DEFAULT_LANG)} class="btn btn-ghost">CV</a>
+      <a href="/cv/" class="btn btn-ghost">CV</a>
       <a href="/v1/" class="btn btn-ghost">Documentary version</a>
     </p>
   </main>

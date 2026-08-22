@@ -141,13 +141,14 @@ export const abs = (path: string) => new URL(path, SITE).href
 /**
  * La misma ruta en el idioma pedido.
  *
- * La gramática de URLs pone el inglés en la raíz y el castellano bajo `/es/`,
- * así que la traducción de una ruta es mecánica. Estaba escrita a mano en
- * media docena de componentes —cada uno con su propio ternario— y basta con
- * que uno se olvide del prefijo para mandar a un lector castellano a la
- * versión inglesa sin que nada falle.
+ * La gramática de URLs deja el idioma por defecto en la raíz y prefija el
+ * resto con su código, así que la traducción de una ruta es mecánica. Estaba
+ * escrita a mano en media docena de componentes —cada uno con su propio
+ * ternario contra `'es'`— y basta con que uno se olvide del prefijo para
+ * mandar a un lector castellano a la versión inglesa sin que nada falle.
  */
-export const localePath = (path: string, lang: Lang) => (lang === 'es' ? `/es${path}` : path)
+export const localePath = (path: string, lang: Lang) =>
+  (lang === DEFAULT_LANG ? path : `/${lang}${path}`)
 
 /** Ruta del CV en el idioma dado. La enlazan la V1, la V2 y el propio CV. */
 export const cvPath = (lang: Lang) => localePath('/cv/', lang)
