@@ -100,6 +100,68 @@
   color: var(--fg);
 }
 
+/* Killua peeker behind the brand avatar — must ship with the header sheet.
+   Living only inside game-mode.css meant the sprite painted raw until the
+   Game Mode chunk was fetched (common in local first loads). */
+.header-killua-peeker {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 6px) scale(0.65);
+  opacity: 0;
+  z-index: 5;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
+  animation: killuaPeekLook 10s infinite ease-in-out;
+  pointer-events: none;
+}
+
+.header-killua-sprite {
+  width: 20px;
+  height: 44px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  filter: drop-shadow(0 0 5px rgba(111, 227, 255, 0.7));
+}
+
+#header-brand-link:hover .header-killua-peeker {
+  animation: none;
+  transform: translate(-50%, -22px) scale(0.9) rotate(0deg);
+  opacity: 1;
+  filter: drop-shadow(0 0 10px rgba(111, 227, 255, 0.95));
+}
+
+@keyframes killuaPeekLook {
+  0%, 14% {
+    transform: translate(-50%, 8px) scale(0.6);
+    opacity: 0;
+  }
+  18% {
+    transform: translate(-50%, -19px) scale(0.85) rotate(0deg);
+    opacity: 1;
+  }
+  24% {
+    transform: translate(-50%, -19px) scale(0.85) rotate(-14deg);
+    opacity: 1;
+  }
+  31% {
+    transform: translate(-50%, -19px) scale(0.85) rotate(14deg);
+    opacity: 1;
+  }
+  37% {
+    transform: translate(-50%, -22px) scale(0.88) rotate(0deg);
+    opacity: 1;
+  }
+  43% {
+    transform: translate(-50%, 8px) scale(0.6);
+    opacity: 0;
+  }
+  44%, 100% {
+    transform: translate(-50%, 8px) scale(0.6);
+    opacity: 0;
+  }
+}
+
 @media (max-width: 639px) {
   html {
     scroll-padding-top: 5rem;
