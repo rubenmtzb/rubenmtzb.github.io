@@ -621,6 +621,12 @@ for (const page of EXPECTED.filter((p) => p.kind === 'v2')) {
     !homeHtml.includes('.gm-canvas{') && !homeHtml.includes('html.game-mode-active'),
     `${page.path} does not inline Game Mode CSS`,
   )
+  assert(
+    [...home.querySelectorAll('link[rel="preload"][as="image"]')].some(
+      (link) => (link.getAttribute('href') ?? '').includes('avatar.png'),
+    ),
+    `${page.path} preloads the portrait so the ASCII canvas does not wait on JS`,
+  )
 }
 
 /* ---------- Result ---------- */

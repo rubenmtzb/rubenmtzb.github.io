@@ -49,6 +49,7 @@ if (!pageKey && !Astro.slots.has('head')) {
     {pageKey ? <Seo pageKey={pageKey} lang={lang} pageType={pageType} /> : <slot name="head" />}
     <FontPreload display={displayFont} />
     <Enhancement />
+    <slot name="head-extra" />
   </head>
   <body class={bodyClass}>
     <a class="skip-link" href="#main">{t(lang, 'nav.skip')}</a>
