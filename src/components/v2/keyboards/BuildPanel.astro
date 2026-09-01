@@ -48,15 +48,7 @@ const partSpec = (part: KeyboardBuild['parts'][number]) =>
         role="group"
         aria-label={`${copy.model} — ${build.name}`}
       >
-        <!--
-          Inert until the archive is close. The markup is still in the document
-          but a template is not live DOM, so the home page does not style or lay
-          out four thousand keys on first paint. The explorer materialises this
-          the moment the section approaches, so opening a build does not wait.
-        -->
-        <template data-bx-model-template>
-          <BuildModel build={build} lang={lang} />
-        </template>
+        <BuildModel build={build} lang={lang} />
 
         {build.status !== 'complete' && (
           <span class="bx-prototype-note">{copy.prototype}</span>

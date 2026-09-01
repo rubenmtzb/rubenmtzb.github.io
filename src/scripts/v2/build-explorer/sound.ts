@@ -43,7 +43,7 @@ export function createBuildSound(rack: HTMLElement) {
     const seek = row.querySelector<HTMLInputElement>('[data-bx-clip-seek]')
     const readout = row.querySelector<HTMLElement>('[data-bx-clip-now]')
     /* With no audio output the row just sits still: the rest of the panel never notices. */
-    if (!audio || !toggle || !seek || typeof audio.play !== 'function') continue
+    if (!audio || !toggle || !seek) continue
 
     /* The duration ships in the markup because with `preload="none"` the file
        does not yet exist for the browser when the first 0:00 must be written. */

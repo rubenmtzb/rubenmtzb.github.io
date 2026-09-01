@@ -31,6 +31,8 @@ const EXPECTED = [
   { path: '/es/work/sars-cov-2/', file: 'es/work/sars-cov-2/index.html', lang: 'es', cluster: 'case', indexable: true, kind: 'case' },
   { path: '/v1/', file: 'v1/index.html', lang: 'en', cluster: null, indexable: false, kind: 'v1' },
   { path: '/v1/es/', file: 'v1/es/index.html', lang: 'es', cluster: null, indexable: false, kind: 'v1' },
+  { path: '/builds/models/', file: 'builds/models/index.html', lang: 'en', cluster: null, indexable: false, kind: 'fragment' },
+  { path: '/es/builds/models/', file: 'es/builds/models/index.html', lang: 'es', cluster: null, indexable: false, kind: 'fragment' },
 ]
 
 const CLUSTERS = {
@@ -151,6 +153,13 @@ assert(
 for (const page of EXPECTED) {
   console.log(`\n· ${page.path}`)
   const html = read(page.file)
+  if (page.kind === 'fragment') {
+    assert(html.includes('noindex'), 'the fragment is not a page of the site')
+    assert((html.match(/data-bx-build=/g) ?? []).length >= 4, 'one workbench per build')
+    assert(html.includes('bx-model-key'), 'ships the layered keys')
+    assert(html.includes('data-bx-geometry'), 'ships the key geometry with the models')
+    continue
+  }
   const { document } = parseHTML(html)
 
   // 2. Exactamente un H1
@@ -503,7 +512,9 @@ const soundBuilds = JSON.parse(readFileSync('src/content/keyboards.json', 'utf8'
 const withSound = soundBuilds.filter((b) => b.sound)
 
 for (const page of EXPECTED.filter((p) => p.kind === 'v2')) {
-  const { document } = parseHTML(read(page.file))
+  const { document: home } = parseHTML(read(page.file))
+  const fragmentFile = page.lang === 'es' ? 'es/builds/models/index.html' : 'builds/models/index.html'
+  const { document } = parseHTML(read(fragmentFile))
   assert(
     document.querySelectorAll('[data-bx-clip]').length === withSound.length,
     `${page.path} publishes ${withSound.length} sample(s), one per recorded build`,
@@ -591,11 +602,24 @@ for (const page of EXPECTED.filter((p) => p.kind === 'v2')) {
   }
 
   /* The whole card opens the build; the button remains the keyboard's target. */
-  const cards = [...document.querySelectorAll('.bx-build-card')]
+  const cards = [...home.querySelectorAll('.bx-build-card')]
   assert(
     cards.length > 0 && cards.every((card) => card.dataset.bxOpen
       && card.querySelector(`button[data-bx-open="${card.dataset.bxOpen}"]`)),
     `${page.path} lets the whole card open the build, with its button inside`,
+  )
+
+  const homeKeys = home.querySelectorAll('.bx-model-key').length
+  const homePanels = home.querySelectorAll('[data-bx-build]').length
+  assert(
+    homeKeys === 0 && homePanels === 0 && Boolean(home.querySelector('[data-bx-models-src]')),
+    `${page.path} leaves workbenches and layered keys out of the home document`,
+  )
+
+  const homeHtml = read(page.file)
+  assert(
+    !homeHtml.includes('.gm-canvas{') && !homeHtml.includes('html.game-mode-active'),
+    `${page.path} does not inline Game Mode CSS`,
   )
 }
 
