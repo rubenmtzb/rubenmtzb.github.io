@@ -16,7 +16,7 @@
  * full, that the carousels advance with a single active element, that the tabs
  * switch panels, and that the keyboard records hits, misses and deletions.
  */
-import { readFileSync, readdirSync } from 'node:fs'
+import { readFileSync, readdirSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { parseHTML } from 'linkedom'
@@ -91,8 +91,17 @@ async function run(page, runIndex) {
    */
   const intervals = new Map()
   let nextIntervalId = 1
+  const fetchFromDist = async (input) => {
+    const href = typeof input === 'string' ? input : String(input?.url ?? input)
+    const path = href.replace(/^https?:\/\/[^/]+/, '')
+    const file = path.endsWith('/') ? `${path.replace(/^\//, '')}index.html` : path.replace(/^\//, '')
+    const full = join(DIST, file)
+    if (!existsSync(full)) return { ok: false, status: 404, text: async () => '' }
+    return { ok: true, status: 200, text: async () => readFileSync(full, 'utf8') }
+  }
   Object.assign(window, {
     matchMedia: () => ({ matches: false, addEventListener: noop, removeEventListener: noop }),
+    fetch: fetchFromDist,
     requestAnimationFrame: () => 0,
     cancelAnimationFrame: noop,
     setTimeout: () => 0,
@@ -116,20 +125,22 @@ async function run(page, runIndex) {
   })
   for (const canvas of document.querySelectorAll('canvas')) canvas.getContext = () => null
 
-  /* linkedom plays nothing. It is given the minimum output the sound bench
-     needs — play, pause and a playhead — so it can be checked here that only one
-     sample plays at a time and that scrubbing moves the position. The duration
-     comes from the markup, which is where the player itself reads it from while
-     the file has not been downloaded. */
-  for (const audio of document.querySelectorAll('audio')) {
-    let head = 0
-    Object.defineProperties(audio, {
-      duration: { get: () => Number(audio.closest('[data-duration]')?.dataset.duration ?? 0) },
-      currentTime: { get: () => head, set: (value) => { head = value } },
-    })
-    audio.play = () => { audio.dispatchEvent(new window.Event('play')) }
-    audio.pause = () => { audio.dispatchEvent(new window.Event('pause')) }
-  }
+  /* linkedom plays nothing. Samples arrive in a fetched fragment, so the
+     prototype is patched: play/pause/duration have to exist on audio nodes
+     created after this harness runs. */
+  const AudioProto = window.HTMLAudioElement?.prototype ?? window.HTMLElement.prototype
+  const head = new WeakMap()
+  Object.defineProperty(AudioProto, 'duration', {
+    configurable: true,
+    get() { return Number(this.closest?.('[data-duration]')?.dataset.duration ?? 0) },
+  })
+  Object.defineProperty(AudioProto, 'currentTime', {
+    configurable: true,
+    get() { return head.get(this) ?? 0 },
+    set(value) { head.set(this, value) },
+  })
+  AudioProto.play = function play() { this.dispatchEvent(new window.Event('play')); return Promise.resolve() }
+  AudioProto.pause = function pause() { this.dispatchEvent(new window.Event('pause')) }
 
   /* linkedom pins event.target to the dispatching object and will not let it be
      overwritten, but in a browser a keydown points at the focused element. The
@@ -157,10 +168,21 @@ async function run(page, runIndex) {
     setInterval: window.setInterval,
     clearTimeout: window.clearTimeout,
     clearInterval: window.clearInterval,
+    fetch: fetchFromDist,
   })
 
   // The suffix bypasses Node's module cache: every page starts from scratch.
   await import(`${bundleUrl}?run=${runIndex}`)
+
+  for (const audio of document.querySelectorAll('audio')) {
+    const own = { head: 0 }
+    Object.defineProperties(audio, {
+      duration: { configurable: true, get: () => Number(audio.closest('[data-duration]')?.dataset.duration ?? 0) },
+      currentTime: { configurable: true, get: () => own.head, set: (value) => { own.head = value } },
+    })
+    audio.play = () => { audio.dispatchEvent(new window.Event('play')); return Promise.resolve() }
+    audio.pause = () => { audio.dispatchEvent(new window.Event('pause')) }
+  }
 
   const el = (id) => document.getElementById(id)
   return {
@@ -273,6 +295,40 @@ function suite(page, dom) {
     && !momentCard.classList.contains('is-dragging', 'is-flying'),
   'rearranging keeps the original reset after dragging a photo')
 
+  const momentCards = all('.moment-card')
+  momentCards.forEach((card, i) => {
+    card.getBoundingClientRect = () => ({
+      x: 100, y: 100, left: 100, top: 100, right: 200, bottom: 240, width: 100, height: 140, toJSON: () => {},
+    })
+    Object.defineProperty(card, 'offsetWidth', { configurable: true, get: () => 100 })
+    Object.defineProperty(card, 'offsetHeight', { configurable: true, get: () => 140 })
+    card.style.zIndex = String(10 + i)
+  })
+  fire(document, 'pointermove', { pointerType: 'mouse', clientX: 150, clientY: 150 })
+  const peeked = momentCards.filter((card) => card.classList.contains('is-peeked'))
+  check(
+    peeked.length === 1 && peeked[0] === momentCards[momentCards.length - 1],
+    'overlapping photos peek only the top card',
+  )
+  fire(document, 'pointermove', { pointerType: 'mouse', clientX: 160, clientY: 170 })
+  check(
+    momentCards.filter((card) => card.classList.contains('is-peeked')).length === 1
+      && momentCards[momentCards.length - 1].classList.contains('is-peeked'),
+    'moving inside the top card does not flip the stack',
+  )
+  fire(document, 'pointermove', { pointerType: 'mouse', clientX: 10, clientY: 10 })
+  check(momentCards.every((card) => !card.classList.contains('is-peeked')),
+    'leaving the stack unpeeks')
+
+  fire(momentCards[0], 'focus')
+  check(momentCards[0].classList.contains('is-peeked'), 'keyboard focus peeks the card')
+  fire(momentCards[0], 'keydown', { key: 'Enter' })
+  check(momentCards[0].classList.contains('is-flipped'), 'Enter pins the back face')
+  fire(momentCards[0], 'keydown', { key: ' ' })
+  check(!momentCards[0].classList.contains('is-flipped'), 'Space unpins it')
+  fire(momentCards[0], 'blur')
+  check(!momentCards[0].classList.contains('is-peeked'), 'blur unpeeks when the pointer is elsewhere')
+
   console.log('\n· Experience tabs')
   const jobTabs = all('.job-tab')
   const jobPanels = all('.job-panel')
@@ -343,6 +399,10 @@ function suite(page, dom) {
     `the speed mode uses the ${page.lang} label ("${el('kb-tab-speed').textContent.trim()}")`,
   )
   key('keydown', { code: 'KeyX', key: quote[0], target: el('monkey-box') })
+  check(!spans()[0].classList.contains('correct'), 'typing does nothing until the trial is started')
+  fire(el('monkey-start-btn'), 'click')
+  check(el('monkey-box').classList.contains('is-live'), 'Comenzar puts the board live')
+  key('keydown', { code: 'KeyX', key: quote[0], target: el('monkey-box') })
   check(spans()[0].classList.contains('correct'), 'the first correct letter is marked as a hit')
   check(spans()[1].classList.contains('current'), 'the cursor advances')
   key('keydown', { code: 'KeyZ', key: '±', target: el('monkey-box') })
@@ -374,6 +434,7 @@ function suite(page, dom) {
 
   fire(el('monkey-restart-btn'), 'click')
   check(el('kb-timer').textContent === '⏱️ 30s' && marked() === 0, 'restarting returns the round to zero')
+  fire(el('monkey-start-btn'), 'click')
   key('keydown', { code: 'KeyW', key: spans()[0].textContent, target: el('monkey-box') })
   check(spans()[0].classList.contains('correct'), 'and it counts what gets typed once more')
 
@@ -402,6 +463,38 @@ function suite(page, dom) {
   check(el('kb-sound-label').textContent === page.soundOff, `the toggle uses i18n ("${el('kb-sound-label').textContent}")`)
   fire(el('kb-sound-toggle'), 'click')
   check(el('kb-sound-label').textContent === page.soundOn, 'and it returns to the initial state')
+
+  console.log('\n· Game mode does not share the keyboard')
+  const setGameMode = (on) => {
+    document.documentElement.classList.toggle('game-mode-active', on)
+    document.dispatchEvent(new window.CustomEvent('game-mode-change', { detail: { active: on } }))
+  }
+  fire(el('kb-tab-speed'), 'click')
+  fire(el('monkey-start-btn'), 'click')
+  const liveQuote = spans().map((s) => s.textContent).join('')
+  key('keydown', { code: 'KeyX', key: liveQuote[0], target: el('monkey-box') })
+  const hitsBeforeGame = spans().filter((s) => s.classList.contains('correct')).length
+  tick(2)
+  const timerBeforePause = el('kb-timer').textContent
+  setGameMode(true)
+  key('keydown', { code: 'KeyX', key: liveQuote[1] ?? 'a', target: el('monkey-box') })
+  check(spans().filter((s) => s.classList.contains('correct')).length === hitsBeforeGame,
+    'with game mode on, typing does not mark the speed trial')
+  const drawnProbe = drawnKey('KeyQ')
+  drawnProbe.classList.remove('is-down')
+  key('keydown', { code: 'KeyQ', key: 'q' })
+  check(!drawnProbe.classList.contains('is-down'), 'with game mode on, keys do not light up')
+  fire(drawnProbe, 'mousedown')
+  check(spans().filter((s) => s.classList.contains('correct')).length === hitsBeforeGame,
+    'and clicking a drawn key is ignored too')
+  tick(5)
+  check(el('kb-timer').textContent === timerBeforePause, 'and the trial clock is frozen')
+  setGameMode(false)
+  key('keydown', { code: 'KeyX', key: liveQuote[1] ?? 'a', target: el('monkey-box') })
+  check(spans().filter((s) => s.classList.contains('correct')).length === hitsBeforeGame + 1,
+    'leaving game mode returns typing to the trial')
+  tick(1)
+  check(el('kb-timer').textContent !== timerBeforePause, 'and the clock runs again')
 
   console.log('\n· Build archive')
   fire(el('kb-tab-photos'), 'click')
