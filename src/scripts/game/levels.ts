@@ -11,7 +11,7 @@
  * anyone to open the file where the game is played.
  */
 
-export type Rect = { x: number; y: number; w: number; isCustom?: boolean }
+export type Rect = { x: number; y: number; w: number; isCustom?: boolean; page?: boolean }
 export type MovingLedge = { x: number; y: number; w: number; originX: number; range: number; speed: number; dir: number }
 export type CustomLedge = { x: number; y: number; w: number; alpha: number }
 export type SectionOrb = {
