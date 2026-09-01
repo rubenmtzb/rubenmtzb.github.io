@@ -314,6 +314,35 @@
   50% { opacity: 0; }
 }
 
+.monkey-start {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--ink-950) 78%, transparent);
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+.monkey-start:hover {
+  color: #fff;
+  background: color-mix(in srgb, var(--ink-950) 55%, rgba(111, 227, 255, 0.12));
+}
+#monkey-box.is-live .monkey-start {
+  display: none;
+}
+#monkey-box:not(.is-live) .monkey-char.current::before {
+  display: none;
+}
+
 #kb-wpm,
 #kb-acc,
 #kb-combo,
