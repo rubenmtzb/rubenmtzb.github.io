@@ -1,0 +1,43 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:03.000
+Real demo. Original music; continuous editorial pointer and click/typing cues.
+
+00:00:03.000 --> 00:00:07.320
+A YouTube URL, with Spanish as the target language.
+
+00:00:07.320 --> 00:00:13.880
+Follow processing stages while the API works. Timings vary by video and provider.
+
+00:00:13.880 --> 00:00:16.600
+The result: timestamped source text.
+
+00:00:16.640 --> 00:00:18.840
+Read the Spanish translation.
+
+00:00:18.880 --> 00:00:21.800
+Compare source and translation in dual view.
+
+00:00:21.880 --> 00:00:25.440
+Search the text to filter matching lines.
+
+00:00:25.520 --> 00:00:27.500
+Jump to 00:05 using its timestamp.
+
+00:00:27.560 --> 00:00:29.880
+Focus on the text in reading mode.
+
+00:00:29.920 --> 00:00:32.640
+Download the result as TXT, SRT, VTT or Markdown.
+
+00:00:32.720 --> 00:00:34.240
+Create a quote image.
+
+00:00:34.280 --> 00:00:35.840
+Reopen from history.
+
+00:00:35.920 --> 00:00:39.640
+Reopen a previous result from this browser without a new transcription.
+
+00:00:39.640 --> 00:00:42.640
+Explore the demo and the technical case study. yt.rubenitx.me

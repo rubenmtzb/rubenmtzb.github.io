@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "policy": "User-authorized editorial cursor/halo/ripple overlays and locally synthesized interaction cues. The approved montage, scene timing and original music arrangement remain; guided video frames and audio are intentionally NOT byte-identical. No fabricated interactions, progress stages, success notices or latency claims.",
+  "source": {
+    "recording": "page@f3669ff2b6325fafb6e2cdecccc2f61b.webm",
+    "sha256": "463c32e76c7253812e3e4546df7c885b007c566e4609a14cb88782e802bce477",
+    "script": "record-demo.mjs",
+    "scriptSha256": "4b3a06dae10fbec94a208c7495f7b640f0dc849b3967f3711fdc00a65f28488f",
+    "checks": "recording-checks.json",
+    "checksSha256": "7ca345c6b2b7ab8469c5c42ddd302ccaec9474d69e917f2f260f8cf9699b9996",
+    "resolution": [1280, 800],
+    "frameRate": 25,
+    "durationSeconds": 39.96
+  },
+  "alignment": {
+    "method": "Inspected native 25 fps source frames with PTS labels, matched visible state changes and focused/pressed controls to the actual recording script. Independently compared decoded 160x90 grayscale UI crops in the approved montage against source frames before/after transitions (MSE normally 0.02-0.32 at matching frames). Wall-clock milestones were only search hints, NOT frame offsets.",
+    "geometry": { "sourceCrop": [0, 0, 1280, 720], "outputOffset": [568, 191], "scale": 1, "output": [1920, 1080] },
+    "montageWindows": [
+      { "source": [3, 10], "output": [3, 10] },
+      { "source": [10, 16], "output": [10, 16] },
+      { "source": [16, 21], "output": [16, 21] },
+      { "source": [21, 28], "output": [21, 28] },
+      { "source": [28, 32], "output": [28, 32] },
+      { "source": [32, 36.5], "output": [32, 36.52] },
+      { "source": [36.5, 39.6], "output": [36.52, 39.64] }
+    ],
+    "precision": "Cue timestamps are selected native frame PTS, not measured mouse-down telemetry. Each click has an observed transition bracket. Coordinates are the target center measured in the visible source UI, not a claim of the unrecorded original cursor trajectory. No interpolated cursor travel between actions.",
+    "anchors": [
+      { "event": "submit", "sourceTransition": 7.32, "montageTransition": 7.32, "wallClockMark": 7.355083375 },
+      { "event": "result-visible", "sourceTransition": 13.88, "montageTransition": 13.88, "wallClockMark": 14.198735875 },
+      { "event": "dual", "sourceTransition": 18.88, "montageTransition": 18.88, "wallClockMark": 18.959908625 },
+      { "event": "seek", "sourceTransition": 25.52, "montageTransition": 25.52, "wallClockMark": 25.557507041 },
+      { "event": "history-result-visible", "sourceTransition": 35.92, "montageTransition": 35.92, "wallClockMark": 35.996137166 }
+    ]
+  },
+  "events": [
+    { "id": "submit", "kind": "click", "sourceAt": 7.28, "at": 7.28, "start": 6.56, "end": 7.32, "xy": [884, 332], "label": "Transcribir", "labelXY": [795, 273], "evidence": { "scriptLines": [28, 29], "sourceFrames": [7.28, 7.32], "observed": "Transcribir button becomes Procesando and the page scrolls. Overlay stops before the button relocates." } },
+    { "id": "loading", "kind": "wait", "sourceAt": 7.84, "at": 7.84, "start": 7.84, "end": 13.68, "xy": [434, 486], "label": "Procesando", "labelXY": [701, 424], "focusRect": [410, 386, 290, 203], "pulses": [8.08, 9.52, 10.96, 12.4, 13.12], "evidence": { "scriptLines": [29, 31], "sourceFrames": [7.32, 13.84, 13.88], "observed": "Only the genuinely visible processing interval is pulsed. The focus encloses existing stages without changing them. No completion sound or new success UI." } },
+    { "id": "translation", "kind": "click", "sourceAt": 16.64, "at": 16.64, "start": 16.12, "end": 17.36, "xy": [673, 203], "label": "Traducción", "labelXY": [602, 143], "evidence": { "scriptLines": [34, 35], "sourceFrames": [16.6, 16.64], "observed": "Traducción (ES) becomes the active tab and Spanish lines appear." } },
+    { "id": "dual", "kind": "click", "sourceAt": 18.88, "at": 18.88, "start": 18.36, "end": 19.64, "xy": [797, 203], "label": "Vista dual", "labelXY": [726, 143], "evidence": { "scriptLines": [36, 37], "sourceFrames": [18.84, 18.88], "observed": "Vista dual becomes active and paired source/translation lines appear." } },
+    { "id": "search", "kind": "input", "sourceAt": 21.88, "at": 21.88, "start": 21.88, "end": 23.28, "xy": [805, 259], "label": "Buscar en el texto", "labelXY": [867, 195], "focusRect": [478, 237, 653, 43], "evidence": { "scriptLines": [39, 40], "sourceFrames": [21.84, 21.88, 21.92], "observed": "Programmatic keyboard focus and typing, NOT a click. Focus outline only, no cursor/ripple/click audio." } },
+    { "id": "seek", "kind": "click", "sourceAt": 25.52, "at": 25.52, "start": 25.48, "end": 26.44, "xy": [518, 383], "label": "Ir a 00:05", "labelXY": [340, 353], "evidence": { "scriptLines": [45, 47], "sourceFrames": [25.44, 25.48, 25.52], "observed": "Search clears programmatically at 25.48; only then is the 00:05 target present. The second line highlights at 25.52. No pointer is shown before the target exists." } },
+    { "id": "reading", "kind": "click", "sourceAt": 27.52, "at": 27.52, "start": 26.92, "end": 27.56, "xy": [1072, 158], "label": "Modo lectura", "labelXY": [882, 99], "evidence": { "scriptLines": [49, 50], "sourceFrames": [27.52, 27.56], "observed": "Reading layout replaces normal layout; pointer stops at the layout change." } },
+    { "id": "exit-reading", "kind": "click", "sourceAt": 29.84, "at": 29.84, "start": 29.24, "end": 29.88, "xy": [921, 158], "label": "Salir de lectura", "labelXY": [746, 99], "evidence": { "scriptLines": [51, 52], "sourceFrames": [29.84, 29.88], "observed": "Normal layout returns; pointer stops before the exit button disappears." } },
+    { "id": "txt", "kind": "click", "sourceAt": 29.96, "at": 29.96, "start": 29.92, "end": 30.6, "xy": [152, 568], "label": "TXT", "labelXY": [130, 603], "evidence": { "scriptLines": [53, 60], "sourceFrames": [29.92, 29.96, 30], "check": "export-txt", "observed": "TXT control focuses; recording checks confirm its real download. No added download-success notice." } },
+    { "id": "srt", "kind": "click", "sourceAt": 30.72, "at": 30.72, "start": 30.6, "end": 31.28, "xy": [215, 568], "label": "SRT", "labelXY": [194, 603], "evidence": { "scriptLines": [53, 60], "sourceFrames": [30.68, 30.72, 30.76], "check": "export-srt", "observed": "SRT pressed/focus state and confirmed real download." } },
+    { "id": "vtt", "kind": "click", "sourceAt": 31.44, "at": 31.44, "start": 31.28, "end": 31.96, "xy": [279, 568], "label": "VTT", "labelXY": [258, 603], "evidence": { "scriptLines": [53, 60], "sourceFrames": [31.4, 31.44], "check": "export-vtt", "observed": "VTT control focuses; recording checks confirm its download." } },
+    { "id": "md", "kind": "click", "sourceAt": 32.08, "at": 32.08, "start": 31.96, "end": 32.64, "xy": [340, 568], "label": "Markdown", "labelXY": [282, 603], "evidence": { "scriptLines": [53, 60], "sourceFrames": [32.04, 32.08], "check": "export-md", "observed": "MD control focuses; recording checks confirm its download." } },
+    { "id": "image", "kind": "click", "sourceAt": 32.72, "at": 32.72, "start": 32.64, "end": 33.48, "xy": [1109, 328], "label": "Imagen", "labelXY": [1150, 343], "evidence": { "scriptLines": [62, 63], "sourceFrames": [32.68, 32.72], "observed": "First-line image button highlights and the recorded application shows its own toast. We add no success UI and do not assert a separately verified image download." } },
+    { "id": "new", "kind": "click", "sourceAt": 34.24, "at": 34.24, "start": 33.6, "end": 34.28, "xy": [200, 680], "label": "Nueva transcripción", "labelXY": [252, 656], "evidence": { "scriptLines": [64, 65], "sourceFrames": [34.24, 34.28], "observed": "Nueva transcripción returns to the form. Pointer ends before the link disappears." } },
+    { "id": "history", "kind": "click", "sourceAt": 35.84, "at": 35.84, "start": 35.12, "end": 35.92, "xy": [640, 632], "label": "Abrir del historial", "labelXY": [510, 551], "evidence": { "scriptLines": [66, 69], "sourceFrames": [35.8, 35.84, 35.88, 35.92], "check": "reopen-history", "observed": "Existing Me at the zoo history card presses and result returns. No new production transcription was requested." } },
+    { "id": "history-dual", "kind": "click", "sourceAt": 35.96, "at": 35.96, "start": 35.92, "end": 36.68, "xy": [797, 203], "label": "Vista dual", "labelXY": [726, 143], "evidence": { "scriptLines": [70, 71], "sourceFrames": [35.92, 35.96], "observed": "Reopened Transcripción tab is visible at 35.92; recorded second Vista dual click switches it at 35.96." } }
+  ],
+  "limitations": [
+    "14 click cues correspond only to explicit click() actions visible in the recording; no language-selection, URL-entry, search-field or clear-field click is invented.",
+    "The loading pulse is editorial ambience during the real wait, not an application notification or progress measurement.",
+    "Original scene cards and subtitle timings remain unchanged even when narration boundaries do not coincide with action frames.",
+    "The historical baked-in Sin audio footer describes the originally silent capture; the guided edition has optional original music and editorial cues.",
+    "Source artifacts remain private/local and are not copied into the public directory. Reproduction uses the pinned approved music backup plus this inspected ledger."
+  ]
+}

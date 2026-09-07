@@ -1,0 +1,3199 @@
+{
+  "source": "Real browser recording of https://yt.rubenitx.me, 2026-09-06. No mocked API responses.",
+  "sourceSha256": "463c32e76c7253812e3e4546df7c885b007c566e4609a14cb88782e802bce477",
+  "videoSha256": "7c4089c5985f63e707d5c68520a67846d9ecd0590b94bc116ee10e30b812bbb5",
+  "sourceResolution": "1280x800",
+  "outputResolution": "1920x1080",
+  "fps": 25,
+  "durationSeconds": 42.64,
+  "bytes": 4061059,
+  "audio": true,
+  "editing": "Original montage, cards, native UI size, scene timing and 1066-frame duration preserved. New opaque pointer/focus/click/wait overlays rendered ONLY over clean music-original picture, then H.264 re-encoded. No old intermittent cursor is composited. Original guided audio is decoded once at unity gain and receives one observed-input keyboard layer.",
+  "scenes": [
+    {
+      "sourceStart": 3,
+      "sourceEnd": 10,
+      "description": "Paste a YouTube URL and select a target language."
+    },
+    {
+      "sourceStart": 10,
+      "sourceEnd": 16,
+      "description": "Follow processing stages while the API works. Timings vary by video and provider."
+    },
+    {
+      "sourceStart": 16,
+      "sourceEnd": 21,
+      "description": "Read timestamped captions and their translation."
+    },
+    {
+      "sourceStart": 21,
+      "sourceEnd": 28,
+      "description": "Compare source and translation in dual view, then search within the text."
+    },
+    {
+      "sourceStart": 28,
+      "sourceEnd": 32,
+      "description": "Jump to a timestamp and switch to reading mode."
+    },
+    {
+      "sourceStart": 32,
+      "sourceEnd": 36.5,
+      "description": "Download the result as TXT, SRT, VTT or Markdown."
+    },
+    {
+      "sourceStart": 36.5,
+      "sourceEnd": 39.6,
+      "description": "Reopen a previous result from this browser without a new transcription."
+    }
+  ],
+  "silentBackup": {
+    "file": "public/media/transcriber-demo-silent.mp4",
+    "sha256": "70a30d78b23aba3abeee43e770cd8b138e9c745c506fe856a08a1f2ea20707ed",
+    "bytes": 2578221,
+    "policy": "Byte-identical approved silent montage. Never modify, replace or regenerate this backup.",
+    "restoreCommand": "node scripts/media/guide-transcriber-demo.mjs --restore=silent",
+    "verifyCommand": "node scripts/media/guide-transcriber-demo.mjs --verify"
+  },
+  "soundtrack": {
+    "applied": true,
+    "title": "Quiet Signals",
+    "origin": "Original instrumental composition and deterministic local synthesis created for this montage. No downloaded audio, third-party samples, song references or voices.",
+    "role": "Quiet Signals and existing editorial click/wait cues plus soft keyboard cues; not recorded app audio or narration.",
+    "generator": "scripts/media/guide-transcriber-demo.mjs",
+    "generatorSha256": "99f962fe05d730a3c43a1c3765c35cbedd0cd969ac6956751b130e44c1fdfc20",
+    "regenerateCommand": "node scripts/media/guide-transcriber-demo.mjs",
+    "synthesis": {
+      "seed": 1497453617,
+      "tempoBpm": 84,
+      "sampleRateHz": 48000,
+      "channels": 2,
+      "pcmBits": 24,
+      "pcmSamplesPerChannel": 2046720,
+      "synthesizedWavSha256": "7b9883afaf7fbbd7adf6d197bb422773503ab7a903b6fea9c0b5bd8c30acd071",
+      "unmasteredSamplePeakDbfs": -15.002,
+      "arrangement": "Slowly crossfaded, gently detuned additive pads and warm bass; sparse FM-softened mallets with dotted-eighth echoes; a low sine pulse; harmonic transition swells; damped stereo reverb.",
+      "fadeInSeconds": 1.6,
+      "fadeOutSeconds": 3,
+      "transitionSync": "Harmonic swells peak on the original edit-boundary keyframes. 36.52 and 39.64 include the original 25 fps rounding.",
+      "cues": [
+        {
+          "at": 0,
+          "label": "Introduction",
+          "chord": "Dmaj9",
+          "bass": 38,
+          "notes": [
+            50,
+            57,
+            61,
+            64,
+            69
+          ]
+        },
+        {
+          "at": 3,
+          "label": "URL and language",
+          "chord": "Amaj9",
+          "bass": 45,
+          "notes": [
+            52,
+            56,
+            59,
+            61,
+            64
+          ]
+        },
+        {
+          "at": 10,
+          "label": "Processing",
+          "chord": "F#m9",
+          "bass": 42,
+          "notes": [
+            52,
+            56,
+            57,
+            61,
+            68
+          ]
+        },
+        {
+          "at": 16,
+          "label": "Text and translation",
+          "chord": "Dmaj9",
+          "bass": 38,
+          "notes": [
+            50,
+            57,
+            61,
+            64,
+            69
+          ]
+        },
+        {
+          "at": 21,
+          "label": "Dual view and search",
+          "chord": "Amaj9/C#",
+          "bass": 37,
+          "notes": [
+            52,
+            56,
+            59,
+            61,
+            64
+          ]
+        },
+        {
+          "at": 28,
+          "label": "Navigation",
+          "chord": "E6/9",
+          "bass": 40,
+          "notes": [
+            52,
+            56,
+            59,
+            61,
+            66
+          ]
+        },
+        {
+          "at": 32,
+          "label": "Export",
+          "chord": "F#m9",
+          "bass": 42,
+          "notes": [
+            52,
+            56,
+            57,
+            61,
+            68
+          ]
+        },
+        {
+          "at": 36.52,
+          "label": "Local history",
+          "chord": "Dmaj9",
+          "bass": 38,
+          "notes": [
+            50,
+            57,
+            61,
+            64,
+            69
+          ]
+        },
+        {
+          "at": 39.64,
+          "label": "Closing card",
+          "chord": "Aadd9",
+          "bass": 45,
+          "notes": [
+            52,
+            57,
+            59,
+            61,
+            64
+          ]
+        }
+      ]
+    },
+    "mastering": {
+      "target": {
+        "integratedLufs": -19,
+        "truePeakDbtp": -2,
+        "loudnessRangeLu": 8
+      },
+      "method": "Original deterministic damped sine-body/noise key attacks with gentle timbre, level and stereo variation. One attack per observed text-growth frame. Exact approved guided AAC decoded at unity gain plus keyboard PCM; no new score, ducking, rearrangement, limiter or guessed sub-frame keystrokes. Final AAC is re-encoded and measured.",
+      "codec": "AAC-LC",
+      "bitrateBitsPerSecond": 192000,
+      "sampleRateHz": 48000,
+      "channels": 2
+    },
+    "measured": {
+      "integratedLufs": -19.01,
+      "truePeakDbtp": -8.18,
+      "loudnessRangeLu": 2.5,
+      "thresholdLufs": -29.23,
+      "measurement": "FFmpeg loudnorm / EBU R128, measured after decoding the final AAC"
+    },
+    "tools": {
+      "node": "v26.5.1",
+      "ffmpeg": "ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers",
+      "ffprobe": "ffprobe version 8.0.1 Copyright (c) 2007-2025 the FFmpeg developers",
+      "platform": "darwin/arm64"
+    },
+    "reproducibility": "Fixed score, seed and 24-bit PCM. Exact AAC/MP4 bytes depend on tool versions/platform; use the recorded hashes to check reproduction.",
+    "caveat": "The original baked-in “Sin audio” label remains visually untouched. External copy/captions must explain that optional original background music was added later; the original recording contains no audio.",
+    "originalMusicGenerator": "scripts/media/add-transcriber-soundtrack.mjs",
+    "interactionMix": {
+      "musicSource": "public/media/transcriber-demo-music-original.mp4",
+      "musicSourceSha256": "3fd1264855ef11a05321392f7d562c6ab84023d9d3abc9111cc447a4b5d86a02",
+      "musicDecodedPcmSha256": "ff354a4f0851396200a783daadadcca6c10dd0ac5027e453442552058f6d410d",
+      "mixedPcmWavSha256": "d360f4e256c61f0545b101c7aecf5d767d32ed0d58b3313fe82057f8d9f5ad0c",
+      "seed": 1129072971,
+      "sampleRateHz": 48000,
+      "clickCount": 14,
+      "waitPulseCount": 5,
+      "effectPeakDbfs": -19.75,
+      "masterGainDb": 0.01,
+      "method": "Exact approved AAC decoded at unity gain + original deterministic soft sine/noise clicks and warm wait pulses. Single constant gain to -19 LUFS; no ducking, time-stretch, rearrangement, new score or completion alarm. Final AAC re-encoded and measured.",
+      "cues": [
+        {
+          "at": 7.28,
+          "kind": "click",
+          "id": "submit"
+        },
+        {
+          "at": 8.08,
+          "kind": "wait",
+          "id": "loading"
+        },
+        {
+          "at": 9.52,
+          "kind": "wait",
+          "id": "loading"
+        },
+        {
+          "at": 10.96,
+          "kind": "wait",
+          "id": "loading"
+        },
+        {
+          "at": 12.4,
+          "kind": "wait",
+          "id": "loading"
+        },
+        {
+          "at": 13.12,
+          "kind": "wait",
+          "id": "loading"
+        },
+        {
+          "at": 16.64,
+          "kind": "click",
+          "id": "translation"
+        },
+        {
+          "at": 18.88,
+          "kind": "click",
+          "id": "dual"
+        },
+        {
+          "at": 25.52,
+          "kind": "click",
+          "id": "seek"
+        },
+        {
+          "at": 27.52,
+          "kind": "click",
+          "id": "reading"
+        },
+        {
+          "at": 29.84,
+          "kind": "click",
+          "id": "exit-reading"
+        },
+        {
+          "at": 29.96,
+          "kind": "click",
+          "id": "txt"
+        },
+        {
+          "at": 30.72,
+          "kind": "click",
+          "id": "srt"
+        },
+        {
+          "at": 31.44,
+          "kind": "click",
+          "id": "vtt"
+        },
+        {
+          "at": 32.08,
+          "kind": "click",
+          "id": "md"
+        },
+        {
+          "at": 32.72,
+          "kind": "click",
+          "id": "image"
+        },
+        {
+          "at": 34.24,
+          "kind": "click",
+          "id": "new"
+        },
+        {
+          "at": 35.84,
+          "kind": "click",
+          "id": "history"
+        },
+        {
+          "at": 35.96,
+          "kind": "click",
+          "id": "history-dual"
+        }
+      ]
+    },
+    "keyboardMix": {
+      "seed": 1415139397,
+      "sampleRateHz": 48000,
+      "channels": 2,
+      "pcmBits": 24,
+      "samplesPerChannel": 2046720,
+      "baseDecodedPcmSha256": "75dad1e3c678609351f455803850caa35cdfff724a9bc7bf8513ca503aaffb58",
+      "mixedWavSha256": "132cffd90da1fe928b5d5e9f4de0cdc55a514414f4d7b48470f8fa78b8610c6a",
+      "keyboardAttackCount": 49,
+      "visibleCharacterCount": 52,
+      "effectPeakDbfs": -21.23,
+      "mixedSamplePeakDbfs": -8.18,
+      "masterGainDb": 0,
+      "method": "Original deterministic damped sine-body/noise key attacks with gentle timbre, level and stereo variation. One attack per observed text-growth frame. Exact approved guided AAC decoded at unity gain plus keyboard PCM; no new score, ducking, rearrangement, limiter or guessed sub-frame keystrokes. Final AAC is re-encoded and measured.",
+      "cues": [
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.16,
+          "at": 4.16,
+          "sourceFrame": 104,
+          "visibleCharacterCount": 1,
+          "addedCharacters": "h",
+          "audioStartSample": 199680,
+          "durationSeconds": 0.059866
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.2,
+          "at": 4.2,
+          "sourceFrame": 105,
+          "visibleCharacterCount": 2,
+          "addedCharacters": "t",
+          "audioStartSample": 201600,
+          "durationSeconds": 0.051009
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.24,
+          "at": 4.24,
+          "sourceFrame": 106,
+          "visibleCharacterCount": 3,
+          "addedCharacters": "t",
+          "audioStartSample": 203520,
+          "durationSeconds": 0.055066
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.28,
+          "at": 4.28,
+          "sourceFrame": 107,
+          "visibleCharacterCount": 4,
+          "addedCharacters": "p",
+          "audioStartSample": 205440,
+          "durationSeconds": 0.063145
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.36,
+          "at": 4.36,
+          "sourceFrame": 109,
+          "visibleCharacterCount": 5,
+          "addedCharacters": "s",
+          "audioStartSample": 209280,
+          "durationSeconds": 0.051409
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.4,
+          "at": 4.4,
+          "sourceFrame": 110,
+          "visibleCharacterCount": 6,
+          "addedCharacters": ":",
+          "audioStartSample": 211200,
+          "durationSeconds": 0.061465
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.44,
+          "at": 4.44,
+          "sourceFrame": 111,
+          "visibleCharacterCount": 7,
+          "addedCharacters": "/",
+          "audioStartSample": 213120,
+          "durationSeconds": 0.053709
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.48,
+          "at": 4.48,
+          "sourceFrame": 112,
+          "visibleCharacterCount": 8,
+          "addedCharacters": "/",
+          "audioStartSample": 215040,
+          "durationSeconds": 0.055699
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.52,
+          "at": 4.52,
+          "sourceFrame": 113,
+          "visibleCharacterCount": 9,
+          "addedCharacters": "w",
+          "audioStartSample": 216960,
+          "durationSeconds": 0.059481
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.56,
+          "at": 4.56,
+          "sourceFrame": 114,
+          "visibleCharacterCount": 10,
+          "addedCharacters": "w",
+          "audioStartSample": 218880,
+          "durationSeconds": 0.051947
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.6,
+          "at": 4.6,
+          "sourceFrame": 115,
+          "visibleCharacterCount": 11,
+          "addedCharacters": "w",
+          "audioStartSample": 220800,
+          "durationSeconds": 0.052311
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.64,
+          "at": 4.64,
+          "sourceFrame": 116,
+          "visibleCharacterCount": 12,
+          "addedCharacters": ".",
+          "audioStartSample": 222720,
+          "durationSeconds": 0.052455
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.72,
+          "at": 4.72,
+          "sourceFrame": 118,
+          "visibleCharacterCount": 14,
+          "addedCharacters": "yo",
+          "audioStartSample": 226560,
+          "durationSeconds": 0.062158
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.8,
+          "at": 4.8,
+          "sourceFrame": 120,
+          "visibleCharacterCount": 15,
+          "addedCharacters": "u",
+          "audioStartSample": 230400,
+          "durationSeconds": 0.052831
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.84,
+          "at": 4.84,
+          "sourceFrame": 121,
+          "visibleCharacterCount": 16,
+          "addedCharacters": "t",
+          "audioStartSample": 232320,
+          "durationSeconds": 0.05446
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.88,
+          "at": 4.88,
+          "sourceFrame": 122,
+          "visibleCharacterCount": 17,
+          "addedCharacters": "u",
+          "audioStartSample": 234240,
+          "durationSeconds": 0.057333
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.92,
+          "at": 4.92,
+          "sourceFrame": 123,
+          "visibleCharacterCount": 18,
+          "addedCharacters": "b",
+          "audioStartSample": 236160,
+          "durationSeconds": 0.050466
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.96,
+          "at": 4.96,
+          "sourceFrame": 124,
+          "visibleCharacterCount": 19,
+          "addedCharacters": "e",
+          "audioStartSample": 238080,
+          "durationSeconds": 0.054187
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5,
+          "at": 5,
+          "sourceFrame": 125,
+          "visibleCharacterCount": 20,
+          "addedCharacters": ".",
+          "audioStartSample": 240000,
+          "durationSeconds": 0.059499
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.04,
+          "at": 5.04,
+          "sourceFrame": 126,
+          "visibleCharacterCount": 21,
+          "addedCharacters": "c",
+          "audioStartSample": 241920,
+          "durationSeconds": 0.050162
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.08,
+          "at": 5.08,
+          "sourceFrame": 127,
+          "visibleCharacterCount": 22,
+          "addedCharacters": "o",
+          "audioStartSample": 243840,
+          "durationSeconds": 0.06264
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.12,
+          "at": 5.12,
+          "sourceFrame": 128,
+          "visibleCharacterCount": 23,
+          "addedCharacters": "m",
+          "audioStartSample": 245760,
+          "durationSeconds": 0.051358
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.2,
+          "at": 5.2,
+          "sourceFrame": 130,
+          "visibleCharacterCount": 24,
+          "addedCharacters": "/",
+          "audioStartSample": 249600,
+          "durationSeconds": 0.063644
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.24,
+          "at": 5.24,
+          "sourceFrame": 131,
+          "visibleCharacterCount": 25,
+          "addedCharacters": "w",
+          "audioStartSample": 251520,
+          "durationSeconds": 0.056471
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.28,
+          "at": 5.28,
+          "sourceFrame": 132,
+          "visibleCharacterCount": 26,
+          "addedCharacters": "a",
+          "audioStartSample": 253440,
+          "durationSeconds": 0.052841
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.32,
+          "at": 5.32,
+          "sourceFrame": 133,
+          "visibleCharacterCount": 27,
+          "addedCharacters": "t",
+          "audioStartSample": 255360,
+          "durationSeconds": 0.052847
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.36,
+          "at": 5.36,
+          "sourceFrame": 134,
+          "visibleCharacterCount": 28,
+          "addedCharacters": "c",
+          "audioStartSample": 257280,
+          "durationSeconds": 0.063923
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.4,
+          "at": 5.4,
+          "sourceFrame": 135,
+          "visibleCharacterCount": 29,
+          "addedCharacters": "h",
+          "audioStartSample": 259200,
+          "durationSeconds": 0.058778
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.44,
+          "at": 5.44,
+          "sourceFrame": 136,
+          "visibleCharacterCount": 30,
+          "addedCharacters": "?",
+          "audioStartSample": 261120,
+          "durationSeconds": 0.062923
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.48,
+          "at": 5.48,
+          "sourceFrame": 137,
+          "visibleCharacterCount": 31,
+          "addedCharacters": "v",
+          "audioStartSample": 263040,
+          "durationSeconds": 0.052251
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.56,
+          "at": 5.56,
+          "sourceFrame": 139,
+          "visibleCharacterCount": 32,
+          "addedCharacters": "=",
+          "audioStartSample": 266880,
+          "durationSeconds": 0.055907
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.6,
+          "at": 5.6,
+          "sourceFrame": 140,
+          "visibleCharacterCount": 34,
+          "addedCharacters": "jN",
+          "audioStartSample": 268800,
+          "durationSeconds": 0.054462
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.68,
+          "at": 5.68,
+          "sourceFrame": 142,
+          "visibleCharacterCount": 35,
+          "addedCharacters": "Q",
+          "audioStartSample": 272640,
+          "durationSeconds": 0.055275
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.72,
+          "at": 5.72,
+          "sourceFrame": 143,
+          "visibleCharacterCount": 36,
+          "addedCharacters": "X",
+          "audioStartSample": 274560,
+          "durationSeconds": 0.060474
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.76,
+          "at": 5.76,
+          "sourceFrame": 144,
+          "visibleCharacterCount": 37,
+          "addedCharacters": "A",
+          "audioStartSample": 276480,
+          "durationSeconds": 0.054448
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.8,
+          "at": 5.8,
+          "sourceFrame": 145,
+          "visibleCharacterCount": 38,
+          "addedCharacters": "C",
+          "audioStartSample": 278400,
+          "durationSeconds": 0.061913
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.84,
+          "at": 5.84,
+          "sourceFrame": 146,
+          "visibleCharacterCount": 39,
+          "addedCharacters": "9",
+          "audioStartSample": 280320,
+          "durationSeconds": 0.062081
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.88,
+          "at": 5.88,
+          "sourceFrame": 147,
+          "visibleCharacterCount": 40,
+          "addedCharacters": "I",
+          "audioStartSample": 282240,
+          "durationSeconds": 0.060157
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.96,
+          "at": 5.96,
+          "sourceFrame": 149,
+          "visibleCharacterCount": 42,
+          "addedCharacters": "VR",
+          "audioStartSample": 286080,
+          "durationSeconds": 0.062644
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 6,
+          "at": 6,
+          "sourceFrame": 150,
+          "visibleCharacterCount": 43,
+          "addedCharacters": "w",
+          "audioStartSample": 288000,
+          "durationSeconds": 0.062442
+        },
+        {
+          "id": "transcript-search",
+          "sourceAt": 21.92,
+          "at": 21.92,
+          "sourceFrame": 548,
+          "visibleCharacterCount": 1,
+          "addedCharacters": "e",
+          "audioStartSample": 1052160,
+          "durationSeconds": 0.06247
+        },
+        {
+          "id": "transcript-search",
+          "sourceAt": 22.04,
+          "at": 22.04,
+          "sourceFrame": 551,
+          "visibleCharacterCount": 2,
+          "addedCharacters": "l",
+          "audioStartSample": 1057920,
+          "durationSeconds": 0.059081
+        },
+        {
+          "id": "transcript-search",
+          "sourceAt": 22.2,
+          "at": 22.2,
+          "sourceFrame": 555,
+          "visibleCharacterCount": 3,
+          "addedCharacters": "e",
+          "audioStartSample": 1065600,
+          "durationSeconds": 0.056527
+        },
+        {
+          "id": "transcript-search",
+          "sourceAt": 22.36,
+          "at": 22.36,
+          "sourceFrame": 559,
+          "visibleCharacterCount": 4,
+          "addedCharacters": "f",
+          "audioStartSample": 1073280,
+          "durationSeconds": 0.054639
+        },
+        {
+          "id": "transcript-search",
+          "sourceAt": 22.48,
+          "at": 22.48,
+          "sourceFrame": 562,
+          "visibleCharacterCount": 5,
+          "addedCharacters": "a",
+          "audioStartSample": 1079040,
+          "durationSeconds": 0.062264
+        },
+        {
+          "id": "transcript-search",
+          "sourceAt": 22.64,
+          "at": 22.64,
+          "sourceFrame": 566,
+          "visibleCharacterCount": 6,
+          "addedCharacters": "n",
+          "audioStartSample": 1086720,
+          "durationSeconds": 0.062731
+        },
+        {
+          "id": "transcript-search",
+          "sourceAt": 22.8,
+          "at": 22.8,
+          "sourceFrame": 570,
+          "visibleCharacterCount": 7,
+          "addedCharacters": "t",
+          "audioStartSample": 1094400,
+          "durationSeconds": 0.062258
+        },
+        {
+          "id": "transcript-search",
+          "sourceAt": 22.96,
+          "at": 22.96,
+          "sourceFrame": 574,
+          "visibleCharacterCount": 8,
+          "addedCharacters": "e",
+          "audioStartSample": 1102080,
+          "durationSeconds": 0.053196
+        },
+        {
+          "id": "transcript-search",
+          "sourceAt": 23.12,
+          "at": 23.12,
+          "sourceFrame": 578,
+          "visibleCharacterCount": 9,
+          "addedCharacters": "s",
+          "audioStartSample": 1109760,
+          "durationSeconds": 0.052189
+        }
+      ]
+    }
+  },
+  "videoPreservation": {
+    "byteIdentical": false,
+    "source": "public/media/transcriber-demo-music-original.mp4",
+    "sourceSha256": "3fd1264855ef11a05321392f7d562c6ab84023d9d3abc9111cc447a4b5d86a02",
+    "method": "Overlay one opaque shared Finance pointer and inspected annotations on the cursor-free music-original picture. Re-encode H.264 without trimming, retiming, cropping or frame-rate conversion. Audio input is independently the approved guided mix plus one keyboard layer.",
+    "exactContainerDurationSeconds": 42.64,
+    "resolution": "1920x1080",
+    "fps": "25/1",
+    "frames": 1066,
+    "checks": "All 1066 decoded frames and exact presentation timing checked; all 916 source UI frames have zero shared glyphs, final UI frames exactly one. Outside-UI fidelity measured for every frame; no byte/pixel identity claim.",
+    "montageFraming": {
+      "passed": true,
+      "frames": 1066,
+      "psnrDb": 64.737279,
+      "method": "All corresponding frames, masking only the UI rectangle plus a two-pixel chroma margin; 480x270 grayscale PSNR. Lossy fidelity, NOT byte/pixel identity. Full presentation timing is checked separately."
+    }
+  },
+  "variant": "guided-continuous-keyboard",
+  "backups": {
+    "silent": {
+      "file": "public/media/transcriber-demo-silent.mp4",
+      "sha256": "70a30d78b23aba3abeee43e770cd8b138e9c745c506fe856a08a1f2ea20707ed",
+      "policy": "Immutable, byte-identical approved variant; never overwrite or regenerate.",
+      "restoreCommand": "node scripts/media/guide-transcriber-demo.mjs --restore=silent",
+      "verifyCommand": "node scripts/media/guide-transcriber-demo.mjs --verify"
+    },
+    "music": {
+      "file": "public/media/transcriber-demo-music-original.mp4",
+      "sha256": "3fd1264855ef11a05321392f7d562c6ab84023d9d3abc9111cc447a4b5d86a02",
+      "policy": "Immutable, byte-identical approved variant; never overwrite or regenerate.",
+      "restoreCommand": "node scripts/media/guide-transcriber-demo.mjs --restore=music",
+      "verifyCommand": "node scripts/media/guide-transcriber-demo.mjs --verify"
+    },
+    "guided": {
+      "file": "public/media/transcriber-demo-guided-original.mp4",
+      "sha256": "804e3111f960ecac5bbcb8070db8deeba1c12891f976d484141c4806903796c1",
+      "policy": "Immutable, byte-identical approved variant; never overwrite or regenerate.",
+      "restoreCommand": "node scripts/media/guide-transcriber-demo.mjs --restore=guided",
+      "verifyCommand": "node scripts/media/guide-transcriber-demo.mjs --verify"
+    }
+  },
+  "guidance": {
+    "applied": true,
+    "policy": "One opaque editorial pointer on all 916 application frames. The original recording has NO mouse telemetry. Smooth interpolation between inspected controls and explicitly editorial resting positions is reconstructed, NOT a genuine recorded trajectory. Click and visible-input timings are unchanged. The two 120 ms successive-click intervals necessarily have fast travel; neither clicks nor montage are slowed or relocated.",
+    "generator": "scripts/media/guide-transcriber-demo.mjs",
+    "generatorSha256": "99f962fe05d730a3c43a1c3765c35cbedd0cd969ac6956751b130e44c1fdfc20",
+    "regenerateCommand": "node scripts/media/guide-transcriber-demo.mjs",
+    "ledger": "scripts/media/transcriber-demo-events.json",
+    "ledgerSha256": "82b080db1f08ca469e7d17c502d845e3e123020ede4aedc28fc5f3148673136c",
+    "alignment": {
+      "method": "Inspected native 25 fps source frames with PTS labels, matched visible state changes and focused/pressed controls to the actual recording script. Independently compared decoded 160x90 grayscale UI crops in the approved montage against source frames before/after transitions (MSE normally 0.02-0.32 at matching frames). Wall-clock milestones were only search hints, NOT frame offsets.",
+      "geometry": {
+        "sourceCrop": [
+          0,
+          0,
+          1280,
+          720
+        ],
+        "outputOffset": [
+          568,
+          191
+        ],
+        "scale": 1,
+        "output": [
+          1920,
+          1080
+        ]
+      },
+      "montageWindows": [
+        {
+          "source": [
+            3,
+            10
+          ],
+          "output": [
+            3,
+            10
+          ]
+        },
+        {
+          "source": [
+            10,
+            16
+          ],
+          "output": [
+            10,
+            16
+          ]
+        },
+        {
+          "source": [
+            16,
+            21
+          ],
+          "output": [
+            16,
+            21
+          ]
+        },
+        {
+          "source": [
+            21,
+            28
+          ],
+          "output": [
+            21,
+            28
+          ]
+        },
+        {
+          "source": [
+            28,
+            32
+          ],
+          "output": [
+            28,
+            32
+          ]
+        },
+        {
+          "source": [
+            32,
+            36.5
+          ],
+          "output": [
+            32,
+            36.52
+          ]
+        },
+        {
+          "source": [
+            36.5,
+            39.6
+          ],
+          "output": [
+            36.52,
+            39.64
+          ]
+        }
+      ],
+      "precision": "One opaque editorial pointer on all 916 application frames. The original recording has NO mouse telemetry. Smooth interpolation between inspected controls and explicitly editorial resting positions is reconstructed, NOT a genuine recorded trajectory. Click and visible-input timings are unchanged. The two 120 ms successive-click intervals necessarily have fast travel; neither clicks nor montage are slowed or relocated.",
+      "anchors": [
+        {
+          "event": "submit",
+          "sourceTransition": 7.32,
+          "montageTransition": 7.32,
+          "wallClockMark": 7.355083375
+        },
+        {
+          "event": "result-visible",
+          "sourceTransition": 13.88,
+          "montageTransition": 13.88,
+          "wallClockMark": 14.198735875
+        },
+        {
+          "event": "dual",
+          "sourceTransition": 18.88,
+          "montageTransition": 18.88,
+          "wallClockMark": 18.959908625
+        },
+        {
+          "event": "seek",
+          "sourceTransition": 25.52,
+          "montageTransition": 25.52,
+          "wallClockMark": 25.557507041
+        },
+        {
+          "event": "history-result-visible",
+          "sourceTransition": 35.92,
+          "montageTransition": 35.92,
+          "wallClockMark": 35.996137166
+        }
+      ]
+    },
+    "events": [
+      {
+        "id": "submit",
+        "kind": "click",
+        "sourceAt": 7.28,
+        "at": 7.28,
+        "start": 6.56,
+        "end": 7.32,
+        "xy": [
+          884,
+          332
+        ],
+        "label": "Transcribir",
+        "labelXY": [
+          795,
+          273
+        ],
+        "evidence": {
+          "scriptLines": [
+            28,
+            29
+          ],
+          "sourceFrames": [
+            7.28,
+            7.32
+          ],
+          "observed": "Transcribir button becomes Procesando and the page scrolls. Overlay stops before the button relocates."
+        }
+      },
+      {
+        "id": "loading",
+        "kind": "wait",
+        "sourceAt": 7.84,
+        "at": 7.84,
+        "start": 7.84,
+        "end": 13.68,
+        "xy": [
+          434,
+          486
+        ],
+        "label": "Procesando",
+        "labelXY": [
+          701,
+          424
+        ],
+        "focusRect": [
+          410,
+          386,
+          290,
+          203
+        ],
+        "pulses": [
+          8.08,
+          9.52,
+          10.96,
+          12.4,
+          13.12
+        ],
+        "evidence": {
+          "scriptLines": [
+            29,
+            31
+          ],
+          "sourceFrames": [
+            7.32,
+            13.84,
+            13.88
+          ],
+          "observed": "Only the genuinely visible processing interval is pulsed. The focus encloses existing stages without changing them. No completion sound or new success UI."
+        }
+      },
+      {
+        "id": "translation",
+        "kind": "click",
+        "sourceAt": 16.64,
+        "at": 16.64,
+        "start": 16.12,
+        "end": 17.36,
+        "xy": [
+          673,
+          203
+        ],
+        "label": "Traducción",
+        "labelXY": [
+          602,
+          143
+        ],
+        "evidence": {
+          "scriptLines": [
+            34,
+            35
+          ],
+          "sourceFrames": [
+            16.6,
+            16.64
+          ],
+          "observed": "Traducción (ES) becomes the active tab and Spanish lines appear."
+        }
+      },
+      {
+        "id": "dual",
+        "kind": "click",
+        "sourceAt": 18.88,
+        "at": 18.88,
+        "start": 18.36,
+        "end": 19.64,
+        "xy": [
+          797,
+          203
+        ],
+        "label": "Vista dual",
+        "labelXY": [
+          726,
+          143
+        ],
+        "evidence": {
+          "scriptLines": [
+            36,
+            37
+          ],
+          "sourceFrames": [
+            18.84,
+            18.88
+          ],
+          "observed": "Vista dual becomes active and paired source/translation lines appear."
+        }
+      },
+      {
+        "id": "search",
+        "kind": "input",
+        "sourceAt": 21.88,
+        "at": 21.88,
+        "start": 21.88,
+        "end": 23.28,
+        "xy": [
+          805,
+          259
+        ],
+        "label": "Buscar en el texto",
+        "labelXY": [
+          867,
+          195
+        ],
+        "focusRect": [
+          478,
+          237,
+          653,
+          43
+        ],
+        "evidence": {
+          "scriptLines": [
+            39,
+            40
+          ],
+          "sourceFrames": [
+            21.84,
+            21.88,
+            21.92
+          ],
+          "observed": "Programmatic keyboard focus and typing, NOT a click. Focus outline only, no cursor/ripple/click audio."
+        }
+      },
+      {
+        "id": "seek",
+        "kind": "click",
+        "sourceAt": 25.52,
+        "at": 25.52,
+        "start": 25.48,
+        "end": 26.44,
+        "xy": [
+          518,
+          383
+        ],
+        "label": "Ir a 00:05",
+        "labelXY": [
+          340,
+          353
+        ],
+        "evidence": {
+          "scriptLines": [
+            45,
+            47
+          ],
+          "sourceFrames": [
+            25.44,
+            25.48,
+            25.52
+          ],
+          "observed": "Search clears programmatically at 25.48; only then is the 00:05 target present. The second line highlights at 25.52. No pointer is shown before the target exists."
+        }
+      },
+      {
+        "id": "reading",
+        "kind": "click",
+        "sourceAt": 27.52,
+        "at": 27.52,
+        "start": 26.92,
+        "end": 27.56,
+        "xy": [
+          1072,
+          158
+        ],
+        "label": "Modo lectura",
+        "labelXY": [
+          882,
+          99
+        ],
+        "evidence": {
+          "scriptLines": [
+            49,
+            50
+          ],
+          "sourceFrames": [
+            27.52,
+            27.56
+          ],
+          "observed": "Reading layout replaces normal layout; pointer stops at the layout change."
+        }
+      },
+      {
+        "id": "exit-reading",
+        "kind": "click",
+        "sourceAt": 29.84,
+        "at": 29.84,
+        "start": 29.24,
+        "end": 29.88,
+        "xy": [
+          921,
+          158
+        ],
+        "label": "Salir de lectura",
+        "labelXY": [
+          746,
+          99
+        ],
+        "evidence": {
+          "scriptLines": [
+            51,
+            52
+          ],
+          "sourceFrames": [
+            29.84,
+            29.88
+          ],
+          "observed": "Normal layout returns; pointer stops before the exit button disappears."
+        }
+      },
+      {
+        "id": "txt",
+        "kind": "click",
+        "sourceAt": 29.96,
+        "at": 29.96,
+        "start": 29.92,
+        "end": 30.6,
+        "xy": [
+          152,
+          568
+        ],
+        "label": "TXT",
+        "labelXY": [
+          130,
+          603
+        ],
+        "evidence": {
+          "scriptLines": [
+            53,
+            60
+          ],
+          "sourceFrames": [
+            29.92,
+            29.96,
+            30
+          ],
+          "check": "export-txt",
+          "observed": "TXT control focuses; recording checks confirm its real download. No added download-success notice."
+        }
+      },
+      {
+        "id": "srt",
+        "kind": "click",
+        "sourceAt": 30.72,
+        "at": 30.72,
+        "start": 30.6,
+        "end": 31.28,
+        "xy": [
+          215,
+          568
+        ],
+        "label": "SRT",
+        "labelXY": [
+          194,
+          603
+        ],
+        "evidence": {
+          "scriptLines": [
+            53,
+            60
+          ],
+          "sourceFrames": [
+            30.68,
+            30.72,
+            30.76
+          ],
+          "check": "export-srt",
+          "observed": "SRT pressed/focus state and confirmed real download."
+        }
+      },
+      {
+        "id": "vtt",
+        "kind": "click",
+        "sourceAt": 31.44,
+        "at": 31.44,
+        "start": 31.28,
+        "end": 31.96,
+        "xy": [
+          279,
+          568
+        ],
+        "label": "VTT",
+        "labelXY": [
+          258,
+          603
+        ],
+        "evidence": {
+          "scriptLines": [
+            53,
+            60
+          ],
+          "sourceFrames": [
+            31.4,
+            31.44
+          ],
+          "check": "export-vtt",
+          "observed": "VTT control focuses; recording checks confirm its download."
+        }
+      },
+      {
+        "id": "md",
+        "kind": "click",
+        "sourceAt": 32.08,
+        "at": 32.08,
+        "start": 31.96,
+        "end": 32.64,
+        "xy": [
+          340,
+          568
+        ],
+        "label": "Markdown",
+        "labelXY": [
+          282,
+          603
+        ],
+        "evidence": {
+          "scriptLines": [
+            53,
+            60
+          ],
+          "sourceFrames": [
+            32.04,
+            32.08
+          ],
+          "check": "export-md",
+          "observed": "MD control focuses; recording checks confirm its download."
+        }
+      },
+      {
+        "id": "image",
+        "kind": "click",
+        "sourceAt": 32.72,
+        "at": 32.72,
+        "start": 32.64,
+        "end": 33.48,
+        "xy": [
+          1109,
+          328
+        ],
+        "label": "Imagen",
+        "labelXY": [
+          1150,
+          343
+        ],
+        "evidence": {
+          "scriptLines": [
+            62,
+            63
+          ],
+          "sourceFrames": [
+            32.68,
+            32.72
+          ],
+          "observed": "First-line image button highlights and the recorded application shows its own toast. We add no success UI and do not assert a separately verified image download."
+        }
+      },
+      {
+        "id": "new",
+        "kind": "click",
+        "sourceAt": 34.24,
+        "at": 34.24,
+        "start": 33.6,
+        "end": 34.28,
+        "xy": [
+          200,
+          680
+        ],
+        "label": "Nueva transcripción",
+        "labelXY": [
+          252,
+          656
+        ],
+        "evidence": {
+          "scriptLines": [
+            64,
+            65
+          ],
+          "sourceFrames": [
+            34.24,
+            34.28
+          ],
+          "observed": "Nueva transcripción returns to the form. Pointer ends before the link disappears."
+        }
+      },
+      {
+        "id": "history",
+        "kind": "click",
+        "sourceAt": 35.84,
+        "at": 35.84,
+        "start": 35.12,
+        "end": 35.92,
+        "xy": [
+          640,
+          632
+        ],
+        "label": "Abrir del historial",
+        "labelXY": [
+          510,
+          551
+        ],
+        "evidence": {
+          "scriptLines": [
+            66,
+            69
+          ],
+          "sourceFrames": [
+            35.8,
+            35.84,
+            35.88,
+            35.92
+          ],
+          "check": "reopen-history",
+          "observed": "Existing Me at the zoo history card presses and result returns. No new production transcription was requested."
+        }
+      },
+      {
+        "id": "history-dual",
+        "kind": "click",
+        "sourceAt": 35.96,
+        "at": 35.96,
+        "start": 35.92,
+        "end": 36.68,
+        "xy": [
+          797,
+          203
+        ],
+        "label": "Vista dual",
+        "labelXY": [
+          726,
+          143
+        ],
+        "evidence": {
+          "scriptLines": [
+            70,
+            71
+          ],
+          "sourceFrames": [
+            35.92,
+            35.96
+          ],
+          "observed": "Reopened Transcripción tab is visible at 35.92; recorded second Vista dual click switches it at 35.96."
+        }
+      }
+    ],
+    "limitations": [
+      "14 click cues correspond only to explicit click() actions visible in the recording; no language-selection, URL-entry, search-field or clear-field click is invented.",
+      "The loading pulse is editorial ambience during the real wait, not an application notification or progress measurement.",
+      "Original scene cards and subtitle timings remain unchanged even when narration boundaries do not coincide with action frames.",
+      "The historical baked-in Sin audio footer describes the originally silent capture; the guided edition has optional original music and editorial cues.",
+      "Source artifacts remain private/local and are not copied into the public directory. Reproduction uses the pinned approved music backup plus this inspected ledger."
+    ],
+    "subtitleSha256": {
+      "es": "6e92c34d83aa6779b71d45057751db0c07594a14ebb7102f2d2aa71972d6d656",
+      "en": "dddff2716ab3883d4f45994fed1ca080be1f8655d99bb157b38868108c4d30ba"
+    },
+    "decodedFrameMd5Sha256": "e091a4b4e43c40455597838f876d6ef7d5777d30fc0f29e36018f914464cef08",
+    "presentationTimingSha256": "51154b8851151a1a8eaa39a38937a5fddbcb6c20d274b75471b866142c356b9e",
+    "tools": {
+      "node": "v26.5.1",
+      "ffmpeg": "ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers",
+      "platform": "darwin/arm64"
+    },
+    "helperSha256": {
+      "guide-transcriber-demo.mjs": "99f962fe05d730a3c43a1c3765c35cbedd0cd969ac6956751b130e44c1fdfc20",
+      "transcriber-continuous-pointer.mjs": "df7c448b2a5bae1148403b62bf2ed512ed3d7ef1fc4410957c63aac6b778f709",
+      "transcriber-keyboard-audio.mjs": "810f74ea8fab95306af06d55ccd04f2671b7e227d3f8905825b86f4882bdf1c8",
+      "verify-transcriber-continuous.mjs": "d231ae681864d8b740d7a80cfc0692cc2b3293a01f2e8967e21e98a06d5eebd9",
+      "finance-demo-v2-pointer.mjs": "c62f95aa1bc935b3c37dd8b439a720a484e318ba79ab501625e529842a51876a"
+    },
+    "historicalLedgerNote": "The pinned action ledger describes the old intermittent-pointer edition. Its no-travel/pointer-stop statements are historical, not the current continuous track. Click/input/wait timings and inspected targets are retained.",
+    "continuousPointer": {
+      "positionsSha256": "049e00607bb15c5ac93adf3b4aab1a3052cd0611f4ee32471c7c33282886fc0c",
+      "trajectoryPolicy": "One opaque editorial pointer on all 916 application frames. The original recording has NO mouse telemetry. Smooth interpolation between inspected controls and explicitly editorial resting positions is reconstructed, NOT a genuine recorded trajectory. Click and visible-input timings are unchanged. The two 120 ms successive-click intervals necessarily have fast travel; neither clicks nor montage are slowed or relocated.",
+      "renderedUiFrames": 916,
+      "renderedInstancesPerUiFrame": 1,
+      "opacity": 1
+    },
+    "validation": {
+      "cleanSource": {
+        "totalUiFrames": 916,
+        "inspectedUiFrames": 916,
+        "firstFrame": 75,
+        "lastFrame": 990,
+        "cursorCoveredFrames": 0,
+        "missingFrames": 916,
+        "multipleCursorFrames": 0,
+        "outOfBoundsFrames": 0,
+        "coordinatesInBoundsFrames": 0,
+        "maximumAdjacentFrameStepPixels": 506.412,
+        "maximumTemplateError": 0,
+        "coverageLedgerSha256": "5ff5998243782132a2d13ea107f630c2f25b9906cc2bc513a91d4a69ffe82032",
+        "positionsSha256": "049e00607bb15c5ac93adf3b4aab1a3052cd0611f4ee32471c7c33282886fc0c",
+        "method": "Scan the entire native 1280x720 application crop in EVERY decoded final UI frame for all shared-glyph silhouettes; cluster adjacent raster matches. Confirm unique match, expected position and glyph bounds. Not a click-only or expected-position-only check.",
+        "trajectory": "One opaque editorial pointer on all 916 application frames. The original recording has NO mouse telemetry. Smooth interpolation between inspected controls and explicitly editorial resting positions is reconstructed, NOT a genuine recorded trajectory. Click and visible-input timings are unchanged. The two 120 ms successive-click intervals necessarily have fast travel; neither clicks nor montage are slowed or relocated.",
+        "cleanSource": true,
+        "pairs": [],
+        "passed": true
+      },
+      "pointer": {
+        "totalUiFrames": 916,
+        "inspectedUiFrames": 916,
+        "firstFrame": 75,
+        "lastFrame": 990,
+        "cursorCoveredFrames": 916,
+        "missingFrames": 0,
+        "multipleCursorFrames": 0,
+        "outOfBoundsFrames": 0,
+        "coordinatesInBoundsFrames": 916,
+        "maximumAdjacentFrameStepPixels": 506.412,
+        "maximumTemplateError": 9.620315581854044,
+        "coverageLedgerSha256": "d6f1a3543122b1624236246a7520003e43d1299c7a487e6031e000f9faaf458a",
+        "positionsSha256": "049e00607bb15c5ac93adf3b4aab1a3052cd0611f4ee32471c7c33282886fc0c",
+        "method": "Scan the entire native 1280x720 application crop in EVERY decoded final UI frame for all shared-glyph silhouettes; cluster adjacent raster matches. Confirm unique match, expected position and glyph bounds. Not a click-only or expected-position-only check.",
+        "trajectory": "One opaque editorial pointer on all 916 application frames. The original recording has NO mouse telemetry. Smooth interpolation between inspected controls and explicitly editorial resting positions is reconstructed, NOT a genuine recorded trajectory. Click and visible-input timings are unchanged. The two 120 ms successive-click intervals necessarily have fast travel; neither clicks nor montage are slowed or relocated.",
+        "cleanSource": false,
+        "pairs": [
+          {
+            "kind": "url-typing",
+            "frames": [
+              104,
+              149
+            ]
+          },
+          {
+            "kind": "search-typing",
+            "frames": [
+              548,
+              578
+            ]
+          },
+          {
+            "kind": "waiting",
+            "frames": [
+              202,
+              310
+            ]
+          },
+          {
+            "kind": "scrolling",
+            "frames": [
+              183,
+              190
+            ]
+          },
+          {
+            "kind": "between-actions",
+            "frames": [
+              350,
+              375
+            ]
+          },
+          {
+            "kind": "rapid-export",
+            "frames": [
+              746,
+              749
+            ]
+          },
+          {
+            "kind": "rapid-history",
+            "frames": [
+              896,
+              899
+            ]
+          },
+          {
+            "kind": "last-ui-frame",
+            "frames": [
+              989,
+              990
+            ]
+          },
+          {
+            "kind": "chapter-10",
+            "frames": [
+              249,
+              250
+            ]
+          },
+          {
+            "kind": "chapter-16",
+            "frames": [
+              399,
+              400
+            ]
+          },
+          {
+            "kind": "chapter-21",
+            "frames": [
+              524,
+              525
+            ]
+          },
+          {
+            "kind": "chapter-28",
+            "frames": [
+              699,
+              700
+            ]
+          },
+          {
+            "kind": "chapter-32",
+            "frames": [
+              799,
+              800
+            ]
+          },
+          {
+            "kind": "chapter-36.52",
+            "frames": [
+              912,
+              913
+            ]
+          }
+        ],
+        "passed": true
+      },
+      "audioSync": {
+        "passed": true,
+        "decodedSamplesPerChannel": 2046720,
+        "decodedPcmSha256": "8038b37fd9b09922c280219c69b67b37fd2f02fa2e2ce30d2a67bcf0070aed52",
+        "referenceMixedWavSha256": "132cffd90da1fe928b5d5e9f4de0cdc55a514414f4d7b48470f8fa78b8610c6a",
+        "snrDb": 40.71117286563223,
+        "correlation": 0.999957677210054,
+        "clickCues": 14,
+        "waitPulses": 5,
+        "keyboardAttacks": 49,
+        "visibleCharacters": 52,
+        "maximumMeasuredLagMs": 0,
+        "cues": [
+          {
+            "kind": "click",
+            "id": "submit",
+            "at": 7.28,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "click",
+            "id": "translation",
+            "at": 16.64,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "click",
+            "id": "dual",
+            "at": 18.88,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "click",
+            "id": "seek",
+            "at": 25.52,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "click",
+            "id": "reading",
+            "at": 27.52,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "click",
+            "id": "exit-reading",
+            "at": 29.84,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "click",
+            "id": "txt",
+            "at": 29.96,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "click",
+            "id": "srt",
+            "at": 30.72,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "click",
+            "id": "vtt",
+            "at": 31.44,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "click",
+            "id": "md",
+            "at": 32.08,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "click",
+            "id": "image",
+            "at": 32.72,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "click",
+            "id": "new",
+            "at": 34.24,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "click",
+            "id": "history",
+            "at": 35.84,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "click",
+            "id": "history-dual",
+            "at": 35.96,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "wait",
+            "id": "loading",
+            "at": 8.08,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "wait",
+            "id": "loading",
+            "at": 9.52,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "wait",
+            "id": "loading",
+            "at": 10.96,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "wait",
+            "id": "loading",
+            "at": 12.4,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "wait",
+            "id": "loading",
+            "at": 13.12,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 4.16,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 4.2,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 4.24,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 4.28,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 4.36,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 4.4,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 4.44,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 4.48,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 4.52,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 4.56,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 4.6,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 4.64,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 4.72,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 4.8,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 4.84,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 4.88,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 4.92,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 4.96,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 5,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 5.04,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 5.08,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 5.12,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 5.2,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 5.24,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 5.28,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 5.32,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 5.36,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 5.4,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 5.44,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 5.48,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 5.56,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 5.6,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 5.68,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 5.72,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 5.76,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 5.8,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 5.84,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 5.88,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 5.96,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "youtube-url",
+            "at": 6,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "transcript-search",
+            "at": 21.92,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "transcript-search",
+            "at": 22.04,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "transcript-search",
+            "at": 22.2,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "transcript-search",
+            "at": 22.36,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "transcript-search",
+            "at": 22.48,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "transcript-search",
+            "at": 22.64,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "transcript-search",
+            "at": 22.8,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "transcript-search",
+            "at": 22.96,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          },
+          {
+            "kind": "keyboard",
+            "id": "transcript-search",
+            "at": 23.12,
+            "measuredLagSamples": 0,
+            "measuredLagMs": 0
+          }
+        ],
+        "method": "Compare every decoded stereo AAC sample with the deterministic unity-gain approved guided audio plus one observed-input keyboard layer. Require >24 dB SNR and >0.998 correlation; independently search ±40 ms lag at all 68 cue windows with one-sample refinement. No second music/click/wait layer.",
+        "auditoryListeningReview": false
+      },
+      "montageFraming": {
+        "passed": true,
+        "frames": 1066,
+        "psnrDb": 64.737279,
+        "method": "All corresponding frames, masking only the UI rectangle plus a two-pixel chroma margin; 480x270 grayscale PSNR. Lossy fidelity, NOT byte/pixel identity. Full presentation timing is checked separately."
+      }
+    }
+  },
+  "keyboard": {
+    "applied": true,
+    "policy": "Editorial keyboard audio only for the 49 observed text-growth frames/52 visible characters. The keyboard ledger describes the prior audio-only edition; its picture-copy/no-new-cursor claim does not describe this continuous visual edition.",
+    "source": "public/media/transcriber-demo-guided-original.mp4",
+    "sourceSha256": "804e3111f960ecac5bbcb8070db8deeba1c12891f976d484141c4806903796c1",
+    "ledger": "scripts/media/transcriber-demo-keyboard-events.json",
+    "ledgerSha256": "2583c832602e504577a464c259f7f5ef2e105f6fbf4970056e4653d12a9ebd76",
+    "alignment": {
+      "method": "Inspected every native 25 fps source frame in 3.84-6.64 and 21.80-23.60; read visible prefixes from cropped input fields with source PTS. Compared the corresponding approved guided input crops at the selected frame and immediately preceding frame. These intervals map source PTS to montage PTS without an offset.",
+      "precision": "Each [sourcePTS, visibleCharacterCount] pair marks the first recorded frame showing the longer prefix. Actual keyboard dispatch can precede it by a frame and was not measured. The 42/150 ms scripted delays are corroboration only, not generated timestamps.",
+      "grouping": "At 4.72, 5.60 and 5.96 two URL characters become visible together. Emit ONE soft attack per observed growth frame, not guessed sub-frame keystrokes: 43 URL characters across 40 attacks, plus 9 search characters across 9 attacks.",
+      "nativeFramePrecisionSeconds": 0.04,
+      "characterCount": 52,
+      "keyboardAttackCount": 49
+    },
+    "generator": "scripts/media/transcriber-keyboard-audio.mjs",
+    "generatorSha256": "810f74ea8fab95306af06d55ccd04f2671b7e227d3f8905825b86f4882bdf1c8",
+    "regenerateCommand": "node scripts/media/guide-transcriber-demo.mjs",
+    "restoreCommand": "node scripts/media/guide-transcriber-demo.mjs --restore=guided",
+    "mix": {
+      "seed": 1415139397,
+      "sampleRateHz": 48000,
+      "channels": 2,
+      "pcmBits": 24,
+      "samplesPerChannel": 2046720,
+      "baseDecodedPcmSha256": "75dad1e3c678609351f455803850caa35cdfff724a9bc7bf8513ca503aaffb58",
+      "mixedWavSha256": "132cffd90da1fe928b5d5e9f4de0cdc55a514414f4d7b48470f8fa78b8610c6a",
+      "keyboardAttackCount": 49,
+      "visibleCharacterCount": 52,
+      "effectPeakDbfs": -21.23,
+      "mixedSamplePeakDbfs": -8.18,
+      "masterGainDb": 0,
+      "method": "Original deterministic damped sine-body/noise key attacks with gentle timbre, level and stereo variation. One attack per observed text-growth frame. Exact approved guided AAC decoded at unity gain plus keyboard PCM; no new score, ducking, rearrangement, limiter or guessed sub-frame keystrokes. Final AAC is re-encoded and measured.",
+      "cues": [
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.16,
+          "at": 4.16,
+          "sourceFrame": 104,
+          "visibleCharacterCount": 1,
+          "addedCharacters": "h",
+          "audioStartSample": 199680,
+          "durationSeconds": 0.059866
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.2,
+          "at": 4.2,
+          "sourceFrame": 105,
+          "visibleCharacterCount": 2,
+          "addedCharacters": "t",
+          "audioStartSample": 201600,
+          "durationSeconds": 0.051009
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.24,
+          "at": 4.24,
+          "sourceFrame": 106,
+          "visibleCharacterCount": 3,
+          "addedCharacters": "t",
+          "audioStartSample": 203520,
+          "durationSeconds": 0.055066
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.28,
+          "at": 4.28,
+          "sourceFrame": 107,
+          "visibleCharacterCount": 4,
+          "addedCharacters": "p",
+          "audioStartSample": 205440,
+          "durationSeconds": 0.063145
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.36,
+          "at": 4.36,
+          "sourceFrame": 109,
+          "visibleCharacterCount": 5,
+          "addedCharacters": "s",
+          "audioStartSample": 209280,
+          "durationSeconds": 0.051409
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.4,
+          "at": 4.4,
+          "sourceFrame": 110,
+          "visibleCharacterCount": 6,
+          "addedCharacters": ":",
+          "audioStartSample": 211200,
+          "durationSeconds": 0.061465
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.44,
+          "at": 4.44,
+          "sourceFrame": 111,
+          "visibleCharacterCount": 7,
+          "addedCharacters": "/",
+          "audioStartSample": 213120,
+          "durationSeconds": 0.053709
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.48,
+          "at": 4.48,
+          "sourceFrame": 112,
+          "visibleCharacterCount": 8,
+          "addedCharacters": "/",
+          "audioStartSample": 215040,
+          "durationSeconds": 0.055699
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.52,
+          "at": 4.52,
+          "sourceFrame": 113,
+          "visibleCharacterCount": 9,
+          "addedCharacters": "w",
+          "audioStartSample": 216960,
+          "durationSeconds": 0.059481
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.56,
+          "at": 4.56,
+          "sourceFrame": 114,
+          "visibleCharacterCount": 10,
+          "addedCharacters": "w",
+          "audioStartSample": 218880,
+          "durationSeconds": 0.051947
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.6,
+          "at": 4.6,
+          "sourceFrame": 115,
+          "visibleCharacterCount": 11,
+          "addedCharacters": "w",
+          "audioStartSample": 220800,
+          "durationSeconds": 0.052311
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.64,
+          "at": 4.64,
+          "sourceFrame": 116,
+          "visibleCharacterCount": 12,
+          "addedCharacters": ".",
+          "audioStartSample": 222720,
+          "durationSeconds": 0.052455
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.72,
+          "at": 4.72,
+          "sourceFrame": 118,
+          "visibleCharacterCount": 14,
+          "addedCharacters": "yo",
+          "audioStartSample": 226560,
+          "durationSeconds": 0.062158
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.8,
+          "at": 4.8,
+          "sourceFrame": 120,
+          "visibleCharacterCount": 15,
+          "addedCharacters": "u",
+          "audioStartSample": 230400,
+          "durationSeconds": 0.052831
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.84,
+          "at": 4.84,
+          "sourceFrame": 121,
+          "visibleCharacterCount": 16,
+          "addedCharacters": "t",
+          "audioStartSample": 232320,
+          "durationSeconds": 0.05446
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.88,
+          "at": 4.88,
+          "sourceFrame": 122,
+          "visibleCharacterCount": 17,
+          "addedCharacters": "u",
+          "audioStartSample": 234240,
+          "durationSeconds": 0.057333
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.92,
+          "at": 4.92,
+          "sourceFrame": 123,
+          "visibleCharacterCount": 18,
+          "addedCharacters": "b",
+          "audioStartSample": 236160,
+          "durationSeconds": 0.050466
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 4.96,
+          "at": 4.96,
+          "sourceFrame": 124,
+          "visibleCharacterCount": 19,
+          "addedCharacters": "e",
+          "audioStartSample": 238080,
+          "durationSeconds": 0.054187
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5,
+          "at": 5,
+          "sourceFrame": 125,
+          "visibleCharacterCount": 20,
+          "addedCharacters": ".",
+          "audioStartSample": 240000,
+          "durationSeconds": 0.059499
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.04,
+          "at": 5.04,
+          "sourceFrame": 126,
+          "visibleCharacterCount": 21,
+          "addedCharacters": "c",
+          "audioStartSample": 241920,
+          "durationSeconds": 0.050162
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.08,
+          "at": 5.08,
+          "sourceFrame": 127,
+          "visibleCharacterCount": 22,
+          "addedCharacters": "o",
+          "audioStartSample": 243840,
+          "durationSeconds": 0.06264
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.12,
+          "at": 5.12,
+          "sourceFrame": 128,
+          "visibleCharacterCount": 23,
+          "addedCharacters": "m",
+          "audioStartSample": 245760,
+          "durationSeconds": 0.051358
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.2,
+          "at": 5.2,
+          "sourceFrame": 130,
+          "visibleCharacterCount": 24,
+          "addedCharacters": "/",
+          "audioStartSample": 249600,
+          "durationSeconds": 0.063644
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.24,
+          "at": 5.24,
+          "sourceFrame": 131,
+          "visibleCharacterCount": 25,
+          "addedCharacters": "w",
+          "audioStartSample": 251520,
+          "durationSeconds": 0.056471
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.28,
+          "at": 5.28,
+          "sourceFrame": 132,
+          "visibleCharacterCount": 26,
+          "addedCharacters": "a",
+          "audioStartSample": 253440,
+          "durationSeconds": 0.052841
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.32,
+          "at": 5.32,
+          "sourceFrame": 133,
+          "visibleCharacterCount": 27,
+          "addedCharacters": "t",
+          "audioStartSample": 255360,
+          "durationSeconds": 0.052847
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.36,
+          "at": 5.36,
+          "sourceFrame": 134,
+          "visibleCharacterCount": 28,
+          "addedCharacters": "c",
+          "audioStartSample": 257280,
+          "durationSeconds": 0.063923
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.4,
+          "at": 5.4,
+          "sourceFrame": 135,
+          "visibleCharacterCount": 29,
+          "addedCharacters": "h",
+          "audioStartSample": 259200,
+          "durationSeconds": 0.058778
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.44,
+          "at": 5.44,
+          "sourceFrame": 136,
+          "visibleCharacterCount": 30,
+          "addedCharacters": "?",
+          "audioStartSample": 261120,
+          "durationSeconds": 0.062923
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.48,
+          "at": 5.48,
+          "sourceFrame": 137,
+          "visibleCharacterCount": 31,
+          "addedCharacters": "v",
+          "audioStartSample": 263040,
+          "durationSeconds": 0.052251
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.56,
+          "at": 5.56,
+          "sourceFrame": 139,
+          "visibleCharacterCount": 32,
+          "addedCharacters": "=",
+          "audioStartSample": 266880,
+          "durationSeconds": 0.055907
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.6,
+          "at": 5.6,
+          "sourceFrame": 140,
+          "visibleCharacterCount": 34,
+          "addedCharacters": "jN",
+          "audioStartSample": 268800,
+          "durationSeconds": 0.054462
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.68,
+          "at": 5.68,
+          "sourceFrame": 142,
+          "visibleCharacterCount": 35,
+          "addedCharacters": "Q",
+          "audioStartSample": 272640,
+          "durationSeconds": 0.055275
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.72,
+          "at": 5.72,
+          "sourceFrame": 143,
+          "visibleCharacterCount": 36,
+          "addedCharacters": "X",
+          "audioStartSample": 274560,
+          "durationSeconds": 0.060474
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.76,
+          "at": 5.76,
+          "sourceFrame": 144,
+          "visibleCharacterCount": 37,
+          "addedCharacters": "A",
+          "audioStartSample": 276480,
+          "durationSeconds": 0.054448
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.8,
+          "at": 5.8,
+          "sourceFrame": 145,
+          "visibleCharacterCount": 38,
+          "addedCharacters": "C",
+          "audioStartSample": 278400,
+          "durationSeconds": 0.061913
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.84,
+          "at": 5.84,
+          "sourceFrame": 146,
+          "visibleCharacterCount": 39,
+          "addedCharacters": "9",
+          "audioStartSample": 280320,
+          "durationSeconds": 0.062081
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.88,
+          "at": 5.88,
+          "sourceFrame": 147,
+          "visibleCharacterCount": 40,
+          "addedCharacters": "I",
+          "audioStartSample": 282240,
+          "durationSeconds": 0.060157
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 5.96,
+          "at": 5.96,
+          "sourceFrame": 149,
+          "visibleCharacterCount": 42,
+          "addedCharacters": "VR",
+          "audioStartSample": 286080,
+          "durationSeconds": 0.062644
+        },
+        {
+          "id": "youtube-url",
+          "sourceAt": 6,
+          "at": 6,
+          "sourceFrame": 150,
+          "visibleCharacterCount": 43,
+          "addedCharacters": "w",
+          "audioStartSample": 288000,
+          "durationSeconds": 0.062442
+        },
+        {
+          "id": "transcript-search",
+          "sourceAt": 21.92,
+          "at": 21.92,
+          "sourceFrame": 548,
+          "visibleCharacterCount": 1,
+          "addedCharacters": "e",
+          "audioStartSample": 1052160,
+          "durationSeconds": 0.06247
+        },
+        {
+          "id": "transcript-search",
+          "sourceAt": 22.04,
+          "at": 22.04,
+          "sourceFrame": 551,
+          "visibleCharacterCount": 2,
+          "addedCharacters": "l",
+          "audioStartSample": 1057920,
+          "durationSeconds": 0.059081
+        },
+        {
+          "id": "transcript-search",
+          "sourceAt": 22.2,
+          "at": 22.2,
+          "sourceFrame": 555,
+          "visibleCharacterCount": 3,
+          "addedCharacters": "e",
+          "audioStartSample": 1065600,
+          "durationSeconds": 0.056527
+        },
+        {
+          "id": "transcript-search",
+          "sourceAt": 22.36,
+          "at": 22.36,
+          "sourceFrame": 559,
+          "visibleCharacterCount": 4,
+          "addedCharacters": "f",
+          "audioStartSample": 1073280,
+          "durationSeconds": 0.054639
+        },
+        {
+          "id": "transcript-search",
+          "sourceAt": 22.48,
+          "at": 22.48,
+          "sourceFrame": 562,
+          "visibleCharacterCount": 5,
+          "addedCharacters": "a",
+          "audioStartSample": 1079040,
+          "durationSeconds": 0.062264
+        },
+        {
+          "id": "transcript-search",
+          "sourceAt": 22.64,
+          "at": 22.64,
+          "sourceFrame": 566,
+          "visibleCharacterCount": 6,
+          "addedCharacters": "n",
+          "audioStartSample": 1086720,
+          "durationSeconds": 0.062731
+        },
+        {
+          "id": "transcript-search",
+          "sourceAt": 22.8,
+          "at": 22.8,
+          "sourceFrame": 570,
+          "visibleCharacterCount": 7,
+          "addedCharacters": "t",
+          "audioStartSample": 1094400,
+          "durationSeconds": 0.062258
+        },
+        {
+          "id": "transcript-search",
+          "sourceAt": 22.96,
+          "at": 22.96,
+          "sourceFrame": 574,
+          "visibleCharacterCount": 8,
+          "addedCharacters": "e",
+          "audioStartSample": 1102080,
+          "durationSeconds": 0.053196
+        },
+        {
+          "id": "transcript-search",
+          "sourceAt": 23.12,
+          "at": 23.12,
+          "sourceFrame": 578,
+          "visibleCharacterCount": 9,
+          "addedCharacters": "s",
+          "audioStartSample": 1109760,
+          "durationSeconds": 0.052189
+        }
+      ]
+    },
+    "syncValidation": {
+      "passed": true,
+      "decodedSamplesPerChannel": 2046720,
+      "decodedPcmSha256": "8038b37fd9b09922c280219c69b67b37fd2f02fa2e2ce30d2a67bcf0070aed52",
+      "referenceMixedWavSha256": "132cffd90da1fe928b5d5e9f4de0cdc55a514414f4d7b48470f8fa78b8610c6a",
+      "snrDb": 40.71117286563223,
+      "correlation": 0.999957677210054,
+      "clickCues": 14,
+      "waitPulses": 5,
+      "keyboardAttacks": 49,
+      "visibleCharacters": 52,
+      "maximumMeasuredLagMs": 0,
+      "cues": [
+        {
+          "kind": "click",
+          "id": "submit",
+          "at": 7.28,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "click",
+          "id": "translation",
+          "at": 16.64,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "click",
+          "id": "dual",
+          "at": 18.88,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "click",
+          "id": "seek",
+          "at": 25.52,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "click",
+          "id": "reading",
+          "at": 27.52,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "click",
+          "id": "exit-reading",
+          "at": 29.84,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "click",
+          "id": "txt",
+          "at": 29.96,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "click",
+          "id": "srt",
+          "at": 30.72,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "click",
+          "id": "vtt",
+          "at": 31.44,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "click",
+          "id": "md",
+          "at": 32.08,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "click",
+          "id": "image",
+          "at": 32.72,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "click",
+          "id": "new",
+          "at": 34.24,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "click",
+          "id": "history",
+          "at": 35.84,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "click",
+          "id": "history-dual",
+          "at": 35.96,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "wait",
+          "id": "loading",
+          "at": 8.08,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "wait",
+          "id": "loading",
+          "at": 9.52,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "wait",
+          "id": "loading",
+          "at": 10.96,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "wait",
+          "id": "loading",
+          "at": 12.4,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "wait",
+          "id": "loading",
+          "at": 13.12,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 4.16,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 4.2,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 4.24,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 4.28,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 4.36,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 4.4,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 4.44,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 4.48,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 4.52,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 4.56,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 4.6,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 4.64,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 4.72,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 4.8,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 4.84,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 4.88,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 4.92,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 4.96,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 5,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 5.04,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 5.08,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 5.12,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 5.2,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 5.24,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 5.28,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 5.32,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 5.36,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 5.4,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 5.44,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 5.48,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 5.56,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 5.6,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 5.68,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 5.72,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 5.76,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 5.8,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 5.84,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 5.88,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 5.96,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "youtube-url",
+          "at": 6,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "transcript-search",
+          "at": 21.92,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "transcript-search",
+          "at": 22.04,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "transcript-search",
+          "at": 22.2,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "transcript-search",
+          "at": 22.36,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "transcript-search",
+          "at": 22.48,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "transcript-search",
+          "at": 22.64,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "transcript-search",
+          "at": 22.8,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "transcript-search",
+          "at": 22.96,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        },
+        {
+          "kind": "keyboard",
+          "id": "transcript-search",
+          "at": 23.12,
+          "measuredLagSamples": 0,
+          "measuredLagMs": 0
+        }
+      ],
+      "method": "Compare every decoded stereo AAC sample with the deterministic unity-gain approved guided audio plus one observed-input keyboard layer. Require >24 dB SNR and >0.998 correlation; independently search ±40 ms lag at all 68 cue windows with one-sample refinement. No second music/click/wait layer.",
+      "auditoryListeningReview": false
+    },
+    "auditoryListeningReview": false,
+    "tools": {
+      "node": "v26.5.1",
+      "ffmpeg": "ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers",
+      "platform": "darwin/arm64"
+    }
+  }
+}
