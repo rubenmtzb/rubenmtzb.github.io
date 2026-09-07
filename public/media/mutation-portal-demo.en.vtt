@@ -1,0 +1,22 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:05.000
+SARS-CoV-2 Mutation Portal. A real visit to the URV research portal.
+
+00:00:05.000 --> 00:00:14.000
+The homepage explains the dataset. Its displayed date is 26 February 2024; this is not a live-data claim.
+
+00:00:14.000 --> 00:00:26.000
+Typing “spike” in the gene table returns two regions from 36 entries.
+
+00:00:26.000 --> 00:00:42.000
+Using the native controls by keyboard, select spike, Spain and a percentage above 50. Submit a real, bounded query.
+
+00:00:42.000 --> 00:00:56.000
+The query returns four rows. Table search locates D614G without another server query.
+
+00:00:56.000 --> 00:01:12.000
+The actual scatter plot shows mutation information on hover and supports selection zoom.
+
+00:01:12.000 --> 00:01:21.000
+A point-in-time walkthrough, not an exhaustive audit. Excel export returned HTTP 500 during inspection; no download is simulated.
