@@ -595,8 +595,8 @@ for (const page of EXPECTED.filter((page) => page.kind === 'v2')) {
   const cards = [...document.querySelectorAll('#work [data-project]')]
   const keys = cards.map((card) => card.dataset.project)
   assert(
-    keys.length === 4 && new Set(keys).size === 4 && keys[0] === 'youtube-transcriber',
-    `${page.path} presents each project once, with Transcriber first`,
+    keys.join(',') === 'youtube-transcriber,financial-architecture,sars-cov-2,portfolio',
+    `${page.path} presents each project once, ordered Transcriber, Finance, research and portfolio source`,
   )
   assert(
     document.querySelectorAll('.project-slide').length === 3
@@ -604,7 +604,15 @@ for (const page of EXPECTED.filter((page) => page.kind === 'v2')) {
       && !document.querySelector('.project-slide[data-project="financial-architecture"] a[href*="github.com"]')
       && !document.querySelector('#project-deck button, .project-deck-track')
       && !document.querySelector('#project-deck')?.hasAttribute('aria-roledescription'),
-    `${page.path} features Finance without exposing private source, with one carousel and a static secondary grid`,
+    `${page.path} features Finance without exposing private source or another carousel`,
+  )
+  const reference = document.querySelector('#project-deck .project-reference')
+  assert(
+    reference?.querySelector('a[href="https://github.com/rubenmtzb/rubenmtzb.github.io"]')
+      && !document.querySelector('#other-projects-title, .project-grid-card')
+      && !reference.querySelector('h3, h4, img, .tech-chip')
+      && reference.querySelectorAll('a').length === 1,
+    `${page.path} keeps the portfolio as a compact source reference without a redundant visit link`,
   )
   assert(
     [...document.querySelectorAll('.project-slide')].every((slide) =>
@@ -614,17 +622,42 @@ for (const page of EXPECTED.filter((page) => page.kind === 'v2')) {
 }
 
 console.log('\n· Verified demonstration assets')
-for (const [name, duration, uiFrames] of [
-  ['transcriber-demo', 42.64, 916],
-  ['finance-core-demo', 191.64, 4541],
-  ['mutation-portal-demo', 81, 1675],
+for (const page of EXPECTED.filter(page => ['case', 'finance', 'transcriber'].includes(page.cluster))) {
+  const { document } = parseHTML(read(page.file))
+  const player = document.querySelector('#demo video')
+  const downloads = [...document.querySelectorAll('#demo a[download]')]
+  assert(
+    downloads.length === 1
+      && downloads[0].getAttribute('href') === player?.querySelector('source')?.getAttribute('src')
+      && !document.querySelector('#demo a[href*="-original."], #demo a[href*="-silent."]'),
+    `${page.path} offers exactly one download, matching the video being watched`,
+  )
+  assert(
+    document.querySelector('[data-demo-fullscreen][hidden]')
+      && document.querySelector('[data-demo-error][role="status"][hidden]')
+      && document.querySelector('.case-demo-hint')?.textContent.trim(),
+    `${page.path} progressively enables fullscreen with a localized viewing hint and visible error handling`,
+  )
+  const graph = JSON.parse(document.querySelector('script[type="application/ld+json"]').textContent)['@graph']
+  const canonical = document.querySelector('link[rel="canonical"]').getAttribute('href')
+  const entity = graph.find(item => item['@id'] === `${canonical}#project`)
+  assert(
+    entity?.['@type'] === 'CreativeWork' && entity.url === canonical && entity.inLanguage === page.lang
+      && graph.find(item => item['@id'] === `${canonical}#page`)?.mainEntity?.['@id'] === entity['@id'],
+    `${page.path} identifies its public project case as the structured-data main entity`,
+  )
+}
+for (const [name, duration, fps, uiFrames] of [
+  ['transcriber-demo', 42.64, 25, 916],
+  ['finance-core-demo', 191.64, 25, 4541],
+  ['mutation-portal-demo', 81, 30, 2010],
 ]) {
   const validation = JSON.parse(readFileSync(join(DIST, 'media', `${name}-validation.json`), 'utf8'))
   const videoHash = createHash('sha256').update(readFileSync(join(DIST, 'media', `${name}.mp4`))).digest('hex')
   const cursor = validation.continuousCursor
   assert(
     validation.videoSha256 === videoHash
-      && (validation.decodedFrames ?? validation.video?.decodedFrames) === Math.round(duration * 25)
+      && (validation.decodedFrames ?? validation.video?.decodedFrames) === Math.round(duration * fps)
       && (validation.durationSeconds ?? validation.video?.seconds) === duration,
     `${name} ships the exact fully decoded and validated film`,
   )
@@ -634,6 +667,15 @@ for (const [name, duration, uiFrames] of [
       && cursor.coordinatesInBoundsFrames === uiFrames,
     `${name} has a single visible in-bounds cursor throughout every application frame`,
   )
+  if (name === 'mutation-portal-demo') {
+    assert(
+      validation.video.fps === fps && validation.presentation?.guideVisibleFrames === uiFrames
+        && validation.presentation.guideDoesNotOverlapUi === true
+        && validation.presentation.blackApplicationFrames === 0
+        && cursor.motion?.unintendedCursorStallsOver200ms === 0,
+      `${name} preserves 30fps, non-overlapping explanatory panels and continuous motion`,
+    )
+  }
   for (const language of ['en', 'es']) {
     const subtitles = readFileSync(join(DIST, 'media', `${name}.${language}.vtt`), 'utf8')
     const times = [...subtitles.matchAll(/(\d{2}):(\d{2}):(\d{2}\.\d{3}) --> (\d{2}):(\d{2}):(\d{2}\.\d{3})/g)]
@@ -691,10 +733,9 @@ for (const page of EXPECTED.filter((page) => page.cluster === 'finance')) {
       && (article.querySelector('#demo-caption')?.textContent ?? '').includes(
         new Intl.NumberFormat(page.lang).format(JSON.parse(readFileSync(join(DIST, 'media/finance-core-demo.json'), 'utf8')).durationSeconds),
       )
-      && article.querySelector('a[href="/media/finance-core-demo-original.mp4"][download]')
       && existsSync(join(DIST, 'media/finance-core-demo-original.mp4'))
       && !article.querySelector('a[href*="transcriber-demo"]'),
-    `${page.path} offers bilingual Finance captions without unrelated backup links`,
+    `${page.path} offers bilingual Finance captions and preserves the original asset`,
   )
 }
 for (const page of EXPECTED.filter((page) => page.cluster === 'case')) {
@@ -761,13 +802,10 @@ for (const page of EXPECTED.filter((page) => page.cluster === 'transcriber')) {
     `${page.path} serves the supplied recording and poster, not placeholders`,
   )
   assert(
-    document.querySelector('a[href="/media/transcriber-demo-silent.mp4"][download]')
-      && existsSync(join(DIST, 'media/transcriber-demo-silent.mp4'))
-      && document.querySelector('a[href="/media/transcriber-demo-music-original.mp4"][download]')
+    existsSync(join(DIST, 'media/transcriber-demo-silent.mp4'))
       && existsSync(join(DIST, 'media/transcriber-demo-music-original.mp4'))
-      && document.querySelector('a[href="/media/transcriber-demo-guided-original.mp4"][download]')
       && existsSync(join(DIST, 'media/transcriber-demo-guided-original.mp4')),
-    `${page.path} keeps all three exact approved demos available separately`,
+    `${page.path} preserves earlier approved recordings without advertising alternate downloads`,
   )
   const caption = document.getElementById('demo-caption')?.textContent ?? ''
   const tracks = [...(player?.querySelectorAll('track') ?? [])]

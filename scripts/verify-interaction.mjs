@@ -22,6 +22,7 @@ import { pathToFileURL } from 'node:url'
 import { parseHTML } from 'linkedom'
 import { createHash } from 'node:crypto'
 import ts from 'typescript'
+import { verifyMotion } from './verify-motion.mjs'
 
 const DIST = 'dist'
 const languageSourceOnly = process.argv.includes('--language-source')
@@ -200,9 +201,9 @@ async function languageSuite() {
     ['v2.mutation.explorer', 'GENOMIC EXPLORER', 'EXPLORADOR GENÓMICO'],
   ]) check(uiSource.includes(`'${key}': '${en}'`) && uiSource.includes(`'${key}': '${es}'`)
     && caseSource.includes(`t(lang, '${key}')`), `${key}: both translations are consumed by the case diagram`)
-  check(uiSource.includes("'v2.finance.originalVersion': 'Previous Finance Core walkthrough'")
-    && uiSource.includes("'v2.finance.originalVersion': 'Recorrido anterior de Finance Core'"),
-    'both preserved recording labels retain the Finance Core proper name')
+  check(uiSource.includes("'v2.case.download': 'Download this video'")
+    && uiSource.includes("'v2.case.download': 'Descargar este vídeo'"),
+    'both demo download labels identify only the current recording')
   check(uiSource.includes("'v2.case.transcript': 'Texto con marcas de tiempo'"),
     'the transcript flow label consistently names timestamps')
 
@@ -480,9 +481,14 @@ function suite(page, dom) {
   const repoLink = projectSlides[0]?.querySelector('.project-repo-link')
   fire(repoLink, 'keydown', { key: 'ArrowRight' })
   check(projectSlides[0]?.classList.contains('is-active'), 'arrow keys inside a project link do not navigate the carousel')
-  check(all('#project-deck .project-grid-card').length === 1
+  check(all('#project-deck .project-reference').length === 1
     && !el('project-deck-next') && !el('project-deck-prev'),
-  'secondary projects remain visible without another set of carousel controls')
+  'the compact portfolio source remains visible without another carousel')
+  const gameLevels = readFileSync('src/scripts/game/levels.ts', 'utf8')
+  check(['#project-carousel', '#project-deck .project-reference'].every(selector =>
+    document.querySelector(selector) && gameLevels.includes(`selector: '${selector}'`))
+    && !gameLevels.includes('.project-grid-card'),
+  'Game Mode project targets still resolve after compacting the source reference')
 
   console.log('\n· Draggable personal photos')
   const momentCard = document.querySelector('.moment-card')
@@ -1107,7 +1113,64 @@ function suite(page, dom) {
   check(/^UTC[+-]\d+$/.test(el('local-offset').textContent), `the offset is derived from the zone ("${el('local-offset').textContent}")`)
 }
 
+async function demoFullscreenSuite() {
+  console.log('\n· Demo fullscreen enhancement')
+  const check = (condition, label) => {
+    if (condition) { pass++; console.log(`  ✓ ${label}`) }
+    else { fail++; console.error(`  ✗ ${label}`) }
+  }
+  const source = readFileSync('src/components/CaseDemo.astro', 'utf8').match(/<script>([\s\S]*?)<\/script>/)?.[1]
+  if (!source) throw new Error('CaseDemo must expose its fullscreen enhancement for verification')
+  const code = ts.transpileModule(source, {
+    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext },
+  }).outputText
+  const previousDocument = globalThis.document
+  try {
+    for (const mode of ['standard', 'webkit', 'unsupported', 'rejected']) {
+      let listener
+      let requests = 0
+      let reject = mode === 'rejected'
+      const video = { currentTime: 17, paused: true }
+      if (mode === 'webkit') video.webkitEnterFullscreen = () => { requests++ }
+      else video.requestFullscreen = async () => {
+        requests++
+        if (reject) throw new Error('Fullscreen permission denied')
+      }
+      const expand = { hidden: true, addEventListener: (event, callback) => {
+        if (event !== 'click') throw new Error(`Unexpected fullscreen trigger: ${event}`)
+        listener = callback
+      } }
+      const error = { hidden: true }
+      globalThis.document = {
+        fullscreenEnabled: ['standard', 'rejected'].includes(mode),
+        querySelector: selector => ({
+          '#demo video': video, '[data-demo-fullscreen]': expand, '[data-demo-error]': error,
+        })[selector],
+      }
+      await import(`data:text/javascript;base64,${Buffer.from(code).toString('base64')}#${mode}`)
+      check(requests === 0 && video.paused, `${mode}: initialization never starts playback or fullscreen`)
+      if (mode === 'unsupported') {
+        check(expand.hidden && !listener, 'unsupported fullscreen leaves only native controls and the current download')
+        continue
+      }
+      check(!expand.hidden && typeof listener === 'function', `${mode}: an available API reveals the explicit control`)
+      await listener()
+      check(requests === 1 && error.hidden === !reject, `${mode}: success stays quiet and rejection is surfaced`)
+      check(video.currentTime === 17 && video.paused, `${mode}: expanding never resets or auto-plays the movie`)
+      if (reject) {
+        reject = false
+        await listener()
+        check(requests === 2 && error.hidden, 'a successful retry clears the fullscreen error')
+      }
+    }
+  } finally {
+    globalThis.document = previousDocument
+  }
+}
+
 await languageSuite()
+await demoFullscreenSuite()
+pass += await verifyMotion()
 
 for (const [i, page] of (languageSourceOnly ? [] : PAGES).entries()) {
   console.log(`\n${'═'.repeat(52)}\n${page.file} — ${bundleName}\n${'═'.repeat(52)}`)
