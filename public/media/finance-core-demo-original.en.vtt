@@ -1,0 +1,31 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:04.000
+Finance Core. A real application walkthrough using synthetic data.
+
+00:00:04.000 --> 00:00:12.000
+Net worth, income and expenses in one view. All data in this demonstration is fictitious.
+
+00:00:12.000 --> 00:00:19.000
+Accounts grouped by institution. Net worth includes manual investments; it is not all liquid cash.
+
+00:00:19.000 --> 00:00:27.000
+The read-only GoCardless connector requires provider configuration and consent. It is not configured here.
+
+00:00:27.000 --> 00:00:39.000
+The local alternative: select a synthetic CSV and review its preview before confirming.
+
+00:00:39.000 --> 00:00:47.000
+After confirming two rows, preview the file again: duplicate protection prevents counting them twice.
+
+00:00:47.000 --> 00:00:55.000
+Analytics summarize income, spending and savings trends from local transactions.
+
+00:00:55.000 --> 00:01:05.000
+An extra-savings scenario helps explore goals. It is an estimate, not a financial promise.
+
+00:01:05.000 --> 00:01:18.000
+Local crypto holdings: quantities and recorded cost. No market prices, P&L, connected wallets or trading.
+
+00:01:18.000 --> 00:01:24.000
+Real application, synthetic data. No connected banks, live prices or external AI. Source code remains private.
