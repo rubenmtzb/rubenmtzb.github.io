@@ -52,6 +52,26 @@ dist-ssr
 *.MOV
 *.mp4
 *.MP4
+# Demo editada del portfolio; las grabaciones originales siguen excluidas.
+!/public/media/transcriber-demo.mp4
+# Copia silenciosa exacta e inmutable para restaurar el montaje sin pérdida.
+!/public/media/transcriber-demo-silent.mp4
+# Variante aprobada con la música original exacta: backup inmutable.
+!/public/media/transcriber-demo-music-original.mp4
+!/public/media/transcriber-demo-poster.jpg
+# Solo las piezas saneadas de Finanzas; los originales permanecen privados.
+!/public/media/finance-core-demo.mp4
+!/public/media/finance-core-demo-poster.jpg
+!/public/media/finance-core-demo-original.mp4
+!/public/media/finance-core-demo-original-poster.jpg
+!/public/media/transcriber-demo-guided-original.mp4
+!/public/media/mutation-portal-demo.mp4
+!/public/media/mutation-portal-demo-poster.jpg
+# Trabajo local de los generadores; nunca publicar fuentes ni intermedios.
+/.transcriber-guide-work/
+/.transcriber-guidance-render/
+/.transcriber-soundtrack-work/
+/.transcriber-film-*/
 # Tomas de sonido sin cortar, en la raíz del proyecto. Los cortes servidos
 # viven en public/keyboards/sound/ y sí se versionan.
 /*.m4a
