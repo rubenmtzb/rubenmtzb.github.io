@@ -4,7 +4,7 @@
  * pressed, which mode we are in and which tab is in charge; the mascot, the
  * sound and the writing pad are pieces of their own with their own modules.
  */
-import { say } from '../dom'
+import { isSpanish, say } from '../dom'
 import { createPixelKillua } from './killua'
 import { createSwitchAudio } from './switch-audio'
 import { createFreeSandbox } from './sandbox'
@@ -26,7 +26,7 @@ export function initKeyboard() {
 
   const killuaCanvas = document.getElementById('kb-pixel-killua') as HTMLCanvasElement | null
   const killua = createPixelKillua(killuaCanvas)
-  const audio = createSwitchAudio()
+  const audio = createSwitchAudio(isSpanish() ? 'es' : 'en')
 
   const setKilluaSpeech = (text: string) => {
     if (killuaSpeech) killuaSpeech.textContent = `"${text}"`
@@ -86,6 +86,7 @@ export function initKeyboard() {
    */
   const dispatchKey = (code: string, char: string, fromHardware: boolean) => {
     if (activeMode === 'speed') {
+      if (trial.waiting) return
       if (code === 'Backspace') trial.backspace()
       else if (code === 'Space') trial.type(' ')
       else if (char.length === 1) trial.type(char)
@@ -121,14 +122,32 @@ export function initKeyboard() {
     ).observe(interactivePanel)
   }
 
+  const gameOwnsKeys = () => document.documentElement.classList.contains('game-mode-active')
+
+  const applyGameMode = (active: boolean) => {
+    if (active) trial.pause()
+    else trial.resume()
+  }
+  document.addEventListener('game-mode-change', (event) => {
+    const active = (event as CustomEvent<{ active?: boolean }>).detail?.active
+    applyGameMode(active ?? gameOwnsKeys())
+  })
+
   window.addEventListener('keydown', (e) => {
+    /*
+     * Killua's platformer and this widget share WASD, arrows and space.
+     * preventDefault in the game does not stop this listener, so while the
+     * overlay is up the archive must not light keys, type, or steal Space.
+     */
+    if (gameOwnsKeys()) return
     if (isForeignField(e.target) || activeMode === 'photos') return
 
     const insideArchive = (e.target as HTMLElement)?.closest('#archive') !== null
+    const trialLive = activeMode === 'speed' && !trial.waiting
     const engaged = document.activeElement === trial.element
       || document.activeElement === sandbox.element
       || insideArchive
-      || panelOnScreen
+      || (panelOnScreen && (activeMode === 'sim' || trialLive))
 
     /*
      * Tab is never blocked: it is the only way to walk the page from the
@@ -151,6 +170,7 @@ export function initKeyboard() {
 
   keys.forEach((el, code) => {
     const trigger = () => {
+      if (gameOwnsKeys()) return
       press(code, true, el)
       dispatchKey(code, el.dataset.char ?? '', false)
     }

@@ -3,15 +3,27 @@
  *
  * The platformer is the heaviest piece on the site and only whoever looks for it
  * ever sees it, so it travels in its own chunk and downloads on the first
- * attempt to open it. The rest of the page does not pay its weight.
+ * attempt to open it. The rest of the page does not pay its weight — including
+ * the overlay sheet, which used to land inlined in the home HTML.
  */
+import gameModeSheet from '../../styles/v2/game-mode.css?url'
+
 export function initGameMode() {
   let gameRunning = false
+
+  const wearSheet = () => {
+    if (document.querySelector(`link[href="${gameModeSheet}"]`)) return
+    const link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.href = gameModeSheet
+    document.head.appendChild(link)
+  }
 
   const launch = async () => {
     if (gameRunning) return
     gameRunning = true
     try {
+      wearSheet()
       const { startGameMode } = await import('../game-mode')
       startGameMode(() => { gameRunning = false })
     } catch {

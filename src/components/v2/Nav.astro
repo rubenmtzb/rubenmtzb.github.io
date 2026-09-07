@@ -44,7 +44,7 @@ const other = await getAlternate(pageKey, lang)
       {V2_NAV.map((item) => (
         <a href={`#${item.id}`} data-nav={item.id} class="primary-nav-link nav-link text-xs sm:text-sm">{t(lang, item.key as UiKey)}</a>
       ))}
-      <a href={other.path} hreflang={other.lang} rel="alternate" class="language-nav-link nav-link text-xs sm:text-sm" aria-label={t(lang, 'nav.langSwitch')}>
+      <a href={other.path} hreflang={other.lang} rel="alternate" data-language-switch class="language-nav-link nav-link text-xs sm:text-sm" aria-label={t(lang, 'nav.langSwitch')}>
         {t(lang, 'nav.langNext')}
       </a>
 
@@ -121,3 +121,8 @@ const other = await getAlternate(pageKey, lang)
     </div>
   </nav>
 </header>
+
+<script>
+  import { initLanguageSwitch } from '../../scripts/language-switch'
+  initLanguageSwitch()
+</script>

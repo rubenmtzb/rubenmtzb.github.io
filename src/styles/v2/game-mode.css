@@ -2,10 +2,11 @@
 html.game-mode-active {
   scroll-behavior: auto !important;
 }
-html.game-mode-active body > *:not(.gm-canvas):not(.gm-ui),
-html.game-mode-active body > *:not(.gm-canvas):not(.gm-ui) * {
-  animation-play-state: paused !important;
-}
+
+/*
+ * Page geometry is drawn as motes on the canvas, not as bars on the
+ * elements: titles and buttons stay themselves, with magic sitting on top.
+ */
 
 .gm-canvas {
   position: fixed;
@@ -17,39 +18,61 @@ html.game-mode-active body > *:not(.gm-canvas):not(.gm-ui) * {
   pointer-events: none;
 }
 
+/*
+ * The HUD, the modal and the touch buttons are position:fixed on their own.
+ * Stretching this wrapper across the viewport — even with pointer-events:none —
+ * still ate hover and clicks on cards, tabs and the keyboard viewer in WebKit.
+ * `display: contents` leaves no box, so it cannot become a hit layer or a
+ * containing block for the fixed chrome.
+ */
 .gm-ui {
-  position: fixed;
-  inset: 0;
-  z-index: 1001;
-  pointer-events: none;
+  display: contents;
 }
 
 .gm-hud-bar {
   position: fixed;
-  top: 1rem;
-  right: 1.25rem;
+  top: 4.65rem;
+  right: 1rem;
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  background: rgba(5, 8, 15, 0.88);
+  flex-wrap: nowrap;
+  gap: 0.4rem;
+  max-width: calc(100vw - 1.5rem);
+  overflow: hidden;
+  background: rgba(5, 8, 15, 0.9);
   border: 1px solid rgba(111, 227, 255, 0.35);
-  padding: 0.35rem 0.85rem;
+  padding: 0.22rem 0.5rem;
   border-radius: 9999px;
   backdrop-filter: blur(14px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 15px rgba(91, 155, 255, 0.2);
   pointer-events: auto;
   z-index: 1002;
-  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.gm-hud-target-name,
+.gm-hud-super-hint {
+  display: none;
+}
+
+@media (min-width: 1440px) {
+  .gm-hud-bar {
+    gap: 0.5rem;
+    padding: 0.28rem 0.7rem;
+  }
+  .gm-hud-target-name,
+  .gm-hud-super-hint {
+    display: inline;
+  }
 }
 
 @media (max-width: 640px) {
   .gm-hud-bar {
-    top: 0.6rem;
-    right: 0.6rem;
+    top: 5.35rem;
+    right: 0.5rem;
     left: auto;
-    padding: 0.3rem 0.65rem;
-    gap: 0.4rem;
-    max-width: calc(100vw - 1.2rem);
+    gap: 0.3rem;
+    padding: 0.2rem 0.45rem;
   }
 }
 
@@ -63,14 +86,27 @@ html.game-mode-active body > *:not(.gm-canvas):not(.gm-ui) * {
   gap: 0.25rem;
 }
 
+.gm-hud-drops {
+  display: inline-flex;
+  gap: 0.12rem;
+  font-size: 0.72rem;
+  letter-spacing: -0.08em;
+  color: var(--line);
+}
+.gm-hud-drops .is-on {
+  color: var(--cyan);
+  text-shadow: 0 0 8px rgba(111, 227, 255, 0.7);
+}
+
 .gm-hud-super {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.2rem 0.65rem;
+  flex-shrink: 0;
+  gap: 0.3rem;
+  padding: 0.15rem 0.5rem;
   border-radius: 9999px;
   background: rgba(10, 16, 32, 0.85);
   border: 1px solid rgba(111, 227, 255, 0.3);
@@ -100,12 +136,13 @@ html.game-mode-active body > *:not(.gm-canvas):not(.gm-ui) * {
 
 .gm-exit-btn {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   color: var(--fg-3);
   background: transparent;
   border: 1px solid var(--line-soft);
   cursor: pointer;
-  padding: 0.2rem 0.55rem;
+  flex-shrink: 0;
+  padding: 0.15rem 0.45rem;
   border-radius: 9999px;
   transition: all 0.2s ease;
 }
@@ -118,12 +155,18 @@ html.game-mode-active body > *:not(.gm-canvas):not(.gm-ui) * {
 .gm-modal-overlay {
   position: fixed;
   inset: 0;
+  z-index: 1003;
   display: grid;
   place-items: center;
   background: rgba(5, 8, 15, 0.85);
   backdrop-filter: blur(8px);
   pointer-events: auto;
-  animation: modalFadeIn 0.25s ease;
+  animation: overlayFade 0.2s ease;
+}
+
+@keyframes overlayFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes modalFadeIn {
@@ -140,6 +183,7 @@ html.game-mode-active body > *:not(.gm-canvas):not(.gm-ui) * {
   padding: 2rem;
   text-align: center;
   box-shadow: 0 0 40px rgba(91, 155, 255, 0.3);
+  animation: modalFadeIn 0.25s ease;
 }
 
 .gm-modal-title {
@@ -162,13 +206,24 @@ html.game-mode-active body > *:not(.gm-canvas):not(.gm-ui) * {
 }
 
 .gm-mobile-controls {
-  position: fixed;
-  bottom: 1.25rem;
-  inset-inline: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  pointer-events: auto;
+  display: none;
+}
+
+@media (max-width: 639px) {
+  .gm-mobile-controls {
+    position: fixed;
+    bottom: 1.25rem;
+    inset-inline: 1rem;
+    z-index: 1002;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    pointer-events: none;
+  }
+
+  .gm-mobile-controls .gm-touch-btn {
+    pointer-events: auto;
+  }
 }
 
 .gm-touch-btn {
@@ -194,62 +249,4 @@ html.game-mode-active body > *:not(.gm-canvas):not(.gm-ui) * {
   padding: 0.75rem 1.25rem;
 }
 
-/* ---------------- HEADER KILLUA PEEKER ---------------- */
-.header-killua-peeker {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translate(-50%, 6px) scale(0.65);
-  opacity: 0;
-  z-index: 5;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
-  animation: killuaPeekLook 10s infinite ease-in-out;
-  pointer-events: none;
-}
-
-.header-killua-sprite {
-  width: 20px;
-  height: 44px;
-  object-fit: contain;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
-  filter: drop-shadow(0 0 5px rgba(111, 227, 255, 0.7));
-}
-
-#header-brand-link:hover .header-killua-peeker {
-  animation: none;
-  transform: translate(-50%, -22px) scale(0.9) rotate(0deg);
-  opacity: 1;
-  filter: drop-shadow(0 0 10px rgba(111, 227, 255, 0.95));
-}
-
-@keyframes killuaPeekLook {
-  0%, 14% {
-    transform: translate(-50%, 8px) scale(0.6);
-    opacity: 0;
-  }
-  18% {
-    transform: translate(-50%, -19px) scale(0.85) rotate(0deg);
-    opacity: 1;
-  }
-  24% {
-    transform: translate(-50%, -19px) scale(0.85) rotate(-14deg);
-    opacity: 1;
-  }
-  31% {
-    transform: translate(-50%, -19px) scale(0.85) rotate(14deg);
-    opacity: 1;
-  }
-  37% {
-    transform: translate(-50%, -22px) scale(0.88) rotate(0deg);
-    opacity: 1;
-  }
-  43% {
-    transform: translate(-50%, 8px) scale(0.6);
-    opacity: 0;
-  }
-  44%, 100% {
-    transform: translate(-50%, 8px) scale(0.6);
-    opacity: 0;
-  }
-}
+/* Header Killua peeker styles live in header.css (always loaded). */

@@ -5,11 +5,8 @@
  * fully accessible, semantic and indexable without JavaScript. Removing this
  * script removes motion, not content.
  *
- * This file is the boot order. The hero's layers are the entry graph — they
- * have to run before the first paint of the interaction — and everything that
- * lives below the fold travels in its own chunk. Those chunks start downloading
- * immediately, in parallel, so a section is already wired when someone reaches
- * it; they are simply not parsed on the critical path.
+ * The hero boots first. Below-the-fold chunks download and initialise once
+ * their section is close, before the visitor arrives.
  *
  * Images that were held as lazy are warmed as soon as their section is close:
  * paging a carousel must not wait on a download that only starts on the click.
@@ -35,46 +32,80 @@ initPortrait()
 initJobList()
 initGameMode()
 
-const work = document.getElementById('work')
-if (work) whenNear(work, () => warmImages(work), '800px')
-const about = document.getElementById('about')
-if (about) whenNear(about, () => warmImages(about), '800px')
+const modelsHref = document.querySelector('[data-bx-models-src]')?.getAttribute('data-bx-models-src')
 const archive = document.getElementById('archive')
-if (archive) whenNear(archive, () => warmImages(archive), '1400px')
+if (modelsHref && archive) {
+  const prefetch = () => {
+    const link = document.createElement('link')
+    link.rel = 'prefetch'
+    link.as = 'document'
+    link.href = modelsHref
+    document.head.appendChild(link)
+  }
+  whenNear(archive, prefetch, '1400px')
+}
+
+const work = document.getElementById('work')
+const about = document.getElementById('about')
 const contact = document.getElementById('contact')
+const projectCarousel = document.getElementById('project-carousel')
+
+if (projectCarousel) whenNear(projectCarousel, () => warmImages(projectCarousel), '800px')
+if (about) whenNear(about, () => warmImages(about), '800px')
+if (archive) whenNear(archive, () => warmImages(archive), '1400px')
 if (contact) whenNear(contact, () => warmImages(contact), '400px')
 
-const [
-  { initProjectCarousel, initEducationSlider, initCertsSlider },
-  { initProjectDeck },
-  { initCaseOrigin },
-  { initProfileWorkbench },
-  { initMomentCards },
-  { initKeyboard },
-  { initKeyboardBuildExplorer },
-  { initMail, initClock, initContactSignal },
-] = await Promise.all([
-  import('./v2/carousels'),
-  import('./v2/project-deck'),
-  import('./v2/case-origin'),
-  import('./v2/profile-workbench'),
-  import('./v2/moment-cards'),
-  import('./v2/keyboard'),
-  import('./v2/build-explorer'),
-  import('./v2/contact'),
-])
+/*
+ * Chunks are not even requested until the section is close. Starting every
+ * `import()` on boot competed with the hero for the connection. Tests fire
+ * IntersectionObserver synchronously, so the promises below are still
+ * populated before the module's final await.
+ */
+const pending: Promise<void>[] = []
 
-initProjectCarousel()
-initProjectDeck()
-initCaseOrigin()
-initProfileWorkbench()
-initEducationSlider()
-initCertsSlider()
-initMomentCards()
-initKeyboard()
-initKeyboardBuildExplorer()
-initMail()
-initClock()
-initContactSignal()
+const boot = (el: Element | null, margin: string, task: () => Promise<void>) => {
+  const run = () => { pending.push(task()) }
+  if (el) whenNear(el, run, margin)
+  else pending.push(task())
+}
+
+boot(work, '500px', async () => {
+  const [{ initProjectCarousel }, { initCaseOrigin }] = await Promise.all([
+    import('./v2/carousels'),
+    import('./v2/case-origin'),
+  ])
+  initProjectCarousel()
+  initCaseOrigin()
+})
+
+boot(about, '600px', async () => {
+  const [{ initEducationSlider, initCertsSlider }, { initProfileWorkbench }] = await Promise.all([
+    import('./v2/carousels'),
+    import('./v2/profile-workbench'),
+  ])
+  initEducationSlider()
+  initCertsSlider()
+  initProfileWorkbench()
+})
+
+boot(archive, '900px', async () => {
+  const [{ initMomentCards }, { initKeyboard }, { initKeyboardBuildExplorer }] = await Promise.all([
+    import('./v2/moment-cards'),
+    import('./v2/keyboard'),
+    import('./v2/build-explorer'),
+  ])
+  initMomentCards()
+  initKeyboard()
+  await initKeyboardBuildExplorer()
+})
+
+boot(contact, '400px', async () => {
+  const { initMail, initClock, initContactSignal } = await import('./v2/contact')
+  initMail()
+  initClock()
+  initContactSignal()
+})
+
+await Promise.all(pending)
 
 export {}

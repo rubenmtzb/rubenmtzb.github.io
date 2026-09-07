@@ -6,7 +6,7 @@
 import BaseLayout from './BaseLayout.astro'
 import CvDocument from '../components/cv/CvDocument.astro'
 import type { Lang } from '../i18n/ui'
-import '../styles/global.css'
+import '../styles/cv.css'
 
 interface Props { lang: Lang }
 const { lang } = Astro.props
@@ -16,8 +16,12 @@ const { lang } = Astro.props
   lang={lang}
   pageKey="cv"
   pageType="ProfilePage"
-  displayFont={false}
-  bodyClass="cv-body font-mono text-slate-100"
+  monoFont={false}
+  bodyClass="cv-body"
 >
   <main id="main"><CvDocument lang={lang} /></main>
+  <script>
+    import { initLanguageSwitch } from '../scripts/language-switch'
+    initLanguageSwitch()
+  </script>
 </BaseLayout>

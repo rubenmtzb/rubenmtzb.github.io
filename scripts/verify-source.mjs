@@ -10,6 +10,7 @@
  * Every rule here was born from a real drift, not from a preference.
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs'
+import { spawnSync } from 'node:child_process'
 import { join } from 'node:path'
 
 let failures = 0
@@ -120,6 +121,31 @@ assert(
   improvised.length === 0,
   `no V2 colour is improvised outside the palette${improvised.length ? ` — these do: ${improvised.join('; ')}` : ''}`,
 )
+
+console.log('\n· Deployable media')
+for (const [path, expectedStatus] of [
+  ['public/media/transcriber-demo.mp4', 1],
+  ['public/media/transcriber-demo-poster.jpg', 1],
+  ['public/media/transcriber-demo-silent.mp4', 1],
+  ['public/media/transcriber-demo-music-original.mp4', 1],
+  ['public/media/transcriber-demo-guided-original.mp4', 1],
+  ['public/media/finance-core-demo.mp4', 1],
+  ['public/media/finance-core-demo-poster.jpg', 1],
+  ['public/media/finance-core-demo-original.mp4', 1],
+  ['public/media/finance-core-demo-original-poster.jpg', 1],
+  ['public/media/mutation-portal-demo.mp4', 1],
+  ['public/media/mutation-portal-demo-poster.jpg', 1],
+  ['public/media/unpublished-recording.mp4', 0],
+  ['personal-photo.JPG', 0],
+]) {
+  const result = spawnSync('git', ['check-ignore', '--no-index', '-q', path], { encoding: 'utf8' })
+  assert(
+    result.status === expectedStatus,
+    `${path} is ${expectedStatus === 1 ? 'available to Git for deployment' : 'kept private by ignore rules'}${
+      result.error || result.status === 128 ? ` — ${result.error?.message ?? result.stderr.trim()}` : ''
+    }`,
+  )
+}
 
 console.log(`\n${'─'.repeat(52)}`)
 if (failures > 0) {

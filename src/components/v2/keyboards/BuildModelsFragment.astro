@@ -1,0 +1,25 @@
+---
+/**
+ * The archive's heavy half: geometry, panels and layered models.
+ *
+ * The home page keeps the gallery. This fragment is prefetched after first
+ * paint and planted before a build opens, so the hero's HTML does not carry
+ * four workbenches the visitor has not asked to see.
+ */
+import BuildPanel from './BuildPanel.astro'
+import { getKeyboards } from '../../../lib/content'
+import { keyGeometry } from '../../../lib/keyboard-layouts'
+import { createWaveform } from '../../../lib/keyboard-sound'
+import type { Lang } from '../../../i18n/ui'
+import viewerSheet from '../../../styles/keyboard-explorer-viewer.css?url'
+
+interface Props { lang: Lang }
+const { lang } = Astro.props
+const builds = await getKeyboards()
+const KEY_GEOMETRY = keyGeometry(builds.map((build) => build.layout))
+const wave = createWaveform(builds.map((build) => build.sound?.peaks ?? []))
+---
+
+<link rel="stylesheet" href={viewerSheet} />
+<style data-bx-geometry set:html={KEY_GEOMETRY}></style>
+{builds.map((build) => <BuildPanel build={build} lang={lang} wave={wave} />)}

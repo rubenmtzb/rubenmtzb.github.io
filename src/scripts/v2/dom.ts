@@ -86,9 +86,24 @@ export function whenNear(el: Element, task: () => void, rootMargin = '1200px') {
   io.observe(el)
 }
 
-/** Turns lazy images into downloads so paging a carousel does not wait on them. */
+/**
+ * Turns lazy images into downloads and asks the browser to decode them before
+ * they are paged into view. `loading = eager` only starts the transfer; without
+ * `decode()` the first navigation can still pay image decoding and texture
+ * upload on its interaction frame.
+ */
 export function warmImages(root: ParentNode) {
   for (const img of root.querySelectorAll('img')) {
     if (img.loading === 'lazy') img.loading = 'eager'
+    /*
+     * SVG technology marks are already cheap vector resources and many repeat
+     * throughout Work. Pre-decoding every instance would create raster work
+     * precisely while the visitor approaches the carousel. Covers and photos
+     * benefit from an early decode; repeated SVGs do not.
+     */
+    const source = img.currentSrc || img.src
+    if (!source.endsWith('.svg') && typeof img.decode === 'function') {
+      void img.decode().catch(() => {})
+    }
   }
 }

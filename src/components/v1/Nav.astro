@@ -46,6 +46,7 @@ const other = await getAlternate(pageKey, lang)
           href={other.path}
           hreflang={other.lang}
           rel="alternate"
+          data-language-switch
           class="flex items-center gap-2 rounded-full border border-green-500/20 bg-black/40 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-green-300 transition hover:border-green-300/40 hover:bg-green-500/10 hover:text-green-100"
           aria-label={t(lang, 'nav.langSwitch')}
         >
@@ -98,6 +99,7 @@ const other = await getAlternate(pageKey, lang)
         href={other.path}
         hreflang={other.lang}
         rel="alternate"
+        data-language-switch
         class="inline-flex items-center gap-2 rounded-full border border-green-500/20 bg-black/40 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-green-300"
         aria-label={t(lang, 'nav.langSwitch')}
       >
@@ -107,3 +109,8 @@ const other = await getAlternate(pageKey, lang)
     </div>
   </div>
 </header>
+
+<script>
+  import { initLanguageSwitch } from '../../scripts/language-switch'
+  initLanguageSwitch()
+</script>

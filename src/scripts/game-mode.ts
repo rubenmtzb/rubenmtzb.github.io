@@ -5,7 +5,8 @@
  *   · Dead-zone camera with immediate scrolling, independent of the portfolio's smooth scroll.
  *   · Simulation capped at 60 FPS and normalised over time for high-refresh monitors.
  *   · Deduplicated DOM platforms and bounded effects, so the easter egg never becomes a burden.
- *   · Total keyboard isolation: keys only drive Killua; the mouse keeps 100% of the web interaction.
+ *   · Keyboard drives Killua; the mouse keeps 100% of the web — cards, tabs and
+ *     viewers stay clickable, and the overlay never swallows hover.
  *   · Calibrated physics driven by Killua's retro animations (idle, steps 1 and 2, jump, Godspeed).
  *   · Comic/manga speech bubbles and retro synthesiser sound effects (voice chirps).
  *   · Ultimate ability: KANMURU / GODSPEED MODE (pure neon-blue aura, lightning and orb magnet).
@@ -21,16 +22,19 @@
  *   already made: the loop simulates, `paintFrame` only reads.
  */
 
-import '../styles/v2/game-mode.css'
 import {
   BODY,
   PHYSICS,
+  PIT,
+  STAGE_PAD,
   clampToStage,
   cutJump,
+  fellOffRoute,
   LEDGE_INSET,
   landsOn,
   nextVelocityX,
   nextVelocityY,
+  placeLedge,
 } from './game/physics'
 import { createGameAudio, type BleepMood } from './game/audio'
 import {
@@ -54,20 +58,32 @@ const MAX_FRAME_SCALE = 2
 const MAX_TRAIL = 28
 const MAX_SPARKS = 72
 const MAX_SHOCKWAVES = 4
+const DROP_CHARGES = 2
+const DROP_REFILL_MS = 480
 
 
 export function startGameMode(onExit: () => void) {
   const originalScrollY = window.scrollY
   document.documentElement.classList.add('game-mode-active')
+  document.dispatchEvent(new CustomEvent('game-mode-change', { detail: { active: true } }))
+  const archiveFocus = document.activeElement
+  if (archiveFocus instanceof HTMLElement && archiveFocus.closest('#archive')) {
+    archiveFocus.blur()
+  }
+  for (const key of document.querySelectorAll('#kb .is-down')) {
+    key.classList.remove('is-down')
+  }
 
   const canvas = document.createElement('canvas')
   canvas.className = 'gm-canvas'
   canvas.setAttribute('aria-hidden', 'true')
+  canvas.style.pointerEvents = 'none'
   document.body.appendChild(canvas)
   const ctx = canvas.getContext('2d')!
 
   const ui = document.createElement('div')
   ui.className = 'gm-ui'
+  ui.style.pointerEvents = 'none'
   document.body.appendChild(ui)
 
   let w = window.innerWidth
@@ -84,6 +100,22 @@ export function startGameMode(onExit: () => void) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     maxCameraY = Math.max(0, document.documentElement.scrollHeight - h)
     cacheDomPlatforms()
+    const bounded = clampToStage(me.x, me.vx, w, STAGE_PAD)
+    me.x = bounded.x
+    me.vx = bounded.vx
+    customLedges.forEach((ledge) => {
+      const placed = placeLedge(ledge.x, ledge.w, w)
+      ledge.x = placed.x
+      ledge.w = placed.w
+    })
+    movingLedges.forEach((ledge) => {
+      const placed = placeLedge(ledge.originX, ledge.w, w)
+      ledge.w = placed.w
+      ledge.originX = placed.x
+      const sideRoom = Math.min(placed.x - STAGE_PAD, w - STAGE_PAD - (placed.x + placed.w))
+      ledge.range = Math.max(0, Math.min(ledge.range, sideRoom))
+      ledge.x = Math.max(placed.x - ledge.range, Math.min(placed.x + ledge.range, ledge.x))
+    })
   }
 
   const isSpanish = document.documentElement.lang === 'es'
@@ -107,9 +139,16 @@ export function startGameMode(onExit: () => void) {
   let customLedges: CustomLedge[] = []
   let movingLedges: MovingLedge[] = []
   let cachedDomPlatforms: Rect[] = []
-  let recoveryLedge: CustomLedge | null = null
   let deathY = 2000
   let dropThroughUntil = 0
+  let dropCharges = DROP_CHARGES
+  let groundedSince = -9999
+  let auraCatchUsed = false
+  let spawnSafeUntil = 0
+  let platformCacheFrame: number | null = null
+  let gameStartedAt = 0
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const markedLedges = new Set<HTMLElement>()
 
   let lastGodspeedTime = -9999
   let godspeedActiveUntil = -9999
@@ -137,6 +176,7 @@ export function startGameMode(onExit: () => void) {
     face: 1 as 1 | -1,
     frame: 0,
     lastGround: -9999,
+    lastGroundY: 0,
     lastJump: -9999,
     jumpsLeft: 1,
     currentMovingLedge: null as MovingLedge | null,
@@ -156,13 +196,15 @@ export function startGameMode(onExit: () => void) {
   const cacheDomPlatforms = () => {
     const list: Rect[] = []
     const seen = new Set<string>()
+    const nextMarked = new Set<HTMLElement>()
     const sy = window.scrollY
     const PLATFORM_SELECTORS = [
       'h1', 'h2', 'h3',
       '.job-panel', '.project-slide.is-active', '.project-grid-card',
       '.profile-workbench', '.edu-slide.is-active', '.cert-slide.is-active',
       '.moment-card', '.kb-console-card', '.contact-signal',
-      '.hero-tech-chip', '.site-badge'
+      '#identity .hero-tech-chip', '.site-badge',
+      '.btn', '.job-tab',
     ]
     const EXCLUDED = ['#viewer', 'dialog', '.site-header', '.gm-ui', '.gm-canvas']
 
@@ -170,23 +212,58 @@ export function startGameMode(onExit: () => void) {
       for (const el of document.querySelectorAll<HTMLElement>(sel)) {
         if (EXCLUDED.some((ex) => el.closest(ex))) continue
         const r = el.getBoundingClientRect()
-        if (r.width < 50 || r.height > 180 || r.width > w) continue
+        if (r.width < 56 || r.height < 8 || r.width > w - 24) continue
         const platform = {
           x: Math.round(r.left),
           y: Math.round(r.top + sy),
           w: Math.round(r.width),
+          page: true,
         }
         const key = `${platform.x}:${platform.y}:${platform.w}`
         if (seen.has(key)) continue
         seen.add(key)
         list.push(platform)
+        nextMarked.add(el)
+        el.classList.add('gm-ledge')
       }
     }
+
+    for (const el of markedLedges) {
+      if (!nextMarked.has(el)) el.classList.remove('gm-ledge')
+    }
+    markedLedges.clear()
+    for (const el of nextMarked) markedLedges.add(el)
+
     cachedDomPlatforms = list.sort((a, b) => a.y - b.y)
+  }
+
+  const schedulePlatformCache = () => {
+    if (platformCacheFrame !== null) return
+    platformCacheFrame = requestAnimationFrame(() => {
+      platformCacheFrame = null
+      if (alive) cacheDomPlatforms()
+    })
   }
 
   const trail: Array<{ x: number; y: number; a: number; isGodspeed?: boolean }> = []
   const sparks: Array<{ x: number; y: number; vx: number; vy: number; life: number; color?: string }> = []
+  const magic: Array<{ x: number; y: number; vx: number; vy: number; life: number; size: number; color: string }> = []
+  const MAX_MAGIC = 96
+  let lastPathX = me.x
+
+  const emitMagic = (x: number, y: number, seed?: { vx?: number; vy?: number; life?: number; size?: number }) => {
+    if (magic.length >= MAX_MAGIC) magic.shift()
+    const palette = ['#6fe3ff', '#e0f7ff', '#00d4ff', '#a5d8ff']
+    magic.push({
+      x,
+      y,
+      vx: seed?.vx ?? (Math.random() - 0.5) * 0.55,
+      vy: seed?.vy ?? (-0.12 - Math.random() * 0.45),
+      life: seed?.life ?? (0.7 + Math.random() * 0.5),
+      size: seed?.size ?? (1.1 + Math.random() * 1.4),
+      color: palette[(Math.random() * palette.length) | 0],
+    })
+  }
   const shockwaves: Array<{ x: number; y: number; r: number; maxR: number; a: number; color?: string }> = []
 
   // Load the level and build a clean, dynamic platform architecture
@@ -199,9 +276,9 @@ export function startGameMode(onExit: () => void) {
     cameraInspectionActive = false
     customLedges = []
     movingLedges = []
-    recoveryLedge = null
     trail.length = 0
     sparks.length = 0
+    magic.length = 0
     shockwaves.length = 0
     me.currentMovingLedge = null
     me.lastGround = performance.now()
@@ -224,9 +301,10 @@ export function startGameMode(onExit: () => void) {
         if (el) {
           const rect = el.getBoundingClientRect()
           targetY = Math.round(rect.top + window.scrollY + Math.min(rect.height * 0.5, 90))
-          targetX = Math.round(Math.max(70, Math.min(w - 90, rect.left + rect.width * 0.5)))
+          targetX = Math.round(rect.left + rect.width * 0.5)
         }
       }
+      targetX = Math.round(Math.max(STAGE_PAD + 40, Math.min(w - STAGE_PAD - 40, targetX)))
       targetY = Math.max(firstTargetSafeY, targetY)
 
       return {
@@ -244,15 +322,22 @@ export function startGameMode(onExit: () => void) {
     // Spawn Killua near the first orb
     const firstOrb = orbs[0]
     const startY = firstOrb ? Math.max(70, firstOrb.y - 110) : 100
-    const startX = firstOrb ? Math.round(Math.max(80, Math.min(w - 80, firstOrb.x > w / 2 ? firstOrb.x - 80 : firstOrb.x + 80))) : Math.round(w / 2)
+    const startX = firstOrb ? Math.round(Math.max(STAGE_PAD + 50, Math.min(w - STAGE_PAD - 50, firstOrb.x > w / 2 ? firstOrb.x - 80 : firstOrb.x + 80))) : Math.round(w / 2)
 
     me.x = Math.round(startX - W / 2)
     me.y = startY - H - 4
+    lastPathX = me.x
     me.vx = 0
     me.vy = 0
     me.grounded = true
     me.jumpsLeft = 1
     me.currentMovingLedge = null
+    me.lastGroundY = me.y
+    spawnSafeUntil = performance.now() + 900
+    gameStartedAt = performance.now()
+    dropCharges = DROP_CHARGES
+    groundedSince = -9999
+    auraCatchUsed = false
 
     cameraY = Math.max(0, startY - h * 0.35)
     targetCameraY = cameraY
@@ -261,14 +346,16 @@ export function startGameMode(onExit: () => void) {
     previousFrame = performance.now()
 
     // Safe starting platform
-    customLedges.push({ x: Math.round(startX - 65), y: startY, w: 130, alpha: 1 })
+    const startPad = placeLedge(startX - 70, 140, w)
+    customLedges.push({ x: startPad.x, y: startY, w: startPad.w, alpha: 1 })
 
     // 2. Guaranteed base platform under every orb
     orbs.forEach((orb) => {
+      const pad = placeLedge(orb.x - 60, 120, w)
       customLedges.push({
-        x: Math.max(20, Math.min(w - 125, orb.x - 55)),
+        x: pad.x,
         y: orb.y + 36,
-        w: 110,
+        w: pad.w,
         alpha: 1,
       })
     })
@@ -280,37 +367,37 @@ export function startGameMode(onExit: () => void) {
       const dy = oB.y - oA.y
       const dx = oB.x - oA.x
 
-      // More fixed footholds and fewer moving platforms: the route favours flow over difficulty.
-      const numSteps = Math.max(2, Math.min(8, Math.ceil(Math.abs(dy) / 120)))
+      // Steps stay inside a single jump so a missed landing can still be climbed.
+      const numSteps = Math.max(2, Math.min(10, Math.ceil(Math.abs(dy) / 88)))
       const stepY = dy / (numSteps + 1)
       const stepX = dx / (numSteps + 1)
 
       for (let s = 1; s <= numSteps; s++) {
         const ledgeY = Math.round(oA.y + 36 + stepY * s)
-        const ledgeX = Math.round(Math.max(30, Math.min(w - 120, oA.x - 45 + stepX * s)))
+        const placed = placeLedge(oA.x - 50 + stepX * s, 108, w)
 
         if (s % 3 === 0) {
+          const sideRoom = Math.min(placed.x - STAGE_PAD, w - STAGE_PAD - (placed.x + placed.w))
           movingLedges.push({
-            x: ledgeX,
+            x: placed.x,
             y: ledgeY,
-            w: 90,
-            originX: ledgeX,
-            range: Math.min(48, w * 0.1),
-            speed: 0.48,
+            w: placed.w,
+            originX: placed.x,
+            range: Math.max(0, Math.min(40, w * 0.08, sideRoom)),
+            speed: 0.42,
             dir: 1,
           })
         } else {
-          customLedges.push({ x: ledgeX, y: ledgeY, w: 90, alpha: 0.9 })
+          customLedges.push({ x: placed.x, y: ledgeY, w: placed.w, alpha: 0.9 })
         }
       }
 
-      // One well-placed side rescue ledge per stretch
+      // Rescue ledge sits next to the route, never flush against the screen edge.
       const rescueY = Math.round(oA.y + 36 + dy * 0.5)
-      if (i % 2 === 0) {
-        customLedges.push({ x: 25, y: rescueY, w: 85, alpha: 0.85 })
-      } else {
-        customLedges.push({ x: Math.max(80, w - 110), y: rescueY, w: 85, alpha: 0.85 })
-      }
+      const towardCenter = (oA.x + oB.x) / 2
+      const offset = i % 2 === 0 ? -130 : 130
+      const rescue = placeLedge(towardCenter + offset - 50, 100, w)
+      customLedges.push({ x: rescue.x, y: rescueY, w: rescue.w, alpha: 0.85 })
     }
 
     deathY = Math.max(
@@ -327,6 +414,17 @@ export function startGameMode(onExit: () => void) {
     }
     say(INTRO_DIALOGS[idx]?.[isSpanish ? 'es' : 'en'] || '¡En marcha! ⚡', 3200, 'normal')
 
+    renderUI()
+  }
+
+  const die = () => {
+    if (status !== 'playing') return
+    status = 'dead'
+    keys.clear()
+    me.vx = 0
+    me.vy = Math.max(me.vy, 4)
+    shockwaves.push({ x: me.x + W / 2, y: me.y + H / 2, r: 6, maxR: 64, a: 1, color: '#00d4ff' })
+    say(isSpanish ? '¡Maldición! Casi lo tenía...' : 'Blast it! Almost had it...', 2500, 'alert')
     renderUI()
   }
 
@@ -409,6 +507,13 @@ export function startGameMode(onExit: () => void) {
   // Drop down / fall through a platform
   const triggerDropThrough = () => {
     if (status !== 'playing') return
+    if (dropCharges <= 0) {
+      if (!currentBubble) {
+        say(isSpanish ? '¡Aterriza y sigue! ▼' : 'Land, then drop! ▼', 1400, 'alert')
+      }
+      return
+    }
+    dropCharges--
     descentAnimationStartedAt = performance.now()
     descentAnimationUntil = descentAnimationStartedAt + 360
     scrollDirection = 1
@@ -420,6 +525,35 @@ export function startGameMode(onExit: () => void) {
       me.grounded = false
       me.y += 6
     }
+  }
+
+  const catchWithAura = () => {
+    const placed = placeLedge(me.x + W / 2 - 55, 120, w)
+    const ledgeY = Math.round(me.y + H + 6)
+    customLedges.push({ x: placed.x, y: ledgeY, w: placed.w, alpha: 1 })
+    me.y = ledgeY - H
+    me.vy = 0
+    me.vx *= 0.35
+    me.grounded = true
+    me.lastGround = performance.now()
+    me.lastGroundY = me.y
+    me.jumpsLeft = 1
+    dropCharges = DROP_CHARGES
+    auraCatchUsed = true
+    dropThroughUntil = 0
+    me.currentMovingLedge = null
+    shockwaves.push({ x: me.x + W / 2, y: me.y + H, r: 6, maxR: 70, a: 1, color: '#00d4ff' })
+    for (let i = 0; i < 14; i++) {
+      sparks.push({
+        x: me.x + W / 2,
+        y: me.y + H,
+        vx: (Math.random() - 0.5) * 7,
+        vy: -Math.random() * 4,
+        life: 1.1,
+        color: i % 2 === 0 ? '#00d4ff' : '#6fe3ff',
+      })
+    }
+    say(isSpanish ? '¡El aura te sostiene! Un aviso.' : 'The aura caught you! One warning.', 2200, 'alert')
   }
 
   const renderUI = () => {
@@ -439,11 +573,13 @@ export function startGameMode(onExit: () => void) {
           ${isSpanish ? `NIVEL ${cfg.level}/3` : `LEVEL ${cfg.level}/3`}
         </span>
         <span id="gm-hud-progress" class="gm-hud-pill">⚡ ${got}/${totalOrbsInLevel}</span>
+        <span id="gm-hud-drops" class="gm-hud-drops" title="${isSpanish ? 'Bajadas seguidas (se recargan al aterrizar)' : 'Chained drops (refill on landing)'}">${'▼'.repeat(DROP_CHARGES)}</span>
 
         ${nextTargetOrb ? `
-          <div id="gm-hud-target" class="hidden md:inline-flex items-center gap-1 rounded-full border border-[color:var(--cyan)]/30 bg-[color:var(--ink-900)] px-2 py-0.5 text-[0.65rem] font-mono text-[color:var(--cyan)]">
-            <span class="h-1.5 w-1.5 rounded-full bg-[color:var(--cyan)] animate-pulse"></span>
-            <span>[${nextTargetIdx + 1}/${totalOrbsInLevel}] ${nextTargetOrb.name}</span>
+          <div id="gm-hud-target" class="inline-flex items-center gap-1 rounded-full border border-[color:var(--cyan)]/30 bg-[color:var(--ink-900)] px-2 py-0.5 text-[0.65rem] font-mono text-[color:var(--cyan)]">
+            <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--cyan)] animate-pulse"></span>
+            <span id="gm-hud-target-idx">[${nextTargetIdx + 1}/${totalOrbsInLevel}]</span>
+            <span class="gm-hud-target-name">${nextTargetOrb.name}</span>
           </div>
         ` : ''}
 
@@ -454,7 +590,7 @@ export function startGameMode(onExit: () => void) {
           title="${isSpanish ? 'Modo Godspeed (Aura Eléctrica)' : 'Godspeed Mode (Electric Aura)'}"
         >
           <span>⚡ ${isGodspeedActive ? `AURA (${remainingActive}s)` : 'GODSPEED'}</span>
-          <span class="text-[0.62rem] opacity-80">${isGodspeedActive ? '⚡' : godspeedReady ? '[Q / F]' : `(${remainingCd}s)`}</span>
+          <span class="gm-hud-super-hint text-[0.62rem] opacity-80">${isGodspeedActive ? '⚡' : godspeedReady ? '[Q / F]' : `(${remainingCd}s)`}</span>
         </button>
 
         <button type="button" class="gm-exit-btn" id="gm-exit" aria-label="${isSpanish ? 'Salir del juego' : 'Exit game'}">✕ ${isSpanish ? 'Salir' : 'Exit'}</button>
@@ -502,13 +638,13 @@ export function startGameMode(onExit: () => void) {
 
       <div class="gm-mobile-controls sm:hidden">
         <div class="flex gap-2">
-          <button type="button" id="gm-btn-left" class="gm-touch-btn" aria-label="Left">◀</button>
-          <button type="button" id="gm-btn-right" class="gm-touch-btn" aria-label="Right">▶</button>
-          <button type="button" id="gm-btn-down" class="gm-touch-btn" aria-label="Down">▼</button>
+          <button type="button" id="gm-btn-left" class="gm-touch-btn" aria-label="${isSpanish ? 'Izquierda' : 'Left'}">◀</button>
+          <button type="button" id="gm-btn-right" class="gm-touch-btn" aria-label="${isSpanish ? 'Derecha' : 'Right'}">▶</button>
+          <button type="button" id="gm-btn-down" class="gm-touch-btn" aria-label="${isSpanish ? 'Abajo' : 'Down'}">▼</button>
         </div>
         <div class="flex gap-2">
           <button type="button" id="gm-btn-godspeed" class="gm-touch-btn !bg-[color:var(--blue-bright)]/25 !border-[color:var(--cyan)] text-[color:var(--cyan)]" aria-label="${isSpanish ? 'Aura Godspeed' : 'Godspeed aura'}">⚡</button>
-          <button type="button" id="gm-btn-jump" class="gm-touch-btn gm-touch-jump" aria-label="Jump">▲ ${isSpanish ? 'Saltar' : 'Jump'}</button>
+          <button type="button" id="gm-btn-jump" class="gm-touch-btn gm-touch-jump" aria-label="${isSpanish ? 'Saltar' : 'Jump'}">▲ ${isSpanish ? 'Saltar' : 'Jump'}</button>
         </div>
       </div>
     `
@@ -520,28 +656,29 @@ export function startGameMode(onExit: () => void) {
     document.getElementById('gm-play-again')?.addEventListener('click', () => loadLevel(0))
     document.getElementById('gm-hud-godspeed')?.addEventListener('click', triggerGodspeed)
 
-    const leftBtn = document.getElementById('gm-btn-left')
-    const rightBtn = document.getElementById('gm-btn-right')
-    const downBtn = document.getElementById('gm-btn-down')
-    const jumpBtn = document.getElementById('gm-btn-jump')
-    const godspeedBtn = document.getElementById('gm-btn-godspeed')
+    const holdKey = (btn: HTMLElement | null, code: string, onDown?: () => void) => {
+      if (!btn) return
+      const down = (e: PointerEvent) => {
+        e.preventDefault()
+        cameraInspectionActive = false
+        onDown?.()
+        keys.add(code)
+        try { btn.setPointerCapture(e.pointerId) } catch { /* capture improves the hold, never aborts it */ }
+      }
+      const up = () => keys.delete(code)
+      btn.addEventListener('pointerdown', down)
+      btn.addEventListener('pointerup', up)
+      btn.addEventListener('pointercancel', up)
+    }
 
-    leftBtn?.addEventListener('touchstart', (e) => { e.preventDefault(); cameraInspectionActive = false; keys.add('ArrowLeft') }, { passive: false })
-    leftBtn?.addEventListener('touchend', () => keys.delete('ArrowLeft'))
-    leftBtn?.addEventListener('touchcancel', () => keys.delete('ArrowLeft'))
-    rightBtn?.addEventListener('touchstart', (e) => { e.preventDefault(); cameraInspectionActive = false; keys.add('ArrowRight') }, { passive: false })
-    rightBtn?.addEventListener('touchend', () => keys.delete('ArrowRight'))
-    rightBtn?.addEventListener('touchcancel', () => keys.delete('ArrowRight'))
-    downBtn?.addEventListener('touchstart', (e) => { e.preventDefault(); cameraInspectionActive = false; triggerDropThrough() }, { passive: false })
-    godspeedBtn?.addEventListener('touchstart', (e) => { e.preventDefault(); triggerGodspeed() }, { passive: false })
-    jumpBtn?.addEventListener('touchstart', (e) => {
+    holdKey(document.getElementById('gm-btn-left'), 'ArrowLeft')
+    holdKey(document.getElementById('gm-btn-right'), 'ArrowRight')
+    holdKey(document.getElementById('gm-btn-down'), 'ArrowDown', triggerDropThrough)
+    holdKey(document.getElementById('gm-btn-jump'), 'Space', requestJump)
+    document.getElementById('gm-btn-godspeed')?.addEventListener('pointerdown', (e) => {
       e.preventDefault()
-      cameraInspectionActive = false
-      requestJump()
-      keys.add('Space')
-    }, { passive: false })
-    jumpBtn?.addEventListener('touchend', () => keys.delete('Space'))
-    jumpBtn?.addEventListener('touchcancel', () => keys.delete('Space'))
+      triggerGodspeed()
+    })
   }
 
   const updateProgressHud = () => {
@@ -552,8 +689,10 @@ export function startGameMode(onExit: () => void) {
     const nextOrb = orbs.find((orb) => !orb.taken)
     const nextIndex = orbs.findIndex((orb) => !orb.taken)
     if (target && nextOrb) {
-      const label = target.querySelector<HTMLElement>('span:last-child')
-      if (label) label.textContent = `[${nextIndex + 1}/${totalOrbsInLevel}] ${nextOrb.name}`
+      const idx = ui.querySelector<HTMLElement>('#gm-hud-target-idx')
+      const name = target.querySelector<HTMLElement>('.gm-hud-target-name')
+      if (idx) idx.textContent = `[${nextIndex + 1}/${totalOrbsInLevel}]`
+      if (name) name.textContent = nextOrb.name
     }
   }
 
@@ -576,23 +715,31 @@ export function startGameMode(onExit: () => void) {
     button.classList.toggle('opacity-60', !isActive && !isReady)
     button.innerHTML = `
       <span>⚡ ${isActive ? `AURA (${remainingActive}s)` : 'GODSPEED'}</span>
-      <span class="text-[0.62rem] opacity-80">${isActive ? '⚡' : isReady ? '[Q / F]' : `(${remainingCd}s)`}</span>
+      <span class="gm-hud-super-hint text-[0.62rem] opacity-80">${isActive ? '⚡' : isReady ? '[Q / F]' : `(${remainingCd}s)`}</span>
     `
   }
 
-  const drawLedge = (bx: number, by: number, bw: number, alpha: number, isMoving = false) => {
+  const drawLedge = (
+    bx: number,
+    by: number,
+    bw: number,
+    alpha: number,
+    kind: 'route' | 'moving' = 'route',
+    lit = false,
+  ) => {
     ctx.save()
     ctx.globalAlpha = alpha
 
+    const moving = kind === 'moving'
     ctx.fillStyle = 'rgba(0, 0, 0, 0.45)'
     ctx.fillRect(bx + 2, by + BLOCK_H, bw - 2, 4)
 
-    ctx.fillStyle = isMoving ? '#0c1a36' : '#0a1020'
+    ctx.fillStyle = moving ? '#0c1a36' : '#0a1020'
     ctx.fillRect(bx, by, bw, BLOCK_H)
 
-    ctx.shadowBlur = isMoving ? 14 : 8
-    ctx.shadowColor = isMoving ? '#00d4ff' : '#6fe3ff'
-    ctx.fillStyle = isMoving ? '#00d4ff' : '#6fe3ff'
+    ctx.shadowBlur = lit ? 18 : moving ? 14 : 8
+    ctx.shadowColor = moving ? '#00d4ff' : '#6fe3ff'
+    ctx.fillStyle = moving ? '#00d4ff' : '#6fe3ff'
     ctx.fillRect(bx, by, bw, 2)
 
     ctx.fillStyle = 'rgba(91, 155, 255, 0.3)'
@@ -802,9 +949,11 @@ export function startGameMode(onExit: () => void) {
   const drawRadarBeacon = (orb: SectionOrb, sy: number, index: number, now: number) => {
     const screenX = orb.x
     const screenY = orb.y - sy
-    const pad = 36
+    const padX = 36
+    const padTop = 88
+    const padBottom = 36
 
-    const isVisible = screenX >= pad && screenX <= w - pad && screenY >= pad && screenY <= h - pad
+    const isVisible = screenX >= padX && screenX <= w - padX && screenY >= padTop && screenY <= h - padBottom
     if (isVisible) return
 
     const cx = w / 2
@@ -814,8 +963,8 @@ export function startGameMode(onExit: () => void) {
     const angle = Math.atan2(dy, dx)
     const dist = Math.round(Math.hypot(orb.x - (me.x + W / 2), orb.y - (me.y + H / 2)))
 
-    const clampedX = Math.max(pad + 24, Math.min(w - pad - 24, cx + Math.cos(angle) * (w / 2 - pad)))
-    const clampedY = Math.max(pad + 32, Math.min(h - pad - 32, cy + Math.sin(angle) * (h / 2 - pad)))
+    const clampedX = Math.max(padX + 24, Math.min(w - padX - 24, cx + Math.cos(angle) * (w / 2 - padX)))
+    const clampedY = Math.max(padTop, Math.min(h - padBottom - 32, cy + Math.sin(angle) * (h / 2 - padBottom)))
 
     const pulse = 0.85 + Math.sin(now * 0.007 + orb.seed) * 0.15
     const nextTarget = orbs.find((o) => !o.taken)
@@ -891,17 +1040,67 @@ export function startGameMode(onExit: () => void) {
   // Use a rounded cameraY for perfect 1:1 sync on screen
   const sy = Math.round(cameraY)
 
-  // Draw the fixed platforms
-  customLedges.forEach((ledge) => {
+  const revealY = reduceMotion ? Number.POSITIVE_INFINITY : (now - gameStartedAt) * 1.35
+  const ledgeVisible = (y: number) => reduceMotion || y < revealY + 40
+  const feet = me.y + H
+  const nearLedge = (ledge: { x: number; y: number; w: number }) =>
+    Math.abs(feet - ledge.y) < 70
+    && me.x + W > ledge.x
+    && me.x < ledge.x + ledge.w
+
+  const coveredByRoute = (p: Rect) =>
+    customLedges.some((c) => Math.abs(c.y - p.y) < 12 && p.x < c.x + c.w && p.x + p.w > c.x)
+      || movingLedges.some((c) => Math.abs(c.y - p.y) < 12 && p.x < c.x + c.w && p.x + p.w > c.x)
+
+  // Titles, buttons and cards: motes along the edge, never a bar.
+  cachedDomPlatforms.forEach((ledge) => {
     const ly = ledge.y - sy
-    if (ly > -20 && ly < h + 20) drawLedge(ledge.x, ly, ledge.w, ledge.alpha)
+    if (ly < -24 || ly > h + 24) return
+    if (!ledgeVisible(ledge.y) || coveredByRoute(ledge)) return
+    const lit = nearLedge(ledge)
+    const chance = (lit ? 0.28 : 0.1) * frameScale * Math.min(2.4, ledge.w / 100)
+    if (Math.random() < chance) {
+      const n = lit ? 2 : 1
+      for (let k = 0; k < n; k++) {
+        emitMagic(ledge.x + 8 + Math.random() * Math.max(8, ledge.w - 16), ledge.y + (Math.random() - 0.4) * 3, {
+          vy: lit ? -0.35 - Math.random() * 0.7 : -0.08 - Math.random() * 0.28,
+          life: lit ? 1 : 0.8,
+          size: lit ? 2 : 1.35,
+        })
+      }
+    }
   })
 
-  // Draw the moving platforms
+  customLedges.forEach((ledge) => {
+    const ly = ledge.y - sy
+    if (ly > -20 && ly < h + 20 && ledgeVisible(ledge.y)) {
+      drawLedge(ledge.x, ly, ledge.w, ledge.alpha * (nearLedge(ledge) ? 1 : 0.92), 'route', nearLedge(ledge))
+    }
+  })
+
   movingLedges.forEach((ml) => {
     const ly = ml.y - sy
-    if (ly > -20 && ly < h + 20) drawLedge(ml.x, ly, ml.w, 1, true)
+    if (ly > -20 && ly < h + 20 && ledgeVisible(ml.y)) {
+      drawLedge(ml.x, ly, ml.w, 1, 'moving', nearLedge(ml))
+    }
   })
+
+  if (!reduceMotion) {
+    const front = revealY - sy
+    if (front > 0 && front < h) {
+      const fade = Math.max(0, 1 - (now - gameStartedAt) / 2800)
+      ctx.save()
+      ctx.globalAlpha = 0.55 * fade
+      ctx.strokeStyle = '#6fe3ff'
+      ctx.shadowColor = '#00d4ff'
+      ctx.shadowBlur = 12
+      ctx.beginPath()
+      ctx.moveTo(0, front)
+      ctx.lineTo(w, front)
+      ctx.stroke()
+      ctx.restore()
+    }
+  }
 
   // Draw the shockwaves
   for (let i = shockwaves.length - 1; i >= 0; i--) {
@@ -945,6 +1144,25 @@ export function startGameMode(onExit: () => void) {
     ctx.fillRect(sp.x, sp.y - sy, 2.5, 2.5)
   }
 
+  for (let i = magic.length - 1; i >= 0; i--) {
+    const mote = magic[i]
+    mote.x += mote.vx * frameScale
+    mote.y += mote.vy * frameScale
+    mote.life -= 0.018 * frameScale
+    if (mote.life <= 0) { magic.splice(i, 1); continue }
+    const my = mote.y - sy
+    if (my < -20 || my > h + 20) continue
+    ctx.save()
+    ctx.globalAlpha = Math.min(1, mote.life)
+    ctx.fillStyle = mote.color
+    ctx.shadowColor = mote.color
+    ctx.shadowBlur = 8
+    ctx.beginPath()
+    ctx.arc(mote.x, my, mote.size, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.restore()
+  }
+
   // Draw and collect the bolts
   const t = now * 0.003
   const activeOrb = orbs.find((orb) => !orb.taken)
@@ -963,7 +1181,7 @@ export function startGameMode(onExit: () => void) {
     }
 
     const oy = orb.y - sy
-    if (oy >= -60 && oy <= h + 60) {
+    if (oy >= 88 && oy <= h + 60) {
       drawBolt(orb, sy, t, i)
     } else {
       drawRadarBeacon(orb, sy, i, now)
@@ -972,6 +1190,7 @@ export function startGameMode(onExit: () => void) {
     if (status === 'playing' && Math.abs(me.x + W / 2 - orb.x) < 40 && Math.abs(me.y + H / 2 - orb.y) < 44) {
       orb.taken = true
       got++
+      auraCatchUsed = false
       playBoltSound()
       updateProgressHud()
 
@@ -1057,6 +1276,9 @@ export function startGameMode(onExit: () => void) {
       if (me.grounded && me.currentMovingLedge === ml) {
         me.x += deltaX
         me.y = ml.y - H
+        const carried = clampToStage(me.x, me.vx, w, STAGE_PAD)
+        me.x = carried.x
+        me.vx = carried.vx
       }
     })
 
@@ -1066,7 +1288,7 @@ export function startGameMode(onExit: () => void) {
       const jumpHeld = keys.has('Space') || keys.has('ArrowUp') || keys.has('KeyW')
       const fastFallHeld = keys.has('ArrowDown') || keys.has('KeyS')
 
-      if (left || right || Math.abs(me.vx) > 0.3) {
+      if (left || right || fastFallHeld || Math.abs(me.vx) > 0.3 || Math.abs(me.vy) > 1) {
         lastMoveTime = now
       }
 
@@ -1103,7 +1325,7 @@ export function startGameMode(onExit: () => void) {
       me.x += me.vx * frameScale
       me.y += me.vy * frameScale
 
-      const bounded = clampToStage(me.x, me.vx, w)
+      const bounded = clampToStage(me.x, me.vx, w, STAGE_PAD)
       me.x = bounded.x
       me.vx = bounded.vx
 
@@ -1111,6 +1333,7 @@ export function startGameMode(onExit: () => void) {
       const dropping = now < dropThroughUntil
       const wasAir = !me.grounded
       me.grounded = false
+      const routeLedges: Array<{ x: number; y: number; w: number }> = [...movingLedges, ...customLedges, ...cachedDomPlatforms]
 
       if (me.vy >= 0 && !dropping) {
         let landedOnMoving = false
@@ -1181,19 +1404,61 @@ export function startGameMode(onExit: () => void) {
 
       if (me.grounded) {
         me.lastGround = now
+        me.lastGroundY = me.y
         me.jumpsLeft = isGodspeed ? 2 : 1
+        if (groundedSince < 0) groundedSince = now
+        if (now - groundedSince > DROP_REFILL_MS) dropCharges = DROP_CHARGES
+
+        const pageUnder = cachedDomPlatforms.find((p) =>
+          me.x + W > p.x && me.x < p.x + p.w && Math.abs(me.y + H - p.y) < 10)
+        if (pageUnder) {
+          const moving = Math.abs(me.vx) > 0.3
+          const from = lastPathX + W / 2
+          const to = me.x + W / 2
+          const span = Math.abs(to - from)
+          const steps = moving ? Math.max(1, Math.round(span / 5)) : (Math.random() < 0.2 * frameScale ? 1 : 0)
+          for (let i = 0; i < steps; i++) {
+            const t = steps === 1 ? 1 : i / steps
+            emitMagic(from + (to - from) * t + (Math.random() - 0.5) * 7, pageUnder.y - 1 + (Math.random() - 0.5) * 2, {
+              vx: -me.vx * 0.12 + (Math.random() - 0.5) * 0.35,
+              vy: -0.08 - Math.random() * 0.32,
+              life: moving ? 1.25 : 0.75,
+              size: moving ? 2.1 : 1.35,
+            })
+          }
+        }
+        lastPathX = me.x
+      } else {
+        groundedSince = -9999
+        lastPathX = me.x
       }
 
       const squashEase = 1 - Math.pow(0.82, frameScale)
       me.sx += (1 - me.sx) * squashEase
       me.sy += (1 - me.sy) * squashEase
 
-      // Safe fall into the void
-      if (me.y > deathY && me.vy > 0) {
-        status = 'dead'
-        keys.clear()
-        say(isSpanish ? '¡Maldición! Casi lo tenía...' : 'Blast it! Almost had it...', 2500, 'alert')
-        renderUI()
+      const activeOrb = orbs.find((orb) => !orb.taken)
+      let floorBelow: number | null = null
+      if (!me.grounded) {
+        const feet = me.y + H
+        for (const p of routeLedges) {
+          if (p.y < feet - 4) continue
+          if (me.x + W <= p.x || me.x >= p.x + p.w) continue
+          if (floorBelow === null || p.y < floorBelow) floorBelow = p.y
+        }
+      }
+      const offWorld = me.y > deathY && me.vy > 0
+      const pit = !me.grounded && fellOffRoute(me, {
+        lastGroundY: me.lastGroundY,
+        orbY: activeOrb ? activeOrb.y : null,
+        godspeed: isGodspeed,
+        dropping,
+        floorBelow,
+        reach: Math.max(PIT.missedOrb, Math.round(h * 0.62)),
+      })
+      if (now > spawnSafeUntil && (offWorld || pit)) {
+        if (!offWorld && !auraCatchUsed) catchWithAura()
+        else die()
       }
 
       // Speed trail
@@ -1232,31 +1497,6 @@ export function startGameMode(onExit: () => void) {
         }
       }
 
-      // If the next target ends up behind, it is recovered ahead of the player.
-      const missedOrbAbove = orbs.find((orb) => !orb.taken)
-      if (missedOrbAbove && missedOrbAbove.y < me.y - 240) {
-        missedOrbAbove.x = Math.max(70, Math.min(w - 90, me.x + W / 2))
-        missedOrbAbove.y = me.y + 120
-        if (recoveryLedge) {
-          recoveryLedge.x = Math.max(20, Math.min(w - 130, missedOrbAbove.x - 60))
-          recoveryLedge.y = missedOrbAbove.y + 36
-        } else {
-          recoveryLedge = {
-            x: Math.max(20, Math.min(w - 130, missedOrbAbove.x - 60)),
-            y: missedOrbAbove.y + 36,
-            w: 120,
-            alpha: 1,
-          }
-          customLedges.push(recoveryLedge)
-        }
-        deathY = Math.max(deathY, missedOrbAbove.y + 280)
-        say(
-          isSpanish ? '¡Rayo recuperado! Sigue descendiendo ⚡' : 'Bolt recovered! Keep moving down ⚡',
-          2400,
-          'alert',
-        )
-      }
-
       if (now - lastMoveTime > 4200 && now - lastIdleSpeechTime > 9000 && !currentBubble) {
         lastIdleSpeechTime = now
         const IDLE_QUOTES = isSpanish ? [
@@ -1275,37 +1515,59 @@ export function startGameMode(onExit: () => void) {
       }
     }
 
+    canvas.dataset.x = String(Math.round(me.x))
+    canvas.dataset.y = String(Math.round(me.y))
+    canvas.dataset.s = status
+    canvas.dataset.drops = String(dropCharges)
+    canvas.dataset.catch = auraCatchUsed ? '1' : '0'
+
+    const dropsEl = ui.querySelector<HTMLElement>('#gm-hud-drops')
+    if (dropsEl) {
+      const marks = Array.from({ length: DROP_CHARGES }, (_, i) =>
+        `<span class="${i < dropCharges ? 'is-on' : ''}">▼</span>`).join('')
+      if (dropsEl.innerHTML !== marks) dropsEl.innerHTML = marks
+    }
+
     paintFrame(now, frameScale, isGodspeed)
 
     if (sparks.length > MAX_SPARKS) sparks.splice(0, sparks.length - MAX_SPARKS)
+    if (magic.length > MAX_MAGIC) magic.splice(0, magic.length - MAX_MAGIC)
     if (shockwaves.length > MAX_SHOCKWAVES) shockwaves.splice(0, shockwaves.length - MAX_SHOCKWAVES)
     raf = requestAnimationFrame(loop)
   }
 
-  // ── KEYBOARD ISOLATION AND EXCLUSIVE GAME CONTROL ──
-  if (document.activeElement && document.activeElement !== document.body) {
-    ;(document.activeElement as HTMLElement).blur()
-  }
-
-  const GAME_PREVENT_KEYS = new Set([
+  // Keyboard drives Killua. The mouse, and any focused field, keep the page.
+  const GAME_MOVE_KEYS = new Set([
     'Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
     'KeyW', 'KeyA', 'KeyS', 'KeyD',
     'KeyQ', 'KeyE', 'KeyR', 'KeyF', 'KeyK',
     'ShiftLeft', 'ShiftRight',
-    'Tab', 'PageUp', 'PageDown', 'Home', 'End', 'Enter'
   ])
 
+  const isTypingTarget = (node: EventTarget | null) => {
+    if (!(node instanceof HTMLElement)) return false
+    if (node.isContentEditable) return true
+    return Boolean(node.closest('input, textarea, select, [contenteditable="true"]'))
+  }
+
+  const explorerIsOpen = () => {
+    const viewer = document.querySelector<HTMLElement>('[data-bx-viewer]')
+    return Boolean(viewer && !viewer.hidden)
+  }
+
   const onKeyDown = (e: KeyboardEvent) => {
-    if (GAME_PREVENT_KEYS.has(e.code)) {
+    if (isTypingTarget(e.target) || isTypingTarget(document.activeElement)) return
+
+    if (e.code === 'Escape') {
+      if (explorerIsOpen()) return
       e.preventDefault()
-      e.stopPropagation()
+      stop()
+      return
     }
 
-    if (document.activeElement && document.activeElement !== document.body) {
-      ;(document.activeElement as HTMLElement).blur()
+    if (GAME_MOVE_KEYS.has(e.code)) {
+      e.preventDefault()
     }
-
-    if (e.code === 'Escape') { stop(); return }
     if (e.repeat) {
       keys.add(e.code)
       return
@@ -1349,10 +1611,8 @@ export function startGameMode(onExit: () => void) {
   }
 
   const onKeyUp = (e: KeyboardEvent) => {
-    if (GAME_PREVENT_KEYS.has(e.code)) {
-      e.preventDefault()
-      e.stopPropagation()
-    }
+    if (isTypingTarget(e.target) || isTypingTarget(document.activeElement)) return
+    if (GAME_MOVE_KEYS.has(e.code)) e.preventDefault()
     keys.delete(e.code)
   }
 
@@ -1381,6 +1641,8 @@ export function startGameMode(onExit: () => void) {
   window.addEventListener('resize', resize)
   window.addEventListener('scroll', onScroll, { passive: true })
   document.addEventListener('visibilitychange', onVisibilityChange)
+  document.addEventListener('click', schedulePlatformCache, true)
+  document.addEventListener('pointerup', schedulePlatformCache, true)
 
   resize()
   loadLevel(0)
@@ -1397,15 +1659,22 @@ export function startGameMode(onExit: () => void) {
     window.removeEventListener('resize', resize)
     window.removeEventListener('scroll', onScroll)
     document.removeEventListener('visibilitychange', onVisibilityChange)
+    document.removeEventListener('click', schedulePlatformCache, true)
+    document.removeEventListener('pointerup', schedulePlatformCache, true)
+    if (platformCacheFrame !== null) cancelAnimationFrame(platformCacheFrame)
     keys.clear()
     trail.length = 0
     sparks.length = 0
+    magic.length = 0
     shockwaves.length = 0
     audio.close()
     canvas.remove()
     ui.remove()
     document.documentElement.scrollTop = originalScrollY
+    for (const el of markedLedges) el.classList.remove('gm-ledge')
+    markedLedges.clear()
     document.documentElement.classList.remove('game-mode-active')
+    document.dispatchEvent(new CustomEvent('game-mode-change', { detail: { active: false } }))
     onExit()
   }
 

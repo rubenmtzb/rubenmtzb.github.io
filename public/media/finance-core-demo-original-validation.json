@@ -1,0 +1,60 @@
+{
+  "success": true,
+  "videoSha256": "81e7eb781d7a82d478b217f3935e462285f2eefeaf3c0e30715ae0227e4fc9c0",
+  "bytes": 7417790,
+  "durationSeconds": 84,
+  "resolution": "1920x1080",
+  "fps": 25,
+  "decodedFrames": 2100,
+  "decodedFrameMd5Sha256": "8be87121bf745cf6bea4a999282f813c5ccf521617304a9020c886d52775f249",
+  "fullDecode": true,
+  "allFrameTimestampsVerified": true,
+  "faststart": true,
+  "audio": {
+    "codec": "aac",
+    "profile": "LC",
+    "channels": 2,
+    "sampleRateHz": 48000,
+    "durationSeconds": 84,
+    "integratedLufs": -20.97,
+    "truePeakDbtp": -9.44
+  },
+  "darkModeEveryFrame": {
+    "checkedFrames": 2100,
+    "reducedFrameResolution": "96x54",
+    "maximumBrightNeutralFraction": 0.017939814814814815,
+    "maximumMeanLuma": 38.15479448302568,
+    "method": "Decode every output frame; reject large bright neutral surfaces or high average luminance. Complement with visual inspection of full-resolution chapter and modal screenshots."
+  },
+  "subtitles": {
+    "es": {
+      "cueCount": 10,
+      "sha256": "ba0a92210389203425c29a7adafcf42a9a1b9e84f9e9911333451da8be299f09",
+      "fullDuration": true
+    },
+    "en": {
+      "cueCount": 10,
+      "sha256": "de722df1110adc37b23d4a7817165113012e45da2dc8e252eff00ab9858262cb",
+      "fullDuration": true
+    }
+  },
+  "recordedEvents": 353,
+  "frameAlignedClickSounds": 13,
+  "requests": {
+    "recordedResponseCount": 34,
+    "externalAttemptCount": 0,
+    "unexpectedFailureCount": 0,
+    "mocks": false,
+    "baselineRestored": true,
+    "description": "Real local authenticated application requests; no bank, market or AI provider calls. Bodies, headers, paths and raw logs remain private."
+  },
+  "sourceTiming": {
+    "clickCount": 13,
+    "capturedBrowserFrames": 4251,
+    "maximumNextCaptureDelayMs": 16.62,
+    "maximumCueQuantizationMs": 17.702,
+    "method": "DOM events use performance.timeOrigin + performance.now, mapped to a process-monotonic clock. Actual CDP screencast timestamps define each clip origin. Click sounds round to the nearest 25fps frame; no invented timestamps."
+  },
+  "disclosure": "Synthetic-data DEMO; external integrations disabled. No source code, credentials, request bodies or raw browser captures are published.",
+  "verificationCommand": "node scripts/media/verify-finance-demo.mjs"
+}

@@ -27,11 +27,19 @@
   border-right: 8px solid var(--ink-950);
 }
 .comic-killua-canvas {
+  width: 76px;
+  height: 84px;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   filter: drop-shadow(0 0 8px rgba(111, 227, 255, 0.35));
   cursor: pointer;
   transition: transform 0.15s ease;
+}
+@media (max-width: 1439px) {
+  .comic-killua-canvas {
+    width: 52px;
+    height: 58px;
+  }
 }
 .comic-killua-canvas:hover {
   transform: scale(1.08);

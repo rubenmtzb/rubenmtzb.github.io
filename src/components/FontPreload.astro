@@ -17,9 +17,10 @@ import monoLatin from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-
 interface Props {
   /** The V1 is monospace only: it does not load Archivo, so it does not preload it. */
   display?: boolean
+  mono?: boolean
 }
-const { display = true } = Astro.props
+const { display = true, mono = true } = Astro.props
 ---
 
 {display && <link rel="preload" href={archivoLatin} as="font" type="font/woff2" crossorigin />}
-<link rel="preload" href={monoLatin} as="font" type="font/woff2" crossorigin />
+{mono && <link rel="preload" href={monoLatin} as="font" type="font/woff2" crossorigin />}

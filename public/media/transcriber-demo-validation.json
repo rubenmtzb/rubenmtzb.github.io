@@ -1,0 +1,796 @@
+{
+  "validatedOn": "2026-09-07T09:01:53.717Z",
+  "variant": "guided-continuous-keyboard",
+  "videoSha256": "7c4089c5985f63e707d5c68520a67846d9ecd0590b94bc116ee10e30b812bbb5",
+  "bytes": 4061059,
+  "durationSeconds": 42.64,
+  "resolution": "1920x1080",
+  "fps": 25,
+  "decodedFrames": 1066,
+  "decodedFrameMd5Sha256": "e091a4b4e43c40455597838f876d6ef7d5777d30fc0f29e36018f914464cef08",
+  "presentationTimingSha256": "51154b8851151a1a8eaa39a38937a5fddbcb6c20d274b75471b866142c356b9e",
+  "measured": {
+    "integratedLufs": -19.01,
+    "truePeakDbtp": -8.18,
+    "loudnessRangeLu": 2.5,
+    "thresholdLufs": -29.23,
+    "measurement": "FFmpeg loudnorm / EBU R128, measured after decoding the final AAC"
+  },
+  "audioCodec": "AAC-LC / 48000 Hz / stereo",
+  "presentationTimingMatchesApprovedSilentMontage": true,
+  "currentSubtitleValidation": {
+    "sha256": {
+      "es": "6e92c34d83aa6779b71d45057751db0c07594a14ebb7102f2d2aa71972d6d656",
+      "en": "dddff2716ab3883d4f45994fed1ca080be1f8655d99bb157b38868108c4d30ba"
+    },
+    "cuesPerLanguage": 14,
+    "matchingEsEnCueTimelines": true,
+    "finalEndpoint": "00:00:42.640",
+    "timeline": [
+      [
+        0,
+        3
+      ],
+      [
+        3,
+        7.32
+      ],
+      [
+        7.32,
+        13.88
+      ],
+      [
+        13.88,
+        16.6
+      ],
+      [
+        16.64,
+        18.84
+      ],
+      [
+        18.88,
+        21.8
+      ],
+      [
+        21.88,
+        25.44
+      ],
+      [
+        25.52,
+        27.5
+      ],
+      [
+        27.56,
+        29.88
+      ],
+      [
+        29.92,
+        32.64
+      ],
+      [
+        32.72,
+        34.24
+      ],
+      [
+        34.28,
+        35.84
+      ],
+      [
+        35.92,
+        39.64
+      ],
+      [
+        39.64,
+        42.64
+      ]
+    ]
+  },
+  "cleanSource": {
+    "totalUiFrames": 916,
+    "inspectedUiFrames": 916,
+    "firstFrame": 75,
+    "lastFrame": 990,
+    "cursorCoveredFrames": 0,
+    "missingFrames": 916,
+    "multipleCursorFrames": 0,
+    "outOfBoundsFrames": 0,
+    "coordinatesInBoundsFrames": 0,
+    "maximumAdjacentFrameStepPixels": 506.412,
+    "maximumTemplateError": 0,
+    "coverageLedgerSha256": "5ff5998243782132a2d13ea107f630c2f25b9906cc2bc513a91d4a69ffe82032",
+    "positionsSha256": "049e00607bb15c5ac93adf3b4aab1a3052cd0611f4ee32471c7c33282886fc0c",
+    "method": "Scan the entire native 1280x720 application crop in EVERY decoded final UI frame for all shared-glyph silhouettes; cluster adjacent raster matches. Confirm unique match, expected position and glyph bounds. Not a click-only or expected-position-only check.",
+    "trajectory": "One opaque editorial pointer on all 916 application frames. The original recording has NO mouse telemetry. Smooth interpolation between inspected controls and explicitly editorial resting positions is reconstructed, NOT a genuine recorded trajectory. Click and visible-input timings are unchanged. The two 120 ms successive-click intervals necessarily have fast travel; neither clicks nor montage are slowed or relocated.",
+    "cleanSource": true,
+    "pairs": [],
+    "passed": true
+  },
+  "pointer": {
+    "totalUiFrames": 916,
+    "inspectedUiFrames": 916,
+    "firstFrame": 75,
+    "lastFrame": 990,
+    "cursorCoveredFrames": 916,
+    "missingFrames": 0,
+    "multipleCursorFrames": 0,
+    "outOfBoundsFrames": 0,
+    "coordinatesInBoundsFrames": 916,
+    "maximumAdjacentFrameStepPixels": 506.412,
+    "maximumTemplateError": 9.620315581854044,
+    "coverageLedgerSha256": "d6f1a3543122b1624236246a7520003e43d1299c7a487e6031e000f9faaf458a",
+    "positionsSha256": "049e00607bb15c5ac93adf3b4aab1a3052cd0611f4ee32471c7c33282886fc0c",
+    "method": "Scan the entire native 1280x720 application crop in EVERY decoded final UI frame for all shared-glyph silhouettes; cluster adjacent raster matches. Confirm unique match, expected position and glyph bounds. Not a click-only or expected-position-only check.",
+    "trajectory": "One opaque editorial pointer on all 916 application frames. The original recording has NO mouse telemetry. Smooth interpolation between inspected controls and explicitly editorial resting positions is reconstructed, NOT a genuine recorded trajectory. Click and visible-input timings are unchanged. The two 120 ms successive-click intervals necessarily have fast travel; neither clicks nor montage are slowed or relocated.",
+    "cleanSource": false,
+    "pairs": [
+      {
+        "kind": "url-typing",
+        "frames": [
+          104,
+          149
+        ]
+      },
+      {
+        "kind": "search-typing",
+        "frames": [
+          548,
+          578
+        ]
+      },
+      {
+        "kind": "waiting",
+        "frames": [
+          202,
+          310
+        ]
+      },
+      {
+        "kind": "scrolling",
+        "frames": [
+          183,
+          190
+        ]
+      },
+      {
+        "kind": "between-actions",
+        "frames": [
+          350,
+          375
+        ]
+      },
+      {
+        "kind": "rapid-export",
+        "frames": [
+          746,
+          749
+        ]
+      },
+      {
+        "kind": "rapid-history",
+        "frames": [
+          896,
+          899
+        ]
+      },
+      {
+        "kind": "last-ui-frame",
+        "frames": [
+          989,
+          990
+        ]
+      },
+      {
+        "kind": "chapter-10",
+        "frames": [
+          249,
+          250
+        ]
+      },
+      {
+        "kind": "chapter-16",
+        "frames": [
+          399,
+          400
+        ]
+      },
+      {
+        "kind": "chapter-21",
+        "frames": [
+          524,
+          525
+        ]
+      },
+      {
+        "kind": "chapter-28",
+        "frames": [
+          699,
+          700
+        ]
+      },
+      {
+        "kind": "chapter-32",
+        "frames": [
+          799,
+          800
+        ]
+      },
+      {
+        "kind": "chapter-36.52",
+        "frames": [
+          912,
+          913
+        ]
+      }
+    ],
+    "passed": true
+  },
+  "audioSync": {
+    "passed": true,
+    "decodedSamplesPerChannel": 2046720,
+    "decodedPcmSha256": "8038b37fd9b09922c280219c69b67b37fd2f02fa2e2ce30d2a67bcf0070aed52",
+    "referenceMixedWavSha256": "132cffd90da1fe928b5d5e9f4de0cdc55a514414f4d7b48470f8fa78b8610c6a",
+    "snrDb": 40.71117286563223,
+    "correlation": 0.999957677210054,
+    "clickCues": 14,
+    "waitPulses": 5,
+    "keyboardAttacks": 49,
+    "visibleCharacters": 52,
+    "maximumMeasuredLagMs": 0,
+    "cues": [
+      {
+        "kind": "click",
+        "id": "submit",
+        "at": 7.28,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "click",
+        "id": "translation",
+        "at": 16.64,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "click",
+        "id": "dual",
+        "at": 18.88,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "click",
+        "id": "seek",
+        "at": 25.52,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "click",
+        "id": "reading",
+        "at": 27.52,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "click",
+        "id": "exit-reading",
+        "at": 29.84,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "click",
+        "id": "txt",
+        "at": 29.96,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "click",
+        "id": "srt",
+        "at": 30.72,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "click",
+        "id": "vtt",
+        "at": 31.44,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "click",
+        "id": "md",
+        "at": 32.08,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "click",
+        "id": "image",
+        "at": 32.72,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "click",
+        "id": "new",
+        "at": 34.24,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "click",
+        "id": "history",
+        "at": 35.84,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "click",
+        "id": "history-dual",
+        "at": 35.96,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "wait",
+        "id": "loading",
+        "at": 8.08,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "wait",
+        "id": "loading",
+        "at": 9.52,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "wait",
+        "id": "loading",
+        "at": 10.96,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "wait",
+        "id": "loading",
+        "at": 12.4,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "wait",
+        "id": "loading",
+        "at": 13.12,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 4.16,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 4.2,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 4.24,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 4.28,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 4.36,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 4.4,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 4.44,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 4.48,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 4.52,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 4.56,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 4.6,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 4.64,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 4.72,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 4.8,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 4.84,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 4.88,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 4.92,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 4.96,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 5,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 5.04,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 5.08,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 5.12,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 5.2,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 5.24,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 5.28,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 5.32,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 5.36,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 5.4,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 5.44,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 5.48,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 5.56,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 5.6,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 5.68,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 5.72,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 5.76,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 5.8,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 5.84,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 5.88,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 5.96,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "youtube-url",
+        "at": 6,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "transcript-search",
+        "at": 21.92,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "transcript-search",
+        "at": 22.04,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "transcript-search",
+        "at": 22.2,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "transcript-search",
+        "at": 22.36,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "transcript-search",
+        "at": 22.48,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "transcript-search",
+        "at": 22.64,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "transcript-search",
+        "at": 22.8,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "transcript-search",
+        "at": 22.96,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      },
+      {
+        "kind": "keyboard",
+        "id": "transcript-search",
+        "at": 23.12,
+        "measuredLagSamples": 0,
+        "measuredLagMs": 0
+      }
+    ],
+    "method": "Compare every decoded stereo AAC sample with the deterministic unity-gain approved guided audio plus one observed-input keyboard layer. Require >24 dB SNR and >0.998 correlation; independently search ±40 ms lag at all 68 cue windows with one-sample refinement. No second music/click/wait layer.",
+    "auditoryListeningReview": false
+  },
+  "montageFraming": {
+    "passed": true,
+    "frames": 1066,
+    "psnrDb": 64.737279,
+    "method": "All corresponding frames, masking only the UI rectangle plus a two-pixel chroma margin; 480x270 grayscale PSNR. Lossy fidelity, NOT byte/pixel identity. Full presentation timing is checked separately."
+  },
+  "restorationTests": [
+    {
+      "variant": "guided",
+      "command": "node scripts/media/guide-transcriber-demo.mjs --restore=guided",
+      "testedOn": "2026-09-07T08:49:10.895Z",
+      "expectedAndActualSha256": "804e3111f960ecac5bbcb8070db8deeba1c12891f976d484141c4806903796c1",
+      "decodedFrameMd5Sha256": "bb56b3c995afef62723140dbfcd1592d624c4acf2a2d66f63c5c64795a589c90",
+      "passed": true,
+      "result": "Actually restored the public MP4; exact SHA, all decoded frames, timing and audio checked before publishing."
+    },
+    {
+      "variant": "music",
+      "command": "node scripts/media/guide-transcriber-demo.mjs --restore=music",
+      "testedOn": "2026-09-07T08:49:28.447Z",
+      "expectedAndActualSha256": "3fd1264855ef11a05321392f7d562c6ab84023d9d3abc9111cc447a4b5d86a02",
+      "decodedFrameMd5Sha256": "416cb3f5b0271e118736ed57a109bfd800761fc2ccbdb7f8ac9f0e8ae3162bc9",
+      "passed": true,
+      "result": "Actually restored the public MP4; exact SHA, all decoded frames, timing and audio checked before publishing."
+    },
+    {
+      "variant": "silent",
+      "command": "node scripts/media/guide-transcriber-demo.mjs --restore=silent",
+      "testedOn": "2026-09-07T08:49:45.609Z",
+      "expectedAndActualSha256": "70a30d78b23aba3abeee43e770cd8b138e9c745c506fe856a08a1f2ea20707ed",
+      "decodedFrameMd5Sha256": "416cb3f5b0271e118736ed57a109bfd800761fc2ccbdb7f8ac9f0e8ae3162bc9",
+      "passed": true,
+      "result": "Actually restored the public MP4; exact SHA, all decoded frames, timing and audio checked before publishing."
+    }
+  ],
+  "continuousCursor": {
+    "totalUiFrames": 916,
+    "cursorCoveredFrames": 916,
+    "missingFrames": 0,
+    "multipleCursorFrames": 0,
+    "coordinatesInBoundsFrames": 916
+  },
+  "backups": {
+    "silent": {
+      "file": "public/media/transcriber-demo-silent.mp4",
+      "sha256": "70a30d78b23aba3abeee43e770cd8b138e9c745c506fe856a08a1f2ea20707ed",
+      "policy": "Immutable, byte-identical approved variant; never overwrite or regenerate.",
+      "restoreCommand": "node scripts/media/guide-transcriber-demo.mjs --restore=silent",
+      "verifyCommand": "node scripts/media/guide-transcriber-demo.mjs --verify"
+    },
+    "music": {
+      "file": "public/media/transcriber-demo-music-original.mp4",
+      "sha256": "3fd1264855ef11a05321392f7d562c6ab84023d9d3abc9111cc447a4b5d86a02",
+      "policy": "Immutable, byte-identical approved variant; never overwrite or regenerate.",
+      "restoreCommand": "node scripts/media/guide-transcriber-demo.mjs --restore=music",
+      "verifyCommand": "node scripts/media/guide-transcriber-demo.mjs --verify"
+    },
+    "guided": {
+      "file": "public/media/transcriber-demo-guided-original.mp4",
+      "sha256": "804e3111f960ecac5bbcb8070db8deeba1c12891f976d484141c4806903796c1",
+      "policy": "Immutable, byte-identical approved variant; never overwrite or regenerate.",
+      "restoreCommand": "node scripts/media/guide-transcriber-demo.mjs --restore=guided",
+      "verifyCommand": "node scripts/media/guide-transcriber-demo.mjs --verify"
+    }
+  },
+  "commands": {
+    "generate": "node scripts/media/guide-transcriber-demo.mjs",
+    "verify": "node scripts/media/guide-transcriber-demo.mjs --verify",
+    "legacyVerify": "node scripts/media/add-transcriber-soundtrack.mjs --verify",
+    "pointerSelfTest": "node scripts/media/transcriber-continuous-pointer.mjs --self-test"
+  },
+  "limitations": [
+    "One opaque editorial pointer on all 916 application frames. The original recording has NO mouse telemetry. Smooth interpolation between inspected controls and explicitly editorial resting positions is reconstructed, NOT a genuine recorded trajectory. Click and visible-input timings are unchanged. The two 120 ms successive-click intervals necessarily have fast travel; neither clicks nor montage are slowed or relocated.",
+    "Original baked-in Sin audio label retained. Audio is optional original music and editorial cues, not source audio. No invented uploads or notifications.",
+    "AAC/cursor checks are computational, not a claim of a human listening audition. Source artifacts remain private."
+  ]
+}

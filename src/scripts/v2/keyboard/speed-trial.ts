@@ -48,6 +48,7 @@ export function createSpeedTrial({ announce }: { announce: (text: string) => voi
   const wordsEl = document.getElementById('monkey-words')
   const box = document.getElementById('monkey-box')
   const restartBtn = document.getElementById('monkey-restart-btn')
+  const startBtn = document.getElementById('monkey-start-btn')
   const wpmEl = document.getElementById('kb-wpm')
   const accEl = document.getElementById('kb-acc')
   const comboEl = document.getElementById('kb-combo')
@@ -61,8 +62,10 @@ export function createSpeedTrial({ announce }: { announce: (text: string) => voi
   let combo = 0
   let startTime = 0
   let isRunning = false
+  let waiting = true
   let timerInterval: number | null = null
   let remainingSec = ROUND_SECONDS
+  let pausedAt = 0
   /*
    * The round is over and the score is final.
    *
@@ -113,6 +116,7 @@ export function createSpeedTrial({ announce }: { announce: (text: string) => voi
   const finish = () => {
     isRunning = false
     over = true
+    pausedAt = 0
     if (timerInterval) clearInterval(timerInterval)
     const elapsedMinutes = Math.max(0.1, (performance.now() - startTime) / 60000)
     const finalWpm = wpmSince(elapsedMinutes)
@@ -129,16 +133,50 @@ export function createSpeedTrial({ announce }: { announce: (text: string) => voi
       ))
   }
 
-  const startIfNeeded = () => {
-    if (isRunning) return
-    isRunning = true
-    startTime = performance.now()
+  const setLive = (live: boolean) => {
+    waiting = !live
+    box?.classList.toggle('is-live', live)
+  }
+
+  const armTimer = () => {
     if (timerInterval) clearInterval(timerInterval)
     timerInterval = window.setInterval(() => {
       remainingSec--
       if (timerEl) timerEl.textContent = `⏱️ ${remainingSec}s`
       if (remainingSec <= 0) finish()
     }, 1000)
+  }
+
+  const startIfNeeded = () => {
+    if (isRunning || waiting) return
+    isRunning = true
+    startTime = performance.now()
+    pausedAt = 0
+    armTimer()
+    if (document.documentElement.classList.contains('game-mode-active')) pause()
+  }
+
+  const pause = () => {
+    if (!isRunning || over || pausedAt) return
+    if (timerInterval) {
+      clearInterval(timerInterval)
+      timerInterval = null
+    }
+    pausedAt = performance.now()
+  }
+
+  const resume = () => {
+    if (!isRunning || over || !pausedAt) return
+    startTime += performance.now() - pausedAt
+    pausedAt = 0
+    armTimer()
+  }
+
+  const start = () => {
+    if (over) restart()
+    setLive(true)
+    startIfNeeded()
+    box?.focus()
   }
 
   const updateLiveStats = () => {
@@ -160,6 +198,8 @@ export function createSpeedTrial({ announce }: { announce: (text: string) => voi
     isRunning = false
     over = false
     remainingSec = ROUND_SECONDS
+    pausedAt = 0
+    setLive(false)
     if (timerInterval) clearInterval(timerInterval)
 
     if (wpmEl) wpmEl.textContent = '0'
@@ -176,14 +216,25 @@ export function createSpeedTrial({ announce }: { announce: (text: string) => voi
   }
 
   restartBtn?.addEventListener('click', () => restart())
-  box?.addEventListener('click', () => box.focus())
+  startBtn?.addEventListener('click', (event) => {
+    event.stopPropagation()
+    start()
+  })
+  box?.addEventListener('click', () => {
+    if (waiting) return
+    box.focus()
+  })
 
   return {
     /** The global keyboard needs to know whether focus is in here. */
     element: box,
+    get waiting() { return waiting },
     restart,
+    start,
+    pause,
+    resume,
     type(inputChar: string) {
-      if (over) return
+      if (over || waiting || pausedAt) return
       startIfNeeded()
 
       const expected = targetChars[charIndex]
@@ -212,7 +263,7 @@ export function createSpeedTrial({ announce }: { announce: (text: string) => voi
       if (charIndex >= targetChars.length) finish()
     },
     backspace() {
-      if (over || charIndex === 0) return
+      if (over || waiting || pausedAt || charIndex === 0) return
       charSpans[charIndex]?.classList.remove('current')
       charIndex--
       const prevCharEl = charSpans[charIndex]

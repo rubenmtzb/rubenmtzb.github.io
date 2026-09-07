@@ -14,6 +14,7 @@
   justify-content: center;
   perspective: 1400px;
   touch-action: pan-y;
+  overflow: hidden;
 }
 
 .moment-card {
@@ -25,17 +26,27 @@
   touch-action: none;
   border-radius: 1.1rem;
   box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.7);
-  will-change: transform;
-}
-
-.moment-card:hover {
-  z-index: 50 !important;
 }
 
 .moment-card.is-dragging,
 .moment-card.is-flying {
   cursor: grabbing !important;
   z-index: 60 !important;
+  will-change: transform;
+}
+
+.moment-card.is-peeked,
+.moment-card.is-flipped {
+  will-change: transform;
+}
+
+.moment-card:focus {
+  outline: none;
+}
+
+.moment-card:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 4px;
 }
 
 .moment-card-inner {
@@ -47,11 +58,16 @@
   border-radius: 1.1rem;
 }
 
-.moment-card:hover .moment-card-inner {
-  transform: rotateY(180deg);
-}
+/*
+ * Flip is class-driven. CSS :hover both raised z-index and rotated Y, so at
+ * ~90° hit-testing fell through to the card below and the stack flickered.
+ * `.is-peeked` is assigned to the topmost card whose 2D box still contains
+ * the pointer — the outer transform does not change during the 3D flip.
+ */
+.moment-card.is-peeked .moment-card-inner,
 .moment-card.is-flipped .moment-card-inner {
   transform: rotateY(180deg);
+  will-change: transform;
 }
 
 .moment-card-face {
@@ -68,7 +84,7 @@
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(91, 155, 255, 0.08);
 }
 
-.moment-card:hover .moment-card-front {
+.moment-card.is-peeked .moment-card-front {
   box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.9), 0 0 20px rgba(111, 227, 255, 0.2), inset 0 0 0 1px var(--cyan);
 }
 
@@ -128,4 +144,8 @@ html:not(.js) .moment-card {
   width: 100%;
   height: 320px;
   transform: none !important;
+}
+
+html:not(.js) .moment-card:hover .moment-card-inner {
+  transform: rotateY(180deg);
 }

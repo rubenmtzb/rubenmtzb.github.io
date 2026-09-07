@@ -17,11 +17,15 @@ import {
   BODY,
   LEDGE_INSET,
   PHYSICS,
+  PIT,
+  STAGE_PAD,
   clampToStage,
   cutJump,
+  fellOffRoute,
   landsOn,
   nextVelocityX,
   nextVelocityY,
+  placeLedge,
 } from '../src/scripts/game/physics.ts'
 
 let pass = 0
@@ -108,6 +112,62 @@ check(
   'the right edge stops him',
 )
 check(clampToStage(300, 2, 800).x === 300, 'in the middle nothing is touched')
+check(
+  clampToStage(-5, -3, 800, STAGE_PAD).x === STAGE_PAD
+    && clampToStage(790, 3, 800, STAGE_PAD).x === 800 - BODY.width - STAGE_PAD,
+  'a pad keeps the sprite off the glass',
+)
+const tucked = placeLedge(25, 85, 800)
+check(tucked.x >= STAGE_PAD && tucked.x + tucked.w <= 800 - STAGE_PAD, 'a ledge never hangs off a side')
+const overflow = placeLedge(-40, 200, 100)
+check(overflow.x >= STAGE_PAD && overflow.x + overflow.w <= 100 - STAGE_PAD, 'on a narrow stage the ledge shrinks to fit')
+
+console.log('\n· Falling off the route')
+check(
+  !fellOffRoute({ y: 100, grounded: true }, { lastGroundY: 100, orbY: 80, godspeed: false }),
+  'on the route, standing still is not a death',
+)
+check(
+  !fellOffRoute({ y: 500, grounded: true }, { lastGroundY: 500, orbY: 200, godspeed: false }),
+  'a shelf below the orb, still climbable, is not a death',
+)
+check(
+  fellOffRoute({ y: 720, grounded: true }, { lastGroundY: 720, orbY: 100, godspeed: false }),
+  'landing a whole section below the orb is the speed brake',
+)
+check(
+  !fellOffRoute({ y: 220, grounded: false }, { lastGroundY: 180, orbY: 100, godspeed: false }),
+  'diving past an orb in the air is not a death until he lands',
+)
+check(
+  fellOffRoute({ y: 550, grounded: false }, { lastGroundY: 100, orbY: 500, godspeed: false }),
+  'a long drop with no landing is a pit',
+)
+check(
+  !fellOffRoute({ y: 550, grounded: false }, { lastGroundY: 100, orbY: 500, godspeed: true }),
+  'the aura may glide through a long drop',
+)
+check(
+  !fellOffRoute({ y: 220, grounded: false }, { lastGroundY: 100, orbY: 180, godspeed: false, dropping: true }),
+  'a tap of Down may skip one ledge',
+)
+check(
+  fellOffRoute({ y: 550, grounded: false }, { lastGroundY: 100, orbY: 500, godspeed: false, dropping: true }),
+  'holding Down through a whole section is still a pit',
+)
+check(
+  !fellOffRoute({ y: 550, grounded: false }, { lastGroundY: 100, orbY: 500, godspeed: false, floorBelow: 600 }),
+  'a stair still under him means he is on the route',
+)
+check(
+  fellOffRoute({ y: 550, grounded: false }, { lastGroundY: 100, orbY: 500, godspeed: false, floorBelow: 900 }),
+  'a floor too far below does not save a reckless drop',
+)
+check(
+  !fellOffRoute({ y: 200, grounded: false }, { lastGroundY: 100, orbY: 180, godspeed: false }),
+  'a short fall between stairs is not a pit',
+)
+check(PIT.missedOrb > PIT.freeFall && PIT.freeFall > 300, 'missing the route is a longer drop than a pit')
 
 console.log('\n· Landing')
 const ledge = { x: 100, y: 400, w: 120 }

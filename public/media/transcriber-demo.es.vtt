@@ -1,0 +1,43 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:03.000
+Demo real. Música original; cursor editorial continuo y sonidos de clic/tecleo.
+
+00:00:03.000 --> 00:00:07.320
+Una URL de YouTube, con español como idioma de destino.
+
+00:00:07.320 --> 00:00:13.880
+Sigue las etapas mientras trabaja la API. Los tiempos varían según el vídeo y el proveedor.
+
+00:00:13.880 --> 00:00:16.600
+El resultado: texto original con marcas de tiempo.
+
+00:00:16.640 --> 00:00:18.840
+Lee la traducción al español.
+
+00:00:18.880 --> 00:00:21.800
+Compara original y traducción en vista dual.
+
+00:00:21.880 --> 00:00:25.440
+Busca en el texto para filtrar las coincidencias.
+
+00:00:25.520 --> 00:00:27.500
+Salta a 00:05 desde su marca de tiempo.
+
+00:00:27.560 --> 00:00:29.880
+Céntrate en el texto con el modo lectura.
+
+00:00:29.920 --> 00:00:32.640
+Descarga el resultado en TXT, SRT, VTT o Markdown.
+
+00:00:32.720 --> 00:00:34.240
+Crea una imagen de una cita.
+
+00:00:34.280 --> 00:00:35.840
+Abre el historial.
+
+00:00:35.920 --> 00:00:39.640
+Recupera un resultado de este navegador sin volver a transcribirlo.
+
+00:00:39.640 --> 00:00:42.640
+Explora la demo y el caso técnico. yt.rubenitx.me

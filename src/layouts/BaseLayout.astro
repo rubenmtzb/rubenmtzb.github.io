@@ -27,10 +27,11 @@ interface Props {
   pageType?: 'WebPage' | 'ProfilePage'
   /** The V1 is monospace only: it does not load Archivo, so it does not preload it. */
   displayFont?: boolean
+  monoFont?: boolean
   bodyClass?: string
 }
 
-const { lang, pageKey, pageType = 'WebPage', displayFont = true, bodyClass } = Astro.props
+const { lang, pageKey, pageType = 'WebPage', displayFont = true, monoFont = true, bodyClass } = Astro.props
 
 /*
  * Either the page has metadata in the collection, or it brings its own through
@@ -47,8 +48,9 @@ if (!pageKey && !Astro.slots.has('head')) {
 <html lang={lang}>
   <head>
     {pageKey ? <Seo pageKey={pageKey} lang={lang} pageType={pageType} /> : <slot name="head" />}
-    <FontPreload display={displayFont} />
+    <FontPreload display={displayFont} mono={monoFont} />
     <Enhancement />
+    <slot name="head-extra" />
   </head>
   <body class={bodyClass}>
     <a class="skip-link" href="#main">{t(lang, 'nav.skip')}</a>

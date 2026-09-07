@@ -1,16 +1,284 @@
 [
   {
+    "id": "en:financial-architecture",
+    "key": "financial-architecture",
+    "lang": "en",
+    "order": 3,
+    "title": "Finance Core",
+    "eyebrow": "Private application",
+    "description": "One workspace for accounts, spending, savings goals and crypto holdings. A private personal-finance application, presented through a real local walkthrough with synthetic data.",
+    "cvSummary": "Accounts, statement imports, budgets and crypto holdings with React/TypeScript, FastAPI and PostgreSQL. Recorded demo with synthetic data.",
+    "status": "In private development",
+    "badge": "private",
+    "featured": true,
+    "inCv": true,
+    "tech": ["React", "TypeScript", "Python", "FastAPI", "PostgreSQL"],
+    "domains": [],
+    "image": "./../assets/projects/finance-core.svg",
+    "imageAlt": "Finance Core: an illustrative dark financial workspace with accounts, spending and crypto modules. Private code; synthetic demonstration.",
+    "deep": null,
+    "caseStudy": {
+      "problem": "Balances, bank statements, recurring spending and crypto holdings are often scattered across different tools. Finance Core brings them into one workspace so that importing a statement, reviewing a transaction and planning a savings goal form a connected workflow.",
+      "decisions": [
+        { "title": "Separate the interface from financial data", "body": "A React / TypeScript client consumes a Python / FastAPI API. PostgreSQL is the application database; the public walkthrough uses an isolated SQLite demo instead. Account balances and internal transfers are kept separate from income and spending." },
+        { "title": "Preview before importing", "body": "Statement imports support multiple bank formats and a generic CSV. Preview, duplicate detection and reversible import batches make changes inspectable before and after confirmation. The recording uses fictional statements, not personal banking data." },
+        { "title": "Connect banks with explicit consent", "body": "A GoCardless PSD2 read-only connector implements consent, account mapping, synchronization and revocation. Automatic bank data retrieval requires a configured provider and the user's authorization. The local demo has no bank connection; its import walkthrough uses CSV instead." },
+        { "title": "Show crypto without pretending to trade", "body": "Holdings can be entered manually or imported as snapshots. CoinMarketCap supplies market data when configured; it is not a wallet or exchange connector. Without a provider, quantities and recorded costs remain visible while market value and profit/loss remain unavailable." },
+        { "title": "Connect daily spending with planning", "body": "The monthly calendar opens each day's transactions and totals. Budgets, recurring subscriptions and savings goals complement those records; the simulator explores changes without moving money or modifying an external subscription." },
+        { "title": "Give the advisor explicit context", "body": "The advisor supports local notes that can be added, reviewed and deleted. The demonstration shows this genuine memory workflow. External AI is disabled in the isolated environment, so no generated advice or invented assistant response is presented." }
+      ],
+      "limits": [
+        "Both source repositories and the deployed application remain private. Only this case study and a sanitized demonstration are public.",
+        "No live or sandbox bank consent was completed for this walkthrough. External bank, market-data and AI providers are disabled; no money or crypto is moved.",
+        "Crypto holdings are tracked separately from the account-based net-worth total. A recorded purchase cost is not a current market valuation.",
+        "Planning and simulations are estimates, not financial advice. Local functional tests do not certify production PostgreSQL migrations or external provider reliability."
+      ],
+      "outcome": "A working private application with connected workflows for accounts, transactions, import review, analytics, budgets, subscriptions, savings goals and crypto holdings. The public demonstration shows real interactions against an isolated local database, not mocked success screens.",
+      "verification": [
+        "Run the application against a dedicated synthetic database, with external providers disabled and no production configuration loaded.",
+        "Check import preview, confirmation, duplicate prevention and undo; ensure internal transfers do not inflate income or spending.",
+        "Review account analytics, savings scenarios and crypto quantities, keeping unavailable provider features explicitly labelled."
+      ],
+      "demo": {
+        "src": "/media/finance-core-demo.mp4",
+        "poster": "/media/finance-core-demo-poster.jpg",
+        "caption": "191.64-second dark-mode walkthrough of the real local application with synthetic data, a continuously visible cursor, typing sounds and a new original score. The brief file-selection tray is explicitly an editorial reconstruction, not an operating-system recording; the subsequent CSV import is real. No connected banks, live prices or external AI. Play on demand; an edited demonstration, not a performance benchmark. The original version remains available below.",
+        "tracks": [
+          { "lang": "en", "label": "English", "src": "/media/finance-core-demo.en.vtt" },
+          { "lang": "es", "label": "Español", "src": "/media/finance-core-demo.es.vtt" }
+        ],
+        "steps": [
+          "Change the month and open a day's spending, scrolling through its individual transactions.",
+          "Explore account balances and individual account details.",
+          "Understand the bank connector's requirements, open the real format/account options and select a synthetic CSV.",
+          "Confirm two transactions and preview the same file again to see duplicate prevention.",
+          "Review annual analytics, update a savings goal and create a budget.",
+          "Calculate an illustrative savings scenario and pause/reactivate a local subscription record, without changing a provider contract.",
+          "Save genuine local context for the advisor; external AI remains explicitly disabled.",
+          "Inspect local crypto holdings and type an EUR snapshot for preview, without confirming an import, connecting a wallet or executing trades."
+        ]
+      }
+    }
+  },
+  {
+    "id": "es:financial-architecture",
+    "key": "financial-architecture",
+    "lang": "es",
+    "order": 3,
+    "title": "Finance Core",
+    "eyebrow": "Aplicación privada",
+    "description": "Cuentas, gastos, objetivos de ahorro y posiciones cripto en un mismo espacio. Una aplicación privada de finanzas personales, presentada con un recorrido local real y datos sintéticos.",
+    "cvSummary": "Cuentas, importación de extractos, presupuestos y cripto con React/TypeScript, FastAPI y PostgreSQL. Demo grabada con datos sintéticos.",
+    "status": "En desarrollo privado",
+    "badge": "private",
+    "featured": true,
+    "inCv": true,
+    "tech": ["React", "TypeScript", "Python", "FastAPI", "PostgreSQL"],
+    "domains": [],
+    "image": "./../assets/projects/finance-core-es.svg",
+    "imageAlt": "Finance Core: espacio financiero ilustrativo en modo oscuro con módulos de cuentas, gastos y cripto. Código privado y demostración sintética.",
+    "deep": null,
+    "caseStudy": {
+      "problem": "Los saldos, extractos bancarios, gastos recurrentes y posiciones cripto suelen estar repartidos entre distintas herramientas. Finance Core los reúne para que importar un extracto, revisar un movimiento y planificar un objetivo de ahorro formen parte del mismo recorrido.",
+      "decisions": [
+        { "title": "Separar la interfaz de los datos financieros", "body": "Un cliente React / TypeScript consume una API Python / FastAPI. PostgreSQL es la base de datos de la aplicación; el recorrido público utiliza una demo aislada con SQLite. Los saldos y las transferencias internas se distinguen de los ingresos y gastos." },
+        { "title": "Previsualizar antes de importar", "body": "La importación admite varios formatos bancarios y un CSV genérico. La vista previa, la detección de duplicados y los lotes reversibles permiten revisar los cambios antes y después de confirmarlos. La grabación utiliza extractos ficticios, no datos bancarios personales." },
+        { "title": "Conectar bancos con consentimiento explícito", "body": "Un conector GoCardless PSD2 de solo lectura implementa consentimiento, mapeo de cuentas, sincronización y revocación. La obtención automática de datos bancarios requiere configurar el proveedor y la autorización del usuario. La demo local no conecta bancos: muestra la alternativa de importar CSV." },
+        { "title": "Mostrar cripto sin simular operaciones", "body": "Las posiciones se introducen manualmente o se importan como instantáneas. CoinMarketCap proporciona datos de mercado cuando está configurado; no conecta carteras ni exchanges. Sin proveedor, se muestran cantidades y costes registrados, pero no valoración de mercado ni rentabilidad." },
+        { "title": "Conectar el gasto diario con la planificación", "body": "El calendario mensual permite abrir los movimientos y totales de cada día. Los presupuestos, suscripciones recurrentes y objetivos de ahorro complementan esos registros; el simulador explora cambios sin mover dinero ni modificar una suscripción externa." },
+        { "title": "Dar contexto explícito al asesor", "body": "El asesor admite notas locales que se pueden añadir, consultar y borrar. La demostración muestra este recorrido real de memoria. La IA externa está desactivada en el entorno aislado: no se presentan consejos generados ni respuestas del asistente inventadas." }
+      ],
+      "limits": [
+        "Ambos repositorios y la aplicación desplegada siguen siendo privados. Solo se publican este caso de estudio y una demostración saneada.",
+        "En este recorrido no se ha completado un consentimiento bancario real ni de pruebas. Los proveedores externos de banca, cotizaciones e IA están desactivados; no se mueve dinero ni cripto.",
+        "Las posiciones cripto se gestionan aparte del patrimonio calculado a partir de las cuentas. El coste registrado de compra no equivale a una valoración actual.",
+        "La planificación y las simulaciones son estimaciones, no asesoramiento financiero. Las pruebas locales no certifican las migraciones PostgreSQL de producción ni la fiabilidad de proveedores externos."
+      ],
+      "outcome": "Una aplicación privada operativa con recorridos conectados de cuentas, movimientos, revisión de importaciones, análisis, presupuestos, suscripciones, objetivos de ahorro y posiciones cripto. La demostración pública muestra interacciones reales contra una base local aislada, no pantallas de éxito simuladas.",
+      "verification": [
+        "Ejecutar la aplicación con una base sintética independiente, proveedores externos desactivados y sin cargar configuración de producción.",
+        "Comprobar vista previa, confirmación, prevención de duplicados y deshacer importaciones; verificar que las transferencias internas no inflan ingresos ni gastos.",
+        "Revisar el análisis de cuentas, escenarios de ahorro y cantidades cripto, indicando expresamente las funciones que dependen de proveedores no disponibles."
+      ],
+      "demo": {
+        "src": "/media/finance-core-demo.mp4",
+        "poster": "/media/finance-core-demo-poster.jpg",
+        "caption": "Recorrido de 191,64 segundos en modo oscuro por la aplicación local real, con datos sintéticos, cursor siempre visible, sonidos de teclado y una nueva música original. La breve selección de archivo se identifica como reconstrucción editorial, no como grabación del sistema operativo; la importación CSV posterior es real. Sin bancos conectados, precios en vivo ni IA externa. Reproducción bajo demanda: una demostración editada, no un benchmark de rendimiento. La versión original sigue disponible debajo.",
+        "tracks": [
+          { "lang": "en", "label": "English", "src": "/media/finance-core-demo.en.vtt" },
+          { "lang": "es", "label": "Español", "src": "/media/finance-core-demo.es.vtt" }
+        ],
+        "steps": [
+          "Cambia de mes y abre el gasto de un día, recorriendo sus movimientos mediante desplazamiento.",
+          "Explora los saldos y el detalle de una cuenta.",
+          "Conoce los requisitos del conector bancario, abre las opciones reales de formato y cuenta y selecciona un CSV sintético.",
+          "Confirma dos movimientos y vuelve a previsualizar el fichero para comprobar la prevención de duplicados.",
+          "Revisa el análisis anual, actualiza un objetivo de ahorro y crea un presupuesto.",
+          "Calcula un escenario ilustrativo de ahorro y pausa/reactiva el registro local de una suscripción, sin modificar un contrato externo.",
+          "Guarda contexto local real para el asesor; la IA externa permanece expresamente desactivada.",
+          "Consulta posiciones cripto locales y escribe una instantánea en EUR para previsualizarla, sin confirmar una importación, conectar carteras ni ejecutar operaciones."
+        ]
+      }
+    }
+  },
+  {
+    "id": "en:youtube-transcriber",
+    "key": "youtube-transcriber",
+    "lang": "en",
+    "order": 1,
+    "title": "YouTube Transcriber",
+    "eyebrow": "Web App",
+    "description": "Turn a public YouTube video into timestamped text you can read, translate and reuse. A working app with public frontend and API code, no account required.",
+    "cvSummary": "Timestamped transcription, translation and TXT/SRT/VTT exports, with an Astro/React interface and a Java/Spring Boot API.",
+    "status": "Live on yt.rubenitx.me",
+    "badge": "live",
+    "featured": true,
+    "inCv": true,
+    "tech": ["Astro", "React", "Java", "Spring Boot", "yt-dlp", "whisper.cpp", "DeepL"],
+    "domains": [],
+    "link": "https://yt.rubenitx.me/",
+    "github": [
+      { "label": "Frontend", "href": "https://github.com/rubenmtzb/yt-transcriber-web" },
+      { "label": "API", "href": "https://github.com/rubenmtzb/yt-transcriber-api" }
+    ],
+    "image": "./../assets/projects/youtube-transcriber.png",
+    "imageAlt": "Illustration of YouTube Transcriber: timestamped dual-language transcript and processing pipeline from yt-dlp captions, with whisper.cpp fallback and DeepL translation.",
+    "deep": null,
+    "caseStudy": {
+      "problem": "Reviewing a video should not require replaying it to find every useful sentence or manually copying captions into a translator. Transcriber brings a public YouTube URL, timestamped text and an optional translation into one reading flow, without requiring an account.",
+      "decisions": [
+        {
+          "title": "Reuse captions before running speech recognition",
+          "body": "The Java / Spring Boot API uses yt-dlp to look for existing subtitles first. When usable captions are unavailable, it downloads audio and runs whisper.cpp on the server. This avoids unnecessary transcription work when text already exists; Whisper is a fallback, not a promise of perfect recognition."
+        },
+        {
+          "title": "Translate only when the language changes",
+          "body": "DeepL receives the text for translation. When the source and target language are the same, that translation step is skipped. Keeping extraction, transcription and translation separate makes the external dependency explicit rather than presenting the whole pipeline as local AI."
+        },
+        {
+          "title": "Expose stages instead of a frozen spinner",
+          "body": "The Astro / React frontend receives processing stages through Server-Sent Events (SSE). The interface can explain what the API is doing while the request runs, without claiming an exact completion time."
+        },
+        {
+          "title": "Keep recent results in the browser",
+          "body": "The last five results are kept in browser local storage, so a reader can revisit them without an account. This is a small local history, not cross-device synchronisation or a statement that the server stores nothing."
+        }
+      ],
+      "limits": [
+        "The project's default configuration allows videos up to 20 minutes and two simultaneous processing requests. Excess requests are rejected rather than queued. These are configurable limits, not verified production settings or a throughput claim; video duration is distinct from processing time.",
+        "The app depends on YouTube availability and extraction through yt-dlp. Public access does not guarantee that every video can be processed, and it does not grant permission to reuse its content.",
+        "Caption quality, speech recognition and translation can all introduce errors. The reported source language belongs to the selected transcript or captions and can differ from the original audio. Review the result before using it as a quotation, subtitle or source document.",
+        "This is not an entirely local or storage-free service: requests reach YouTube, server-side processing uses temporary files and logs, and translation sends text to DeepL. Browser history also persists locally; avoid submitting sensitive material.",
+        "Processing time depends on video length, available captions, server load and external services. The demo is not a performance measurement."
+      ],
+      "outcome": "The deliverable is a working web app backed by a separate API: a public video becomes timestamped text with an optional translation and a recent-results history. The live app and both source repositories let you inspect the implementation; no adoption, time-saving or accuracy figures are claimed.",
+      "verification": [
+        "Open the live app and submit a public video you have permission to process; select the target language and follow the reported stages.",
+        "Compare several timestamped passages with the original video. Check the translation separately rather than treating transcription and translation as the same result.",
+        "Revisit a result from browser history. Inspect the Frontend and API repositories for the captions-first path, Whisper fallback, SSE stages and configured limits."
+      ],
+      "demo": {
+        "src": "/media/transcriber-demo.mp4",
+        "poster": "/media/transcriber-demo-poster.jpg",
+        "caption": "Edited recording of the real app, without mocked API responses. A continuously visible editorial cursor guides the approved montage; its movement is reconstructed between verified controls, not recorded mouse telemetry. Typing sounds follow visible text entry, alongside click cues and the original music. Playback starts only when you press play. Not a benchmark or latency guarantee. The original 'Sin audio' label predates this soundtrack; all three approved earlier versions remain available below.",
+        "steps": [
+          "Enter a public YouTube URL and choose the target language.",
+          "Follow the processing stages as the transcript is prepared.",
+          "Compare the timestamped result and its translation, search within the text and switch to reading mode.",
+          "Export as TXT, SRT, VTT or Markdown, then reopen a result from browser history."
+        ],
+        "tracks": [
+          { "lang": "en", "label": "English", "src": "/media/transcriber-demo.en.vtt" },
+          { "lang": "es", "label": "Spanish", "src": "/media/transcriber-demo.es.vtt" }
+        ]
+      }
+    }
+  },
+  {
+    "id": "es:youtube-transcriber",
+    "key": "youtube-transcriber",
+    "lang": "es",
+    "order": 1,
+    "title": "YouTube Transcriber",
+    "eyebrow": "Aplicación Web",
+    "description": "Convierte un vídeo público de YouTube en texto con marcas de tiempo para leer, traducir y reutilizar. Una aplicación operativa con código público de frontend y API, sin crear una cuenta.",
+    "cvSummary": "Transcripción con marcas de tiempo, traducción y exportación TXT/SRT/VTT, con interfaz Astro/React y API Java/Spring Boot.",
+    "status": "Activo en yt.rubenitx.me",
+    "badge": "live",
+    "featured": true,
+    "inCv": true,
+    "tech": ["Astro", "React", "Java", "Spring Boot", "yt-dlp", "whisper.cpp", "DeepL"],
+    "domains": [],
+    "link": "https://yt.rubenitx.me/",
+    "github": [
+      { "label": "Frontend", "href": "https://github.com/rubenmtzb/yt-transcriber-web" },
+      { "label": "API", "href": "https://github.com/rubenmtzb/yt-transcriber-api" }
+    ],
+    "image": "./../assets/projects/youtube-transcriber-es.png",
+    "imageAlt": "Ilustración de YouTube Transcriber: transcripción bilingüe con marcas de tiempo y proceso de extracción de subtítulos mediante yt-dlp, con whisper.cpp como alternativa y traducción con DeepL.",
+    "deep": null,
+    "caseStudy": {
+      "problem": "Revisar un vídeo no debería exigir reproducirlo una y otra vez para encontrar cada frase útil ni copiar subtítulos a mano en un traductor. Transcriber reúne una URL pública de YouTube, texto con marcas de tiempo y una traducción opcional en un mismo flujo de lectura, sin exigir una cuenta.",
+      "decisions": [
+        {
+          "title": "Reutilizar subtítulos antes de reconocer voz",
+          "body": "La API en Java / Spring Boot utiliza yt-dlp para buscar primero subtítulos existentes. Si no hay subtítulos utilizables, descarga el audio y ejecuta whisper.cpp en el servidor. Así evita transcribir de nuevo cuando ya existe texto; Whisper es una alternativa, no una promesa de reconocimiento perfecto."
+        },
+        {
+          "title": "Traducir solo cuando cambia el idioma",
+          "body": "DeepL recibe el texto para traducirlo. Cuando el idioma de origen y el de destino coinciden, se omite esa traducción. Separar extracción, transcripción y traducción hace explícita la dependencia externa, en lugar de presentar todo el proceso como IA local."
+        },
+        {
+          "title": "Mostrar etapas en lugar de una espera opaca",
+          "body": "El frontend en Astro / React recibe las etapas del proceso mediante Server-Sent Events (SSE). La interfaz puede explicar qué está haciendo la API mientras se procesa la petición, sin afirmar una hora exacta de finalización."
+        },
+        {
+          "title": "Conservar resultados recientes en el navegador",
+          "body": "Los últimos cinco resultados se guardan en el almacenamiento local del navegador para poder revisarlos sin cuenta. Es un historial local acotado, no sincronización entre dispositivos ni una afirmación de que el servidor no almacena nada."
+        }
+      ],
+      "limits": [
+        "La configuración predeterminada del proyecto admite vídeos de hasta 20 minutos y dos solicitudes de procesamiento simultáneas. El exceso se rechaza, no se encola. Son límites configurables, no valores de producción comprobados ni una afirmación de capacidad; la duración del vídeo es distinta del tiempo de procesamiento.",
+        "La aplicación depende de la disponibilidad de YouTube y de la extracción mediante yt-dlp. Que un vídeo sea público no garantiza que pueda procesarse ni concede permiso para reutilizar su contenido.",
+        "Los subtítulos, el reconocimiento de voz y la traducción pueden introducir errores. El idioma de origen indicado corresponde a la transcripción o los subtítulos seleccionados y puede diferir del audio original. Revisa el resultado antes de usarlo como cita, subtítulo o documento de referencia.",
+        "No es un servicio totalmente local ni libre de almacenamiento: hay peticiones a YouTube, archivos temporales y registros en el servidor, y la traducción envía texto a DeepL. El historial también persiste en el navegador; evita introducir material sensible.",
+        "El tiempo de procesamiento depende de la duración del vídeo, los subtítulos disponibles, la carga del servidor y los servicios externos. La demo no mide rendimiento."
+      ],
+      "outcome": "El entregable es una aplicación web operativa con una API separada: convierte un vídeo público en texto con marcas de tiempo, traducción opcional e historial reciente. La aplicación y ambos repositorios permiten revisar la implementación; no se atribuyen cifras de uso, ahorro de tiempo ni precisión.",
+      "verification": [
+        "Abre la aplicación y envía un vídeo público que tengas permiso para procesar; elige el idioma de destino y sigue las etapas indicadas.",
+        "Compara varios fragmentos con marcas de tiempo con el vídeo original. Revisa la traducción por separado, sin confundir transcripción y traducción.",
+        "Recupera un resultado desde el historial del navegador. Consulta los repositorios Frontend y API para revisar la prioridad de subtítulos, la alternativa Whisper, las etapas SSE y los límites configurados."
+      ],
+      "demo": {
+        "src": "/media/transcriber-demo.mp4",
+        "poster": "/media/transcriber-demo-poster.jpg",
+        "caption": "Grabación editada de la aplicación real, sin respuestas de API simuladas. Un cursor editorial siempre visible guía el montaje aprobado: su movimiento se reconstruye entre controles verificados, no procede de telemetría del ratón. Los sonidos de teclado siguen la entrada visible de texto, junto a los clics y la música original. Solo se reproduce al pulsar el botón de reproducción. No es un benchmark ni una garantía de latencia. El rótulo original «Sin audio» es anterior a esta banda sonora; las tres versiones anteriores aprobadas siguen disponibles debajo.",
+        "steps": [
+          "Introduce una URL pública de YouTube y elige el idioma de destino.",
+          "Sigue las etapas del proceso mientras se prepara la transcripción.",
+          "Compara el resultado con marcas de tiempo y su traducción, busca dentro del texto y cambia al modo lectura.",
+          "Exporta en TXT, SRT, VTT o Markdown y recupera un resultado desde el historial del navegador."
+        ],
+        "tracks": [
+          { "lang": "en", "label": "English", "src": "/media/transcriber-demo.en.vtt" },
+          { "lang": "es", "label": "Español", "src": "/media/transcriber-demo.es.vtt" }
+        ]
+      }
+    }
+  },
+  {
     "id": "en:sars-cov-2",
     "key": "sars-cov-2",
     "lang": "en",
-    "order": 1,
+    "order": 2,
     "title": "The Mutational Landscape of SARS-CoV-2",
     "eyebrow": "Research",
     "description": "Interactive portal for exploring mutations across the SARS-CoV-2 genome. An interdisciplinary project between software engineering and bioinformatics, in collaboration with Universitat Rovira i Virgili.",
     "status": "Live research portal",
     "badge": "live",
     "featured": true,
-    "inCv": true,
+    "inCv": false,
     "tech": ["TypeScript", "PHP", "Python", "D3.js"],
     "domains": ["Bioinformatics"],
     "link": "http://sarscov2-mutation-portal.urv.cat",
@@ -33,21 +301,36 @@
       "focusLabel": "Focus",
       "focusText": "Visual genomics and exploratory analysis",
       "intersectionLabel": "Intersection",
-      "intersectionText": "Software engineering + bioinformatics"
+      "intersectionText": "Software engineering + bioinformatics",
+      "demo": {
+        "src": "/media/mutation-portal-demo.mp4",
+        "poster": "/media/mutation-portal-demo-poster.jpg",
+        "caption": "81-second walkthrough of the real university portal, with a continuously visible cursor, interaction sounds and an original score. The displayed dataset date is 26 February 2024, not live epidemiological coverage. Excel export returned HTTP 500 during inspection; no successful download is simulated. Edited for readability, not a performance benchmark or scientific validation.",
+        "steps": [
+          "Read the portal's dataset context, then search the genes table for spike.",
+          "Select spike, Spain and a percentage above 50 with the native controls; submit a bounded query. Country filters mutation presence, not a country-specific percentage.",
+          "Inspect the four returned rows and locate D614G with the table's text search.",
+          "Explore the scatter plot's mutation tooltip, drag to zoom and reset the view."
+        ],
+        "tracks": [
+          { "lang": "en", "label": "English", "src": "/media/mutation-portal-demo.en.vtt" },
+          { "lang": "es", "label": "Español", "src": "/media/mutation-portal-demo.es.vtt" }
+        ]
+      }
     }
   },
   {
     "id": "es:sars-cov-2",
     "key": "sars-cov-2",
     "lang": "es",
-    "order": 1,
+    "order": 2,
     "title": "The Mutational Landscape of SARS-CoV-2",
     "eyebrow": "Investigación",
     "description": "Portal interactivo para explorar mutaciones del genoma SARS-CoV-2. Proyecto interdisciplinar entre ingeniería de software y bioinformática, en colaboración con la Universitat Rovira i Virgili.",
     "status": "Portal de investigación activo",
     "badge": "live",
     "featured": true,
-    "inCv": true,
+    "inCv": false,
     "tech": ["TypeScript", "PHP", "Python", "D3.js"],
     "domains": ["Bioinformática"],
     "link": "http://sarscov2-mutation-portal.urv.cat",
@@ -70,52 +353,29 @@
       "focusLabel": "Enfoque",
       "focusText": "Genómica visual y análisis exploratorio",
       "intersectionLabel": "Intersección",
-      "intersectionText": "Ingeniería de software + bioinformática"
+      "intersectionText": "Ingeniería de software + bioinformática",
+      "demo": {
+        "src": "/media/mutation-portal-demo.mp4",
+        "poster": "/media/mutation-portal-demo-poster.jpg",
+        "caption": "Recorrido de 81 segundos por el portal universitario real, con cursor visible de forma continua, sonidos de interacción y música original. El conjunto de datos mostrado está fechado el 26 de febrero de 2024: no representa cobertura epidemiológica en tiempo real. La exportación Excel respondió HTTP 500 durante la inspección; no se simula una descarga correcta. Edición para facilitar la lectura, no una medición de rendimiento ni una validación científica.",
+        "steps": [
+          "Consultar el contexto del conjunto de datos y buscar spike en la tabla de genes.",
+          "Seleccionar spike, Spain y un porcentaje superior a 50 con los controles nativos; enviar una consulta acotada. El país filtra la presencia de la mutación, no un porcentaje específico de ese país.",
+          "Revisar las cuatro filas devueltas y localizar D614G con la búsqueda de texto de la tabla.",
+          "Explorar el detalle emergente de una mutación en el gráfico, ampliar una región arrastrando y restablecer la vista."
+        ],
+        "tracks": [
+          { "lang": "en", "label": "English", "src": "/media/mutation-portal-demo.en.vtt" },
+          { "lang": "es", "label": "Español", "src": "/media/mutation-portal-demo.es.vtt" }
+        ]
+      }
     }
-  },
-  {
-    "id": "en:financial-architecture",
-    "key": "financial-architecture",
-    "lang": "en",
-    "order": 2,
-    "title": "Decoupled Financial Architecture",
-    "eyebrow": "Architecture",
-    "description": "Modular platform designed for independent evolution of the financial engine and the client layer. Focused on clean domain boundaries, observability, and long-term maintainability.",
-    "status": "In private development",
-    "badge": "private",
-    "featured": true,
-    "inCv": true,
-    "tech": ["Java", "Spring Boot", "React", "Docker", "PostgreSQL"],
-    "domains": [],
-    "github": "https://github.com/rubenmtzb",
-    "image": "./../assets/projects/financial-architecture.png",
-    "imageAlt": "Cover for the Decoupled Financial Architecture case study, showing an aggregated balance chart and the tech stack: Java, Spring Boot, React, Docker, PostgreSQL.",
-    "deep": null
-  },
-  {
-    "id": "es:financial-architecture",
-    "key": "financial-architecture",
-    "lang": "es",
-    "order": 2,
-    "title": "Arquitectura Financiera Desacoplada",
-    "eyebrow": "Arquitectura",
-    "description": "Plataforma modular diseñada para la evolución independiente del motor financiero y la capa de cliente. Enfocada en límites de dominio limpios, observabilidad y mantenibilidad a largo plazo.",
-    "status": "En desarrollo privado",
-    "badge": "private",
-    "featured": true,
-    "inCv": true,
-    "tech": ["Java", "Spring Boot", "React", "Docker", "PostgreSQL"],
-    "domains": [],
-    "github": "https://github.com/rubenmtzb",
-    "image": "./../assets/projects/financial-architecture.png",
-    "imageAlt": "Portada del caso de estudio de Arquitectura Financiera Desacoplada, con un gráfico de saldo agregado y las tecnologías: Java, Spring Boot, React, Docker y PostgreSQL.",
-    "deep": null
   },
   {
     "id": "en:portfolio",
     "key": "portfolio",
     "lang": "en",
-    "order": 3,
+    "order": 4,
     "title": "Personal Portfolio",
     "eyebrow": "Web App",
     "description": "This very portfolio. Built with Astro as static HTML, with an interactive Killua particle simulation, 3D motion carousels, and a single source of truth for all content.",
@@ -135,7 +395,7 @@
     "id": "es:portfolio",
     "key": "portfolio",
     "lang": "es",
-    "order": 3,
+    "order": 4,
     "title": "Portafolio Personal",
     "eyebrow": "Aplicación Web",
     "description": "Este mismo portafolio. Construido con Astro como HTML estático, con simulación de partículas ASCII de Killua, carrusel 3D y una única fuente de verdad para todo el contenido.",
@@ -145,42 +405,10 @@
     "inCv": false,
     "tech": ["Astro", "Tailwind CSS", "TypeScript"],
     "domains": [],
-    "link": "https://rubenitx.me",
+    "link": "https://rubenitx.me/es/",
     "github": "https://github.com/rubenmtzb/rubenmtzb.github.io",
     "image": "./../assets/projects/portfolio.png",
     "imageAlt": "Portada del proyecto Portafolio Personal, con una ventana de terminal ejecutando los comandos de compilación y despliegue en producción.",
-    "deep": null
-  },
-  {
-    "id": "en:coming-soon",
-    "key": "coming-soon",
-    "lang": "en",
-    "order": 4,
-    "title": "Coming Soon",
-    "eyebrow": "In Development",
-    "description": "A new project is taking shape. The architecture is being defined before the first public release.",
-    "status": "In planning",
-    "badge": "coming-soon",
-    "featured": false,
-    "inCv": false,
-    "tech": [],
-    "domains": [],
-    "deep": null
-  },
-  {
-    "id": "es:coming-soon",
-    "key": "coming-soon",
-    "lang": "es",
-    "order": 4,
-    "title": "Próximamente",
-    "eyebrow": "En Desarrollo",
-    "description": "Un nuevo proyecto está tomando forma. La arquitectura se está definiendo antes de su primera versión pública.",
-    "status": "En planificación",
-    "badge": "coming-soon",
-    "featured": false,
-    "inCv": false,
-    "tech": [],
-    "domains": [],
     "deep": null
   }
 ]

@@ -1,0 +1,243 @@
+{
+  "source": "Real browser recording of https://yt.rubenitx.me, 2026-09-06. No mocked API responses.",
+  "sourceSha256": "463c32e76c7253812e3e4546df7c885b007c566e4609a14cb88782e802bce477",
+  "videoSha256": "3fd1264855ef11a05321392f7d562c6ab84023d9d3abc9111cc447a4b5d86a02",
+  "sourceResolution": "1280x800",
+  "outputResolution": "1920x1080",
+  "fps": 25,
+  "durationSeconds": 42.64,
+  "bytes": 3633282,
+  "audio": true,
+  "editing": "Title cards, browser framing, chronological cuts and bilingual on-screen labels. No speed changes within clips. Not a latency benchmark.",
+  "scenes": [
+    {
+      "sourceStart": 3,
+      "sourceEnd": 10,
+      "description": "Paste a YouTube URL and select a target language."
+    },
+    {
+      "sourceStart": 10,
+      "sourceEnd": 16,
+      "description": "Follow processing stages while the API works. Timings vary by video and provider."
+    },
+    {
+      "sourceStart": 16,
+      "sourceEnd": 21,
+      "description": "Read timestamped captions and their translation."
+    },
+    {
+      "sourceStart": 21,
+      "sourceEnd": 28,
+      "description": "Compare source and translation in dual view, then search within the text."
+    },
+    {
+      "sourceStart": 28,
+      "sourceEnd": 32,
+      "description": "Jump to a timestamp and switch to reading mode."
+    },
+    {
+      "sourceStart": 32,
+      "sourceEnd": 36.5,
+      "description": "Download the result as TXT, SRT, VTT or Markdown."
+    },
+    {
+      "sourceStart": 36.5,
+      "sourceEnd": 39.6,
+      "description": "Reopen a previous result from this browser without a new transcription."
+    }
+  ],
+  "silentBackup": {
+    "file": "public/media/transcriber-demo-silent.mp4",
+    "sha256": "70a30d78b23aba3abeee43e770cd8b138e9c745c506fe856a08a1f2ea20707ed",
+    "bytes": 2578221,
+    "policy": "Byte-identical approved silent montage. Never modify, replace or regenerate this backup.",
+    "restoreCommand": "node scripts/media/add-transcriber-soundtrack.mjs --restore",
+    "verifyCommand": "node scripts/media/add-transcriber-soundtrack.mjs --verify"
+  },
+  "soundtrack": {
+    "applied": true,
+    "title": "Quiet Signals",
+    "origin": "Original instrumental composition and deterministic local synthesis created for this montage. No downloaded audio, third-party samples, song references or voices.",
+    "role": "Optional background music, not source/application audio or narration.",
+    "generator": "scripts/media/add-transcriber-soundtrack.mjs",
+    "generatorSha256": "b8f8cf711ebf66fd7017755c4ff46adb6153301d82afe7bd262be99086e6cdcb",
+    "regenerateCommand": "node scripts/media/add-transcriber-soundtrack.mjs",
+    "synthesis": {
+      "seed": 1497453617,
+      "tempoBpm": 84,
+      "sampleRateHz": 48000,
+      "channels": 2,
+      "pcmBits": 24,
+      "pcmSamplesPerChannel": 2046720,
+      "synthesizedWavSha256": "7b9883afaf7fbbd7adf6d197bb422773503ab7a903b6fea9c0b5bd8c30acd071",
+      "unmasteredSamplePeakDbfs": -15.002,
+      "arrangement": "Slowly crossfaded, gently detuned additive pads and warm bass; sparse FM-softened mallets with dotted-eighth echoes; a low sine pulse; harmonic transition swells; damped stereo reverb.",
+      "fadeInSeconds": 1.6,
+      "fadeOutSeconds": 3,
+      "transitionSync": "Harmonic swells peak on the original edit-boundary keyframes. 36.52 and 39.64 include the original 25 fps rounding.",
+      "cues": [
+        {
+          "at": 0,
+          "label": "Introduction",
+          "chord": "Dmaj9",
+          "bass": 38,
+          "notes": [
+            50,
+            57,
+            61,
+            64,
+            69
+          ]
+        },
+        {
+          "at": 3,
+          "label": "URL and language",
+          "chord": "Amaj9",
+          "bass": 45,
+          "notes": [
+            52,
+            56,
+            59,
+            61,
+            64
+          ]
+        },
+        {
+          "at": 10,
+          "label": "Processing",
+          "chord": "F#m9",
+          "bass": 42,
+          "notes": [
+            52,
+            56,
+            57,
+            61,
+            68
+          ]
+        },
+        {
+          "at": 16,
+          "label": "Text and translation",
+          "chord": "Dmaj9",
+          "bass": 38,
+          "notes": [
+            50,
+            57,
+            61,
+            64,
+            69
+          ]
+        },
+        {
+          "at": 21,
+          "label": "Dual view and search",
+          "chord": "Amaj9/C#",
+          "bass": 37,
+          "notes": [
+            52,
+            56,
+            59,
+            61,
+            64
+          ]
+        },
+        {
+          "at": 28,
+          "label": "Navigation",
+          "chord": "E6/9",
+          "bass": 40,
+          "notes": [
+            52,
+            56,
+            59,
+            61,
+            66
+          ]
+        },
+        {
+          "at": 32,
+          "label": "Export",
+          "chord": "F#m9",
+          "bass": 42,
+          "notes": [
+            52,
+            56,
+            57,
+            61,
+            68
+          ]
+        },
+        {
+          "at": 36.52,
+          "label": "Local history",
+          "chord": "Dmaj9",
+          "bass": 38,
+          "notes": [
+            50,
+            57,
+            61,
+            64,
+            69
+          ]
+        },
+        {
+          "at": 39.64,
+          "label": "Closing card",
+          "chord": "Aadd9",
+          "bass": 45,
+          "notes": [
+            52,
+            57,
+            59,
+            61,
+            64
+          ]
+        }
+      ]
+    },
+    "mastering": {
+      "target": {
+        "integratedLufs": -19,
+        "truePeakDbtp": -2,
+        "loudnessRangeLu": 8
+      },
+      "method": "32 Hz high-pass, 7.2 kHz low-pass, two-pass FFmpeg loudnorm; final decoded AAC measured separately.",
+      "codec": "AAC-LC",
+      "bitrateBitsPerSecond": 192000,
+      "sampleRateHz": 48000,
+      "channels": 2
+    },
+    "measured": {
+      "integratedLufs": -19.02,
+      "truePeakDbtp": -8.18,
+      "loudnessRangeLu": 2.4,
+      "thresholdLufs": -29.24,
+      "measurement": "FFmpeg loudnorm / EBU R128, measured after decoding the final AAC"
+    },
+    "tools": {
+      "node": "v26.5.1",
+      "ffmpeg": "ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers",
+      "ffprobe": "ffprobe version 8.0.1 Copyright (c) 2007-2025 the FFmpeg developers",
+      "platform": "darwin/arm64"
+    },
+    "reproducibility": "Fixed score, seed and 24-bit PCM. Exact AAC/MP4 bytes depend on tool versions/platform; use the recorded hashes to check reproduction.",
+    "caveat": "The original baked-in “Sin audio” label remains visually untouched. External copy/captions must explain that optional original background music was added later; the original recording contains no audio."
+  },
+  "videoPreservation": {
+    "method": "ffmpeg -map 0:v:0 -map 1:a:0 -c:v copy; no visual filters, re-encoding, retiming, trimming or frame-rate conversion.",
+    "source": "public/media/transcriber-demo-silent.mp4",
+    "exactContainerDurationSeconds": 42.64,
+    "resolution": "1920x1080",
+    "fps": "25/1",
+    "frames": 1066,
+    "timeBase": "1/12800",
+    "durationTicks": 545792,
+    "signatures": {
+      "h264AnnexBSha256": "e787207f63d6b170570562c5604d75b109dd2a9026758bf5358fb17ce29f1e7c",
+      "frameMd5RecordsSha256": "416cb3f5b0271e118736ed57a109bfd800761fc2ccbdb7f8ac9f0e8ae3162bc9",
+      "decodedFrameCount": 1066,
+      "packetTimingSha256": "af6d50a5a41631761f5727182f0b80c038291f90e415a2c7375bee4bb6d165cd"
+    },
+    "checks": "Identical source/output Annex-B H.264 SHA-256; SHA-256 of all decoded framemd5 records (including frame timestamps); SHA-256 of video packet PTS/DTS/duration/size/flags; matching video stream properties and container duration."
+  }
+}

@@ -1,6 +1,13 @@
 [
   {
     "id": "en:egarsat",
+    "cv": {
+      "bullets": [
+        "Develop REST APIs and batch processes with Java / Spring Boot to integrate services and automate data processing.",
+        "Build React / TypeScript interfaces and customize Liferay portals and portlets.",
+        "Deploy containerized applications with Docker; work with MySQL."
+      ]
+    },
     "key": "egarsat",
     "lang": "en",
     "order": 1,
@@ -24,6 +31,13 @@
   },
   {
     "id": "es:egarsat",
+    "cv": {
+      "bullets": [
+        "Desarrollo de APIs REST y procesos por lotes con Java / Spring Boot para integrar servicios y automatizar el tratamiento de datos.",
+        "Construcción de interfaces React / TypeScript y personalización de portales y portlets Liferay.",
+        "Despliegues en contenedores Docker; trabajo con MySQL."
+      ]
+    },
     "key": "egarsat",
     "lang": "es",
     "order": 1,
@@ -87,6 +101,12 @@
   },
   {
     "id": "en:urv",
+    "cv": {
+      "bullets": [
+        "Developed the SARS-CoV-2 mutation research portal: design, implementation, testing and deployment with TypeScript, PHP, Python and D3.js."
+      ],
+      "project": "sars-cov-2"
+    },
     "key": "urv",
     "lang": "en",
     "order": 3,
@@ -108,6 +128,12 @@
   },
   {
     "id": "es:urv",
+    "cv": {
+      "bullets": [
+        "Desarrollo del portal de mutaciones SARS-CoV-2: diseño, implementación, pruebas y despliegue con TypeScript, PHP, Python y D3.js."
+      ],
+      "project": "sars-cov-2"
+    },
     "key": "urv",
     "lang": "es",
     "order": 3,

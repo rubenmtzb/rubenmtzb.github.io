@@ -14,9 +14,9 @@ const NO_KILLUA: PixelKillua = { airborne: false, hop() {} }
 
 /**
  * The keyboard block's mascot. It exposes only what the rest needs, and handles
- * the canvas, the sparks and stopping the loop when nobody is looking: it is
- * decoration, and it has no business spending battery while the reader is in
- * another section.
+ * the canvas, the sparks and stopping the loop when the sprite is grounded: it
+ * is decoration, and it has no business spending battery at rest or while the
+ * reader is in another section.
  */
 export function createPixelKillua(canvas: HTMLCanvasElement | null): PixelKillua {
   const ctx = canvas?.getContext('2d')
@@ -47,6 +47,7 @@ export function createPixelKillua(canvas: HTMLCanvasElement | null): PixelKillua
   let lastHop = 0
   let lastFrame = performance.now()
   let raf: number | null = null
+  let onScreen = true
 
   const spawn = (count: number, spread: number) => {
     for (let i = 0; i < count; i++) {
@@ -63,31 +64,31 @@ export function createPixelKillua(canvas: HTMLCanvasElement | null): PixelKillua
     }
   }
 
+  const hopping = () => jumpOffset !== 0 || jumpVel !== 0
+
+  const startLoop = () => {
+    if (raf !== null || !onScreen || document.hidden) return
+    lastFrame = performance.now()
+    raf = requestAnimationFrame(render)
+  }
+
   const render = (time: number) => {
+    if (time - lastFrame < 15) {
+      raf = requestAnimationFrame(render)
+      return
+    }
     // Normalised to 60 fps and clamped, so a dropped frame causes no jump.
     const dt = Math.min((time - lastFrame) / 16.67, 2)
     lastFrame = time
     ctx.clearRect(0, 0, W_PX, H_PX)
 
-    if (jumpOffset !== 0 || jumpVel !== 0) {
+    if (hopping()) {
       jumpOffset += jumpVel * dt
       jumpVel += GRAVITY * dt
       if (jumpOffset > 0) {
         jumpOffset = 0
         jumpVel = 0
       }
-    }
-
-    // The occasional ambient spark: the electric aura at rest.
-    if (Math.random() < 0.12) {
-      sparks.push({
-        x: W_PX / 2 + (Math.random() - 0.5) * 26,
-        y: H_PX / 2 + (Math.random() - 0.5) * 30,
-        vx: (Math.random() - 0.5) * 1.2,
-        vy: (Math.random() - 0.5) * 1.2,
-        life: 0,
-        maxLife: 10 + Math.random() * 8,
-      })
     }
 
     ctx.fillStyle = GLOW
@@ -105,30 +106,38 @@ export function createPixelKillua(canvas: HTMLCanvasElement | null): PixelKillua
     }
     ctx.globalAlpha = 1
 
-    if (sprite.complete && sprite.naturalWidth > 0) {
+    const spriteReady = sprite.complete && sprite.naturalWidth > 0
+    if (spriteReady) {
       ctx.save()
       ctx.translate(W_PX / 2, H_PX / 2 + jumpOffset)
-      ctx.shadowColor = GLOW
-      ctx.shadowBlur = 10
+      if (hopping()) {
+        ctx.shadowColor = GLOW
+        ctx.shadowBlur = 10
+      }
       ctx.drawImage(sprite, -SPRITE_W / 2, -SPRITE_H / 2 + 2, SPRITE_W, SPRITE_H)
       ctx.restore()
     }
 
+    /*
+     * Sparks only exist during a hop. Once they fade and the sprite is on the
+     * ground, another frame would repaint the same pixels: stop until the next
+     * hop, so the archive at rest does not keep the laptop warm.
+     */
+    if (!hopping() && sparks.length === 0 && spriteReady) {
+      raf = null
+      return
+    }
     raf = requestAnimationFrame(render)
   }
 
   /*
    * It only animates while it is both on screen and in an active tab. Both
    * conditions are needed: returning to the tab must not resume a canvas that
-   * scrolled out of the viewport.
+   * scrolled out of the viewport. Grounded, it paints one idle frame and stops.
    */
-  let onScreen = true
   const sync = () => {
-    const shouldRun = onScreen && !document.hidden
-    if (shouldRun && raf === null) {
-      lastFrame = performance.now()
-      raf = requestAnimationFrame(render)
-    } else if (!shouldRun && raf !== null) {
+    if (onScreen && !document.hidden) startLoop()
+    else if (raf !== null) {
       cancelAnimationFrame(raf)
       raf = null
     }
@@ -152,7 +161,9 @@ export function createPixelKillua(canvas: HTMLCanvasElement | null): PixelKillua
       if (airborne() || now - lastHop < HOP_COOLDOWN_MS) return
       lastHop = now
       jumpVel = HOP_IMPULSE
+      lastFrame = 0
       spawn(6, 1)
+      startLoop()
     },
   }
 }
