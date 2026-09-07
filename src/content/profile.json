@@ -51,40 +51,7 @@
       }
     ],
     "cvOnly": {
-      "availability": "Open to remote, hybrid, or on-site opportunities",
-      "referencesNote": "References available upon request.",
-      "summaryTitle": "Professional Summary",
-      "summaryKicker": "A concise snapshot for recruiters scanning the CV quickly.",
-      "summaryLead": "Full-Stack Developer with {years} of enterprise experience delivering software across backend, frontend, and platform layers.",
-      "summaryBody": "I build reliable digital products end to end — from REST APIs and batch workflows to React interfaces, Liferay portals, and production-ready deployments. My profile combines hands-on delivery at Egarsat, people leadership in fast-paced environments, ongoing Computer Science studies at UOC, and research collaboration through a published SARS-CoV-2 mutation portal. I am currently deepening my expertise in DevOps, AI/LLMs, and blockchain technology.",
-      "metrics": [
-        {
-          "title": "Enterprise Delivery",
-          "description": "Shipping production software for {years}, with backend, frontend, and portal ownership."
-        },
-        {
-          "title": "Core Stack",
-          "description": "Java, Spring Boot, React, TypeScript, Liferay, Docker, MySQL, REST APIs."
-        },
-        {
-          "title": "Extra Edge",
-          "description": "Published research collaboration plus leadership experience in high-pressure environments."
-        }
-      ],
-      "interests": [
-        {
-          "title": "AI & Large Language Models",
-          "description": "Building stronger intuition for modern AI tooling and workflows."
-        },
-        {
-          "title": "Blockchain & Smart Contracts",
-          "description": "Exploring decentralized systems, protocols, and practical applications."
-        },
-        {
-          "title": "System Design & Clean Architecture",
-          "description": "Designing resilient software that scales with product and team growth."
-        }
-      ]
+      "summary": "Full-stack developer with {years} of experience at Egarsat. REST APIs, service integrations and web applications, with a background in software for bioinformatics research."
     },
     "headline": "I build APIs, connect services and turn manual workflows into web tools — with Java, Spring Boot and React."
   },
@@ -140,40 +107,7 @@
       }
     ],
     "cvOnly": {
-      "availability": "Disponible para oportunidades remotas, híbridas o presenciales",
-      "referencesNote": "Referencias disponibles bajo petición.",
-      "summaryTitle": "Resumen profesional",
-      "summaryKicker": "Una visión clara para responsables de selección que revisan el CV en segundos.",
-      "summaryLead": "Desarrollador de software integral con {years} de experiencia empresarial entregando software en backend, frontend y capas de plataforma.",
-      "summaryBody": "Construyo productos digitales fiables de extremo a extremo: desde APIs REST y procesos por lotes hasta interfaces con React, portales Liferay y despliegues listos para producción. Mi perfil combina entrega técnica en Egarsat, liderazgo de equipos en entornos exigentes, estudios actuales de Ingeniería Informática en la UOC y colaboración investigadora en un portal publicado sobre mutaciones de SARS-CoV-2. Actualmente sigo profundizando en DevOps, IA/LLMs y tecnología blockchain.",
-      "metrics": [
-        {
-          "title": "Entrega empresarial",
-          "description": "Desarrollando software en producción desde hace {years}, con responsabilidad integral sobre backend, frontend y portales."
-        },
-        {
-          "title": "Tecnologías principales",
-          "description": "Java, Spring Boot, React, TypeScript, Liferay, Docker, MySQL y APIs REST."
-        },
-        {
-          "title": "Valor diferencial",
-          "description": "Colaboración en investigación publicada y experiencia liderando equipos en escenarios de alta presión."
-        }
-      ],
-      "interests": [
-        {
-          "title": "IA y Grandes Modelos de Lenguaje",
-          "description": "Desarrollando mejor criterio sobre herramientas y flujos de trabajo con IA moderna."
-        },
-        {
-          "title": "Blockchain y contratos inteligentes",
-          "description": "Explorando sistemas descentralizados, protocolos y aplicaciones prácticas."
-        },
-        {
-          "title": "Diseño de sistemas y arquitectura limpia",
-          "description": "Diseñando software resiliente que escala con el producto y el equipo."
-        }
-      ]
+      "summary": "Desarrollador de software con {years} de experiencia en Egarsat. APIs REST, integración de servicios y aplicaciones web, con experiencia en software para investigación bioinformática."
     },
     "headline": "Desarrollo APIs, conecto servicios y convierto tareas manuales en herramientas web — con Java, Spring Boot y React."
   }

@@ -58,18 +58,7 @@ const profile = defineCollection({
     languages: z.array(z.object({ name: z.string(), level: z.string() })).min(1),
     /** /cv/ only. */
     cvOnly: z.object({
-      availability: z.string().min(1),
-      referencesNote: z.string().min(1),
-      summaryTitle: z.string().min(1),
-      summaryKicker: z.string().min(1),
-      summaryLead: z.string().min(1),
-      summaryBody: z.string().min(1),
-      metrics: z
-        .array(z.object({ title: z.string(), description: z.string() }))
-        .length(3),
-      interests: z
-        .array(z.object({ title: z.string(), description: z.string() }))
-        .min(1),
+      summary: z.string().min(1),
     }),
   }),
 })
@@ -91,6 +80,11 @@ const experience = defineCollection({
     summary: z.string().min(1),
     /** Granular detail: consumed by /cv/, not by the V1. */
     bullets: z.array(z.string().min(1)).min(1),
+    /** A role appears in the focused developer CV only when curated here. */
+    cv: z.object({
+      bullets: z.array(z.string().min(1)).min(1).max(3),
+      project: z.string().optional(),
+    }).optional(),
     tech: z.array(z.string()).default([]),
     practices: z.array(z.string()).default([]),
     domains: z.array(z.string()).default([]),
@@ -124,6 +118,7 @@ const projects = defineCollection({
       featured: z.boolean().default(false),
       /** Shows up on /cv/ as a project of its own, never as experience. */
       inCv: z.boolean().default(false),
+      cvSummary: z.string().min(1).optional(),
       tech: z.array(z.string()).default([]),
       domains: z.array(z.string()).default([]),
       link: z.string().url().optional(),

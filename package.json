@@ -7,6 +7,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "cv:pdf": "node scripts/generate-cv.mjs",
     "verify": "node scripts/verify-dist.mjs && node scripts/verify-interaction.mjs && node scripts/verify-source.mjs && node --experimental-strip-types scripts/verify-physics.mjs && node --experimental-strip-types scripts/verify-moments.mjs",
     "check": "astro check",
     "test": "npm run check && npm run build && npm run verify"

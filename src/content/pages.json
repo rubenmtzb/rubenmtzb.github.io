@@ -30,10 +30,12 @@
     "key": "cv",
     "lang": "en",
     "path": "/cv/",
-    "title": "Rubén Martínez Bernabe — CV",
-    "description": "Professional CV of Rubén Martínez Bernabe, Software Engineer in Barcelona specialising in Java, Spring Boot, React, REST APIs and Liferay.",
-    "ogImage": "/avatar.png",
-    "ogImageAlt": "Rubén Martínez Bernabe",
+    "title": "Rubén Martínez Bernabe — Java & React Developer CV",
+    "description": "One-page developer CV: Java, Spring Boot, React and TypeScript. Experience at Egarsat, research software at URV and selected projects. Barcelona.",
+    "ogImage": "/og/cv-en.png",
+    "ogImageAlt": "Rubén Martínez Bernabe — Java, Spring Boot and React developer CV",
+    "ogImageWidth": 1200,
+    "ogImageHeight": 630,
     "indexable": true
   },
   {
@@ -41,10 +43,12 @@
     "key": "cv",
     "lang": "es",
     "path": "/es/cv/",
-    "title": "Rubén Martínez Bernabe — CV",
-    "description": "CV profesional de Rubén Martínez Bernabe, Ingeniero de Software en Barcelona especializado en Java, Spring Boot, React, APIs REST y Liferay.",
-    "ogImage": "/avatar.png",
-    "ogImageAlt": "Rubén Martínez Bernabe",
+    "title": "CV de Rubén Martínez Bernabe — Desarrollador Java y React",
+    "description": "CV de desarrollador en una página: Java, Spring Boot, React y TypeScript. Experiencia en Egarsat, software de investigación en la URV y proyectos propios.",
+    "ogImage": "/og/cv-es.png",
+    "ogImageAlt": "Rubén Martínez Bernabe — CV de desarrollador Java, Spring Boot y React",
+    "ogImageWidth": 1200,
+    "ogImageHeight": 630,
     "indexable": true
   },
   {

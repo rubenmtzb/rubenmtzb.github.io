@@ -2,6 +2,7 @@ import { mkdir, readFile } from 'node:fs/promises'
 import sharp from 'sharp'
 
 const pages = JSON.parse(await readFile('src/content/pages.json', 'utf8'))
+const profiles = JSON.parse(await readFile('src/content/profile.json', 'utf8'))
 const cards = {
   home: {
     title: ['Rubén Martínez', 'Bernabe'],
@@ -36,10 +37,22 @@ const cards = {
     flow: ['CSV', 'API', 'UI'],
   },
 }
+cards.cv = {
+  title: cards.home.title,
+  en: [profiles.find(profile => profile.lang === 'en').jobTitle + ' · Barcelona', 'Java · Spring Boot · React · TypeScript'],
+  es: [profiles.find(profile => profile.lang === 'es').jobTitle + ' · Barcelona', 'Java · Spring Boot · React · TypeScript'],
+  accent: '#90d4cc',
+  tag: { en: 'DEVELOPER CV // ONE PAGE', es: 'CV DE DESARROLLADOR // UNA PÁGINA' },
+  flow: ['JAVA', 'API', 'WEB'],
+}
+const selected = new Set(process.argv.slice(2))
+for (const key of selected) {
+  if (!cards[key]) throw new Error(`Unknown social card: ${key}`)
+}
 const escape = (text) => text.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
 await mkdir('public/og', { recursive: true })
 
-for (const page of pages.filter((page) => cards[page.key])) {
+for (const page of pages.filter((page) => cards[page.key] && (!selected.size || selected.has(page.key)))) {
   const card = cards[page.key]
   const lines = card[page.lang]
   const nodes = card.flow.map((label, index) => {
