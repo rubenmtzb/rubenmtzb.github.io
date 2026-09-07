@@ -73,7 +73,7 @@
     "inCv": true,
     "tech": ["React", "TypeScript", "Python", "FastAPI", "PostgreSQL"],
     "domains": [],
-    "image": "./../assets/projects/finance-core.svg",
+    "image": "./../assets/projects/finance-core-es.svg",
     "imageAlt": "Finance Core: espacio financiero ilustrativo en modo oscuro con módulos de cuentas, gastos y cripto. Código privado y demostración sintética.",
     "deep": null,
     "caseStudy": {
@@ -210,8 +210,8 @@
       { "label": "Frontend", "href": "https://github.com/rubenmtzb/yt-transcriber-web" },
       { "label": "API", "href": "https://github.com/rubenmtzb/yt-transcriber-api" }
     ],
-    "image": "./../assets/projects/youtube-transcriber.png",
-    "imageAlt": "Ilustración de YouTube Transcriber: transcripción bilingüe con marcas de tiempo y pipeline de subtítulos mediante yt-dlp, fallback con whisper.cpp y traducción con DeepL.",
+    "image": "./../assets/projects/youtube-transcriber-es.png",
+    "imageAlt": "Ilustración de YouTube Transcriber: transcripción bilingüe con marcas de tiempo y proceso de extracción de subtítulos mediante yt-dlp, con whisper.cpp como alternativa y traducción con DeepL.",
     "deep": null,
     "caseStudy": {
       "problem": "Revisar un vídeo no debería exigir reproducirlo una y otra vez para encontrar cada frase útil ni copiar subtítulos a mano en un traductor. Transcriber reúne una URL pública de YouTube, texto con marcas de tiempo y una traducción opcional en un mismo flujo de lectura, sin exigir una cuenta.",
@@ -249,7 +249,7 @@
       "demo": {
         "src": "/media/transcriber-demo.mp4",
         "poster": "/media/transcriber-demo-poster.jpg",
-        "caption": "Grabación editada de la aplicación real, sin respuestas de API simuladas. Un cursor editorial siempre visible guía el montaje aprobado: su movimiento se reconstruye entre controles verificados, no procede de telemetría del ratón. Los sonidos de teclado siguen la entrada visible de texto, junto a los clics y la música original. Solo se reproduce al pulsar play. No es un benchmark ni una garantía de latencia. El rótulo original «Sin audio» es anterior a esta banda sonora; las tres versiones anteriores aprobadas siguen disponibles debajo.",
+        "caption": "Grabación editada de la aplicación real, sin respuestas de API simuladas. Un cursor editorial siempre visible guía el montaje aprobado: su movimiento se reconstruye entre controles verificados, no procede de telemetría del ratón. Los sonidos de teclado siguen la entrada visible de texto, junto a los clics y la música original. Solo se reproduce al pulsar el botón de reproducción. No es un benchmark ni una garantía de latencia. El rótulo original «Sin audio» es anterior a esta banda sonora; las tres versiones anteriores aprobadas siguen disponibles debajo.",
         "steps": [
           "Introduce una URL pública de YouTube y elige el idioma de destino.",
           "Sigue las etapas del proceso mientras se prepara la transcripción.",
@@ -401,7 +401,7 @@
     "inCv": false,
     "tech": ["Astro", "Tailwind CSS", "TypeScript"],
     "domains": [],
-    "link": "https://rubenitx.me",
+    "link": "https://rubenitx.me/es/",
     "github": "https://github.com/rubenmtzb/rubenmtzb.github.io",
     "image": "./../assets/projects/portfolio.png",
     "imageAlt": "Portada del proyecto Portafolio Personal, con una ventana de terminal ejecutando los comandos de compilación y despliegue en producción.",

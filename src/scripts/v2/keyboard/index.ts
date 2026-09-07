@@ -4,7 +4,7 @@
  * pressed, which mode we are in and which tab is in charge; the mascot, the
  * sound and the writing pad are pieces of their own with their own modules.
  */
-import { say } from '../dom'
+import { isSpanish, say } from '../dom'
 import { createPixelKillua } from './killua'
 import { createSwitchAudio } from './switch-audio'
 import { createFreeSandbox } from './sandbox'
@@ -26,7 +26,7 @@ export function initKeyboard() {
 
   const killuaCanvas = document.getElementById('kb-pixel-killua') as HTMLCanvasElement | null
   const killua = createPixelKillua(killuaCanvas)
-  const audio = createSwitchAudio()
+  const audio = createSwitchAudio(isSpanish() ? 'es' : 'en')
 
   const setKilluaSpeech = (text: string) => {
     if (killuaSpeech) killuaSpeech.textContent = `"${text}"`

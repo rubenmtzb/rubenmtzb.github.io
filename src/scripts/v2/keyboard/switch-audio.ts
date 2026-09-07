@@ -1,9 +1,11 @@
 /* Synthesised switch sound. */
+import { keyboardSwitchLabels } from '../../../i18n/keyboard-switches'
+import type { Lang } from '../../../i18n/ui'
 
 const SWITCH_PROFILES = {
-  linear: { label: 'Linear (Thock)', freqStart: 580, freqEnd: 110, duration: 0.042, type: 'triangle' as OscillatorType, gain: 0.16 },
-  clicky: { label: 'Clicky (Crisp)', freqStart: 1800, freqEnd: 160, duration: 0.032, type: 'square' as OscillatorType, gain: 0.12 },
-  tactile: { label: 'Tactile (Pop)', freqStart: 720, freqEnd: 140, duration: 0.048, type: 'sine' as OscillatorType, gain: 0.2 },
+  linear: { freqStart: 580, freqEnd: 110, duration: 0.042, type: 'triangle' as OscillatorType, gain: 0.16 },
+  clicky: { freqStart: 1800, freqEnd: 160, duration: 0.032, type: 'square' as OscillatorType, gain: 0.12 },
+  tactile: { freqStart: 720, freqEnd: 140, duration: 0.048, type: 'sine' as OscillatorType, gain: 0.2 },
 } as const
 
 type SwitchProfile = keyof typeof SWITCH_PROFILES
@@ -14,19 +16,20 @@ const SWITCH_ORDER = Object.keys(SWITCH_PROFILES) as SwitchProfile[]
  * The AudioContext is created on the first real keystroke, which is when the
  * user gesture browsers demand actually exists.
  */
-export function createSwitchAudio() {
+export function createSwitchAudio(lang: Lang) {
+  const labels = keyboardSwitchLabels(lang)
   let ctx: AudioContext | null = null
   let profile: SwitchProfile = 'linear'
   let enabled = true
 
   return {
-    get label() { return SWITCH_PROFILES[profile].label },
+    get label() { return labels[profile] },
     get enabled() { return enabled },
     toggle() { enabled = !enabled },
     /** Cycles through the three profiles and returns the new one's label. */
     nextProfile() {
       profile = SWITCH_ORDER[(SWITCH_ORDER.indexOf(profile) + 1) % SWITCH_ORDER.length]
-      return SWITCH_PROFILES[profile].label
+      return labels[profile]
     },
     play() {
       if (!enabled) return

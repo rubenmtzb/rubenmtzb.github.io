@@ -638,13 +638,13 @@ export function startGameMode(onExit: () => void) {
 
       <div class="gm-mobile-controls sm:hidden">
         <div class="flex gap-2">
-          <button type="button" id="gm-btn-left" class="gm-touch-btn" aria-label="Left">◀</button>
-          <button type="button" id="gm-btn-right" class="gm-touch-btn" aria-label="Right">▶</button>
-          <button type="button" id="gm-btn-down" class="gm-touch-btn" aria-label="Down">▼</button>
+          <button type="button" id="gm-btn-left" class="gm-touch-btn" aria-label="${isSpanish ? 'Izquierda' : 'Left'}">◀</button>
+          <button type="button" id="gm-btn-right" class="gm-touch-btn" aria-label="${isSpanish ? 'Derecha' : 'Right'}">▶</button>
+          <button type="button" id="gm-btn-down" class="gm-touch-btn" aria-label="${isSpanish ? 'Abajo' : 'Down'}">▼</button>
         </div>
         <div class="flex gap-2">
           <button type="button" id="gm-btn-godspeed" class="gm-touch-btn !bg-[color:var(--blue-bright)]/25 !border-[color:var(--cyan)] text-[color:var(--cyan)]" aria-label="${isSpanish ? 'Aura Godspeed' : 'Godspeed aura'}">⚡</button>
-          <button type="button" id="gm-btn-jump" class="gm-touch-btn gm-touch-jump" aria-label="Jump">▲ ${isSpanish ? 'Saltar' : 'Jump'}</button>
+          <button type="button" id="gm-btn-jump" class="gm-touch-btn gm-touch-jump" aria-label="${isSpanish ? 'Saltar' : 'Jump'}">▲ ${isSpanish ? 'Saltar' : 'Jump'}</button>
         </div>
       </div>
     `
