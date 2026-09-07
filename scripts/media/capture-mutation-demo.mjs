@@ -4,7 +4,7 @@ import { pathToFileURL } from 'node:url';
 import { film, chapters } from './mutation-demo-story.mjs';
 
 const [directory, modulePath, resume] = process.argv.slice(2);
-if (!directory || !modulePath) throw Error('Usage: node scripts/media/capture-mutation-demo.mjs PRIVATE_WORKDIR PLAYWRIGHT_MODULE');
+if (!directory || !modulePath) throw Error('Usage: node scripts/media/capture-mutation-demo.mjs PRIVATE_WORKDIR PLAYWRIGHT_MODULE [--resume|--retake-home]');
 const work = resolve(directory);
 if (/(^|\/)(public|tmp)(\/|$)/.test(work)) throw Error('Private non-temporary work directory required');
 const inspection = JSON.parse(await readFile(join(work, 'inspection.json'), 'utf8'));
@@ -13,10 +13,16 @@ await mkdir(join(work, 'capture'), { recursive: true, mode: 0o700 });
 const { chromium } = await import(pathToFileURL(resolve(modulePath)));
 const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({ viewport: film.source, colorScheme: 'light' });
-const manifest = resume === '--resume'
+const manifest = ['--resume', '--retake-home'].includes(resume)
   ? JSON.parse(await readFile(join(work, 'capture-manifest.json'), 'utf8'))
-  : { schema: 1, capturedAt: new Date().toISOString(), clips: [], requests: [], errors: [], checks: [] };
+  : { schema: 1, capturedAt: new Date().toISOString(), clips: [], requests: [], errors: [], checks: [],
+    motion: { outputFps: film.fps, pointerTargetHz: 60, method: 'Wall-clock paced minimum-jerk real pointer moves and requestAnimationFrame smooth scrolling; Chromium paint timestamps supplemented by actual clocked screenshots when the compositor stops delivering paints. No optical-flow invention.' } };
 const runId = Date.now();
+if (resume === '--retake-home') {
+  await writeFile(join(work, `capture-before-home-retake-${runId}.json`), JSON.stringify(manifest, null, 2));
+  manifest.clips = manifest.clips.filter(clip => clip.id !== 'home');
+  manifest.homeRetakenAt = new Date().toISOString();
+}
 let active = null;
 await context.exposeBinding('__mutationEvent', (_source, event) => {
   if (!active) return;
@@ -35,7 +41,7 @@ await context.addInitScript(() => {
     pointer = document.createElement('div');
     pointer.setAttribute('aria-hidden', 'true');
     pointer.id = '__mutationDemoPointer';
-    pointer.style.cssText = `position:fixed;left:0;top:0;z-index:2147483647;pointer-events:none;width:28px;height:36px;transform:translate(${xy[0]}px,${xy[1]}px);filter:drop-shadow(0 2px 2px #0008)`;
+    pointer.style.cssText = `position:fixed;left:${xy[0]}px;top:${xy[1]}px;z-index:2147483647;pointer-events:none;width:28px;height:36px;filter:drop-shadow(0 2px 2px #0008)`;
     pointer.innerHTML = '<svg width="28" height="36" viewBox="0 0 28 36"><path d="M2 2L3 28l7-7 6 12 5-3-6-11h10Z" fill="white" stroke="#10212a" stroke-width="2"/></svg>';
     document.documentElement.append(pointer);
   };
@@ -45,7 +51,10 @@ await context.addInitScript(() => {
   addEventListener('pointermove', e => {
     xy = [e.clientX, e.clientY];
     sessionStorage.setItem('__mutationPointerXY', JSON.stringify(xy));
-    if (pointer) pointer.style.transform = `translate(${e.clientX}px,${e.clientY}px)`;
+    if (pointer) {
+      pointer.style.left = `${e.clientX}px`;
+      pointer.style.top = `${e.clientY}px`;
+    }
     send('pointermove', { xy });
   }, true);
   addEventListener('pointerdown', e => {
@@ -61,6 +70,7 @@ await context.addInitScript(() => {
     target: e.target.name || e.target.id || e.target.tagName }), true);
   addEventListener('input', e => send('input', { target: e.target.name || e.target.id, value: e.target.value }), true);
   addEventListener('change', e => send('change', { target: e.target.name || e.target.id, value: e.target.value }), true);
+  addEventListener('scroll', () => send('scroll', { xy: [scrollX, scrollY] }), true);
   setInterval(() => {
     const style = pointer && getComputedStyle(pointer);
     send('cursor-sample', { xy, connected: Boolean(pointer?.isConnected),
@@ -89,16 +99,25 @@ cdp.on('Page.screencastFrame', event => {
   const index = clip.frames.length;
   const file = `${clip.id}-${runId}-${String(index).padStart(5, '0')}.jpg`;
   const at = event.metadata.timestamp - clip.epochMs / 1000;
-  clip.frames.push({ file, at, sourceTimestamp: event.metadata.timestamp });
+  clip.frames.push({ file, at, sourceTimestamp: event.metadata.timestamp, capture: 'cdp-paint' });
   pending.push(writeFile(join(work, 'capture', file), Buffer.from(event.data, 'base64')));
 });
 const pause = seconds => new Promise(r => setTimeout(r, seconds * 1000));
+let pointerXY = [720, 420];
+const glide = async (x, y, seconds = 1) => {
+  const from = [...pointerXY], start = performance.now();
+  for (let n = 1; n <= Math.ceil(seconds * 60); n++) {
+    const t = Math.min(1, n / Math.ceil(seconds * 60)), p = t * t * t * (10 + t * (-15 + 6 * t));
+    await page.mouse.move(from[0] + (x - from[0]) * p, from[1] + (y - from[1]) * p);
+    await pause(Math.max(0, (start + t * seconds * 1000 - performance.now()) / 1000));
+  }
+  pointerXY = [x, y];
+};
 const move = async locator => {
-  await locator.scrollIntoViewIfNeeded();
   const b = await locator.boundingBox();
-  if (!b) throw Error('No target bounds');
-  await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2, { steps: 22 });
-  await pause(.18);
+  if (!b || b.y < 0 || b.y + b.height > film.source.height) throw Error('Target needs intentional scrolling before motion');
+  await glide(b.x + b.width / 2, b.y + b.height / 2, .85);
+  await pause(.12);
 };
 const click = async locator => { await move(locator); await page.mouse.down(); await pause(.09); await page.mouse.up(); };
 const type = async text => { for (const character of text) { await page.keyboard.type(character); await pause(.19); } };
@@ -113,9 +132,24 @@ const choose = async (name, text, expected) => {
   if (await locator.inputValue() !== expected) throw Error(`Native keyboard selection failed: ${name}`);
   await pause(.55);
 };
-const wheel = async (delta, steps = 14) => {
-  for (let n = 0; n < steps; n++) { await page.mouse.wheel(0, delta / steps); await pause(.045); }
-  await pause(.3);
+const scroll = async (y, seconds = 1.3) => {
+  await page.evaluate(async ({ y, seconds }) => {
+    const from = scrollY, to = Math.min(y, document.documentElement.scrollHeight - innerHeight);
+    await new Promise(resolve => {
+      const start = performance.now();
+      function tick(now) {
+        const t = Math.min(1, (now - start) / (seconds * 1000)), p = t * t * t * (10 + t * (-15 + 6 * t));
+        scrollTo(0, from + (to - from) * p);
+        if (t < 1) requestAnimationFrame(tick); else resolve();
+      }
+      requestAnimationFrame(tick);
+    });
+  }, { y, seconds });
+  await pause(.15);
+};
+const scrollTo = async (locator, top = 150, seconds = 1.3) => {
+  const y = await locator.evaluate((element, top) => element.getBoundingClientRect().top + scrollY - top, top);
+  await scroll(y, seconds);
 };
 async function record(id, action) {
   if (manifest.clips.some(c => c.id === id)) return;
@@ -125,14 +159,35 @@ async function record(id, action) {
       const rect = e.getBoundingClientRect(); return [rect.x, rect.y];
     }) };
   const clip = active;
-  await cdp.send('Page.startScreencast', { format: 'jpeg', quality: 94, maxWidth: film.source.width, maxHeight: film.source.height, everyNthFrame: 1 });
+  await cdp.send('Page.startScreencast', { format: 'jpeg', quality: 92, maxWidth: film.source.width, maxHeight: film.source.height, everyNthFrame: 1 });
+  /** @type {{ pending: Promise<void> | null, error: unknown }} */
+  const screenshot = { pending: null, error: null };
+  const heartbeat = setInterval(() => {
+    if (screenshot.pending || Date.now() / 1000 - (clip.frames.at(-1)?.sourceTimestamp || 0) < 1 / film.fps) return;
+    screenshot.pending = (async () => {
+      const before = Date.now();
+      const image = await cdp.send('Page.captureScreenshot', { format: 'jpeg', quality: 92, fromSurface: true });
+      const after = Date.now(), sourceTimestamp = (before + after) / 2000;
+      const file = `${clip.id}-${runId}-${String(clip.frames.length).padStart(5, '0')}.jpg`;
+      clip.frames.push({ file, at: sourceTimestamp - clip.epochMs / 1000, sourceTimestamp,
+        capture: 'clocked-real-screenshot', captureIntervalMs: [before, after] });
+      pending.push(writeFile(join(work, 'capture', file), Buffer.from(image.data, 'base64')));
+    })().catch(error => { screenshot.error = error; }).finally(() => { screenshot.pending = null; });
+  }, 1000 / film.fps);
+  try {
   await pause(.35);
   await action();
   const remaining = chapter.seconds - (Date.now() - clip.epochMs) / 1000;
   if (remaining < .2) throw Error(`Scene overrun ${id}: ${remaining}`);
   await pause(remaining);
+  } finally {
+    clearInterval(heartbeat);
+    if (screenshot.pending) await screenshot.pending;
+  }
   await cdp.send('Page.stopScreencast');
+  if (screenshot.error) throw screenshot.error;
   active = null;
+  clip.frames.sort((a, b) => a.sourceTimestamp - b.sourceTimestamp);
   manifest.clips.push(clip);
   await Promise.all(pending.splice(0));
   await page.screenshot({ path: join(work, `capture-${id}-end.png`) });
@@ -140,17 +195,22 @@ async function record(id, action) {
 }
 try {
   await page.goto('http://sarscov2-mutation-portal.urv.cat/', { waitUntil: 'networkidle', timeout: 30000 });
-  await page.mouse.move(1250, 650);
+  await page.mouse.move(...pointerXY);
   await record('home', async () => {
-    await pause(1.4);
+    await pause(.6);
     await click(page.getByRole('link', { name: 'Info', exact: true }));
-    await pause(1.5);
-    await wheel(550);
+    await pause(.5);
+    const date = page.getByRole('cell', { name: '26/02/2024', exact: true });
+    await scrollTo(date, 360, 1.8);
+    await move(date);
+    manifest.checks.push({ displayedSnapshot: await date.innerText() });
   });
+  if (resume !== '--retake-home') {
   await page.getByRole('link', { name: 'Genes', exact: true }).click();
   await page.locator('input[type=search]').waitFor();
+  await page.mouse.move(720, 420); pointerXY = [720, 420];
   await record('genes', async () => {
-    await pause(1.1);
+    await pause(.6);
     await click(page.locator('input[type=search]'));
     await type('spike');
     await pause(2.1);
@@ -161,6 +221,7 @@ try {
   });
   await page.getByRole('link', { name: 'Mutations', exact: true }).click();
   await page.locator('select[name=xgene]').waitFor();
+  await page.mouse.move(720, 420); pointerXY = [720, 420];
   if (manifest.clips.some(c => c.id === 'filters')) {
     await page.locator('select[name=xgene]').selectOption({ label: 'spike' });
     await page.locator('select[name=xcountries]').selectOption({ label: 'Spain' });
@@ -187,36 +248,37 @@ try {
     if (rows !== 4) throw Error(`Unexpected live result row count: ${rows}`);
     manifest.checks.push({ query: { gene: 'spike', country: 'Spain', percentageGreaterThan: 50 }, rows });
   });
-  await page.locator('#tabla').scrollIntoViewIfNeeded();
-  await wheel(150, 5);
+  await scrollTo(page.locator('#tabla'), 200);
+  await page.mouse.move(720, 420); pointerXY = [720, 420];
   await record('results', async () => {
-    await pause(.8);
+    await pause(2);
     await click(page.locator('input[type=search]'));
     await type('D614G');
-    await pause(4);
+    await pause(3.8);
     manifest.checks.push({ tableSearch: 'D614G', rows: await page.locator('#tabla tbody tr').count() });
     await page.keyboard.press('Meta+A');
     await page.keyboard.press('Backspace');
     await pause(2);
   });
   await page.getByRole('button', { name: 'Scatter Plot', exact: true }).scrollIntoViewIfNeeded();
+  await page.mouse.move(720, 420); pointerXY = [720, 420];
   await record('scatter', async () => {
     await click(page.getByRole('button', { name: 'Scatter Plot', exact: true }));
     await page.locator('.highcharts-markers .highcharts-point').first().waitFor();
-    await page.locator('figure').scrollIntoViewIfNeeded();
-    await pause(.7);
+    await scrollTo(page.locator('figure'), 170, 1.4);
+    await pause(.3);
     const points = page.locator('.highcharts-markers .highcharts-point');
     await move(points.nth(2));
-    await pause(2.5);
+    await pause(1.6);
     manifest.checks.push({ tooltip: await page.locator('.highcharts-tooltip').textContent() });
     const plot = await page.locator('.highcharts-plot-background').boundingBox();
     const x = plot.x + plot.width * .24;
     const y = plot.y + plot.height * .35;
-    await page.mouse.move(x, y, { steps: 18 });
+    await glide(x, y, .8);
     await page.mouse.down();
-    await page.mouse.move(plot.x + plot.width * .9, plot.y + plot.height * .93, { steps: 42 });
+    await glide(plot.x + plot.width * .9, plot.y + plot.height * .93, 1.6);
     await page.mouse.up();
-    await pause(2.3);
+    await pause(1.4);
     const reset = page.locator('.highcharts-reset-zoom');
     await reset.waitFor({ timeout: 2000 });
     manifest.checks.push({ zoom: 'Reset zoom control appeared following actual drag' });
@@ -224,7 +286,8 @@ try {
     await pause(.8);
     await move(points.nth(2));
   });
-  manifest.complete = true;
+  }
+  manifest.complete = manifest.clips.length === 5;
 } finally {
   if (active) manifest.failedAttempt = { ...active, note: 'Incomplete take; never used by the renderer.' };
   await Promise.all(pending);

@@ -4,7 +4,7 @@ import { dirname, resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
 import sharp from 'sharp';
-import { chapters as storyChapters, film } from './mutation-demo-story.mjs';
+import { chapters as storyChapters, film, framing } from './mutation-demo-story.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const work = resolve(process.argv[2] || '');
@@ -12,6 +12,10 @@ if (!process.argv[2] || /(^|\/)(public|tmp)(\/|$)/.test(work))
   throw Error('Usage: node scripts/media/verify-mutation-cursor.mjs PRIVATE_WORKDIR');
 const manifest = JSON.parse(await readFile(join(work, 'capture-manifest.json'), 'utf8'));
 const metadata = JSON.parse(await readFile(join(root, 'public/media/mutation-portal-demo.json'), 'utf8'));
+const privateBytes = await readFile(join(work, 'mutation-provenance-private.json'));
+if (createHash('sha256').update(privateBytes).digest('hex') !== metadata.privateEvidence.provenanceSha256)
+  throw Error('Private capture evidence differs from the published hash');
+const privateMetadata = JSON.parse(privateBytes);
 const template = await sharp(Buffer.from('<svg width="28" height="36" viewBox="0 0 28 36"><path d="M2 2L3 28l7-7 6 12 5-3-6-11h10Z" fill="white" stroke="#10212a" stroke-width="2"/></svg>')).raw().toBuffer();
 const mask = [];
 for (let y = 0; y < 36; y++) for (let x = 0; x < 28; x++) {
@@ -52,30 +56,31 @@ for (const clip of manifest.clips) {
     failures, matchesSha256: createHash('sha256').update(JSON.stringify(matches)).digest('hex') });
 }
 const uiChapters = storyChapters().filter(s => !['intro', 'outro'].includes(s.id));
-const firstUiFrame = uiChapters[0].start * film.fps;
 const totalUiFrames = uiChapters.reduce((n, s) => n + s.seconds * film.fps, 0);
 const frameAt = time => Math.round(time * film.fps);
-const typed = metadata.events.find(e => e.kind === 'input' && e.value === 'D614G');
-const option = metadata.events.find(e => e.kind === 'change' && e.value === 'Saint Lucia');
+const typed = privateMetadata.events.find(e => e.kind === 'input' && e.value === 'D614G');
+const option = privateMetadata.events.find(e => e.kind === 'change' && e.target === 'xcountries');
+const geneTyped = privateMetadata.events.find(e => e.kind === 'input' && e.value === 'sp');
+const scrolled = privateMetadata.events.find(e => e.kind === 'scroll' && e.chapter === 'home');
 const pairs = [
   { kind: 'waiting', frames: [frameAt(typed.at + 1), frameAt(typed.at + 2)] },
-  { kind: 'typing', frames: [frameAt(16.45), frameAt(16.85)] },
-  { kind: 'scrolling', frames: [frameAt(9.2), frameAt(9.6)] },
-  { kind: 'between-actions', frames: [frameAt(20.1), frameAt(20.5)] },
+  { kind: 'typing', frames: [frameAt(geneTyped.at), frameAt(geneTyped.at + .4)] },
+  { kind: 'scrolling', frames: [frameAt(scrolled.at + .2), frameAt(scrolled.at + .6)] },
+  { kind: 'between-actions', frames: [frameAt(22.1), frameAt(22.5)] },
   { kind: 'native-option-selection', frames: [frameAt(option.at + .06), frameAt(option.at + .3)] },
   ...uiChapters.slice(1).map(s => ({ kind: `chapter-cut-${s.id}`, frames: [s.start * film.fps - 1, s.start * film.fps] })),
 ];
 const wantedFrames = new Set(pairs.flatMap(p => p.frames));
 const pairImages = new Map(), coverage = [];
-const width = film.source.width, height = film.source.height, frameBytes = width * height * 3;
 const closest = (x, y, white) => mask.filter(p => (p.rgb[0] > 245) === white)
   .sort((a, b) => (a.x - x) ** 2 + (a.y - y) ** 2 - (b.x - x) ** 2 - (b.y - y) ** 2)[0];
-const sparse = [
+const anchors = [
   closest(2, 12, false), closest(7, 12, true), closest(3, 25, false),
   closest(17, 28, true), closest(20, 29, false), closest(7, 19, true),
-].map(p => ({ offset: (p.y * width + p.x) * 3, white: p.rgb[0] > 245 }));
-const offsets = mask.map(p => ({ offset: (p.y * width + p.x) * 3, rgb: p.rgb }));
-function findEveryArrow(data) {
+];
+function findEveryArrow(data, width, height) {
+  const sparse = anchors.map(p => ({ offset: (p.y * width + p.x) * 3, white: p.rgb[0] > 245 }));
+  const offsets = mask.map(p => ({ offset: (p.y * width + p.x) * 3, rgb: p.rgb }));
   const clusters = [];
   for (let y = 0; y <= height - 36; y++) for (let x = 0; x <= width - 28; x++) {
     const base = (y * width + x) * 3;
@@ -96,8 +101,10 @@ function findEveryArrow(data) {
   }
   return clusters;
 }
-const decoder = spawn('ffmpeg', ['-v', 'error', '-xerror', '-nostdin', '-ss', String(uiChapters[0].start),
-  '-i', join(root, 'public/media/mutation-portal-demo.mp4'), '-t', String(totalUiFrames / film.fps),
+for (const chapter of uiChapters) {
+  const camera = framing[chapter.id], { width, height } = camera, frameBytes = width * height * 3;
+  const decoder = spawn('ffmpeg', ['-v', 'error', '-xerror', '-nostdin', '-ss', String(chapter.start),
+  '-i', join(root, 'public/media/mutation-portal-demo.mp4'), '-t', String(chapter.seconds),
   '-an', '-sn', '-vf', `crop=${film.screen.width}:${film.screen.height}:${film.screen.x}:${film.screen.y},scale=${width}:${height}`,
   '-pix_fmt', 'rgb24', '-f', 'rawvideo', '-'], { stdio: ['ignore', 'pipe', 'pipe'] });
 let stderr = '';
@@ -108,17 +115,23 @@ for await (const chunk of decoder.stdout) {
   buffer = buffer.length ? Buffer.concat([buffer, chunk]) : chunk;
   while (buffer.length >= frameBytes) {
     const data = buffer.subarray(0, frameBytes);
-    const frame = firstUiFrame + index;
-    const arrows = findEveryArrow(data);
-    coverage.push({ frame, cursors: arrows.length, coordinates: arrows.map(p => [p.x, p.y]),
+    const frame = chapter.start * film.fps + index;
+    const arrows = findEveryArrow(data, width, height);
+    coverage.push({ frame, chapter: chapter.id, cursors: arrows.length,
+      coordinates: arrows.map(p => [p.x + camera.x, p.y + camera.y]),
       inBounds: arrows.every(p => p.x >= 0 && p.y >= 0 && p.x + 28 <= width && p.y + 36 <= height),
       matchError: arrows.length ? Math.min(...arrows.map(p => p.error)) : null });
-    if (wantedFrames.has(frame)) pairImages.set(frame, Buffer.from(data));
+    if (wantedFrames.has(frame)) pairImages.set(frame, await sharp(data, { raw: { width, height, channels: 3 } })
+      .extend({ left: camera.x, top: camera.y, right: film.source.width - width - camera.x,
+        bottom: film.source.height - height - camera.y, background: '#07111e' }).raw().toBuffer());
     buffer = buffer.subarray(frameBytes);
     index++;
   }
 }
 if (await exit !== 0 || buffer.length) throw Error(`Complete UI-frame decode failed: ${stderr}`);
+if (index !== chapter.seconds * film.fps) throw Error(`Incomplete chapter decode: ${chapter.id}`);
+}
+const { width, height } = film.source;
 for (const pair of pairs) {
   pair.coverage = pair.frames.map(frame => coverage.find(c => c.frame === frame));
   if (pair.frames.some(frame => !pairImages.has(frame))) throw Error(`Missing frame pair: ${pair.kind}`);
@@ -127,6 +140,27 @@ for (const pair of pairs) {
       raw: { width, height, channels: 3 }, left: i * width, top: 0 })))
     .png().toFile(join(work, `cursor-pair-${pair.kind}.png`));
 }
+const distances = coverage.slice(1).flatMap((frame, index) => {
+  const previous = coverage[index];
+  return frame.chapter === previous.chapter && frame.cursors === 1 && previous.cursors === 1
+    ? [Math.hypot(frame.coordinates[0][0] - previous.coordinates[0][0], frame.coordinates[0][1] - previous.coordinates[0][1])]
+    : [];
+}).filter(distance => distance > 1).sort((a, b) => a - b);
+const stalledWindows = [];
+for (let index = 6; index < coverage.length; index++) {
+  const window = coverage.slice(index - 6, index + 1), first = window[0], last = window.at(-1);
+  if (first.chapter !== last.chapter || window.some(frame => frame.cursors !== 1)) continue;
+  const scene = uiChapters.find(chapter => chapter.id === first.chapter);
+  const moves = manifest.clips.find(clip => clip.id === first.chapter).events.filter(event =>
+    event.kind === 'pointermove' && event.at >= first.frame / film.fps - scene.start
+    && event.at <= last.frame / film.fps - scene.start);
+  if (moves.length < 3) continue;
+  const sourceDistance = Math.hypot(moves.at(-1).xy[0] - moves[0].xy[0], moves.at(-1).xy[1] - moves[0].xy[1]);
+  const encodedDistance = Math.max(...window.map(frame =>
+    Math.hypot(frame.coordinates[0][0] - first.coordinates[0][0], frame.coordinates[0][1] - first.coordinates[0][1])));
+  if (sourceDistance > 20 && encodedDistance < 3) stalledWindows.push({ chapter: first.chapter,
+    from: first.frame, to: last.frame, sourceDistance, encodedDistance });
+}
 const encoded = {
   totalUiFrames, inspectedUiFrames: coverage.length,
   cursorCoveredFrames: coverage.filter(c => c.cursors >= 1).length,
@@ -134,8 +168,12 @@ const encoded = {
   multipleCursorFrames: coverage.filter(c => c.cursors > 1).length,
   coordinatesInBoundsFrames: coverage.filter(c => c.cursors === 1 && c.inBounds).length,
   coverageLedgerSha256: createHash('sha256').update(JSON.stringify(coverage)).digest('hex'),
-  scan: 'Every decoded application-footage frame is scanned over the full native UI area for all matching arrow silhouettes, not only the expected pointer location or click frames. Nearby raster matches are one cursor, not duplicate pointers.',
-  trajectory: 'Genuine DOM pointermove trajectories inside each chapter. Explicit editorial cuts omit navigation between chapters; positions at those cuts are real source positions, not fabricated interpolation.',
+  scan: 'Every decoded application frame is reverse-scaled from its documented camera crop and scanned over the ENTIRE visible native crop for all matching arrow silhouettes, not only expected pointer/click positions. Nearby raster matches count as one cursor. Every arrow must fit wholly inside the visible crop.',
+  trajectory: 'Genuine wall-clock paced minimum-jerk DOM pointermove trajectories. Explicit editorial chapter cuts omit navigation; there is no invented pointer interpolation or UI fade.',
+  motion: { movingFrameTransitions: distances.length, medianNativePixelsPerFrame: distances[Math.floor(distances.length / 2)],
+    p95NativePixelsPerFrame: distances[Math.floor(distances.length * .95)], maxNativePixelsPerFrame: distances.at(-1),
+    unintendedCursorStallsOver200ms: stalledWindows.length,
+    method: 'Every 200ms encoded window with over 20 native pixels of real pointer movement must visibly move by at least 3 pixels. Chapter cuts are excluded.', stalledWindows },
   pairs,
 };
 await writeFile(join(work, 'mutation-cursor-all-ui-frames.json'), JSON.stringify(coverage) + '\n');
@@ -143,7 +181,7 @@ const report = { videoSha256: metadata.videoSha256, checkedAt: new Date().toISOS
   method: 'Pixel-template matching against genuine DOM pointer coordinates in every source paint, plus whole-UI arrow counting on every final encoded application frame. Static holds, typing, scrolling, option selection and chapter boundaries are included.',
   passed: chapters.every(c => !c.failures.length && c.domInvisibleSamples === 0)
     && coverage.length === totalUiFrames && encoded.missingFrames === 0 && encoded.multipleCursorFrames === 0
-    && encoded.coordinatesInBoundsFrames === totalUiFrames,
+    && encoded.coordinatesInBoundsFrames === totalUiFrames && stalledWindows.length === 0,
   chapters, encoded };
 await writeFile(join(work, 'mutation-cursor-audit.json'), JSON.stringify(report, null, 2) + '\n');
 console.log(JSON.stringify({ passed: report.passed, encoded: { ...encoded, pairs: pairs.length } }));
