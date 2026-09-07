@@ -10,7 +10,7 @@
     "region": "Catalonia",
     "country": "ES",
     "email": "rmartbernabe@gmail.com",
-    "bioShort": "Full-Stack Developer with solid experience in the Java ecosystem, turning complex problems into efficient, scalable and robust software.",
+    "bioShort": "I build Java / Spring Boot APIs and React web tools that connect services and turn manual workflows into usable software.",
     "bioLong": "Full-Stack Developer with solid experience in the Java ecosystem. I focus on transforming complex problems into efficient, scalable, and robust solutions for large-scale projects. I build backend services with Spring Boot and interactive frontends with React, with a track record in REST API design, batch processing, and Liferay portal development. My goal is to deliver value through clean code and high performance.",
     "socials": [
       {
@@ -22,7 +22,7 @@
         "href": "https://github.com/rubenmtzb"
       }
     ],
-    "focus": "Solid architectures and products with real impact.",
+    "focus": "APIs, service integrations and web tools for everyday workflows.",
     "mindset": "Systems thinking, constant iteration, and obsession with detail.",
     "terminalCard": {
       "role": "Software Engineer",
@@ -34,8 +34,8 @@
         "AI/ML"
       ]
     },
-    "contactHeadline": "Have an interesting project?",
-    "contactSubheadline": "I'm open to conversations about ambitious backend, full-stack, or research-oriented projects.",
+    "contactHeadline": "A manual workflow or disconnected systems?",
+    "contactSubheadline": "Tell me what your team does today and where it gets stuck. I can help define and build the API, integration or web interface you need.",
     "languages": [
       {
         "name": "Spanish",
@@ -86,7 +86,7 @@
         }
       ]
     },
-    "headline": "Software engineer building scalable systems — Java, Spring Boot and React, from the API to production."
+    "headline": "I build APIs, connect services and turn manual workflows into web tools — with Java, Spring Boot and React."
   },
   {
     "id": "es:ruben",
@@ -99,7 +99,7 @@
     "region": "Cataluña",
     "country": "ES",
     "email": "rmartbernabe@gmail.com",
-    "bioShort": "Desarrollador de software integral con sólida experiencia en el ecosistema Java, transformando problemas complejos en software eficiente, escalable y robusto.",
+    "bioShort": "Desarrollo APIs con Java / Spring Boot y herramientas web con React para conectar servicios y convertir tareas manuales en software útil.",
     "bioLong": "Desarrollador de software integral con sólida experiencia en el ecosistema Java. Me enfoco en transformar problemas complejos en soluciones eficientes, escalables y robustas para proyectos de gran envergadura. Construyo servicios backend con Spring Boot e interfaces interactivas con React, con historial en diseño de APIs REST, procesamiento por lotes y desarrollo sobre portales Liferay. Mi objetivo es aportar valor mediante código limpio y alto rendimiento.",
     "socials": [
       {
@@ -111,7 +111,7 @@
         "href": "https://github.com/rubenmtzb"
       }
     ],
-    "focus": "Arquitecturas sólidas y producto con impacto real.",
+    "focus": "APIs, integración de servicios y herramientas web para el trabajo diario.",
     "mindset": "Pensamiento sistémico, iteración constante y obsesión por el detalle.",
     "terminalCard": {
       "role": "Ingeniero de Software",
@@ -123,8 +123,8 @@
         "AI/ML"
       ]
     },
-    "contactHeadline": "¿Tienes un proyecto interesante?",
-    "contactSubheadline": "Estoy abierto a conversaciones sobre proyectos ambiciosos de backend, desarrollo integral o investigación.",
+    "contactHeadline": "¿Tareas manuales o sistemas que no se entienden?",
+    "contactSubheadline": "Cuéntame cómo trabaja tu equipo y dónde se atasca. Puedo ayudarte a definir y construir la API, integración o interfaz web que necesitas.",
     "languages": [
       {
         "name": "Español",
@@ -175,6 +175,6 @@
         }
       ]
     },
-    "headline": "Ingeniero de software construyendo sistemas escalables — Java, Spring Boot y React, de la API a producción."
+    "headline": "Desarrollo APIs, conecto servicios y convierto tareas manuales en herramientas web — con Java, Spring Boot y React."
   }
 ]

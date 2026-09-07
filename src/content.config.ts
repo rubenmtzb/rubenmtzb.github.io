@@ -97,6 +97,18 @@ const experience = defineCollection({
   }),
 })
 
+const projectDemo = z.object({
+  src: z.string().regex(/^\/media\/[\w-]+\.mp4$/),
+  poster: z.string().regex(/^\/media\/[\w-]+\.jpg$/),
+  caption: z.string().min(1),
+  steps: z.array(z.string().min(1)).min(1),
+  tracks: z.array(z.object({
+    lang,
+    label: z.string().min(1),
+    src: z.string().regex(/^\/media\/[\w.-]+\.vtt$/),
+  })).min(1),
+})
+
 const projects = defineCollection({
   loader: file('src/content/projects.json'),
   schema: ({ image }) =>
@@ -115,11 +127,25 @@ const projects = defineCollection({
       tech: z.array(z.string()).default([]),
       domains: z.array(z.string()).default([]),
       link: z.string().url().optional(),
-      github: z.string().url().optional(),
+      /** One repo, or frontend + API when the product is split. */
+      github: z
+        .union([
+          z.string().url(),
+          z.array(z.object({ label: z.string().min(1), href: z.string().url() })).min(1),
+        ])
+        .optional(),
       /** The project's real cover. Optimised via astro:assets, not a loose string. */
       image: image().optional(),
       imageAlt: z.string().optional(),
       publication: link.optional(),
+      caseStudy: z.object({
+        problem: z.string().min(1),
+        decisions: z.array(z.object({ title: z.string().min(1), body: z.string().min(1) })).min(1),
+        limits: z.array(z.string().min(1)).min(1),
+        outcome: z.string().min(1),
+        verification: z.array(z.string().min(1)).min(1),
+        demo: projectDemo.optional(),
+      }).optional(),
       /** Depth that used to live in the Research section. */
       deep: z
         .object({
@@ -131,6 +157,7 @@ const projects = defineCollection({
           focusText: z.string().min(1),
           intersectionLabel: z.string().min(1),
           intersectionText: z.string().min(1),
+          demo: projectDemo.optional(),
         })
         .nullish(),
     }),
@@ -349,6 +376,8 @@ const pages = defineCollection({
     description: z.string().min(50).max(180),
     ogImage: z.string().min(1),
     ogImageAlt: z.string().min(1),
+    ogImageWidth: z.number().int().positive().optional(),
+    ogImageHeight: z.number().int().positive().optional(),
     indexable: z.boolean().default(true),
   }),
 })

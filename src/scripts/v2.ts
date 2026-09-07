@@ -5,10 +5,8 @@
  * fully accessible, semantic and indexable without JavaScript. Removing this
  * script removes motion, not content.
  *
- * The hero boots first. Below-the-fold chunks start downloading in parallel so
- * they are warm when the visitor arrives, but their `init` only runs once the
- * section is close — wiring four keyboard models and the typing trial on first
- * paint was work nobody could see yet.
+ * The hero boots first. Below-the-fold chunks download and initialise once
+ * their section is close, before the visitor arrives.
  *
  * Images that were held as lazy are warmed as soon as their section is close:
  * paging a carousel must not wait on a download that only starts on the click.
@@ -35,7 +33,8 @@ initJobList()
 initGameMode()
 
 const modelsHref = document.querySelector('[data-bx-models-src]')?.getAttribute('data-bx-models-src')
-if (modelsHref) {
+const archive = document.getElementById('archive')
+if (modelsHref && archive) {
   const prefetch = () => {
     const link = document.createElement('link')
     link.rel = 'prefetch'
@@ -43,17 +42,15 @@ if (modelsHref) {
     link.href = modelsHref
     document.head.appendChild(link)
   }
-  const idle = window.requestIdleCallback
-  if (typeof idle === 'function') idle(prefetch, { timeout: 1800 })
-  else window.setTimeout(prefetch, 1)
+  whenNear(archive, prefetch, '1400px')
 }
 
 const work = document.getElementById('work')
 const about = document.getElementById('about')
-const archive = document.getElementById('archive')
 const contact = document.getElementById('contact')
+const projectCarousel = document.getElementById('project-carousel')
 
-if (work) whenNear(work, () => warmImages(work), '800px')
+if (projectCarousel) whenNear(projectCarousel, () => warmImages(projectCarousel), '800px')
 if (about) whenNear(about, () => warmImages(about), '800px')
 if (archive) whenNear(archive, () => warmImages(archive), '1400px')
 if (contact) whenNear(contact, () => warmImages(contact), '400px')
@@ -73,13 +70,11 @@ const boot = (el: Element | null, margin: string, task: () => Promise<void>) => 
 }
 
 boot(work, '500px', async () => {
-  const [{ initProjectCarousel }, { initProjectDeck }, { initCaseOrigin }] = await Promise.all([
+  const [{ initProjectCarousel }, { initCaseOrigin }] = await Promise.all([
     import('./v2/carousels'),
-    import('./v2/project-deck'),
     import('./v2/case-origin'),
   ])
   initProjectCarousel()
-  initProjectDeck()
   initCaseOrigin()
 })
 

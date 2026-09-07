@@ -2,7 +2,7 @@
  * The V2's three carousels — projects, education and certifications — and the
  * single primitive they all come from.
  */
-import { onSwipe, pad, trackPointer } from './dom'
+import { onSwipe, pad, trackPointer, whenNear } from './dom'
 
 /** A group of controls that mirrors the active index and navigates on press. */
 type CarouselControls = {
@@ -43,23 +43,38 @@ function createCarousel({
   const total = slides.length
   if (total === 0) return
 
-  let active = 0
+  let active = -1
+  if (ariaHideInactive) {
+    slides.forEach((slide, index) => slide.setAttribute('aria-hidden', index === 0 ? 'false' : 'true'))
+  }
 
   const show = (index: number) => {
-    active = (index + total) % total
+    const next = (index + total) % total
+    if (next === active) return
 
-    slides.forEach((slide, i) => {
-      const on = i === active
-      slide.classList.toggle('is-active', on)
-      if (ariaHideInactive) slide.setAttribute('aria-hidden', String(!on))
-    })
+    /*
+     * Only two slides and two controls can change per navigation. Iterating over
+     * every node made each click invalidate the whole carousel's style tree.
+     * Initial markup already describes index zero; the first call simply
+     * confirms it, and subsequent calls touch the previous and next nodes only.
+     */
+    if (active >= 0) {
+      slides[active]?.classList.remove('is-active')
+      if (ariaHideInactive) slides[active]?.setAttribute('aria-hidden', 'true')
+      for (const group of controls) {
+        const previous = group.els[active]
+        previous?.classList.remove('is-active')
+        if (group.state) previous?.setAttribute(group.state, 'false')
+      }
+    }
 
+    active = next
+    slides[active]?.classList.add('is-active')
+    if (ariaHideInactive) slides[active]?.setAttribute('aria-hidden', 'false')
     for (const group of controls) {
-      group.els.forEach((el, i) => {
-        const on = i === active
-        el.classList.toggle('is-active', on)
-        if (group.state) el.setAttribute(group.state, String(on))
-      })
+      const current = group.els[active]
+      current?.classList.add('is-active')
+      if (group.state) current?.setAttribute(group.state, 'true')
     }
 
     if (counter) counter.textContent = `${pad(active + 1)} / ${pad(total)}`
@@ -102,6 +117,9 @@ export function initProjectCarousel() {
 
   /* The light that follows the pointer is decorative and not part of the carousel. */
   for (const slide of slides) trackPointer(slide, '--project-pointer')
+
+  const title = carousel.querySelector('.project-slide[data-project="youtube-transcriber"] .project-cover-title')
+  if (title) whenNear(title, () => title.classList.add('has-entered'), '-72px 0px -12% 0px')
 
   createCarousel({
     slides,

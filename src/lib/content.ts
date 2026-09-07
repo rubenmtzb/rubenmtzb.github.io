@@ -27,6 +27,17 @@ export async function getProjects(lang: Lang) {
   return byOrder(byLang(await getCollection('projects'), lang)).map((e) => e.data)
 }
 
+export type Project = Awaited<ReturnType<typeof getProjects>>[number]
+export type ProjectDemo = NonNullable<NonNullable<Project['caseStudy']>['demo']>
+
+export type ProjectRepo = { label: string; href: string }
+
+/** Normalises a project's GitHub field into labelled links. */
+export function projectRepos(github: string | ProjectRepo[] | undefined): ProjectRepo[] {
+  if (!github) return []
+  return typeof github === 'string' ? [{ label: 'GitHub', href: github }] : github
+}
+
 export async function getEducation(lang: Lang) {
   return byOrder(byLang(await getCollection('education'), lang)).map((e) => e.data)
 }
@@ -167,7 +178,11 @@ export const cvPdfPath = (lang: Lang) =>
  * Projects with a case study of their own. V1 and V2 link to the same page, so
  * the map lives here: a second case study is added once, not twice.
  */
-const CASE_PATHS: Record<string, string> = { 'sars-cov-2': '/work/sars-cov-2/' }
+const CASE_PATHS: Record<string, string> = {
+  'sars-cov-2': '/work/sars-cov-2/',
+  'youtube-transcriber': '/work/youtube-transcriber/',
+  'financial-architecture': '/work/finance-core/',
+}
 
 /** The case study path in the given language, or null if the project has none. */
 export function casePath(projectKey: string, lang: Lang): string | null {

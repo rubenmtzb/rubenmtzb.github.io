@@ -10,6 +10,7 @@ import {
   getExperience,
   getProfile,
   getProjects,
+  projectRepos,
   getStackByGroup,
   cvPdfPath,
   homePath,
@@ -213,6 +214,11 @@ const groups = STACK_GROUPS.map((g) => ({
                     {p.link.replace(/^https?:\/\//, '')}
                   </a>
                 )}
+                {projectRepos(p.github).map((repo) => (
+                  <a href={repo.href} class="text-cyan-200 hover:text-cyan-100">
+                    {repo.label === 'GitHub' ? 'GitHub' : `GitHub ${repo.label}`}
+                  </a>
+                ))}
                 {p.publication && (
                   <a href={p.publication.href} class="text-purple-200 hover:text-purple-100">
                     {p.publication.label}

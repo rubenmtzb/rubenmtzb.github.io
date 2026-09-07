@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+  <defs>
+    <linearGradient id="ytdlp-gradient" x1="5" y1="3" x2="19" y2="21">
+      <stop stop-color="#ff4d67"/>
+      <stop offset="1" stop-color="#5b9bff"/>
+    </linearGradient>
+  </defs>
+  <rect x="3.2" y="4.2" width="17.6" height="12.2" rx="3.2" fill="none" stroke="url(#ytdlp-gradient)" stroke-width="1.7"/>
+  <path fill="#edf1f8" d="m10.1 8.1 5.2 2.2a.75.75 0 0 1 0 1.38l-5.2 2.2a.75.75 0 0 1-1.05-.69V8.79a.75.75 0 0 1 1.05-.69Z"/>
+  <path fill="none" stroke="#6fe3ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M12 14.4v6.1m-2.5-2.6 2.5 2.6 2.5-2.6"/>
+</svg>

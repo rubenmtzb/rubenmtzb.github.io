@@ -14,7 +14,7 @@ const other = await getAlternate(pageKey, lang)
 ---
 
 <BaseLayout lang={lang} pageKey={pageKey}>
-  <header class="fixed inset-x-0 top-0 z-50">
+  <header class="fixed inset-x-0 top-0 z-50 editorial-case-nav">
     <nav aria-label={t(lang, 'a11y.mainNav')} class="mx-auto flex w-full max-w-3xl items-center justify-between px-5 py-4 sm:px-8">
       <a href={homePath(lang)} class="text-sm font-bold tracking-[0.3em] text-[color:var(--fg)]">RMB</a>
       <a href={other.path} hreflang={other.lang} rel="alternate"

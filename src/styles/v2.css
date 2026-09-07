@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import 'tailwindcss' source('../');
 /*
  * The weight axis only. The `wdth` file also carries the width axis
  * (font-stretch), which no rule on the site uses, and weighs 88 kB against this

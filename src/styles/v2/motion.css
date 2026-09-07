@@ -6,4 +6,7 @@
   .edu-timeline-pill, .edu-slide, .cert-pill, .cert-slide, .profile-file,
   .profile-signal { transition: none !important; }
   .profile-panel { animation: none !important; }
+  .project-cover-title,
+  .project-cover-title > span,
+  html.js .project-slide.is-active { animation: none !important; transition: none !important; }
 }
