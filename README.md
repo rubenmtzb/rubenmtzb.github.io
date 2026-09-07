@@ -216,9 +216,10 @@ verified production settings. Concurrency counts requests, not OS subprocesses; 
 requests are rejected rather than queued. Video length is separate from any total
 processing-time budget.
 
-The showcase features Transcriber first, published research second and private Finance Core
-third. Finance has a public case but no code or login link. The portfolio stays in a static
-secondary grid; no second carousel repeats the same projects.
+The showcase features Transcriber first, private Finance Core second and published research
+third: an immediately usable app, a broader product walkthrough, then academic evidence.
+Finance has a public case but no code or login link. The portfolio itself is a compact
+source-code row, not a separate "More work" heading and large self-referential card.
 The historical `#project-deck` anchor is retained for inbound links and Game Mode.
 
 Finance Core's shared project key remains `financial-architecture` for existing content
@@ -256,7 +257,8 @@ confirming new holdings, querying live prices or executing trades.
 The six files named `finance-core-demo-original*` preserve the approved 84-second version
 byte-for-byte, including its MP4 (SHA-256
 `81e7eb781d7a82d478b217f3935e462285f2eefeaf3c0e30715ae0227e4fc9c0`),
-poster, metadata, validation and both caption tracks. The case links to that original.
+poster, metadata, validation and both caption tracks. Preserved originals remain available
+for restoration, but the case offers only the current recording as a download.
 
 ```sh
 node scripts/media/preserve-finance-demo.mjs --verify
@@ -279,8 +281,13 @@ request logs, bank files or source. The recorder and its input captures stay out
 The research case keeps its existing context and publication under `deep`, with a bilingual
 `deep.demo` rendered by the same `CaseDemo.astro` player as the other cases. All three players
 use native controls, no autoplay and `preload="none"`.
+Each case offers exactly one download, using the same source as its player. No silent,
+music-only or earlier-version links appear in the interface. On small screens the frame
+uses more of the available width without cropping the recording. A progressive fullscreen
+button uses the standard API or iOS video API; failure is reported inline and native controls
+remain available without JavaScript. Landscape viewing is recommended for detailed desktop UI.
 
-The 81-second Mutation film retains the real university UI. It shows the dataset context,
+The 81-second, 1080p30 Mutation film retains the real university UI. It shows the dataset context,
 gene search, a bounded spike/Spain/>50 query returning four rows, D614G table filtering,
 and a real scatter tooltip, drag zoom and reset. The country filter denotes mutation
 presence, not country-specific percentages. The displayed dataset date is 26 February
@@ -290,10 +297,17 @@ This is a point-in-time walkthrough, not exhaustive application or scientific va
 
 Its distinct, locally synthesized seven-pulse score accompanies 12 real click cues and
 15 keyboard cues tied to observed input, using a transient from the owner's HHKB recording.
-The cursor follows genuine captured movement within chapters; chapter cuts remain editorial.
-All 1,675 final UI frames contain exactly one in-bounds cursor. Only the outer framing fades,
-never the UI or pointer. The verifier also fully decodes all 2,025 frames, checks both caption
-tracks, source hashes and AAC alignment. Raw captures and any dataset exports stay private.
+The cursor follows real, wall-clock-paced captured movement within chapters; chapter cuts
+remain editorial. Smooth scrolling and tighter camera windows improve legibility, with gene
+search and filter controls 26.4% larger than the earlier film. Separate explanatory panels
+use 72px titles and 46px body copy, outside the application rather than obscuring its controls.
+All 2,010 final UI frames contain exactly one in-bounds cursor and a visible guide.
+The verifier fully decodes all 2,430 frames, checks both caption tracks, source hashes, AAC
+alignment, black frames and unintended cursor stalls longer than 200ms.
+Public provenance contains summaries and evidence hashes; raw trajectories, frame ledgers,
+captures and any dataset exports stay private. The prior 81-second film and associated files
+are preserved byte-for-byte in the private authoring workspace; its movie SHA-256 is
+`30d4e0ef654a62afb69e26db468465fd9829be57d6325b4aaa5f0f9518ad9983`.
 
 ```sh
 node scripts/media/render-mutation-demo.mjs PRIVATE_WORKDIR PLAYWRIGHT_MODULE
@@ -308,12 +322,45 @@ Original bilingual social cards for the home page and each case study are 1200 Ã
 under `public/og/`. Regenerate them with `node scripts/generate-social-cards.mjs` (uses Astro's
 existing Sharp dependency). Their page-specific metadata remains in `pages.json`; canonical,
 hreflang and JSON-LD still use the common SEO pipeline.
+Each project case is now its page's structured-data main entity. Finance is included through
+its public case URL, never a private application or repository URL. The visible project order
+is a presentation decision, not a ranking promise. Following
+[Google's video guidance](https://developers.google.com/search/docs/appearance/video), the
+native video source and stable poster remain in static HTML. These are technical case studies,
+not dedicated watch pages; video-rich-result eligibility is not claimed.
 
 **Nothing ships that nothing asks for.** Bundling emits the original of every image in
 `src/assets/` alongside the slices `astro:assets` actually generates. The
 `prune-unused-assets` integration walks the finished output, collects every filename the
 HTML, CSS, JS, sitemap and manifest reference, and deletes the images none of them do â€”
 20 MB of untouched originals on the last full build.
+
+### Measured rendering improvements
+
+The portrait reuses pre-rasterized glyphs at its existing 32 alpha levels instead of
+repeating atlas crops and alpha changes for every particle, every frame. Particle physics,
+colors and frame rate are unchanged. Settled/offscreen canvases stay asleep and repaint
+correctly after resizing. The typewriter retains its text and remaining delay while hidden;
+decorative CSS timelines pause offscreen and resume at the same phase. Visible effects,
+reduced-motion and no-JavaScript fallbacks remain intact.
+
+September 2026 loopback Chromium comparison, three samples per phase, normalized renderer
+main-thread busy time (not whole-device CPU or battery consumption):
+
+| Activity | Desktop reduction | Mobile reduction |
+|----------|-------------------|------------------|
+| Portrait interaction | 34% | 12% |
+| Page scrolling | 20% | 17% |
+| Idle at the keyboard archive | 83% | 95% |
+
+Desktop used 1440x1000/DPR1 with 4x CPU slowdown; mobile used 390x844/DPR2 with 6x slowdown.
+Runtime phases lasted about six seconds after settling. Cold-load checks additionally used
+1.6 Mbit/s download and 150ms latency. Initial LCP was effectively unchanged; no download-speed,
+production Core Web Vitals or universal-device claim is made. The performance-only comparison
+excluded simultaneous showcase and media changes. All six final archive-idle samples had zero
+layout/style recalculations; reduced-motion portrait pixels matched the baseline exactly at
+both viewport sizes. The existing interaction runner includes 46 deterministic motion/cache
+regressions from `scripts/verify-motion.mjs`.
 
 ---
 

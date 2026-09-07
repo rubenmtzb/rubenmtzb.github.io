@@ -188,11 +188,13 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
   let srcH = 0
   let destW = 0
   let destH = 0
+  let glyphs: (HTMLCanvasElement | undefined)[] = []
 
   const ensureAtlas = (fontPx: number, dpr: number) => {
     if (atlas && atlasFont === fontPx && atlasDpr === dpr) return
     atlasFont = fontPx
     atlasDpr = dpr
+    glyphs = []
     destW = Math.ceil(fontPx * 1.7)
     destH = Math.ceil(fontPx * 1.9)
     srcW = Math.max(1, Math.round(destW * dpr))
@@ -215,11 +217,32 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
     }
   }
 
+  /*
+   * Alpha is already quantised to 32 steps. Cache those small glyph stamps too:
+   * the canvas otherwise crops the atlas and applies a different globalAlpha
+   * for almost every particle on every frame, including at commit time.
+   */
+  const glyphFor = (gi: number, row: number, alpha: number) => {
+    const key = gi + CHARS.length * (row + alpha * 2)
+    const cached = glyphs[key]
+    if (cached) return cached
+    if (!atlas) return
+    const glyph = document.createElement('canvas')
+    glyph.width = srcW
+    glyph.height = srcH
+    const g = glyph.getContext('2d')
+    if (!g) return
+    g.globalAlpha = alpha / 32
+    g.drawImage(atlas, gi * srcW, row * srcH, srcW, srcH, 0, 0, srcW, srcH)
+    glyphs[key] = glyph
+    return glyph
+  }
+
   /* ---------- Dibujo ---------- */
   let lastPaint = 0
   let fontSize = 0
   let frozen = false
-  let onScreen = true
+  let onScreen = !('IntersectionObserver' in window)
 
   const wake = () => {
     if (!frozen && running) return
@@ -240,8 +263,8 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
      * the cursor, and the field has to spring back at the same speed when the
      * pointer leaves. Rest is silence — `frozen` — not a slower loop.
      */
-    if (now - lastPaint < 15) {
-      if (running) raf = requestAnimationFrame(draw)
+    if (running && now - lastPaint < 15) {
+      raf = requestAnimationFrame(draw)
       return
     }
     lastPaint = now
@@ -277,7 +300,6 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
     const reachSq = reach * reach
     const ox = destW / 2
     const oy = destH / 2
-    let lastAlpha = -1
     ctx.imageSmoothingEnabled = false
 
     for (let i = 0; i < particles.length; i++) {
@@ -347,26 +369,19 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
         }
       }
 
-      const alpha = Math.round(p.cur * 32) / 32
-      if (alpha < 0.03 || !atlas) continue
+      const alpha = Math.round(p.cur * 32)
+      if (alpha < 1) continue
       const row = sparkle > 0.15 ? 1 : 0
-      if (alpha !== lastAlpha) {
-        ctx.globalAlpha = alpha
-        lastAlpha = alpha
-      }
+      const glyph = glyphFor(p.gi, row, alpha)
+      if (!glyph) continue
       ctx.drawImage(
-        atlas,
-        p.gi * srcW,
-        row * srcH,
-        srcW,
-        srcH,
+        glyph,
         p.x - ox,
         p.y - oy,
         destW,
         destH,
       )
     }
-    ctx.globalAlpha = 1
 
     if (!pointer.active && t > 3.5) {
       let resting = true
@@ -393,7 +408,7 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
    */
   const sync = () => {
     const shouldRun = onScreen && !document.hidden && !reduce
-    if (shouldRun && !running) {
+    if (shouldRun && !running && !frozen) {
       running = true
       raf = requestAnimationFrame(draw)
     } else if (!shouldRun && running) {
@@ -461,10 +476,12 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
       boxDirty = true
       if (!img.complete) return
       build(img)
-      /* With the loop stopped — "reduce motion" — nobody is going to repaint the
-         portrait at the new size, so the rebuild goes unpainted and the browser
-         scales the previous bitmap. One frame is enough. */
-      if (!running) draw()
+      if (reduce) draw()
+      else {
+        // A settled portrait has no loop to finish the new size's entrance.
+        frozen = false
+        sync()
+      }
     }, 100)
   })
 

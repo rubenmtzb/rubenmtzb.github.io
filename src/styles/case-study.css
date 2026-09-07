@@ -131,12 +131,19 @@
   color: var(--fg-2);
   border-bottom: 1px solid var(--case-edge);
 }
-.case-demo-dots { display: flex; gap: 5px; }
+.case-demo-dots { display: flex; flex-shrink: 0; gap: 5px; }
 .case-demo-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--case-edge); }
 .case-demo-dots i:first-child { background: var(--case-accent); }
 .case-video-frame video { display: block; border: 0; border-radius: 0; }
-.case-original { display: inline-block; margin-top: .75rem; color: var(--case-accent); font-size: .8rem; text-underline-offset: .25em; text-decoration: underline; }
-.case-original:hover { color: var(--fg); }
+.case-video-frame video:fullscreen { width: 100%; height: 100%; object-fit: contain; background: #000; }
+.case-demo-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.25rem; margin-top: 1rem; }
+.case-demo-actions a, .case-demo-expand { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; min-height: 44px; font-size: .8rem; color: var(--case-accent); }
+.case-demo-expand { padding: .5rem .8rem; border: 1px solid var(--case-edge); border-radius: .6rem; background: var(--case-glow); cursor: pointer; }
+.case-demo-expand[hidden], .case-demo-error[hidden] { display: none; }
+.case-demo-download { text-underline-offset: .25em; text-decoration: underline; }
+.case-demo-actions a:hover, .case-demo-expand:hover { color: var(--fg); }
+.case-demo-hint, .case-demo-error { margin-top: .5rem; font-size: .8rem; line-height: 1.6; color: var(--fg-3); }
+.case-demo-error { color: var(--fg); }
 .editorial-case .case-demo-steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem 2rem; padding-left: 1.5rem; margin-top: 1.75rem; }
 .case-demo-steps li { padding-left: .35rem; margin: 0; }
 .case-demo-steps li::marker { color: var(--case-accent); font-family: var(--font-mono); }
@@ -185,7 +192,8 @@ html.js .case-signal.is-in .case-wave i { animation: caseWaveIn 1.1s ease-out ca
   .editorial-case .case-demo-steps { grid-template-columns: 1fr; }
   .editorial-case .case-section { margin-top: 3.5rem; }
   .editorial-case .case-limits, .editorial-case .case-contact { padding: 1.25rem; }
-  .case-demo-toolbar { font-size: .5rem; gap: .5rem; padding-inline: .75rem; }
+  .case-video-frame { margin-inline: -.75rem; border-radius: .65rem; }
+  .case-demo-toolbar { font-size: .55rem; gap: .5rem; padding-inline: .75rem; }
   .case-decision { padding: 1.25rem; }
 }
 @media (prefers-reduced-motion: reduce) {

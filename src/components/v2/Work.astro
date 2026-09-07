@@ -307,62 +307,21 @@ const caseLink = (projectKey: string, origin: 'project-carousel' | 'project-deck
       </div>
     </div>
 
-    <!-- Secondary work stays visible; no second carousel repeats the same projects. -->
-    <div class="reveal mt-12 sm:mt-16" style="--i:3">
-      <h3 id="other-projects-title" class="t-h3 mb-6">{t(lang, 'v2.work.projects')}</h3>
-      <div
-        id="project-deck"
-        class="grid gap-6 sm:grid-cols-2"
-        role="region"
-        aria-labelledby="other-projects-title"
-      >
+    {otherProjects.length > 0 && (
+      <div id="project-deck" class="project-references reveal" style="--i:3">
         {otherProjects.map((p) => (
-          <article data-project={p.key} class="project-grid-card group flex flex-col justify-between rounded-xl border border-[color:var(--line)] bg-[color:var(--ink-800)] p-6 shadow-md transition hover:border-[color:var(--blue-bright)] hover:shadow-xl">
-            <div>
-              <div class="flex items-center justify-between gap-2">
-                <span class="font-mono text-xs text-[color:var(--cyan)] uppercase tracking-wider">{p.eyebrow}</span>
-                <span class={`rounded-full px-2 py-0.5 text-[0.65rem] font-mono uppercase ${p.badge === 'live' ? 'bg-[color:var(--live-strong)]/10 text-[color:var(--live)]' : p.badge === 'coming-soon' ? 'bg-[color:var(--pending)]/10 text-[color:var(--pending-soft)]' : 'bg-[color:var(--ink-700)] text-[color:var(--fg-3)]'}`}>
-                  {badgeLabel(p.badge)}
-                </span>
-              </div>
-              <h4 class="mt-3 text-lg font-bold text-[color:var(--fg)] group-hover:text-[color:var(--cyan)] transition-colors">
-                {p.title}
-              </h4>
-              <p class="mt-2 text-xs sm:text-sm text-[color:var(--fg-2)] leading-relaxed">
-                {p.description}
-              </p>
-            </div>
-
-            <div class="mt-6 border-t border-[color:var(--line-soft)] pt-4">
-              <ul class="flex flex-wrap gap-1.5 mb-4">
-                {p.tech.map((tech) => (
-                  <li><TechChip tag={tech} lang={lang} /></li>
-                ))}
-              </ul>
-              <div class="flex flex-wrap items-center gap-3 text-xs font-mono">
-                {caseLink(p.key, 'project-deck') && (
-                  <a href={caseLink(p.key, 'project-deck')!} data-case-origin="project-deck" class="text-[color:var(--blue-bright)] hover:underline inline-flex items-center gap-1">
-                    <span>{t(lang, 'v2.work.case')}</span>
-                    <Icon name="arrowUpRight" class="h-3 w-3" />
-                  </a>
-                )}
-                {p.link && (
-                  <a href={p.link} target="_blank" rel="noopener noreferrer" class="text-[color:var(--fg-2)] hover:text-[color:var(--cyan)] inline-flex items-center gap-1" aria-label={`${t(lang, 'v2.work.visit')} ${p.title}`}>
-                    <Icon name="external" class="h-3.5 w-3.5" />
-                    <span>{t(lang, 'v2.work.visit')}</span>
-                  </a>
-                )}
-                {projectRepos(p.github).map((repo) => (
-                  <a href={repo.href} target="_blank" rel="noopener noreferrer" class="text-[color:var(--fg-2)] hover:text-[color:var(--cyan)] inline-flex items-center gap-1">
-                    <Icon name="github" class="h-3.5 w-3.5" />
-                    <span>{repo.label}</span>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </article>
+          <div data-project={p.key} class="project-reference">
+            <p><strong>{p.title}</strong><span>{p.tech.join(' / ')}</span></p>
+            {projectRepos(p.github).map((repo) => (
+              <a href={repo.href} target="_blank" rel="noopener noreferrer" aria-label={`${t(lang, 'v2.work.source')}: ${p.title} / ${repo.label}`}>
+                <Icon name="github" class="h-4 w-4" />
+                <span>{t(lang, 'v2.work.source')}</span>
+                <Icon name="arrowUpRight" class="h-3.5 w-3.5" />
+              </a>
+            ))}
+          </div>
         ))}
       </div>
-    </div>
+    )}
   </div>
 </section>

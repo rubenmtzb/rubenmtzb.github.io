@@ -3,8 +3,9 @@ import { spawnSync } from 'node:child_process';
 import { mkdir, readFile, writeFile, stat } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { chapters, duration, film, timecode } from './mutation-demo-story.mjs';
+import { chapters, duration, film, timecode, framing, callouts } from './mutation-demo-story.mjs';
 import { synthMutationAudio } from './synth-mutation-demo.mjs';
+import { publishMutationProvenance } from './mutation-demo-provenance.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const [directory, modulePath] = process.argv.slice(2);
@@ -37,22 +38,23 @@ function layout(scene) {
   *{box-sizing:border-box}html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#07111e;color:#e5f4fb;font-family:Arial,sans-serif}
   body{background:radial-gradient(ellipse at 82% 18%,#103448 0,transparent 46%),radial-gradient(ellipse at 4% 100%,#122335 0,transparent 52%),#07111e}
   .grid{position:absolute;inset:0;opacity:.15;background-image:linear-gradient(#6593a122 1px,transparent 1px),linear-gradient(90deg,#6593a122 1px,transparent 1px);background-size:64px 64px}
-  .brand{position:absolute;left:96px;top:34px;font-size:24px;font-weight:700;letter-spacing:1px}.brand span{color:#6fe3ff}
-  .chapter{position:absolute;left:470px;top:36px;font-size:25px;color:#d6edf7}.label{position:absolute;right:96px;top:43px;font-size:14px;letter-spacing:1.8px;color:#88b3c6}
-  .frame{position:absolute;left:94px;top:96px;width:1732px;height:916px;border:2px solid #2b586c;border-radius:10px;box-shadow:0 28px 60px #0007;background:#fff}
-  .footer{position:absolute;left:96px;bottom:29px;font-size:17px;letter-spacing:.3px;color:#9ab8c7}.footer b{color:#6fe3ff}.credit{position:absolute;right:96px;bottom:29px;font-size:17px;color:#9ab8c7}
+  .brand{position:absolute;left:80px;top:34px;font-size:26px;font-weight:700;letter-spacing:1px}.brand span{color:#6fe3ff}
+  .chapter{position:absolute;left:490px;top:36px;font-size:27px;color:#d6edf7}.label{position:absolute;right:80px;top:43px;font-size:16px;letter-spacing:1.3px;color:#88b3c6}
+  .frame{position:absolute;left:78px;top:102px;width:1764px;height:708px;border:2px solid #2b586c;border-radius:10px;box-shadow:0 20px 50px #0005;background:#fff}
+  .guide{position:absolute;left:80px;top:832px;width:1760px;height:183px;border:1px solid #2b586c;border-left:5px solid #6fe3ff;border-radius:14px;background:linear-gradient(110deg,#103345,#0b1f30)}
+  .footer{position:absolute;left:80px;bottom:24px;font-size:19px;letter-spacing:.3px;color:#9ab8c7}.footer b{color:#6fe3ff}.credit{position:absolute;right:80px;bottom:24px;font-size:18px;color:#9ab8c7}
   .hero{position:absolute;left:128px;top:210px;width:1300px}.eyebrow{font-size:19px;color:#6fe3ff;letter-spacing:4px;margin-bottom:34px}
   h1{font-size:109px;line-height:1.08;letter-spacing:-4.5px;margin:0 0 35px}h1 span{color:#6fe3ff}
-  .lead{font-size:31px;line-height:1.5;color:#b0c8d5;max-width:1140px}.en{font-size:24px;color:#80a3b5;margin-top:23px}
+  .lead{font-size:38px;line-height:1.5;color:#b0c8d5;max-width:1200px}.en{font-size:28px;color:#80a3b5;margin-top:23px}
   .pill{display:inline-block;margin-top:35px;border:1px solid #31687c;border-radius:24px;background:#10334488;color:#a0e4f7;padding:12px 24px;font-size:18px;letter-spacing:1px}
-  .art{position:absolute;right:120px;top:286px;opacity:.9}.notice{margin-top:32px;border-left:3px solid #6fe3ff;padding:5px 0 5px 22px;max-width:1100px;font-size:23px;line-height:1.5;color:#b6d2df}
+  .art{position:absolute;right:120px;top:286px;opacity:.9}.notice{margin-top:32px;border-left:3px solid #6fe3ff;padding:5px 0 5px 22px;max-width:1250px;font-size:30px;line-height:1.5;color:#b6d2df}
   </style><div class="grid"></div><div class="brand">MUTATION <span>/ PORTAL</span></div>
   ${hero ? `<div class="hero"><div class="eyebrow">${escape(scene.label)}</div>
   <h1>${scene.id === 'intro' ? 'SARS-CoV-2<br><span>Mutation Portal.</span>' : 'Datos con<br><span>contexto.</span>'}</h1>
   <div class="lead">${scene.id === 'intro' ? 'Exploración de mutaciones. Contexto científico.<br>Un recorrido por la aplicación real de la URV.' : 'Genes, filtros, tabla y exploración visual.<br>Un recorrido real, no una auditoría exhaustiva.'}</div>
   <div class="en">${scene.id === 'intro' ? 'Genomic data. Visual exploration. Research context.' : 'Real public portal · Point-in-time demonstration'}</div>
   ${scene.id === 'intro' ? '<div class="pill">WEB REAL · INTERFAZ ORIGINAL · SIN DATOS SIMULADOS</div>' : '<div class="notice">Excel: HTTP 500 durante la inspección. No se simula una descarga.<br>Snapshot mostrado por el portal: 26/02/2024. Disponibilidad variable.</div>'}</div>
-  <div class="art">${helix()}</div>` : `<div class="chapter">${escape(scene.title)}</div><div class="label">${escape(scene.label)}</div><div class="frame"></div>`}
+  <div class="art">${helix()}</div>` : `<div class="chapter">${escape(scene.title)}</div><div class="label">${escape(scene.label)}</div><div class="frame"></div><div class="guide"></div>`}
   <div class="footer"><b>CAPTURA REAL</b> · 07 SEP 2026 · Snapshot del portal: 26 FEB 2024</div>
   <div class="credit">RUBÉN MARTÍNEZ / SOFTWARE ENGINEERING</div></html>`;
 }
@@ -65,6 +67,18 @@ try {
   for (const scene of chapters()) {
     await page.setContent(layout(scene));
     await page.screenshot({ path: join(work, `${scene.id}-frame.png`) });
+    for (const [index, note] of (callouts[scene.id] || []).entries()) {
+      await page.setContent(`<!doctype html><meta charset="utf-8"><style>
+      *{box-sizing:border-box}html,body{margin:0;width:1920px;height:1080px;background:transparent;color:#eefaff;font-family:Arial,sans-serif}
+      section{position:absolute;left:116px;top:845px;width:1680px}.eyebrow{font-size:16px;letter-spacing:2px;color:#83c8df}
+      h2{font-size:72px;letter-spacing:-1.2px;line-height:1.1;margin:7px 0;font-weight:700;white-space:nowrap}
+      p{font-size:46px;line-height:1.1;margin:0;color:#bfdbe7;white-space:nowrap}
+      </style><section><div class="eyebrow">GUÍA EDITORIAL · INTERFAZ REAL ARRIBA</div><h2>${escape(note.title)}</h2><p>${escape(note.detail)}</p></section>`);
+      const fits = await page.locator('section').evaluate(element => [...element.children].every(child =>
+        child.scrollWidth <= element.clientWidth && child.getBoundingClientRect().bottom <= 1010));
+      if (!fits) throw Error(`Explanatory text overflows: ${scene.id}/${index}`);
+      await page.screenshot({ path: join(work, `${scene.id}-callout-${index}.png`), omitBackground: true });
+    }
   }
 } finally { await browser.close(); }
 const events = [], sources = [], parts = [];
@@ -89,7 +103,21 @@ for (const scene of chapters()) {
     concat.push(`file '${join(work, 'capture', frames.at(-1).file).replaceAll("'", "'\\''")}'`);
     await writeFile(join(work, `${scene.id}-source.ffconcat`), concat.join('\n') + '\n');
     inputs.push('-f', 'concat', '-safe', '0', '-i', join(work, `${scene.id}-source.ffconcat`));
-    filter = `[0:v]fade=t=in:st=0:d=0.2:color=0x07111e,fade=t=out:st=${scene.seconds - .2}:d=0.2:color=0x07111e[framing];[1:v]fps=${film.fps},scale=${film.screen.width}:${film.screen.height},setsar=1[screen];[framing][screen]overlay=${film.screen.x}:${film.screen.y}:shortest=1[v]`;
+    const camera = framing[scene.id];
+    if (film.screen.width / camera.width < 1.2) throw Error('Framing must never shrink the approved desktop interface');
+    filter = `[0:v]setsar=1[framing];[1:v]fps=${film.fps},crop=${camera.width}:${camera.height}:${camera.x}:${camera.y},scale=${film.screen.width}:${film.screen.height}:flags=lanczos,setsar=1[screen];[framing][screen]overlay=${film.screen.x}:${film.screen.y}:shortest=1[app]`;
+    let previous = 'app';
+    for (const [index, note] of callouts[scene.id].entries()) {
+      inputs.push('-loop', '1', '-framerate', String(film.fps), '-i', join(work, `${scene.id}-callout-${index}.png`));
+      const start = Math.max(0, note.start - .14);
+      const enter = index ? `,fade=t=in:st=${start}:d=0.28:alpha=1` : '';
+      const exit = index < callouts[scene.id].length - 1 ? `,fade=t=out:st=${note.end - .14}:d=0.28:alpha=1` : '';
+      filter += `;[${index + 2}:v]format=rgba${enter}${exit}[note${index}]`;
+      const offset = index ? `if(lt(t,${start}),12,12*max(0,1-(t-${start})/0.28))` : '0';
+      filter += `;[${previous}][note${index}]overlay=0:'${offset}':shortest=1[guided${index}]`;
+      previous = `guided${index}`;
+    }
+    filter += `;[${previous}]null[v]`;
     for (const event of clip.events) {
       if (event.at < 0 || event.at >= scene.seconds) continue;
       events.push({ kind: event.kind, at: scene.start + event.at, chapter: scene.id,
@@ -104,7 +132,11 @@ for (const scene of chapters()) {
         invisibleSamples: clip.cursorSamples.filter(s => !s.connected || !s.visible).length,
         actualPointerMoves: clip.events.filter(e => e.kind === 'pointermove').length,
         largestMonitorGapMs: Math.max(...clip.cursorSamples.slice(1).map((s, i) => s.epochMs - clip.cursorSamples[i].epochMs)) },
-      presentation: 'Actual Chromium paint frames sorted by source timestamps (CDP delivery may reorder adjacent paints); timestamp-preserving holds sampled to 25 fps. No speed changes or substituted responses.' });
+      framing: camera, outputScale: film.screen.width / camera.width,
+      clockedScreenshots: frames.filter(frame => frame.capture === 'clocked-real-screenshot').length,
+      maximumScreenshotCaptureIntervalMs: Math.max(0, ...frames.filter(frame => frame.captureIntervalMs)
+        .map(frame => frame.captureIntervalMs[1] - frame.captureIntervalMs[0])),
+      presentation: `Actual Chromium paints sorted by source timestamp; wall-clock paced 60 Hz minimum-jerk pointer input and requestAnimationFrame scrolling, sampled to ${film.fps} fps. Homepage compositor gaps are filled with genuine clocked screenshots, timed at the midpoint of their measured capture interval. Static reading holds are intentional. No optical-flow interpolation, speed changes or substituted responses.` });
   }
   const fadeIn = scene.id === 'intro' ? .6 : .2, fadeOut = scene.id === 'outro' ? .8 : .2;
   filter += clip ? ';[v]null[out]'
@@ -139,28 +171,32 @@ const provenance = {
   videoSha256: hash(await readFile(media)), bytes: (await stat(media)).size,
   durationSeconds: duration, outputResolution: '1920x1080', sourceResolution: '1440x760', fps: film.fps,
   snapshot: { displayedGisaidDate: '26/02/2024', claim: 'Date as displayed by the portal; no current-data or completeness claim.' },
-  disclosure: 'Real university-hosted public application, original native light presentation. No fixtures, response mocks, synthetic results or changed application CSS. Availability is external and variable.',
+  disclosure: 'Real university-hosted public application, original native light presentation. No fixtures, response mocks, synthetic results or changed application CSS. Clearly separated editorial guide panels explain the real interface; camera crops enlarge active regions without rearranging application pixels. Availability is external and variable.',
   limitations: ['Point-in-time functional inspection, not exhaustive testing or scientific validation.',
     'Excel export returned HTTP 500 and net::ERR_INVALID_RESPONSE during inspection. No successful export or download is shown.',
     'Native select controls are operated by visible keyboard selection; OS dropdown surfaces are not captured and no replacement list is fabricated.',
     'The native chart instruction alert was acknowledged; browser-modal surfaces are not part of the page capture.',
     'No dedicated lineage filter or table-row detail links were found. Lineage count is a table column; no unsupported feature is claimed.',
     'The country condition filters mutation presence; displayed percentages are not asserted to be Spain-specific.',
-    'The original wide table overflows horizontally, so later columns are not visible simultaneously. The original sticky navigation overlaps the table heading in the scatter view. Neither issue is hidden with a CSS patch or fabricated interface.',
-    'An initial take unintentionally left the percentage range unset, returning 1081 rows; it was rejected before use. The final recorded query is verified to return four rows.',
+    'The original wide table overflows horizontally, so later columns are not visible simultaneously. Editorial focus crops omit unused navigation/footer areas; there is no application CSS patch or fabricated interface.',
+    'The portal logged non-blocking JavaScript errors during homepage navigation; the recorded bounded query, table search, hover and zoom were independently checked to work.',
     'GISAID-derived on-screen data remain subject to GISAID terms. No dataset or export is redistributed.'],
   inputMethod: 'Real Playwright mouse movement, pointer presses, keyboard character input and native controls. Every DOM pointermove is recorded. The in-capture cursor is continuously mounted before DOMContentLoaded, persists at the last actual coordinates across navigation, and remains visible during reading and typing. Only click rings decay. No fabricated file picker.',
-  editing: 'Original cyan genomic framing and abstract decorative helix. Only framing and title cards fade: application pixels and their single baked cursor never fade out. Native app clips retain wall-clock action timing. Five explicitly edited chapters; off-chapter navigation omitted. Pointer position changes at chapter cuts are editorial discontinuities between real recordings, not invented continuous trajectories.',
+  editing: 'Original cyan genomic framing and abstract decorative helix. Large, separately labelled explanatory panels crossfade/settle outside the active application area. Detail crops increase gene/filter text size by 26% versus the approved film; other footage is never scaled smaller. The real application and its single baked cursor stay opaque. Five explicit chapter cuts omit off-chapter navigation, not action time. All mouse glides/drag gestures are real minimum-jerk input paced by wall clock; smooth scrolls use the actual document and animation frames.',
+  presentation: { screen: film.screen, callouts, framing, minimumSourceScale: 1760 / 1440,
+    previousSourceScale: 1.2, guideTitlePx: 72, guideBodyPx: 46,
+    cadence: '30 fps output from genuine timestamped browser paints; static reading frames held, active motion captured at browser paint cadence up to 60 fps.' },
   sourceClips: sources, chapters: chapters().map(({ id, start, end, es, en }) => ({ id, start, end, es, en })),
   events, requests, verifiedFunctions: manifest.checks, audio,
+  observedPageErrors: manifest.errors.filter(error => !error.url).map(({ error }) => error),
   reproduction: {
     inspect: 'node scripts/media/inspect-mutation-demo.mjs PRIVATE_WORKDIR PLAYWRIGHT_MODULE',
     capture: 'node scripts/media/capture-mutation-demo.mjs PRIVATE_WORKDIR PLAYWRIGHT_MODULE',
     render: 'node scripts/media/render-mutation-demo.mjs PRIVATE_WORKDIR PLAYWRIGHT_MODULE',
     cursorVerify: 'node scripts/media/verify-mutation-cursor.mjs PRIVATE_WORKDIR',
     verify: 'node scripts/media/verify-mutation-demo.mjs PRIVATE_WORKDIR',
-    privacy: 'Raw frames, downloaded data if any, request logs, diagnostics and audio stems stay in the private session files/mutation-demo directory, outside public/.',
+    privacy: 'Raw frames, request logs, diagnostics, approved-film backup and audio stems stay in the private sessionfiles/genome-polish directory, outside the portfolio repository.',
   },
 };
-await writeFile(join(output, 'mutation-portal-demo.json'), JSON.stringify(provenance, null, 2) + '\n');
+await publishMutationProvenance(provenance, work, output);
 console.log(JSON.stringify({ duration, sha256: provenance.videoSha256, bytes: provenance.bytes, events: events.length, audioCues: audio.cues.length }));

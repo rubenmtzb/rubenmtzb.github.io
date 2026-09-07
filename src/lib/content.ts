@@ -323,6 +323,10 @@ export async function buildJsonLd({ lang, pageUrl, pageType, pageName, pageDescr
   const projects = await getProjects(lang)
 
   const current = experience.find((e) => e.end === null)
+  const caseProject = projects.find((project) => {
+    const path = casePath(project.key, lang)
+    return path !== null && abs(path) === pageUrl
+  })
 
   const person = {
     '@type': 'Person',
@@ -371,21 +375,30 @@ export async function buildJsonLd({ lang, pageUrl, pageType, pageName, pageDescr
     description: pageDescription,
     inLanguage: lang,
     isPartOf: { '@id': WEBSITE_ID },
-    ...(pageType === 'ProfilePage'
+    ...(caseProject
+      ? { mainEntity: { '@id': `${pageUrl}#project` } }
+      : pageType === 'ProfilePage'
       ? { mainEntity: { '@id': PERSON_ID } }
       : { about: { '@id': PERSON_ID } }),
   }
 
   const works = projects
-    .filter((p) => p.link)
-    .map((p) => ({
-      '@type': 'CreativeWork',
-      name: p.title,
-      description: p.description,
-      url: p.link,
-      author: { '@id': PERSON_ID },
-      ...(p.publication ? { citation: p.publication.href } : {}),
-    }))
+    .flatMap((project) => {
+      const path = casePath(project.key, lang)
+      const url = path ? abs(path) : project.link
+      if (!url) return []
+      return [{
+        '@type': 'CreativeWork',
+        '@id': `${url}#project`,
+        name: project.title,
+        description: project.description,
+        url,
+        inLanguage: lang,
+        author: { '@id': PERSON_ID },
+        ...(path && project.link ? { sameAs: project.link } : {}),
+        ...(project.publication ? { citation: project.publication.href } : {}),
+      }]
+    })
 
   return { '@context': 'https://schema.org', '@graph': [person, website, page, ...works] }
 }

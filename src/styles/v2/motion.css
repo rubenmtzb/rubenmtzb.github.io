@@ -1,8 +1,13 @@
+/* Pausing preserves the approved effect and resumes its phase on return. */
+[data-motion-paused],
+[data-motion-paused]::before,
+[data-motion-paused]::after { animation-play-state: paused !important; }
+
 /* ---------------- REDUCED MOTION ---------------- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   html.js .reveal, html.js .reveal.is-in { opacity: 1; transform: none; transition: none; }
-  .nav-link::after, .kb-key, .job-indicator, .project-grid-card,
+  .nav-link::after, .kb-key, .job-indicator, .project-reference,
   .edu-timeline-pill, .edu-slide, .cert-pill, .cert-slide, .profile-file,
   .profile-signal { transition: none !important; }
   .profile-panel { animation: none !important; }

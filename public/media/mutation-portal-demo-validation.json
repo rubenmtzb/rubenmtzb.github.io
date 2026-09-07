@@ -1,15 +1,15 @@
 {
   "schema": 1,
   "passed": true,
-  "verifiedAt": "2026-09-07T08:46:32.370Z",
-  "videoSha256": "30d4e0ef654a62afb69e26db468465fd9829be57d6325b4aaa5f0f9518ad9983",
+  "verifiedAt": "2026-09-07T11:24:43.350Z",
+  "videoSha256": "350b7f2a1a2be7c6f176b729da6b25e31fb562485b6b84d9cadb7912d2e9cf87",
   "video": {
     "codec": "H.264",
     "resolution": "1920x1080",
-    "fps": 25,
+    "fps": 30,
     "seconds": 81,
-    "decodedFrames": 2025,
-    "decodedFrameLedgerSha256": "671d594774367c6fb048db18e9f0dbaeece1226496df1b82e76c175ab91e391d",
+    "decodedFrames": 2430,
+    "decodedFrameLedgerSha256": "c08659b76cda09ad7e92d3af603c001d55d6020f3ba15ffbb73493c4b3b8a612",
     "fullDecode": "All frames decoded with FFmpeg -xerror."
   },
   "audio": {
@@ -17,177 +17,18 @@
     "sampleRateHz": 48000,
     "channels": 2,
     "seconds": 81,
-    "integratedLufs": -21.04,
-    "truePeakDbtp": -5.58,
+    "integratedLufs": -21.03,
+    "truePeakDbtp": -5.71,
     "keyboardCues": 15,
     "clickCues": 12,
-    "cueFrameErrorMaxMs": 18.99999999999835,
+    "cueFrameErrorMaxMs": 16.566813151040805,
     "visibleInputRequiredForTypingCues": true,
     "programmaticFillAndClearTypingCues": 0,
-    "decodedAacAlignment": [
-      {
-        "kind": "soft-click",
-        "at": 7.36,
-        "lagMs": 0,
-        "correlation": 0.99988
-      },
-      {
-        "kind": "soft-click",
-        "at": 16.04,
-        "lagMs": 0,
-        "correlation": 0.99999
-      },
-      {
-        "kind": "physical-key-sample",
-        "at": 16.16,
-        "lagMs": 0,
-        "correlation": 0.99999
-      },
-      {
-        "kind": "physical-key-sample",
-        "at": 16.36,
-        "lagMs": 0,
-        "correlation": 0.99999
-      },
-      {
-        "kind": "physical-key-sample",
-        "at": 16.56,
-        "lagMs": 0,
-        "correlation": 0.99991
-      },
-      {
-        "kind": "physical-key-sample",
-        "at": 16.76,
-        "lagMs": 0,
-        "correlation": 0.99995
-      },
-      {
-        "kind": "physical-key-sample",
-        "at": 16.96,
-        "lagMs": 0,
-        "correlation": 0.99988
-      },
-      {
-        "kind": "soft-click",
-        "at": 21.6,
-        "lagMs": 0,
-        "correlation": 0.99999
-      },
-      {
-        "kind": "soft-click",
-        "at": 27.52,
-        "lagMs": 0,
-        "correlation": 0.99986
-      },
-      {
-        "kind": "physical-key-sample",
-        "at": 28,
-        "lagMs": 0,
-        "correlation": 0.99994
-      },
-      {
-        "kind": "soft-click",
-        "at": 29.32,
-        "lagMs": 0,
-        "correlation": 0.99994
-      },
-      {
-        "kind": "physical-key-sample",
-        "at": 29.76,
-        "lagMs": 0,
-        "correlation": 0.99988
-      },
-      {
-        "kind": "physical-key-sample",
-        "at": 29.96,
-        "lagMs": 0,
-        "correlation": 0.99989
-      },
-      {
-        "kind": "soft-click",
-        "at": 31.28,
-        "lagMs": 0,
-        "correlation": 0.99972
-      },
-      {
-        "kind": "soft-click",
-        "at": 33.08,
-        "lagMs": 0,
-        "correlation": 0.99994
-      },
-      {
-        "kind": "physical-key-sample",
-        "at": 33.16,
-        "lagMs": 0,
-        "correlation": 0.9999
-      },
-      {
-        "kind": "physical-key-sample",
-        "at": 33.36,
-        "lagMs": 0,
-        "correlation": 0.99997
-      },
-      {
-        "kind": "soft-click",
-        "at": 34.84,
-        "lagMs": 0,
-        "correlation": 0.99996
-      },
-      {
-        "kind": "soft-click",
-        "at": 43.72,
-        "lagMs": 0,
-        "correlation": 0.99967
-      },
-      {
-        "kind": "physical-key-sample",
-        "at": 43.84,
-        "lagMs": 0,
-        "correlation": 1
-      },
-      {
-        "kind": "physical-key-sample",
-        "at": 44.04,
-        "lagMs": 0,
-        "correlation": 0.9998
-      },
-      {
-        "kind": "physical-key-sample",
-        "at": 44.24,
-        "lagMs": 0,
-        "correlation": 0.99997
-      },
-      {
-        "kind": "physical-key-sample",
-        "at": 44.4,
-        "lagMs": 0,
-        "correlation": 0.99989
-      },
-      {
-        "kind": "physical-key-sample",
-        "at": 44.6,
-        "lagMs": 0,
-        "correlation": 0.99994
-      },
-      {
-        "kind": "soft-click",
-        "at": 56.92,
-        "lagMs": 0,
-        "correlation": 0.99996
-      },
-      {
-        "kind": "soft-click",
-        "at": 61.16,
-        "lagMs": 0,
-        "correlation": 0.99999
-      },
-      {
-        "kind": "soft-click",
-        "at": 64.72,
-        "lagMs": 0,
-        "correlation": 0.99997
-      }
-    ],
+    "decodedAacAlignment": {
+      "verifiedCues": 27,
+      "maximumAbsoluteLagMs": 0,
+      "minimumCorrelation": 0.99963
+    },
     "alignmentMethod": "Cross-correlation of each final decoded AAC cue window against the pre-encode real-time mixture at 6 kHz; maximum accepted lag 2 ms."
   },
   "source": {
@@ -205,323 +46,113 @@
   "continuousCursor": {
     "passed": true,
     "method": "Pixel-template matching against genuine DOM pointer coordinates in every source paint, plus whole-UI arrow counting on every final encoded application frame. Static holds, typing, scrolling, option selection and chapter boundaries are included.",
-    "cursorCoveredFrames": 1675,
-    "totalUiFrames": 1675,
+    "cursorCoveredFrames": 2010,
+    "totalUiFrames": 2010,
     "missingFrames": 0,
     "multipleCursorFrames": 0,
-    "coordinatesInBoundsFrames": 1675,
-    "finalFrameCoverageLedgerSha256": "8c803fe204ec884d8e93db6aa7c5d6af6e8e41d394681428d7980dd96f76de81",
-    "framePairs": [
-      {
-        "kind": "waiting",
-        "frames": [
-          1140,
-          1165
-        ],
-        "coverage": [
-          {
-            "frame": 1140,
-            "cursors": 1,
-            "coordinates": [
-              [
-                1353,
-                80
-              ]
-            ],
-            "inBounds": true,
-            "matchError": 13.495757575757576
-          },
-          {
-            "frame": 1165,
-            "cursors": 1,
-            "coordinates": [
-              [
-                1353,
-                80
-              ]
-            ],
-            "inBounds": true,
-            "matchError": 13.495757575757576
-          }
-        ]
-      },
-      {
-        "kind": "typing",
-        "frames": [
-          411,
-          421
-        ],
-        "coverage": [
-          {
-            "frame": 411,
-            "cursors": 1,
-            "coordinates": [
-              [
-                1189,
-                255
-              ]
-            ],
-            "inBounds": true,
-            "matchError": 11.293333333333333
-          },
-          {
-            "frame": 421,
-            "cursors": 1,
-            "coordinates": [
-              [
-                1189,
-                255
-              ]
-            ],
-            "inBounds": true,
-            "matchError": 11.346666666666666
-          }
-        ]
-      },
-      {
-        "kind": "scrolling",
-        "frames": [
-          230,
-          240
-        ],
-        "coverage": [
-          {
-            "frame": 230,
-            "cursors": 1,
-            "coordinates": [
-              [
-                741,
-                50
-              ]
-            ],
-            "inBounds": true,
-            "matchError": 6.7309090909090905
-          },
-          {
-            "frame": 240,
-            "cursors": 1,
-            "coordinates": [
-              [
-                741,
-                50
-              ]
-            ],
-            "inBounds": true,
-            "matchError": 6.6460606060606064
-          }
-        ]
-      },
-      {
-        "kind": "between-actions",
-        "frames": [
-          503,
-          513
-        ],
-        "coverage": [
-          {
-            "frame": 503,
-            "cursors": 1,
-            "coordinates": [
-              [
-                235,
-                374
-              ]
-            ],
-            "inBounds": true,
-            "matchError": 12.803636363636363
-          },
-          {
-            "frame": 513,
-            "cursors": 1,
-            "coordinates": [
-              [
-                235,
-                374
-              ]
-            ],
-            "inBounds": true,
-            "matchError": 12.803636363636363
-          }
-        ]
-      },
-      {
-        "kind": "native-option-selection",
-        "frames": [
-          745,
-          751
-        ],
-        "coverage": [
-          {
-            "frame": 745,
-            "cursors": 1,
-            "coordinates": [
-              [
-                666,
-                351
-              ]
-            ],
-            "inBounds": true,
-            "matchError": 13.294545454545455
-          },
-          {
-            "frame": 751,
-            "cursors": 1,
-            "coordinates": [
-              [
-                666,
-                351
-              ]
-            ],
-            "inBounds": true,
-            "matchError": 13.28
-          }
-        ]
-      },
-      {
-        "kind": "chapter-cut-genes",
-        "frames": [
-          349,
-          350
-        ],
-        "coverage": [
-          {
-            "frame": 349,
-            "cursors": 1,
-            "coordinates": [
-              [
-                741,
-                50
-              ]
-            ],
-            "inBounds": true,
-            "matchError": 6.6460606060606064
-          },
-          {
-            "frame": 350,
-            "cursors": 1,
-            "coordinates": [
-              [
-                876,
-                35
-              ]
-            ],
-            "inBounds": true,
-            "matchError": 10.284848484848485
-          }
-        ]
-      },
-      {
-        "kind": "chapter-cut-filters",
-        "frames": [
-          649,
-          650
-        ],
-        "coverage": [
-          {
-            "frame": 649,
-            "cursors": 1,
-            "coordinates": [
-              [
-                338,
-                299
-              ]
-            ],
-            "inBounds": true,
-            "matchError": 8.437575757575758
-          },
-          {
-            "frame": 650,
-            "cursors": 1,
-            "coordinates": [
-              [
-                962,
-                50
-              ]
-            ],
-            "inBounds": true,
-            "matchError": 6.732121212121212
-          }
-        ]
-      },
-      {
-        "kind": "chapter-cut-results",
-        "frames": [
-          1049,
-          1050
-        ],
-        "coverage": [
-          {
-            "frame": 1049,
-            "cursors": 1,
-            "coordinates": [
-              [
-                996,
-                494
-              ]
-            ],
-            "inBounds": true,
-            "matchError": 9.951515151515151
-          },
-          {
-            "frame": 1050,
-            "cursors": 1,
-            "coordinates": [
-              [
-                996,
-                494
-              ]
-            ],
-            "inBounds": true,
-            "matchError": 10.168484848484848
-          }
-        ]
-      },
-      {
-        "kind": "chapter-cut-scatter",
-        "frames": [
-          1399,
-          1400
-        ],
-        "coverage": [
-          {
-            "frame": 1399,
-            "cursors": 1,
-            "coordinates": [
-              [
-                1353,
-                80
-              ]
-            ],
-            "inBounds": true,
-            "matchError": 13.423030303030304
-          },
-          {
-            "frame": 1400,
-            "cursors": 1,
-            "coordinates": [
-              [
-                1353,
-                80
-              ]
-            ],
-            "inBounds": true,
-            "matchError": 14.256969696969698
-          }
-        ]
-      }
-    ],
-    "trajectory": "Genuine DOM pointermove trajectories inside each chapter. Explicit editorial cuts omit navigation between chapters; positions at those cuts are real source positions, not fabricated interpolation.",
-    "checkedPaintFrames": 1126,
-    "actualPointerMoves": 368,
+    "coordinatesInBoundsFrames": 2010,
+    "finalFrameCoverageLedgerSha256": "cf3950e94c0c79b65d1cd0fd613650bc13fa27c8b90f488c08309f58b9955750",
+    "trajectory": "Genuine wall-clock paced minimum-jerk DOM pointermove trajectories. Explicit editorial chapter cuts omit navigation; there is no invented pointer interpolation or UI fade.",
+    "motion": {
+      "movingFrameTransitions": 333,
+      "medianNativePixelsPerFrame": 19.4164878389476,
+      "p95NativePixelsPerFrame": 61.400325732035,
+      "maxNativePixelsPerFrame": 105.80170130957252,
+      "unintendedCursorStallsOver200ms": 0,
+      "method": "Every 200ms encoded window with over 20 native pixels of real pointer movement must visibly move by at least 3 pixels. Chapter cuts are excluded.",
+      "stalledWindows": []
+    },
+    "checkedPaintFrames": 1766,
+    "actualPointerMoves": 909,
     "domVisibilitySamples": 668,
     "invisibleFrames": 0,
     "persistentDuringReading": true,
     "persistsAcrossNavigation": true,
-    "clickRingsOnlyDecay": true
+    "clickRingsOnlyDecay": true,
+    "reviewedFramePairs": 9,
+    "reviewScenarios": [
+      "waiting",
+      "typing",
+      "scrolling",
+      "between-actions",
+      "native-option-selection",
+      "chapter-cut-genes",
+      "chapter-cut-filters",
+      "chapter-cut-results",
+      "chapter-cut-scatter"
+    ]
   },
   "subtitles": {
     "es": "de86f8da6f2f407a867bed08a1a7624611b0e55c9aa62a81cc8d08ef34b1cb28",
     "en": "378d009091140f6798bc91a5733af6685b3e9db2d837db0256e14f2782c3d75a"
   },
-  "visualReview": "Private chapter frames and final decoded contact sheet support manual review; actual event timestamps control cursor, click halo and keyboard cues."
+  "motion": [
+    {
+      "chapter": "genes",
+      "capturedPaints": 250,
+      "intentionalReadingHolds": true,
+      "pointerMotionIntervals": 129,
+      "medianMotionIntervalMs": 16.699951171874616,
+      "activeMotionPaintGapsAbove150ms": 0,
+      "maximumPaintHoldSeconds": 0.5012791156768799
+    },
+    {
+      "chapter": "filters",
+      "capturedPaints": 508,
+      "intentionalReadingHolds": true,
+      "pointerMotionIntervals": 211,
+      "medianMotionIntervalMs": 16.699951171874616,
+      "activeMotionPaintGapsAbove150ms": 0,
+      "maximumPaintHoldSeconds": 0.40279603004455566
+    },
+    {
+      "chapter": "results",
+      "capturedPaints": 103,
+      "intentionalReadingHolds": true,
+      "pointerMotionIntervals": 45,
+      "medianMotionIntervalMs": 16.69995117187506,
+      "activeMotionPaintGapsAbove150ms": 0,
+      "maximumPaintHoldSeconds": 2.342945098876953
+    },
+    {
+      "chapter": "scatter",
+      "capturedPaints": 537,
+      "intentionalReadingHolds": true,
+      "pointerMotionIntervals": 302,
+      "medianMotionIntervalMs": 16.699951171875504,
+      "activeMotionPaintGapsAbove150ms": 0,
+      "maximumPaintHoldSeconds": 1.497136116027832
+    },
+    {
+      "chapter": "home",
+      "capturedPaints": 368,
+      "intentionalReadingHolds": true,
+      "pointerMotionIntervals": 88,
+      "medianMotionIntervalMs": 16.699951171874616,
+      "activeMotionPaintGapsAbove150ms": 0,
+      "maximumPaintHoldSeconds": 0.08101892471313477
+    }
+  ],
+  "presentation": {
+    "guideTitlePx": 72,
+    "guideBodyPx": 46,
+    "minimumUiScale": 1.2222222222222223,
+    "previousUiScale": 1.2,
+    "geneAndFilterUiScale": 1.5172413793103448,
+    "guideDoesNotOverlapUi": true,
+    "nativePixelsOnly": true,
+    "blackApplicationFrames": 0,
+    "guideCueTimingVerified": true,
+    "guideVisibleFrames": 2010,
+    "guideMinimumMeanRed": 35,
+    "guidePresenceMethod": "Every encoded UI frame is area-averaged over the actual guide text band. Mean red must exceed 20; the empty cyan panel background is below 16. No text-free transition frames."
+  },
+  "observedPageErrors": [
+    {
+      "message": "Cannot read properties of undefined (reading 'top')",
+      "count": 2
+    }
+  ],
+  "visualReview": "Private final decoded full-size, mobile-size and contact-sheet frames support manual review. All source and encoded cursor frames are verified. A separately labelled editorial guide never overlaps the application. Actual timestamps control pointer, click and keyboard cues; static reading holds are intentional.",
+  "privateValidationSha256": "a41ebca5b67f46bb8ef325a4b71b8d9fa1595d8858352465a58b63afe964bc0b"
 }
