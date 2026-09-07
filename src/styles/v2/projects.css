@@ -360,10 +360,28 @@ html:not(.js) #proj-next {
   display: none;
 }
 
-.project-grid-card {
+.project-references {
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--line-soft);
+}
+.project-reference {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem 1.5rem;
+  padding-block: 1rem;
   min-width: 0;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
-.project-grid-card:hover {
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.8), 0 0 20px -8px rgba(91, 155, 255, 0.2);
+.project-reference p { display: flex; flex-wrap: wrap; align-items: baseline; gap: .35rem 1rem; font-size: .8rem; }
+.project-reference strong { color: var(--fg-2); font-weight: 550; }
+.project-reference p span { color: var(--fg-3); font-size: .7rem; }
+.project-reference a {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  min-height: 44px;
+  color: var(--fg-2);
+  font: .7rem var(--font-mono);
 }
+.project-reference a:hover { color: var(--cyan); }

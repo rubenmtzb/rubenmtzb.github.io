@@ -200,7 +200,7 @@ export function startGameMode(onExit: () => void) {
     const sy = window.scrollY
     const PLATFORM_SELECTORS = [
       'h1', 'h2', 'h3',
-      '.job-panel', '.project-slide.is-active', '.project-grid-card',
+      '.job-panel', '.project-slide.is-active', '.project-reference',
       '.profile-workbench', '.edu-slide.is-active', '.cert-slide.is-active',
       '.moment-card', '.kb-console-card', '.contact-signal',
       '#identity .hero-tech-chip', '.site-badge',

@@ -3,7 +3,7 @@
     "id": "en:financial-architecture",
     "key": "financial-architecture",
     "lang": "en",
-    "order": 3,
+    "order": 2,
     "title": "Finance Core",
     "eyebrow": "Private application",
     "description": "One workspace for accounts, spending, savings goals and crypto holdings. A private personal-finance application, presented through a real local walkthrough with synthetic data.",
@@ -42,7 +42,7 @@
       "demo": {
         "src": "/media/finance-core-demo.mp4",
         "poster": "/media/finance-core-demo-poster.jpg",
-        "caption": "191.64-second dark-mode walkthrough of the real local application with synthetic data, a continuously visible cursor, typing sounds and a new original score. The brief file-selection tray is explicitly an editorial reconstruction, not an operating-system recording; the subsequent CSV import is real. No connected banks, live prices or external AI. Play on demand; an edited demonstration, not a performance benchmark. The original version remains available below.",
+        "caption": "191.64-second dark-mode walkthrough of the real local application with synthetic data, a continuously visible cursor, typing sounds and a new original score. The brief file-selection tray is explicitly an editorial reconstruction, not an operating-system recording; the subsequent CSV import is real. No connected banks, live prices or external AI. Play on demand; an edited demonstration, not a performance benchmark.",
         "tracks": [
           { "lang": "en", "label": "English", "src": "/media/finance-core-demo.en.vtt" },
           { "lang": "es", "label": "Español", "src": "/media/finance-core-demo.es.vtt" }
@@ -64,7 +64,7 @@
     "id": "es:financial-architecture",
     "key": "financial-architecture",
     "lang": "es",
-    "order": 3,
+    "order": 2,
     "title": "Finance Core",
     "eyebrow": "Aplicación privada",
     "description": "Cuentas, gastos, objetivos de ahorro y posiciones cripto en un mismo espacio. Una aplicación privada de finanzas personales, presentada con un recorrido local real y datos sintéticos.",
@@ -103,7 +103,7 @@
       "demo": {
         "src": "/media/finance-core-demo.mp4",
         "poster": "/media/finance-core-demo-poster.jpg",
-        "caption": "Recorrido de 191,64 segundos en modo oscuro por la aplicación local real, con datos sintéticos, cursor siempre visible, sonidos de teclado y una nueva música original. La breve selección de archivo se identifica como reconstrucción editorial, no como grabación del sistema operativo; la importación CSV posterior es real. Sin bancos conectados, precios en vivo ni IA externa. Reproducción bajo demanda: una demostración editada, no un benchmark de rendimiento. La versión original sigue disponible debajo.",
+        "caption": "Recorrido de 191,64 segundos en modo oscuro por la aplicación local real, con datos sintéticos, cursor siempre visible, sonidos de teclado y una nueva música original. La breve selección de archivo se identifica como reconstrucción editorial, no como grabación del sistema operativo; la importación CSV posterior es real. Sin bancos conectados, precios en vivo ni IA externa. Reproducción bajo demanda: una demostración editada, no un benchmark de rendimiento.",
         "tracks": [
           { "lang": "en", "label": "English", "src": "/media/finance-core-demo.en.vtt" },
           { "lang": "es", "label": "Español", "src": "/media/finance-core-demo.es.vtt" }
@@ -180,7 +180,7 @@
       "demo": {
         "src": "/media/transcriber-demo.mp4",
         "poster": "/media/transcriber-demo-poster.jpg",
-        "caption": "Edited recording of the real app, without mocked API responses. A continuously visible editorial cursor guides the approved montage; its movement is reconstructed between verified controls, not recorded mouse telemetry. Typing sounds follow visible text entry, alongside click cues and the original music. Playback starts only when you press play. Not a benchmark or latency guarantee. The original 'Sin audio' label predates this soundtrack; all three approved earlier versions remain available below.",
+        "caption": "Edited recording of the real app, without mocked API responses. A continuously visible editorial cursor guides the approved montage; its movement is reconstructed between verified controls, not recorded mouse telemetry. Typing sounds follow visible text entry, alongside click cues and the original music. Playback starts only when you press play. Not a benchmark or latency guarantee. The original 'Sin audio' label predates this soundtrack.",
         "steps": [
           "Enter a public YouTube URL and choose the target language.",
           "Follow the processing stages as the transcript is prepared.",
@@ -253,7 +253,7 @@
       "demo": {
         "src": "/media/transcriber-demo.mp4",
         "poster": "/media/transcriber-demo-poster.jpg",
-        "caption": "Grabación editada de la aplicación real, sin respuestas de API simuladas. Un cursor editorial siempre visible guía el montaje aprobado: su movimiento se reconstruye entre controles verificados, no procede de telemetría del ratón. Los sonidos de teclado siguen la entrada visible de texto, junto a los clics y la música original. Solo se reproduce al pulsar el botón de reproducción. No es un benchmark ni una garantía de latencia. El rótulo original «Sin audio» es anterior a esta banda sonora; las tres versiones anteriores aprobadas siguen disponibles debajo.",
+        "caption": "Grabación editada de la aplicación real, sin respuestas de API simuladas. Un cursor editorial siempre visible guía el montaje aprobado: su movimiento se reconstruye entre controles verificados, no procede de telemetría del ratón. Los sonidos de teclado siguen la entrada visible de texto, junto a los clics y la música original. Solo se reproduce al pulsar el botón de reproducción. No es un benchmark ni una garantía de latencia. El rótulo original «Sin audio» es anterior a esta banda sonora.",
         "steps": [
           "Introduce una URL pública de YouTube y elige el idioma de destino.",
           "Sigue las etapas del proceso mientras se prepara la transcripción.",
@@ -271,7 +271,7 @@
     "id": "en:sars-cov-2",
     "key": "sars-cov-2",
     "lang": "en",
-    "order": 2,
+    "order": 3,
     "title": "The Mutational Landscape of SARS-CoV-2",
     "eyebrow": "Research",
     "description": "Interactive portal for exploring mutations across the SARS-CoV-2 genome. An interdisciplinary project between software engineering and bioinformatics, in collaboration with Universitat Rovira i Virgili.",
@@ -305,7 +305,7 @@
       "demo": {
         "src": "/media/mutation-portal-demo.mp4",
         "poster": "/media/mutation-portal-demo-poster.jpg",
-        "caption": "81-second walkthrough of the real university portal, with a continuously visible cursor, interaction sounds and an original score. The displayed dataset date is 26 February 2024, not live epidemiological coverage. Excel export returned HTTP 500 during inspection; no successful download is simulated. Edited for readability, not a performance benchmark or scientific validation.",
+        "caption": "81-second walkthrough of the real university portal at 30 fps, with enlarged views, explanatory panels, smooth scrolling, a continuously visible cursor, interaction sounds and an original score. The displayed dataset date is 26 February 2024, not live epidemiological coverage. Excel export returned HTTP 500 during inspection; no successful download is simulated. Edited for readability, not a performance benchmark or scientific validation.",
         "steps": [
           "Read the portal's dataset context, then search the genes table for spike.",
           "Select spike, Spain and a percentage above 50 with the native controls; submit a bounded query. Country filters mutation presence, not a country-specific percentage.",
@@ -323,7 +323,7 @@
     "id": "es:sars-cov-2",
     "key": "sars-cov-2",
     "lang": "es",
-    "order": 2,
+    "order": 3,
     "title": "The Mutational Landscape of SARS-CoV-2",
     "eyebrow": "Investigación",
     "description": "Portal interactivo para explorar mutaciones del genoma SARS-CoV-2. Proyecto interdisciplinar entre ingeniería de software y bioinformática, en colaboración con la Universitat Rovira i Virgili.",
@@ -357,7 +357,7 @@
       "demo": {
         "src": "/media/mutation-portal-demo.mp4",
         "poster": "/media/mutation-portal-demo-poster.jpg",
-        "caption": "Recorrido de 81 segundos por el portal universitario real, con cursor visible de forma continua, sonidos de interacción y música original. El conjunto de datos mostrado está fechado el 26 de febrero de 2024: no representa cobertura epidemiológica en tiempo real. La exportación Excel respondió HTTP 500 durante la inspección; no se simula una descarga correcta. Edición para facilitar la lectura, no una medición de rendimiento ni una validación científica.",
+        "caption": "Recorrido de 81 segundos por el portal universitario real a 30 fps, con vistas ampliadas, paneles explicativos, desplazamiento suave, cursor siempre visible, sonidos de interacción y música original. El conjunto de datos mostrado está fechado el 26 de febrero de 2024: no representa cobertura epidemiológica en tiempo real. La exportación Excel respondió HTTP 500 durante la inspección; no se simula una descarga correcta. Edición para facilitar la lectura, no una medición de rendimiento ni una validación científica.",
         "steps": [
           "Consultar el contexto del conjunto de datos y buscar spike en la tabla de genes.",
           "Seleccionar spike, Spain y un porcentaje superior a 50 con los controles nativos; enviar una consulta acotada. El país filtra la presencia de la mutación, no un porcentaje específico de ese país.",

@@ -41,14 +41,40 @@ const isMutation = projectKey === 'sars-cov-2'
       </video>
     </div>
     <figcaption id="demo-caption" class="mt-3 text-sm leading-relaxed text-[color:var(--fg-3)]">{demo.caption}</figcaption>
-    {isTranscriber && <div class="flex flex-wrap gap-x-6">
-      <a href="/media/transcriber-demo-silent.mp4" download class="case-original">{t(lang, 'v2.case.silentVersion')}</a>
-      <a href="/media/transcriber-demo-music-original.mp4" download class="case-original">{t(lang, 'v2.case.musicVersion')}</a>
-      <a href="/media/transcriber-demo-guided-original.mp4" download class="case-original">{t(lang, 'v2.case.guidedVersion')}</a>
-    </div>}
-    {isFinance && <a href="/media/finance-core-demo-original.mp4" download class="case-original">{t(lang, 'v2.finance.originalVersion')}</a>}
+    <div class="case-demo-actions">
+      <button type="button" class="case-demo-expand" data-demo-fullscreen hidden>
+        <Icon name="expand" class="h-4 w-4" />{t(lang, 'v2.case.fullscreen')}
+      </button>
+      <a href={demo.src} download class="case-demo-download">
+        <Icon name="download" class="h-4 w-4" />{t(lang, 'v2.case.download')}
+      </a>
+    </div>
+    <p class="case-demo-hint">{t(lang, 'v2.case.viewingHint')}</p>
+    <p class="case-demo-error" data-demo-error role="status" hidden>{t(lang, 'v2.case.fullscreenError')}</p>
   </figure>
   <ol class="mt-5 list-decimal space-y-2 pl-5 text-sm leading-relaxed text-[color:var(--fg-2)] case-demo-steps">
     {demo.steps.map((step) => <li>{step}</li>)}
   </ol>
 </section>
+
+<script>
+  const video = document.querySelector<HTMLVideoElement>('#demo video')
+  const expand = document.querySelector<HTMLButtonElement>('[data-demo-fullscreen]')
+  const error = document.querySelector<HTMLElement>('[data-demo-error]')
+  type WebkitVideo = HTMLVideoElement & { webkitEnterFullscreen?: () => void }
+  if (video && expand && error) {
+    const webkitVideo: WebkitVideo = video
+    if (document.fullscreenEnabled || webkitVideo.webkitEnterFullscreen) {
+      expand.hidden = false
+      expand.addEventListener('click', async () => {
+        error.hidden = true
+        try {
+          if (document.fullscreenEnabled) await video.requestFullscreen()
+          else webkitVideo.webkitEnterFullscreen?.()
+        } catch {
+          error.hidden = false
+        }
+      })
+    }
+  }
+</script>
