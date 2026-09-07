@@ -111,6 +111,204 @@ language pair — links, buttons, images, media and form controls — and fails 
 version offers an affordance the other does not. Prose may split into a different number of
 elements; an action that exists in one language and not the other is always a defect.
 
+Tailwind scans `src/` explicitly, not documentation or verification scripts. Examples in
+those files must not become unused utilities in the production stylesheet.
+
+Project covers are warmed near the carousel itself, rather than at the start of the
+experience section. Keyboard model prefetch waits until the archive is approaching.
+Both retain a head start before interaction without competing with the hero.
+
+The YouTube Transcriber cover is an illustration, not a product screenshot. Its editable
+source is `scripts/artwork/youtube-transcriber-cover.svg`; regenerate the PNG with the
+image processor already installed by Astro:
+
+```sh
+node --input-type=module -e "import sharp from 'sharp'; await sharp('scripts/artwork/youtube-transcriber-cover.svg').png().toFile('src/assets/projects/youtube-transcriber.png');"
+```
+
+The Transcriber case study lives in `projects.json` (`caseStudy`), with real English and
+Spanish routes. It documents the captions-first pipeline, server-side Whisper fallback,
+DeepL translation, SSE stages, local history and service limits without claiming measured
+time savings. Its demo uses the supplied recording at `public/media/transcriber-demo.mp4`
+and `public/media/transcriber-demo-poster.jpg`: native controls, `preload="none"`, no autoplay.
+The caption explicitly identifies an edited illustration, not a benchmark. English and
+Spanish VTT caption tracks explain the walkthrough. It now includes the locally composed
+instrumental score "Quiet Signals" and subtle transition effects. No page audio autoplays.
+The recording, poster, original silent backup and both tracks must be present before the
+verification gate passes.
+
+The case details share `src/styles/case-study.css`, with a scoped violet identity for Transcriber
+and a cyan genomic illustration for Mutation Portal:
+staggered title letters, a signal-to-text illustration, numbered sections and a demo frame.
+It reuses the shared reveal observer; motion is finite, starts in the viewport and disappears
+with reduced motion. Text and controls remain available without JavaScript. The home cover's
+letter sweep observes the title itself, not the carousel's image-prefetch margin, so featuring
+it first does not spend the animation before the reader scrolls to it.
+Mutation Portal retains its URV attribution and publication evidence, with icon-led overview
+cards and an explicitly illustrative genomic panel rather than an invented live chart.
+Featured project actions live below the description in a labelled, responsive dock: grouped
+repository links, case details, application and publication. These styles are scoped to the
+showcase; GitHub controls elsewhere are unchanged.
+
+Render the supplied real browser recording with the existing Playwright installation:
+
+```sh
+node scripts/media/render-transcriber-demo.mjs recording.webm screenshot.png /path/to/playwright/index.mjs
+```
+
+The visual renderer produces a silent MP4, poster, English VTT and provenance JSON under `public/media/`.
+Keep the Spanish VTT's cue times aligned with the generated English track when replacing
+the recording. The picture is H.264, 1920 × 1080 at 25 fps; editing is not a
+measurement of the app's processing latency.
+
+The approved silent montage is preserved byte-for-byte as
+`public/media/transcriber-demo-silent.mp4` (SHA-256
+`70a30d78b23aba3abeee43e770cd8b138e9c745c506fe856a08a1f2ea20707ed`).
+Never overwrite or regenerate this backup. The soundtrack script refuses an unexpected
+source or a changed backup; it synthesizes audio locally and uses `-c:v copy`, preserving
+all 1,066 frames and their timing. No third-party music or samples are used.
+
+```sh
+node scripts/media/add-transcriber-soundtrack.mjs          # Add/regenerate the score
+node scripts/media/add-transcriber-soundtrack.mjs --verify # Check hashes, timing and loudness
+node scripts/media/add-transcriber-soundtrack.mjs --restore # Restore the exact silent MP4
+```
+
+The approved music-only edition is also preserved byte-for-byte at
+`public/media/transcriber-demo-music-original.mp4` (SHA-256
+`3fd1264855ef11a05321392f7d562c6ab84023d9d3abc9111cc447a4b5d86a02`),
+with its original metadata alongside it. Never overwrite either approved backup.
+
+The first approved guided edition is also preserved exactly at
+`public/media/transcriber-demo-guided-original.mp4` (SHA-256
+`804e3111f960ecac5bbcb8070db8deeba1c12891f976d484141c4806903796c1`).
+The current edition rebuilds guidance over the immutable music-only picture, avoiding a
+second cursor on top of the first version's baked-in overlays. One editorial cursor stays
+visible throughout the application footage; 14 click cues, focus labels and five quiet
+processing pulses remain tied to inspected actions in `transcriber-demo-events.json`.
+The original recording has no mouse telemetry: smooth travel between verified controls
+is explicitly editorial reconstruction, **not a genuine recorded trajectory**.
+
+Keyboard cues follow observed text-growth frames in `transcriber-demo-keyboard-events.json`.
+No typing sound is added for programmatic clearing, and no upload/file picker is invented:
+Transcriber demonstrates exports, not file uploads. The montage, timing and original
+"Quiet Signals" arrangement remain; the new picture is intentionally re-encoded and is
+**not** byte-identical to an approved earlier edition. ES/EN captions describe real actions.
+
+```sh
+node scripts/media/guide-transcriber-demo.mjs                 # Regenerate guided edition
+node scripts/media/guide-transcriber-demo.mjs --verify        # Verify current variant and backups
+node scripts/media/guide-transcriber-demo.mjs --restore=music # Exact approved music-only edition
+node scripts/media/guide-transcriber-demo.mjs --restore=silent
+node scripts/media/guide-transcriber-demo.mjs --restore=guided # Exact first guided edition
+```
+
+The clip remains 42.64 seconds; current audio measurements and all-frame cursor coverage
+are recorded in `public/media/transcriber-demo-validation.json`.
+Tool versions affect binary regeneration; the approved backup does not depend on regeneration.
+The original burned-in "Sin audio" label intentionally remains unchanged. The external caption
+and first VTT cues explain the added score and guidance; when restoring a prior presentation,
+update those texts too. The native player offers muting and links to all three backups.
+
+The case's 20-minute video limit and two simultaneous requests describe the API's
+`MAX_VIDEO_DURATION_SECONDS=1200` and `MAX_CONCURRENT_TRANSCRIPTIONS=2` defaults, not
+verified production settings. Concurrency counts requests, not OS subprocesses; excess
+requests are rejected rather than queued. Video length is separate from any total
+processing-time budget.
+
+The showcase features Transcriber first, published research second and private Finance Core
+third. Finance has a public case but no code or login link. The portfolio stays in a static
+secondary grid; no second carousel repeats the same projects.
+The historical `#project-deck` anchor is retained for inbound links and Game Mode.
+
+Finance Core's shared project key remains `financial-architecture` for existing content
+references. Its verified stack is React/TypeScript and Python/FastAPI, with PostgreSQL for
+the application and an isolated SQLite database for the synthetic local demonstration.
+Its dark green case and cover are illustrations, not live financial charts. Source repos,
+credentials, raw recordings, session files and local database must never enter this repo.
+The bank connector is implemented, but this demo has no configured bank, market or AI
+provider: do not describe the CSV import as a successful automatic bank connection.
+
+The current Finance video is 191.64 seconds, 1920 × 1080 at 25 fps, H.264/AAC (~15.52 MB).
+It records one real local SPA session entirely in dark mode, with no document reloads,
+including forms, genuine native option menus, monthly/day spending, accounts, import,
+analytics, goals, budget creation, the simulator, subscriptions, advisor memory and crypto.
+The day-detail list is scrolled to reveal its five rows, not claimed to fit simultaneously.
+A persistent synthetic-data notice, 54 event-linked click cues and 97 observed-input typing
+cues accompany a new 96 BPM plucked-string/bass/percussion score, distinct from Transcriber
+(-20.96 LUFS / -3.60 dBTP). Both caption tracks contain 14 cues spanning the whole film.
+The MP4 is deferred with `preload="none"`; neither video nor soundtrack autoplays.
+
+A single composed cursor follows actual recorded pointer events over every UI frame,
+including native top-layer options. There is no baked second cursor or UI/pointer fade.
+The 2.8-second file tray is explicitly labelled an **editorial reconstruction**, not Finder,
+an OS recording or a Finance feature. A real filechooser event precedes it; only a synthetic
+CSV is displayed, and the same file's hash is checked before the real import preview.
+No desktop, Recents, personal files or authentication screens are recorded.
+
+The import sequence previews and confirms two synthetic rows, then verifies duplicates.
+Those rows remain present through the following analytics; they are not silently reset
+between scenes. Goal progress, the new budget, subscription state, import batch and advisor
+memory were all restored after recording. Advisor footage only saves genuine local notes,
+with external AI visibly disabled. Crypto uses a typed EUR snapshot preview, without
+confirming new holdings, querying live prices or executing trades.
+
+The six files named `finance-core-demo-original*` preserve the approved 84-second version
+byte-for-byte, including its MP4 (SHA-256
+`81e7eb781d7a82d478b217f3935e462285f2eefeaf3c0e30715ae0227e4fc9c0`),
+poster, metadata, validation and both caption tracks. The case links to that original.
+
+```sh
+node scripts/media/preserve-finance-demo.mjs --verify
+node scripts/media/finance-demo-v2-pointer.mjs --self-test
+node scripts/media/verify-finance-demo.mjs PRIVATE_RENDER_DIRECTORY
+node scripts/media/verify-finance-demo-v2-sync.mjs PRIVATE_RENDER_DIRECTORY
+# Re-render only from retained private captures; no app or provider access:
+node scripts/media/render-finance-demo-v2.mjs PRIVATE_CAPTURE_JSON PRIVATE_RENDER_DIRECTORY PLAYWRIGHT_MODULE
+```
+
+The verifier checks all 4,791 decoded frame timestamps, audio, captions and dark surfaces,
+plus exactly one in-bounds cursor in every one of the 4,541 final UI frames. Full-resolution
+modal/chapter inspection complements the downsampled dark check. Source PCM/final AAC
+correlation additionally checks interaction timing after encoding.
+The public provenance contains hashes and summarized events, not authentication, private
+request logs, bank files or source. The recorder and its input captures stay outside this repo.
+
+### Mutation Portal walkthrough
+
+The research case keeps its existing context and publication under `deep`, with a bilingual
+`deep.demo` rendered by the same `CaseDemo.astro` player as the other cases. All three players
+use native controls, no autoplay and `preload="none"`.
+
+The 81-second Mutation film retains the real university UI. It shows the dataset context,
+gene search, a bounded spike/Spain/>50 query returning four rows, D614G table filtering,
+and a real scatter tooltip, drag zoom and reset. The country filter denotes mutation
+presence, not country-specific percentages. The displayed dataset date is 26 February
+2024; Excel export returned HTTP 500 during inspection. Neither current epidemiological
+coverage nor a working export is claimed, and the university server was not modified.
+This is a point-in-time walkthrough, not exhaustive application or scientific validation.
+
+Its distinct, locally synthesized seven-pulse score accompanies 12 real click cues and
+15 keyboard cues tied to observed input, using a transient from the owner's HHKB recording.
+The cursor follows genuine captured movement within chapters; chapter cuts remain editorial.
+All 1,675 final UI frames contain exactly one in-bounds cursor. Only the outer framing fades,
+never the UI or pointer. The verifier also fully decodes all 2,025 frames, checks both caption
+tracks, source hashes and AAC alignment. Raw captures and any dataset exports stay private.
+
+```sh
+node scripts/media/render-mutation-demo.mjs PRIVATE_WORKDIR PLAYWRIGHT_MODULE
+node scripts/media/verify-mutation-cursor.mjs PRIVATE_WORKDIR
+node scripts/media/verify-mutation-demo.mjs PRIVATE_WORKDIR
+```
+
+The retained private captures are required for regeneration and source-provenance checks.
+Re-recording accesses the university service; it is not part of an ordinary portfolio build.
+
+Original bilingual social cards for the home page and each case study are 1200 × 630 PNGs
+under `public/og/`. Regenerate them with `node scripts/generate-social-cards.mjs` (uses Astro's
+existing Sharp dependency). Their page-specific metadata remains in `pages.json`; canonical,
+hreflang and JSON-LD still use the common SEO pipeline.
+
 **Nothing ships that nothing asks for.** Bundling emits the original of every image in
 `src/assets/` alongside the slices `astro:assets` actually generates. The
 `prune-unused-assets` integration walks the finished output, collects every filename the
@@ -129,6 +327,8 @@ kept reachable for humans but out of the index.
 | `/` · `/es/` | V2 portfolio | ✅ |
 | `/cv/` · `/es/cv/` | Print-ready CV + PDF download | ✅ |
 | `/work/sars-cov-2/` · `/es/work/sars-cov-2/` | Project case study | ✅ |
+| `/work/youtube-transcriber/` · `/es/work/youtube-transcriber/` | Transcriber case study + on-demand demo | ✅ |
+| `/work/finance-core/` · `/es/work/finance-core/` | Private Finance Core case + dark on-demand demo | ✅ |
 | `/v1/` · `/v1/es/` | Previous version | `noindex` |
 
 Each language cluster emits an identical, self-referencing `hreflang` set with `x-default`,
