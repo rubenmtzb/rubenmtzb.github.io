@@ -27,9 +27,9 @@ export function initTypewriter() {
    */
   const prefixNode = document.createTextNode('')
   const nameNode = document.createElement('span')
-  el.replaceChildren(prefixNode, nameNode)
 
   if (reduce) {
+    el.replaceChildren(prefixNode, nameNode)
     prefixNode.data = prefix
     nameNode.className = names[0].cls
     nameNode.textContent = names[0].text
@@ -40,9 +40,20 @@ export function initTypewriter() {
   let charIdx = 0
   let deleting = false
   let prefixDone = false
-  const after = (ms: number): void => { window.setTimeout(tick, ms) }
+  let timer: number | null = null
+  let onScreen = !('IntersectionObserver' in window)
+  let remaining = 300
+  let due = 0
+  let mounted = false
+  const after = (ms: number): void => {
+    remaining = ms
+    if (!onScreen || document.hidden) return
+    due = performance.now() + ms
+    timer = window.setTimeout(tick, ms)
+  }
 
   function tick(): void {
+    timer = null
     const current = names[nameIndex]
 
     if (!prefixDone) {
@@ -54,7 +65,7 @@ export function initTypewriter() {
       return after(200)
     }
 
-    nameNode.className = current.cls
+    if (nameNode.className !== current.cls) nameNode.className = current.cls
     charIdx += deleting ? -1 : 1
     nameNode.textContent = current.text.slice(0, charIdx)
 
@@ -70,5 +81,25 @@ export function initTypewriter() {
     return after(deleting ? 32 + Math.random() * 20 : 50 + Math.random() * 35)
   }
 
-  after(300)
+  const sync = () => {
+    if (onScreen && !document.hidden) {
+      if (!mounted) {
+        el.replaceChildren(prefixNode, nameNode)
+        mounted = true
+      }
+      if (timer === null) after(remaining)
+    } else if (timer !== null) {
+      window.clearTimeout(timer)
+      timer = null
+      remaining = Math.max(0, due - performance.now())
+    }
+  }
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([entry]) => {
+      onScreen = entry.isIntersecting
+      sync()
+    }).observe(el)
+  }
+  document.addEventListener('visibilitychange', sync)
+  sync()
 }

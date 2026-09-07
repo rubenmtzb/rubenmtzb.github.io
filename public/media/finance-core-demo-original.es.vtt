@@ -1,0 +1,31 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:04.000
+Finance Core. Un recorrido por la aplicación real, con datos sintéticos.
+
+00:00:04.000 --> 00:00:12.000
+Patrimonio, ingresos y gastos en una vista. Los datos de esta demostración son ficticios.
+
+00:00:12.000 --> 00:00:19.000
+Cuentas agrupadas por entidad. El patrimonio incluye inversión manual; no es todo dinero líquido.
+
+00:00:19.000 --> 00:00:27.000
+El conector GoCardless de solo lectura requiere proveedor y consentimiento. Aquí no está configurado.
+
+00:00:27.000 --> 00:00:39.000
+La alternativa local: seleccionar un CSV sintético y revisar la vista previa antes de confirmar.
+
+00:00:39.000 --> 00:00:47.000
+Tras confirmar dos filas, se repite la vista previa: la protección de duplicados evita volver a contarlas.
+
+00:00:47.000 --> 00:00:55.000
+La analítica resume tendencias de ingresos, gastos y ahorro a partir de movimientos locales.
+
+00:00:55.000 --> 00:01:05.000
+Un escenario de ahorro extra ayuda a explorar objetivos. Es una estimación, no una promesa financiera.
+
+00:01:05.000 --> 00:01:18.000
+Criptoactivos locales: cantidades y coste registrado. Sin cotizaciones, P&L, wallets conectadas ni operaciones.
+
+00:01:18.000 --> 00:01:24.000
+Aplicación real, datos sintéticos. Sin bancos conectados, precios en vivo ni IA externa. Código privado.

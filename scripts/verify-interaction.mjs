@@ -16,12 +16,16 @@
  * full, that the carousels advance with a single active element, that the tabs
  * switch panels, and that the keyboard records hits, misses and deletions.
  */
-import { readFileSync, readdirSync } from 'node:fs'
-import { join } from 'node:path'
+import { readFileSync, readdirSync, existsSync } from 'node:fs'
+import { dirname, join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { parseHTML } from 'linkedom'
+import { createHash } from 'node:crypto'
+import ts from 'typescript'
+import { verifyMotion } from './verify-motion.mjs'
 
 const DIST = 'dist'
+const languageSourceOnly = process.argv.includes('--language-source')
 const PAGES = [
   {
     file: 'index.html',
@@ -59,16 +63,201 @@ const PAGES = [
   },
 ]
 
-const bundleName = readdirSync(join(DIST, '_astro'))
+const bundleName = languageSourceOnly ? null : readdirSync(join(DIST, '_astro'))
   .find((f) => f.startsWith('V2Layout') && f.endsWith('.js'))
-if (!bundleName) {
+if (!languageSourceOnly && !bundleName) {
   console.error('✗ no V2 bundle in dist/_astro: has the site been built?')
   process.exit(1)
 }
-const bundleUrl = pathToFileURL(join(process.cwd(), DIST, '_astro', bundleName)).href
+const bundleUrl = bundleName ? pathToFileURL(join(process.cwd(), DIST, '_astro', bundleName)).href : null
 
 let pass = 0
 let fail = 0
+
+async function languageSuite() {
+  console.log('\n· Language source regressions')
+  const check = (cond, msg) => {
+    if (cond) { pass++; console.log(`  ✓ ${msg}`) }
+    else { fail++; console.error(`  ✗ ${msg}`) }
+  }
+  const read = (file) => readFileSync(file, 'utf8')
+  const json = (file) => JSON.parse(read(file))
+  const moduleUrls = new Map()
+  const sourceModuleUrl = (file) => {
+    if (moduleUrls.has(file)) return moduleUrls.get(file)
+    let code = ts.transpileModule(read(file), {
+      compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext },
+    }).outputText
+    for (const match of [...code.matchAll(/\bfrom\s+(['"])(\.[^'"]+)\1/g)]) {
+      const target = sourceModuleUrl(join(dirname(file), `${match[2]}.ts`))
+      code = code.replace(match[0], `from ${JSON.stringify(target)}`)
+    }
+    const url = `data:text/javascript,${encodeURIComponent(code)}`
+    moduleUrls.set(file, url)
+    return url
+  }
+  const { initLanguageSwitch } = await import(sourceModuleUrl('src/scripts/language-switch.ts'))
+  const { createSwitchAudio } = await import(sourceModuleUrl('src/scripts/v2/keyboard/switch-audio.ts'))
+  const priorWindow = Object.getOwnPropertyDescriptor(globalThis, 'window')
+  const priorDocument = Object.getOwnPropertyDescriptor(globalThis, 'document')
+  try {
+    const routes = [
+      ['/', '/es/'], ['/es/', '/'], ['/v1/', '/v1/es/'], ['/v1/es/', '/v1/'],
+      ...['finance-core', 'youtube-transcriber', 'sars-cov-2'].flatMap((slug) => [
+        [`/work/${slug}/`, `/es/work/${slug}/`],
+        [`/es/work/${slug}/`, `/work/${slug}/`],
+      ]),
+    ]
+    for (const [route, alternate] of routes) {
+      const { document, window: domWindow } = parseHTML(`<html><body>
+        <a data-language-switch href="${alternate}">Language</a>
+        <a data-language-switch href="https://example.invalid/es/">External</a>
+        <a data-language-switch href="//example.invalid/es/">Protocol relative</a>
+        <a data-language-switch href="/\\example.invalid/es/">Backslash host</a>
+        <a href="/unrelated/">Unrelated</a>
+        </body></html>`)
+      const listeners = new Map()
+      const browserWindow = {
+        location: new URL(`https://portfolio.example${route}?from=project-carousel&next=https%3A%2F%2Fexample.invalid#demo`),
+        addEventListener(type, handler) { listeners.set(type, handler) },
+      }
+      Object.defineProperties(globalThis, {
+        window: { configurable: true, writable: true, value: browserWindow },
+        document: { configurable: true, writable: true, value: document },
+      })
+      const link = document.querySelector('a')
+      check(link.getAttribute('href') === alternate, `${route}: no-JS alternate stays canonical`)
+      initLanguageSwitch()
+      check(link.getAttribute('href') === `${alternate}${browserWindow.location.search}#demo`,
+        `${route}: switching preserves query and section without interpreting query URLs`)
+      browserWindow.location.hash = '#contact'
+      listeners.get('hashchange')()
+      check(link.getAttribute('href').endsWith('#contact'), `${route}: a later hash change is preserved`)
+      browserWindow.location.search = '?from=project-deck'
+      listeners.get('popstate')()
+      check(link.getAttribute('href') === `${alternate}?from=project-deck#contact`,
+        `${route}: back/forward refreshes case origin`)
+      browserWindow.location.search = '?from=project-carousel'
+      link.dispatchEvent(new domWindow.Event('click'))
+      check(link.getAttribute('href') === `${alternate}?from=project-carousel#contact`,
+        `${route}: click refreshes context changed via history APIs`)
+      check(document.querySelectorAll('a')[1].getAttribute('href') === 'https://example.invalid/es/'
+        && document.querySelectorAll('a')[2].getAttribute('href') === '//example.invalid/es/'
+        && document.querySelectorAll('a')[3].getAttribute('href') === '/\\example.invalid/es/'
+        && document.querySelectorAll('a')[4].getAttribute('href') === '/unrelated/',
+        `${route}: external, disguised-host and unrelated links are not rewritten`)
+    }
+  } finally {
+    if (priorWindow) Object.defineProperty(globalThis, 'window', priorWindow)
+    else delete globalThis.window
+    if (priorDocument) Object.defineProperty(globalThis, 'document', priorDocument)
+    else delete globalThis.document
+  }
+  for (const file of ['src/components/v1/Nav.astro', 'src/components/v2/Nav.astro', 'src/layouts/CaseLayout.astro']) {
+    const source = read(file)
+    check(source.includes('data-language-switch') && source.includes('initLanguageSwitch()')
+      && source.includes('href={other.path}'), `${file}: progressive helper leaves canonical SSR links intact`)
+  }
+  for (const [lang, expected] of [
+    ['en', ['Linear (Thock)', 'Clicky (Crisp)', 'Tactile (Pop)']],
+    ['es', ['Lineal (sonido grave)', 'Con clic (sonido nítido)', 'Táctil (sonido seco)']],
+  ]) {
+    const audio = createSwitchAudio(lang)
+    check(audio.label === expected[0] && audio.nextProfile() === expected[1]
+      && audio.label === expected[1] && audio.nextProfile() === expected[2]
+      && audio.nextProfile() === expected[0], `${lang}: all runtime switch labels cycle in the chosen language`)
+  }
+  const keyboardView = read('src/components/v2/OutsideTheCode.astro')
+  check(keyboardView.includes('keyboardSwitchLabels(lang)')
+    && (keyboardView.match(/\{switchLabels.linear\}/g) ?? []).length === 2,
+    'SSR switch selector and sandbox pill use the same translated initial profile')
+
+  const notFound = read('src/pages/404.astro')
+  const localize404 = new Function('location', 'document', notFound.match(/<script is:inline>([\s\S]*?)<\/script>/)[1])
+  for (const [pathname, lang] of [
+    ['/missing/', 'en'], ['/es/missing/', 'es'], ['/v1/es/missing/', 'es'],
+    ['/v1/es', 'es'], ['/es', 'es'], ['/v1/esoteric/', 'en'],
+  ]) {
+    const { document } = parseHTML(`<html lang="en"><body><a class="skip-link">Skip to content</a>${notFound.match(/<main[\s\S]*?<\/main>/)[0]}</body></html>`)
+    localize404({ pathname }, document)
+    check(document.documentElement.lang === lang
+      && document.querySelector('#not-found-cv').getAttribute('href') === (lang === 'es' ? '/es/cv/' : '/cv/'),
+      `${pathname}: 404 language and CV destination are correct`)
+  }
+  const gameControls = read('src/scripts/game-mode.ts').match(/<div class="gm-mobile-controls[\s\S]*?(?=\n\s*`\n)/)[0]
+  for (const [spanish, expected] of [[false, ['Left', 'Right', 'Down', 'Jump']], [true, ['Izquierda', 'Derecha', 'Abajo', 'Saltar']]]) {
+    const { document } = parseHTML(new Function('isSpanish', `return \`${gameControls}\``)(spanish))
+    check(['left', 'right', 'down', 'jump'].every((key, i) =>
+      document.querySelector(`#gm-btn-${key}`).getAttribute('aria-label') === expected[i]),
+    `${spanish ? 'es' : 'en'}: rendered mobile game controls have localized accessible names`)
+  }
+
+  const uiSource = read('src/i18n/ui.ts')
+  const caseSource = read('src/components/CaseStudy.astro')
+  for (const [key, en, es] of [
+    ['v2.case.input', 'INPUT', 'ENTRADA'],
+    ['v2.case.process', 'PROCESS', 'PROCESO'],
+    ['v2.case.output', 'OUTPUT', 'SALIDA'],
+    ['v2.mutation.explorer', 'GENOMIC EXPLORER', 'EXPLORADOR GENÓMICO'],
+  ]) check(uiSource.includes(`'${key}': '${en}'`) && uiSource.includes(`'${key}': '${es}'`)
+    && caseSource.includes(`t(lang, '${key}')`), `${key}: both translations are consumed by the case diagram`)
+  check(uiSource.includes("'v2.case.download': 'Download this video'")
+    && uiSource.includes("'v2.case.download': 'Descargar este vídeo'"),
+    'both demo download labels identify only the current recording')
+  check(uiSource.includes("'v2.case.transcript': 'Texto con marcas de tiempo'"),
+    'the transcript flow label consistently names timestamps')
+
+  const projects = json('src/content/projects.json')
+  const project = (id) => projects.find((entry) => entry.id === id)
+  const education = json('src/content/education.json')
+  const uocEnglish = education.find((entry) => entry.id === 'en:uoc')
+  const uocSpanish = education.find((entry) => entry.id === 'es:uoc')
+  check(uocEnglish.title === "Bachelor's Degree in Computer Engineering"
+    && uocSpanish.title === 'Grado en Ingeniería Informática'
+    && [uocEnglish, uocSpanish].every((entry) => entry.inProgress && entry.end === null),
+    'UOC uses its official English degree name without implying completion')
+  check(project('es:portfolio').link === 'https://rubenitx.me/es/'
+    && new URL(project('en:portfolio').link).pathname === '/', 'the portfolio Visit destination follows the record language')
+  check(project('es:youtube-transcriber').caseStudy.demo.caption.includes('al pulsar el botón de reproducción')
+    && !/\bpipeline\b|\bfallback\b/.test(project('es:youtube-transcriber').imageAlt),
+    'Spanish Transcriber instructions and alternate text use translated editorial labels')
+  check(json('src/content/keyboards.json').find((entry) => entry.key === 'neo65').summary.es
+    === '65 % · Montaje con juntas · Hotswap · Conexión por cable',
+    'Neo65 distinguishes hotswap switches from the wired connection')
+  const climbing = json('src/content/personal.json').find((entry) => entry.key === 'climbing').alt
+  check(climbing.en.includes('climbing wall') && !climbing.en.includes('bouldering')
+    && climbing.en.includes('roped in') && climbing.es.includes('cuerda'), 'climbing alt text describes roped climbing consistently')
+  const keyboardCopy = read('src/i18n/keyboards.ts')
+  check(keyboardCopy.includes("source: 'Part reference'") && keyboardCopy.includes("source: 'Referencia de la pieza'"),
+    'part documentation links no longer promise a purchasing destination')
+  for (const [key, asset] of [['financial-architecture', 'finance-core-es.svg'], ['youtube-transcriber', 'youtube-transcriber-es.png']]) {
+    check(project(`es:${key}`).image.endsWith(asset) && existsSync(`src/assets/projects/${asset}`)
+      && project(`en:${key}`).image !== project(`es:${key}`).image, `${key}: Spanish artwork is available and selected only for Spanish`)
+  }
+  const financeArt = read('src/assets/projects/finance-core-es.svg')
+  const transcriberArt = read('scripts/artwork/youtube-transcriber-cover-es.svg')
+  check(['CUENTAS', 'GASTOS', 'OBJETIVOS DE AHORRO', 'CÓDIGO PRIVADO'].every((label) => financeArt.includes(`>${label}<`) || financeArt.includes(` / ${label}<`))
+    && !/>PRIVATE \/ DEMO<|>OVERVIEW<|>ACCOUNTS<|>SAVINGS GOALS</.test(financeArt),
+    'Finance artwork translates its authored interface labels')
+  check(transcriberArt.includes('>SUBTÍTULOS<') && transcriberArt.includes('>SIN SUBTÍTULOS<')
+    && transcriberArt.includes('SUBTÍTULOS PRIMERO') && transcriberArt.includes('The system boundary is the request.')
+    && transcriberArt.includes('El l&#237;mite del sistema es la petici&#243;n.'),
+    'Transcriber artwork translates chrome while retaining its intentional bilingual example')
+
+  const caption = read('public/media/finance-core-demo.es.vtt')
+  const validation = json('public/media/finance-core-demo-validation.json')
+  const metadata = json('public/media/finance-core-demo.json')
+  const cues = [...caption.matchAll(/(\d{2}:\d{2}:\d{2}\.\d{3}) --> (\d{2}:\d{2}:\d{2}\.\d{3})\n([^\n]+)/g)]
+  const time = (value) => value.split(':').reduce((sum, part) => sum * 60 + Number(part), 0)
+  check(!caption.includes('wallets') && caption.includes('carteras conectadas')
+    && read('scripts/media/render-finance-demo-v2.mjs').includes(cues[12][3]),
+    'current Spanish crypto caption and its generator use the same translated wording')
+  check(cues.length === metadata.chapters.length && cues.every((cue, i) =>
+    Math.abs(time(cue[1]) - metadata.chapters[i].start) < .001
+    && Math.abs(time(cue[2]) - metadata.chapters[i].end) < .001)
+    && createHash('sha256').update(caption).digest('hex') === validation.subtitles.es.sha256,
+    'caption checksum matches its validation record and all original chapter timings remain unchanged')
+}
 
 /**
  * Runs the bundle against a page and returns the tools for interrogating the
@@ -90,9 +279,19 @@ async function run(page, runIndex) {
    * only way to reach the end of a round without typing the whole phrase.
    */
   const intervals = new Map()
+  const viewportEntries = new Map()
   let nextIntervalId = 1
+  const fetchFromDist = async (input) => {
+    const href = typeof input === 'string' ? input : String(input?.url ?? input)
+    const path = href.replace(/^https?:\/\/[^/]+/, '')
+    const file = path.endsWith('/') ? `${path.replace(/^\//, '')}index.html` : path.replace(/^\//, '')
+    const full = join(DIST, file)
+    if (!existsSync(full)) return { ok: false, status: 404, text: async () => '' }
+    return { ok: true, status: 200, text: async () => readFileSync(full, 'utf8') }
+  }
   Object.assign(window, {
     matchMedia: () => ({ matches: false, addEventListener: noop, removeEventListener: noop }),
+    fetch: fetchFromDist,
     requestAnimationFrame: () => 0,
     cancelAnimationFrame: noop,
     setTimeout: () => 0,
@@ -101,9 +300,13 @@ async function run(page, runIndex) {
     clearInterval: (id) => { intervals.delete(id) },
     getComputedStyle: () => ({ gap: '24px' }),
     IntersectionObserver: class {
-      constructor(callback) { this.callback = callback }
-      observe(el) { this.callback([{ isIntersecting: true, target: el }], this) }
-      unobserve() {} disconnect() {}
+      constructor(callback, options) { this.callback = callback; this.options = options; this.disconnected = false }
+      observe(el) {
+        if (el.matches('.project-cover-title')) viewportEntries.set(el, this)
+        else this.callback([{ isIntersecting: true, target: el }], this)
+      }
+      unobserve() {}
+      disconnect() { this.disconnected = true }
     },
     ResizeObserver: class { observe() {} disconnect() {} },
     AudioContext: class { constructor() { throw new Error('no audio output in Node') } },
@@ -116,20 +319,22 @@ async function run(page, runIndex) {
   })
   for (const canvas of document.querySelectorAll('canvas')) canvas.getContext = () => null
 
-  /* linkedom plays nothing. It is given the minimum output the sound bench
-     needs — play, pause and a playhead — so it can be checked here that only one
-     sample plays at a time and that scrubbing moves the position. The duration
-     comes from the markup, which is where the player itself reads it from while
-     the file has not been downloaded. */
-  for (const audio of document.querySelectorAll('audio')) {
-    let head = 0
-    Object.defineProperties(audio, {
-      duration: { get: () => Number(audio.closest('[data-duration]')?.dataset.duration ?? 0) },
-      currentTime: { get: () => head, set: (value) => { head = value } },
-    })
-    audio.play = () => { audio.dispatchEvent(new window.Event('play')) }
-    audio.pause = () => { audio.dispatchEvent(new window.Event('pause')) }
-  }
+  /* linkedom plays nothing. Samples arrive in a fetched fragment, so the
+     prototype is patched: play/pause/duration have to exist on audio nodes
+     created after this harness runs. */
+  const AudioProto = window.HTMLAudioElement?.prototype ?? window.HTMLElement.prototype
+  const head = new WeakMap()
+  Object.defineProperty(AudioProto, 'duration', {
+    configurable: true,
+    get() { return Number(this.closest?.('[data-duration]')?.dataset.duration ?? 0) },
+  })
+  Object.defineProperty(AudioProto, 'currentTime', {
+    configurable: true,
+    get() { return head.get(this) ?? 0 },
+    set(value) { head.set(this, value) },
+  })
+  AudioProto.play = function play() { this.dispatchEvent(new window.Event('play')); return Promise.resolve() }
+  AudioProto.pause = function pause() { this.dispatchEvent(new window.Event('pause')) }
 
   /* linkedom pins event.target to the dispatching object and will not let it be
      overwritten, but in a browser a keydown points at the focused element. The
@@ -157,16 +362,32 @@ async function run(page, runIndex) {
     setInterval: window.setInterval,
     clearTimeout: window.clearTimeout,
     clearInterval: window.clearInterval,
+    fetch: fetchFromDist,
   })
 
   // The suffix bypasses Node's module cache: every page starts from scratch.
   await import(`${bundleUrl}?run=${runIndex}`)
+
+  for (const audio of document.querySelectorAll('audio')) {
+    const own = { head: 0 }
+    Object.defineProperties(audio, {
+      duration: { configurable: true, get: () => Number(audio.closest('[data-duration]')?.dataset.duration ?? 0) },
+      currentTime: { configurable: true, get: () => own.head, set: (value) => { own.head = value } },
+    })
+    audio.play = () => { audio.dispatchEvent(new window.Event('play')); return Promise.resolve() }
+    audio.pause = () => { audio.dispatchEvent(new window.Event('pause')) }
+  }
 
   const el = (id) => document.getElementById(id)
   return {
     document,
     el,
     all: (sel) => [...document.querySelectorAll(sel)],
+    intersect(node, isIntersecting) {
+      const observer = viewportEntries.get(node)
+      if (observer && !observer.disconnected) observer.callback([{ isIntersecting, target: node }], observer)
+      return observer?.options
+    },
     fire(node, type, init = {}) {
       const ev = new window.Event(type, { bubbles: true, cancelable: true })
       Object.assign(ev, init)
@@ -237,6 +458,38 @@ function suite(page, dom) {
     check(activeIndex() === 0, `${c.name}: wraps around on reaching the end`)
   }
 
+  const projectSlides = all('.project-slide')
+  const projectCarousel = el('project-carousel')
+  check(projectSlides[0]?.dataset.project === 'youtube-transcriber',
+    'the showcase starts with the inspectable Transcriber app')
+  const projectTitle = projectSlides[0]?.querySelector('.project-cover-title')
+  check(!projectTitle?.classList.contains('has-entered'), 'the first title does not animate during carousel boot')
+  const visibilityOptions = dom.intersect(projectTitle, false)
+  check(!projectTitle?.classList.contains('has-entered')
+    && visibilityOptions?.rootMargin === '-72px 0px -12% 0px',
+  'the title remains pending outside the visible viewport, not in the prefetch margin')
+  dom.intersect(projectTitle, true)
+  check(projectTitle?.classList.contains('has-entered'), 'entering the viewport enables the title animation')
+  dom.intersect(projectTitle, false)
+  check(projectTitle?.classList.contains('has-entered'), 'the one-shot reveal does not reset on leaving the viewport')
+  fire(projectCarousel, 'keydown', { key: 'End' })
+  check(projectSlides.at(-1)?.classList.contains('is-active')
+    && projectSlides.filter((slide) => slide.getAttribute('aria-hidden') === 'false').length === 1,
+  'End selects the final project and exposes exactly one slide to assistive technology')
+  fire(projectCarousel, 'keydown', { key: 'Home' })
+  check(projectSlides[0]?.classList.contains('is-active'), 'Home restores the first project')
+  const repoLink = projectSlides[0]?.querySelector('.project-repo-link')
+  fire(repoLink, 'keydown', { key: 'ArrowRight' })
+  check(projectSlides[0]?.classList.contains('is-active'), 'arrow keys inside a project link do not navigate the carousel')
+  check(all('#project-deck .project-reference').length === 1
+    && !el('project-deck-next') && !el('project-deck-prev'),
+  'the compact portfolio source remains visible without another carousel')
+  const gameLevels = readFileSync('src/scripts/game/levels.ts', 'utf8')
+  check(['#project-carousel', '#project-deck .project-reference'].every(selector =>
+    document.querySelector(selector) && gameLevels.includes(`selector: '${selector}'`))
+    && !gameLevels.includes('.project-grid-card'),
+  'Game Mode project targets still resolve after compacting the source reference')
+
   console.log('\n· Draggable personal photos')
   const momentCard = document.querySelector('.moment-card')
   const momentImage = momentCard?.querySelector('.moment-img')
@@ -272,6 +525,40 @@ function suite(page, dom) {
   check(momentCard.style.transform === momentOrigin
     && !momentCard.classList.contains('is-dragging', 'is-flying'),
   'rearranging keeps the original reset after dragging a photo')
+
+  const momentCards = all('.moment-card')
+  momentCards.forEach((card, i) => {
+    card.getBoundingClientRect = () => ({
+      x: 100, y: 100, left: 100, top: 100, right: 200, bottom: 240, width: 100, height: 140, toJSON: () => {},
+    })
+    Object.defineProperty(card, 'offsetWidth', { configurable: true, get: () => 100 })
+    Object.defineProperty(card, 'offsetHeight', { configurable: true, get: () => 140 })
+    card.style.zIndex = String(10 + i)
+  })
+  fire(document, 'pointermove', { pointerType: 'mouse', clientX: 150, clientY: 150 })
+  const peeked = momentCards.filter((card) => card.classList.contains('is-peeked'))
+  check(
+    peeked.length === 1 && peeked[0] === momentCards[momentCards.length - 1],
+    'overlapping photos peek only the top card',
+  )
+  fire(document, 'pointermove', { pointerType: 'mouse', clientX: 160, clientY: 170 })
+  check(
+    momentCards.filter((card) => card.classList.contains('is-peeked')).length === 1
+      && momentCards[momentCards.length - 1].classList.contains('is-peeked'),
+    'moving inside the top card does not flip the stack',
+  )
+  fire(document, 'pointermove', { pointerType: 'mouse', clientX: 10, clientY: 10 })
+  check(momentCards.every((card) => !card.classList.contains('is-peeked')),
+    'leaving the stack unpeeks')
+
+  fire(momentCards[0], 'focus')
+  check(momentCards[0].classList.contains('is-peeked'), 'keyboard focus peeks the card')
+  fire(momentCards[0], 'keydown', { key: 'Enter' })
+  check(momentCards[0].classList.contains('is-flipped'), 'Enter pins the back face')
+  fire(momentCards[0], 'keydown', { key: ' ' })
+  check(!momentCards[0].classList.contains('is-flipped'), 'Space unpins it')
+  fire(momentCards[0], 'blur')
+  check(!momentCards[0].classList.contains('is-peeked'), 'blur unpeeks when the pointer is elsewhere')
 
   console.log('\n· Experience tabs')
   const jobTabs = all('.job-tab')
@@ -343,6 +630,10 @@ function suite(page, dom) {
     `the speed mode uses the ${page.lang} label ("${el('kb-tab-speed').textContent.trim()}")`,
   )
   key('keydown', { code: 'KeyX', key: quote[0], target: el('monkey-box') })
+  check(!spans()[0].classList.contains('correct'), 'typing does nothing until the trial is started')
+  fire(el('monkey-start-btn'), 'click')
+  check(el('monkey-box').classList.contains('is-live'), 'Comenzar puts the board live')
+  key('keydown', { code: 'KeyX', key: quote[0], target: el('monkey-box') })
   check(spans()[0].classList.contains('correct'), 'the first correct letter is marked as a hit')
   check(spans()[1].classList.contains('current'), 'the cursor advances')
   key('keydown', { code: 'KeyZ', key: '±', target: el('monkey-box') })
@@ -374,6 +665,7 @@ function suite(page, dom) {
 
   fire(el('monkey-restart-btn'), 'click')
   check(el('kb-timer').textContent === '⏱️ 30s' && marked() === 0, 'restarting returns the round to zero')
+  fire(el('monkey-start-btn'), 'click')
   key('keydown', { code: 'KeyW', key: spans()[0].textContent, target: el('monkey-box') })
   check(spans()[0].classList.contains('correct'), 'and it counts what gets typed once more')
 
@@ -395,13 +687,53 @@ function suite(page, dom) {
     'clearing returns the sandbox to zero')
 
   console.log('\n· Keyboard controls')
-  fire(el('kb-switch-type'), 'click')
-  check(el('kb-switch-type').textContent === 'Clicky (Crisp)', `it cycles the switch profile ("${el('kb-switch-type').textContent}")`)
-  check(el('kb-free-sound-pill').textContent.includes('Clicky'), 'the sandbox pill reflects the profile')
+  const profileLabels = page.lang === 'es'
+    ? ['Con clic (sonido nítido)', 'Táctil (sonido seco)', 'Lineal (sonido grave)']
+    : ['Clicky (Crisp)', 'Tactile (Pop)', 'Linear (Thock)']
+  check(el('kb-switch-type').textContent.trim() === profileLabels[2],
+    'the initial switch selector is localized')
+  for (const label of profileLabels) {
+    fire(el('kb-switch-type'), 'click')
+    check(el('kb-switch-type').textContent === label
+      && el('kb-free-sound-pill').textContent === `🔊 ${label}`,
+      `selector and sandbox pill share the localized profile "${label}"`)
+  }
   fire(el('kb-sound-toggle'), 'click')
   check(el('kb-sound-label').textContent === page.soundOff, `the toggle uses i18n ("${el('kb-sound-label').textContent}")`)
   fire(el('kb-sound-toggle'), 'click')
   check(el('kb-sound-label').textContent === page.soundOn, 'and it returns to the initial state')
+
+  console.log('\n· Game mode does not share the keyboard')
+  const setGameMode = (on) => {
+    document.documentElement.classList.toggle('game-mode-active', on)
+    document.dispatchEvent(new window.CustomEvent('game-mode-change', { detail: { active: on } }))
+  }
+  fire(el('kb-tab-speed'), 'click')
+  fire(el('monkey-start-btn'), 'click')
+  const liveQuote = spans().map((s) => s.textContent).join('')
+  key('keydown', { code: 'KeyX', key: liveQuote[0], target: el('monkey-box') })
+  const hitsBeforeGame = spans().filter((s) => s.classList.contains('correct')).length
+  tick(2)
+  const timerBeforePause = el('kb-timer').textContent
+  setGameMode(true)
+  key('keydown', { code: 'KeyX', key: liveQuote[1] ?? 'a', target: el('monkey-box') })
+  check(spans().filter((s) => s.classList.contains('correct')).length === hitsBeforeGame,
+    'with game mode on, typing does not mark the speed trial')
+  const drawnProbe = drawnKey('KeyQ')
+  drawnProbe.classList.remove('is-down')
+  key('keydown', { code: 'KeyQ', key: 'q' })
+  check(!drawnProbe.classList.contains('is-down'), 'with game mode on, keys do not light up')
+  fire(drawnProbe, 'mousedown')
+  check(spans().filter((s) => s.classList.contains('correct')).length === hitsBeforeGame,
+    'and clicking a drawn key is ignored too')
+  tick(5)
+  check(el('kb-timer').textContent === timerBeforePause, 'and the trial clock is frozen')
+  setGameMode(false)
+  key('keydown', { code: 'KeyX', key: liveQuote[1] ?? 'a', target: el('monkey-box') })
+  check(spans().filter((s) => s.classList.contains('correct')).length === hitsBeforeGame + 1,
+    'leaving game mode returns typing to the trial')
+  tick(1)
+  check(el('kb-timer').textContent !== timerBeforePause, 'and the clock runs again')
 
   console.log('\n· Build archive')
   fire(el('kb-tab-photos'), 'click')
@@ -781,7 +1113,66 @@ function suite(page, dom) {
   check(/^UTC[+-]\d+$/.test(el('local-offset').textContent), `the offset is derived from the zone ("${el('local-offset').textContent}")`)
 }
 
-for (const [i, page] of PAGES.entries()) {
+async function demoFullscreenSuite() {
+  console.log('\n· Demo fullscreen enhancement')
+  const check = (condition, label) => {
+    if (condition) { pass++; console.log(`  ✓ ${label}`) }
+    else { fail++; console.error(`  ✗ ${label}`) }
+  }
+  const source = readFileSync('src/components/CaseDemo.astro', 'utf8').match(/<script>([\s\S]*?)<\/script>/)?.[1]
+  if (!source) throw new Error('CaseDemo must expose its fullscreen enhancement for verification')
+  const code = ts.transpileModule(source, {
+    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext },
+  }).outputText
+  const previousDocument = globalThis.document
+  try {
+    for (const mode of ['standard', 'webkit', 'unsupported', 'rejected']) {
+      let listener
+      let requests = 0
+      let reject = mode === 'rejected'
+      const video = { currentTime: 17, paused: true }
+      if (mode === 'webkit') video.webkitEnterFullscreen = () => { requests++ }
+      else video.requestFullscreen = async () => {
+        requests++
+        if (reject) throw new Error('Fullscreen permission denied')
+      }
+      const expand = { hidden: true, addEventListener: (event, callback) => {
+        if (event !== 'click') throw new Error(`Unexpected fullscreen trigger: ${event}`)
+        listener = callback
+      } }
+      const error = { hidden: true }
+      globalThis.document = {
+        fullscreenEnabled: ['standard', 'rejected'].includes(mode),
+        querySelector: selector => ({
+          '#demo video': video, '[data-demo-fullscreen]': expand, '[data-demo-error]': error,
+        })[selector],
+      }
+      await import(`data:text/javascript;base64,${Buffer.from(code).toString('base64')}#${mode}`)
+      check(requests === 0 && video.paused, `${mode}: initialization never starts playback or fullscreen`)
+      if (mode === 'unsupported') {
+        check(expand.hidden && !listener, 'unsupported fullscreen leaves only native controls and the current download')
+        continue
+      }
+      check(!expand.hidden && typeof listener === 'function', `${mode}: an available API reveals the explicit control`)
+      await listener()
+      check(requests === 1 && error.hidden === !reject, `${mode}: success stays quiet and rejection is surfaced`)
+      check(video.currentTime === 17 && video.paused, `${mode}: expanding never resets or auto-plays the movie`)
+      if (reject) {
+        reject = false
+        await listener()
+        check(requests === 2 && error.hidden, 'a successful retry clears the fullscreen error')
+      }
+    }
+  } finally {
+    globalThis.document = previousDocument
+  }
+}
+
+await languageSuite()
+await demoFullscreenSuite()
+pass += await verifyMotion()
+
+for (const [i, page] of (languageSourceOnly ? [] : PAGES).entries()) {
   console.log(`\n${'═'.repeat(52)}\n${page.file} — ${bundleName}\n${'═'.repeat(52)}`)
   let dom
   try {

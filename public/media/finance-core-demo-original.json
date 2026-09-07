@@ -1,0 +1,4596 @@
+{
+  "schema": 1,
+  "title": "Finance Core — real application / synthetic data",
+  "source": "Isolated local application and synthetic SQLite database. Source repositories and raw captures remain private.",
+  "videoSha256": "81e7eb781d7a82d478b217f3935e462285f2eefeaf3c0e30715ae0227e4fc9c0",
+  "bytes": 7417790,
+  "durationSeconds": 84,
+  "outputResolution": "1920x1080",
+  "sourceResolution": "1440x760",
+  "fps": 25,
+  "audio": {
+    "composition": "Original locally synthesized A-minor / F / C / G pads and sparse bell motifs; no samples or third-party music.",
+    "method": "Deterministic additive synthesis, stereo equal-power panning; soft sine clicks only on recorded pointerdown events.",
+    "sampleRateHz": 48000,
+    "pcmBits": 24,
+    "peakDbfs": -20.3,
+    "clickCount": 13,
+    "codec": "AAC-LC",
+    "channels": 2,
+    "targetIntegratedLufs": -21
+  },
+  "disclosure": "DEMO throughout. Synthetic data; no connected bank, live market data or external AI. GoCardless is implemented read-only but not configured; no external integration is demonstrated end-to-end.",
+  "limits": [
+    "Crypto shows local quantities and recorded cost only; no prices, P&L, wallet connection or trading.",
+    "Manual investment accounts are not a brokerage integration. Net worth is not all liquid cash.",
+    "Savings scenarios are estimates, not financial advice or audited forecasts.",
+    "Local SQLite walkthrough does not validate production PostgreSQL migrations or external integrations."
+  ],
+  "editing": "Original dark cards and chapter frames; brief dips to dark; real-time UI clips. Actual pointer events drive an in-capture cursor/halo and frame-quantized soft click sounds. No invented click cues, response mocks, speed changes or third-party audio.",
+  "sourceClips": [
+    {
+      "chapter": "dashboard",
+      "sha256": "daf151a2dbfbd014e79f4db627e98c656e0f788fece764fe86dd260feb87f522",
+      "seconds": 8,
+      "capture": "Actual local browser screencast frames; constant-rate presentation with unchanged wall-clock timing."
+    },
+    {
+      "chapter": "accounts",
+      "sha256": "7c27bd48f4941ace1d928a1c44b4d86e3fae851755da79cdc7912e5e894297a8",
+      "seconds": 7,
+      "capture": "Actual local browser screencast frames; constant-rate presentation with unchanged wall-clock timing."
+    },
+    {
+      "chapter": "banks",
+      "sha256": "139a0436031b1c299707eeb36ec7458ddaebb9088d5da83b10fc8648d1827c9a",
+      "seconds": 8,
+      "capture": "Actual local browser screencast frames; constant-rate presentation with unchanged wall-clock timing."
+    },
+    {
+      "chapter": "preview",
+      "sha256": "078c6e25e4a5d10127730586aca0f9decaa7904638e488d98c295a02387609aa",
+      "seconds": 12,
+      "capture": "Actual local browser screencast frames; constant-rate presentation with unchanged wall-clock timing."
+    },
+    {
+      "chapter": "duplicates",
+      "sha256": "863563e747e583376e8791b459e698c8fc1249a5c0e164a12a68c90c77d0c83a",
+      "seconds": 8,
+      "capture": "Actual local browser screencast frames; constant-rate presentation with unchanged wall-clock timing."
+    },
+    {
+      "chapter": "analysis",
+      "sha256": "6b8e41ecf7082a9fe8f7655f69b9c74701ca4b8994a62b0a977923933695fcd4",
+      "seconds": 8,
+      "capture": "Actual local browser screencast frames; constant-rate presentation with unchanged wall-clock timing."
+    },
+    {
+      "chapter": "planning",
+      "sha256": "df24cb1776a2b49d7f20d53a428459e380414da59d1ebb2e93623901fe593fef",
+      "seconds": 10,
+      "capture": "Actual local browser screencast frames; constant-rate presentation with unchanged wall-clock timing."
+    },
+    {
+      "chapter": "crypto",
+      "sha256": "7bd12682926dfdfd9960c1f315bd98b23a7491db2aed9b7c0461d09a04450bec",
+      "seconds": 13,
+      "capture": "Actual local browser screencast frames; constant-rate presentation with unchanged wall-clock timing."
+    }
+  ],
+  "chapters": [
+    {
+      "id": "intro",
+      "start": 0,
+      "end": 4,
+      "en": "Finance Core. A real application walkthrough using synthetic data.",
+      "es": "Finance Core. Un recorrido por la aplicación real, con datos sintéticos."
+    },
+    {
+      "id": "dashboard",
+      "start": 4,
+      "end": 12,
+      "en": "Net worth, income and expenses in one view. All data in this demonstration is fictitious.",
+      "es": "Patrimonio, ingresos y gastos en una vista. Los datos de esta demostración son ficticios."
+    },
+    {
+      "id": "accounts",
+      "start": 12,
+      "end": 19,
+      "en": "Accounts grouped by institution. Net worth includes manual investments; it is not all liquid cash.",
+      "es": "Cuentas agrupadas por entidad. El patrimonio incluye inversión manual; no es todo dinero líquido."
+    },
+    {
+      "id": "banks",
+      "start": 19,
+      "end": 27,
+      "en": "The read-only GoCardless connector requires provider configuration and consent. It is not configured here.",
+      "es": "El conector GoCardless de solo lectura requiere proveedor y consentimiento. Aquí no está configurado."
+    },
+    {
+      "id": "preview",
+      "start": 27,
+      "end": 39,
+      "en": "The local alternative: select a synthetic CSV and review its preview before confirming.",
+      "es": "La alternativa local: seleccionar un CSV sintético y revisar la vista previa antes de confirmar."
+    },
+    {
+      "id": "duplicates",
+      "start": 39,
+      "end": 47,
+      "en": "After confirming two rows, preview the file again: duplicate protection prevents counting them twice.",
+      "es": "Tras confirmar dos filas, se repite la vista previa: la protección de duplicados evita volver a contarlas."
+    },
+    {
+      "id": "analysis",
+      "start": 47,
+      "end": 55,
+      "en": "Analytics summarize income, spending and savings trends from local transactions.",
+      "es": "La analítica resume tendencias de ingresos, gastos y ahorro a partir de movimientos locales."
+    },
+    {
+      "id": "planning",
+      "start": 55,
+      "end": 65,
+      "en": "An extra-savings scenario helps explore goals. It is an estimate, not a financial promise.",
+      "es": "Un escenario de ahorro extra ayuda a explorar objetivos. Es una estimación, no una promesa financiera."
+    },
+    {
+      "id": "crypto",
+      "start": 65,
+      "end": 78,
+      "en": "Local crypto holdings: quantities and recorded cost. No market prices, P&L, connected wallets or trading.",
+      "es": "Criptoactivos locales: cantidades y coste registrado. Sin cotizaciones, P&L, wallets conectadas ni operaciones."
+    },
+    {
+      "id": "outro",
+      "start": 78,
+      "end": 84,
+      "en": "Real application, synthetic data. No connected banks, live prices or external AI. Source code remains private.",
+      "es": "Aplicación real, datos sintéticos. Sin bancos conectados, precios en vivo ni IA externa. Código privado."
+    }
+  ],
+  "events": [
+    {
+      "kind": "pointermove",
+      "chapter": "dashboard",
+      "at": 6.52,
+      "sourceAt": 2.525987060546875,
+      "frame": 163,
+      "monotonicMs": 4657.212890625,
+      "xy": [
+        71.12152862548828,
+        3.3888888359069824
+      ],
+      "action": "Open month selector"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "dashboard",
+      "at": 6.56,
+      "sourceAt": 2.542287109375,
+      "frame": 164,
+      "monotonicMs": 4673.512939453125,
+      "xy": [
+        142.24305725097656,
+        6.777777671813965
+      ],
+      "action": "Open month selector"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "dashboard",
+      "at": 6.56,
+      "sourceAt": 2.55888720703125,
+      "frame": 164,
+      "monotonicMs": 4690.113037109375,
+      "xy": [
+        213.3645782470703,
+        10.166666984558105
+      ],
+      "action": "Open month selector"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "dashboard",
+      "at": 6.56,
+      "sourceAt": 2.575787109375,
+      "frame": 164,
+      "monotonicMs": 4707.012939453125,
+      "xy": [
+        284.4861145019531,
+        13.55555534362793
+      ],
+      "action": "Open month selector"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "dashboard",
+      "at": 6.6,
+      "sourceAt": 2.592287109375,
+      "frame": 165,
+      "monotonicMs": 4723.512939453125,
+      "xy": [
+        355.6076354980469,
+        16.94444465637207
+      ],
+      "action": "Open month selector"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "dashboard",
+      "at": 6.6,
+      "sourceAt": 2.60888720703125,
+      "frame": 165,
+      "monotonicMs": 4740.113037109375,
+      "xy": [
+        426.7291564941406,
+        20.33333396911621
+      ],
+      "action": "Open month selector"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "dashboard",
+      "at": 6.64,
+      "sourceAt": 2.625687255859375,
+      "frame": 166,
+      "monotonicMs": 4756.9130859375,
+      "xy": [
+        497.8507080078125,
+        23.72222137451172
+      ],
+      "action": "Open month selector"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "dashboard",
+      "at": 6.64,
+      "sourceAt": 2.642287109375,
+      "frame": 166,
+      "monotonicMs": 4773.512939453125,
+      "xy": [
+        568.9722290039062,
+        27.11111068725586
+      ],
+      "action": "Open month selector"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "dashboard",
+      "at": 6.64,
+      "sourceAt": 2.65888720703125,
+      "frame": 166,
+      "monotonicMs": 4790.113037109375,
+      "xy": [
+        640.09375,
+        30.5
+      ],
+      "action": "Open month selector"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "dashboard",
+      "at": 6.68,
+      "sourceAt": 2.675787109375,
+      "frame": 167,
+      "monotonicMs": 4807.012939453125,
+      "xy": [
+        711.2152709960938,
+        33.88888931274414
+      ],
+      "action": "Open month selector"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "dashboard",
+      "at": 6.68,
+      "sourceAt": 2.692287109375,
+      "frame": 167,
+      "monotonicMs": 4823.512939453125,
+      "xy": [
+        782.3367919921875,
+        37.27777862548828
+      ],
+      "action": "Open month selector"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "dashboard",
+      "at": 6.72,
+      "sourceAt": 2.70888720703125,
+      "frame": 168,
+      "monotonicMs": 4840.113037109375,
+      "xy": [
+        853.4583129882812,
+        40.66666793823242
+      ],
+      "action": "Open month selector"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "dashboard",
+      "at": 6.72,
+      "sourceAt": 2.725587158203125,
+      "frame": 168,
+      "monotonicMs": 4856.81298828125,
+      "xy": [
+        924.579833984375,
+        44.05555725097656
+      ],
+      "action": "Open month selector"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "dashboard",
+      "at": 6.76,
+      "sourceAt": 2.742287109375,
+      "frame": 169,
+      "monotonicMs": 4873.512939453125,
+      "xy": [
+        995.701416015625,
+        47.44444274902344
+      ],
+      "action": "Open month selector"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "dashboard",
+      "at": 6.76,
+      "sourceAt": 2.758787109375,
+      "frame": 169,
+      "monotonicMs": 4890.012939453125,
+      "xy": [
+        1066.8228759765625,
+        50.83333206176758
+      ],
+      "action": "Open month selector"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "dashboard",
+      "at": 6.76,
+      "sourceAt": 2.775587158203125,
+      "frame": 169,
+      "monotonicMs": 4906.81298828125,
+      "xy": [
+        1137.9444580078125,
+        54.22222137451172
+      ],
+      "action": "Open month selector"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "dashboard",
+      "at": 6.8,
+      "sourceAt": 2.792787109375,
+      "frame": 170,
+      "monotonicMs": 4924.012939453125,
+      "xy": [
+        1209.06591796875,
+        57.61111068725586
+      ],
+      "action": "Open month selector"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "dashboard",
+      "at": 6.8,
+      "sourceAt": 2.80938720703125,
+      "frame": 170,
+      "monotonicMs": 4940.613037109375,
+      "xy": [
+        1280.1875,
+        61
+      ],
+      "action": "Open month selector"
+    },
+    {
+      "kind": "pointerdown",
+      "chapter": "dashboard",
+      "at": 7,
+      "sourceAt": 3.011987060546875,
+      "frame": 175,
+      "monotonicMs": 5143.212890625,
+      "xy": [
+        1280.1875,
+        61
+      ],
+      "action": "Open month selector"
+    },
+    {
+      "kind": "pointerup",
+      "chapter": "dashboard",
+      "at": 7.08,
+      "sourceAt": 3.09038720703125,
+      "frame": 177,
+      "monotonicMs": 5221.613037109375,
+      "xy": [
+        1280.1875,
+        61
+      ],
+      "action": "Open month selector"
+    },
+    {
+      "kind": "click",
+      "chapter": "dashboard",
+      "at": 7.08,
+      "sourceAt": 3.090587158203125,
+      "frame": 177,
+      "monotonicMs": 5221.81298828125,
+      "xy": [
+        1280,
+        61
+      ],
+      "action": "Open month selector"
+    },
+    {
+      "kind": "keydown",
+      "chapter": "dashboard",
+      "at": 9,
+      "sourceAt": 5.001787109375,
+      "frame": 225,
+      "monotonicMs": 7133.012939453125,
+      "action": "Open month selector"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "accounts",
+      "at": 14.04,
+      "sourceAt": 2.025458740234375,
+      "frame": 351,
+      "monotonicMs": 14923.912841796875,
+      "xy": [
+        1228.165771484375,
+        70.72222137451172
+      ],
+      "action": "Open synthetic account details"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "accounts",
+      "at": 14.04,
+      "sourceAt": 2.04165869140625,
+      "frame": 351,
+      "monotonicMs": 14940.11279296875,
+      "xy": [
+        1176.14404296875,
+        80.44444274902344
+      ],
+      "action": "Open synthetic account details"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "accounts",
+      "at": 14.04,
+      "sourceAt": 2.05865869140625,
+      "frame": 351,
+      "monotonicMs": 14957.11279296875,
+      "xy": [
+        1124.1224365234375,
+        90.16666412353516
+      ],
+      "action": "Open synthetic account details"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "accounts",
+      "at": 14.08,
+      "sourceAt": 2.075058837890625,
+      "frame": 352,
+      "monotonicMs": 14973.512939453125,
+      "xy": [
+        1072.1007080078125,
+        99.88888549804688
+      ],
+      "action": "Open synthetic account details"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "accounts",
+      "at": 14.08,
+      "sourceAt": 2.0917587890625,
+      "frame": 352,
+      "monotonicMs": 14990.212890625,
+      "xy": [
+        1020.0789794921875,
+        109.61111450195312
+      ],
+      "action": "Open synthetic account details"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "accounts",
+      "at": 14.12,
+      "sourceAt": 2.1087587890625,
+      "frame": 353,
+      "monotonicMs": 15007.212890625,
+      "xy": [
+        968.0573120117188,
+        119.33333587646484
+      ],
+      "action": "Open synthetic account details"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "accounts",
+      "at": 14.12,
+      "sourceAt": 2.1252587890625,
+      "frame": 353,
+      "monotonicMs": 15023.712890625,
+      "xy": [
+        916.0355834960938,
+        129.05555725097656
+      ],
+      "action": "Open synthetic account details"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "accounts",
+      "at": 14.16,
+      "sourceAt": 2.141858642578125,
+      "frame": 354,
+      "monotonicMs": 15040.312744140625,
+      "xy": [
+        864.013916015625,
+        138.77777099609375
+      ],
+      "action": "Open synthetic account details"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "accounts",
+      "at": 14.16,
+      "sourceAt": 2.158558837890625,
+      "frame": 354,
+      "monotonicMs": 15057.012939453125,
+      "xy": [
+        811.9921875,
+        148.5
+      ],
+      "action": "Open synthetic account details"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "accounts",
+      "at": 14.16,
+      "sourceAt": 2.174958740234375,
+      "frame": 354,
+      "monotonicMs": 15073.412841796875,
+      "xy": [
+        759.970458984375,
+        158.22222900390625
+      ],
+      "action": "Open synthetic account details"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "accounts",
+      "at": 14.2,
+      "sourceAt": 2.19165869140625,
+      "frame": 355,
+      "monotonicMs": 15090.11279296875,
+      "xy": [
+        707.9487915039062,
+        167.94444274902344
+      ],
+      "action": "Open synthetic account details"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "accounts",
+      "at": 14.2,
+      "sourceAt": 2.209358642578125,
+      "frame": 355,
+      "monotonicMs": 15107.812744140625,
+      "xy": [
+        655.9270629882812,
+        177.6666717529297
+      ],
+      "action": "Open synthetic account details"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "accounts",
+      "at": 14.24,
+      "sourceAt": 2.2252587890625,
+      "frame": 356,
+      "monotonicMs": 15123.712890625,
+      "xy": [
+        603.9053955078125,
+        187.38888549804688
+      ],
+      "action": "Open synthetic account details"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "accounts",
+      "at": 14.24,
+      "sourceAt": 2.242058837890625,
+      "frame": 356,
+      "monotonicMs": 15140.512939453125,
+      "xy": [
+        551.8836669921875,
+        197.11111450195312
+      ],
+      "action": "Open synthetic account details"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "accounts",
+      "at": 14.24,
+      "sourceAt": 2.259358642578125,
+      "frame": 356,
+      "monotonicMs": 15157.812744140625,
+      "xy": [
+        499.8619689941406,
+        206.8333282470703
+      ],
+      "action": "Open synthetic account details"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "accounts",
+      "at": 14.28,
+      "sourceAt": 2.2752587890625,
+      "frame": 357,
+      "monotonicMs": 15173.712890625,
+      "xy": [
+        447.84027099609375,
+        216.55555725097656
+      ],
+      "action": "Open synthetic account details"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "accounts",
+      "at": 14.28,
+      "sourceAt": 2.291958740234375,
+      "frame": 357,
+      "monotonicMs": 15190.412841796875,
+      "xy": [
+        395.8185729980469,
+        226.27777099609375
+      ],
+      "action": "Open synthetic account details"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "accounts",
+      "at": 14.32,
+      "sourceAt": 2.308858642578125,
+      "frame": 358,
+      "monotonicMs": 15207.312744140625,
+      "xy": [
+        343.796875,
+        236
+      ],
+      "action": "Open synthetic account details"
+    },
+    {
+      "kind": "pointerdown",
+      "chapter": "accounts",
+      "at": 14.52,
+      "sourceAt": 2.51015869140625,
+      "frame": 363,
+      "monotonicMs": 15408.61279296875,
+      "xy": [
+        343.796875,
+        236
+      ],
+      "action": "Open synthetic account details"
+    },
+    {
+      "kind": "pointerup",
+      "chapter": "accounts",
+      "at": 14.6,
+      "sourceAt": 2.583058837890625,
+      "frame": 365,
+      "monotonicMs": 15481.512939453125,
+      "xy": [
+        343.796875,
+        236
+      ],
+      "action": "Open synthetic account details"
+    },
+    {
+      "kind": "click",
+      "chapter": "accounts",
+      "at": 14.6,
+      "sourceAt": 2.58315869140625,
+      "frame": 365,
+      "monotonicMs": 15481.61279296875,
+      "xy": [
+        343,
+        236
+      ],
+      "action": "Open synthetic account details"
+    },
+    {
+      "kind": "keydown",
+      "chapter": "accounts",
+      "at": 17.52,
+      "sourceAt": 5.501458740234375,
+      "frame": 438,
+      "monotonicMs": 18399.912841796875,
+      "action": "Open synthetic account details"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "banks",
+      "at": 25.52,
+      "sourceAt": 6.5252021484375,
+      "frame": 638,
+      "monotonicMs": 29190.31298828125,
+      "xy": [
+        345.1263122558594,
+        241.5833282470703
+      ],
+      "action": "Open local CSV alternative"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "banks",
+      "at": 25.56,
+      "sourceAt": 6.541501953125,
+      "frame": 639,
+      "monotonicMs": 29206.61279296875,
+      "xy": [
+        346.4557189941406,
+        247.1666717529297
+      ],
+      "action": "Open local CSV alternative"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "banks",
+      "at": 25.56,
+      "sourceAt": 6.55810205078125,
+      "frame": 639,
+      "monotonicMs": 29223.212890625,
+      "xy": [
+        347.78515625,
+        252.75
+      ],
+      "action": "Open local CSV alternative"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "banks",
+      "at": 25.56,
+      "sourceAt": 6.574902099609375,
+      "frame": 639,
+      "monotonicMs": 29240.012939453125,
+      "xy": [
+        349.1145935058594,
+        258.3333435058594
+      ],
+      "action": "Open local CSV alternative"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "banks",
+      "at": 25.6,
+      "sourceAt": 6.5917021484375,
+      "frame": 640,
+      "monotonicMs": 29256.81298828125,
+      "xy": [
+        350.4440002441406,
+        263.9166564941406
+      ],
+      "action": "Open local CSV alternative"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "banks",
+      "at": 25.6,
+      "sourceAt": 6.60810205078125,
+      "frame": 640,
+      "monotonicMs": 29273.212890625,
+      "xy": [
+        351.7734375,
+        269.5
+      ],
+      "action": "Open local CSV alternative"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "banks",
+      "at": 25.64,
+      "sourceAt": 6.625001953125,
+      "frame": 641,
+      "monotonicMs": 29290.11279296875,
+      "xy": [
+        353.1028747558594,
+        275.0833435058594
+      ],
+      "action": "Open local CSV alternative"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "banks",
+      "at": 25.64,
+      "sourceAt": 6.6417021484375,
+      "frame": 641,
+      "monotonicMs": 29306.81298828125,
+      "xy": [
+        354.4322814941406,
+        280.6666564941406
+      ],
+      "action": "Open local CSV alternative"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "banks",
+      "at": 25.64,
+      "sourceAt": 6.6582021484375,
+      "frame": 641,
+      "monotonicMs": 29323.31298828125,
+      "xy": [
+        355.76171875,
+        286.25
+      ],
+      "action": "Open local CSV alternative"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "banks",
+      "at": 25.68,
+      "sourceAt": 6.674902099609375,
+      "frame": 642,
+      "monotonicMs": 29340.012939453125,
+      "xy": [
+        357.0911560058594,
+        291.8333435058594
+      ],
+      "action": "Open local CSV alternative"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "banks",
+      "at": 25.68,
+      "sourceAt": 6.69160205078125,
+      "frame": 642,
+      "monotonicMs": 29356.712890625,
+      "xy": [
+        358.4205627441406,
+        297.4166564941406
+      ],
+      "action": "Open local CSV alternative"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "banks",
+      "at": 25.72,
+      "sourceAt": 6.708501953125,
+      "frame": 643,
+      "monotonicMs": 29373.61279296875,
+      "xy": [
+        359.75,
+        303
+      ],
+      "action": "Open local CSV alternative"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "banks",
+      "at": 25.72,
+      "sourceAt": 6.725001953125,
+      "frame": 643,
+      "monotonicMs": 29390.11279296875,
+      "xy": [
+        361.0794372558594,
+        308.5833435058594
+      ],
+      "action": "Open local CSV alternative"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "banks",
+      "at": 25.76,
+      "sourceAt": 6.74160205078125,
+      "frame": 644,
+      "monotonicMs": 29406.712890625,
+      "xy": [
+        362.4088439941406,
+        314.1666564941406
+      ],
+      "action": "Open local CSV alternative"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "banks",
+      "at": 25.76,
+      "sourceAt": 6.758302001953125,
+      "frame": 644,
+      "monotonicMs": 29423.412841796875,
+      "xy": [
+        363.73828125,
+        319.75
+      ],
+      "action": "Open local CSV alternative"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "banks",
+      "at": 25.76,
+      "sourceAt": 6.775001953125,
+      "frame": 644,
+      "monotonicMs": 29440.11279296875,
+      "xy": [
+        365.0677185058594,
+        325.3333435058594
+      ],
+      "action": "Open local CSV alternative"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "banks",
+      "at": 25.8,
+      "sourceAt": 6.7917021484375,
+      "frame": 645,
+      "monotonicMs": 29456.81298828125,
+      "xy": [
+        366.3971252441406,
+        330.9166564941406
+      ],
+      "action": "Open local CSV alternative"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "banks",
+      "at": 25.8,
+      "sourceAt": 6.8082021484375,
+      "frame": 645,
+      "monotonicMs": 29473.31298828125,
+      "xy": [
+        367.7265625,
+        336.5
+      ],
+      "action": "Open local CSV alternative"
+    },
+    {
+      "kind": "pointerdown",
+      "chapter": "banks",
+      "at": 26,
+      "sourceAt": 7.011001953125,
+      "frame": 650,
+      "monotonicMs": 29676.11279296875,
+      "xy": [
+        367.7265625,
+        336.5
+      ],
+      "action": "Open local CSV alternative"
+    },
+    {
+      "kind": "pointerup",
+      "chapter": "banks",
+      "at": 26.08,
+      "sourceAt": 7.0837021484375,
+      "frame": 652,
+      "monotonicMs": 29748.81298828125,
+      "xy": [
+        367.7265625,
+        336.5
+      ],
+      "action": "Open local CSV alternative"
+    },
+    {
+      "kind": "click",
+      "chapter": "banks",
+      "at": 26.08,
+      "sourceAt": 7.083802001953125,
+      "frame": 652,
+      "monotonicMs": 29748.912841796875,
+      "xy": [
+        367,
+        336
+      ],
+      "action": "Open local CSV alternative"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 28.04,
+      "sourceAt": 1.027553955078125,
+      "frame": 701,
+      "monotonicMs": 32723.912841796875,
+      "xy": [
+        378.54730224609375,
+        327.75
+      ],
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 28.04,
+      "sourceAt": 1.04375390625,
+      "frame": 701,
+      "monotonicMs": 32740.11279296875,
+      "xy": [
+        389.3680419921875,
+        319
+      ],
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 28.08,
+      "sourceAt": 1.060654052734375,
+      "frame": 702,
+      "monotonicMs": 32757.012939453125,
+      "xy": [
+        400.1888122558594,
+        310.25
+      ],
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 28.08,
+      "sourceAt": 1.077154052734375,
+      "frame": 702,
+      "monotonicMs": 32773.512939453125,
+      "xy": [
+        411.0095520019531,
+        301.5
+      ],
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 28.08,
+      "sourceAt": 1.09385400390625,
+      "frame": 702,
+      "monotonicMs": 32790.212890625,
+      "xy": [
+        421.8302917480469,
+        292.75
+      ],
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 28.12,
+      "sourceAt": 1.1104541015625,
+      "frame": 703,
+      "monotonicMs": 32806.81298828125,
+      "xy": [
+        432.6510314941406,
+        284
+      ],
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 28.12,
+      "sourceAt": 1.127154052734375,
+      "frame": 703,
+      "monotonicMs": 32823.512939453125,
+      "xy": [
+        443.4718017578125,
+        275.25
+      ],
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 28.16,
+      "sourceAt": 1.14375390625,
+      "frame": 704,
+      "monotonicMs": 32840.11279296875,
+      "xy": [
+        454.29254150390625,
+        266.5
+      ],
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 28.16,
+      "sourceAt": 1.1604541015625,
+      "frame": 704,
+      "monotonicMs": 32856.81298828125,
+      "xy": [
+        465.11328125,
+        257.75
+      ],
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 28.16,
+      "sourceAt": 1.177053955078125,
+      "frame": 704,
+      "monotonicMs": 32873.412841796875,
+      "xy": [
+        475.93402099609375,
+        249
+      ],
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 28.2,
+      "sourceAt": 1.193654052734375,
+      "frame": 705,
+      "monotonicMs": 32890.012939453125,
+      "xy": [
+        486.7547607421875,
+        240.25
+      ],
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 28.2,
+      "sourceAt": 1.21035400390625,
+      "frame": 705,
+      "monotonicMs": 32906.712890625,
+      "xy": [
+        497.5755310058594,
+        231.5
+      ],
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 28.24,
+      "sourceAt": 1.227053955078125,
+      "frame": 706,
+      "monotonicMs": 32923.412841796875,
+      "xy": [
+        508.3962707519531,
+        222.75
+      ],
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 28.24,
+      "sourceAt": 1.243654052734375,
+      "frame": 706,
+      "monotonicMs": 32940.012939453125,
+      "xy": [
+        519.217041015625,
+        214
+      ],
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 28.28,
+      "sourceAt": 1.2604541015625,
+      "frame": 707,
+      "monotonicMs": 32956.81298828125,
+      "xy": [
+        530.0377807617188,
+        205.25
+      ],
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 28.28,
+      "sourceAt": 1.2774541015625,
+      "frame": 707,
+      "monotonicMs": 32973.81298828125,
+      "xy": [
+        540.8585205078125,
+        196.5
+      ],
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 28.28,
+      "sourceAt": 1.2934541015625,
+      "frame": 707,
+      "monotonicMs": 32989.81298828125,
+      "xy": [
+        551.6792602539062,
+        187.75
+      ],
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 28.32,
+      "sourceAt": 1.31035400390625,
+      "frame": 708,
+      "monotonicMs": 33006.712890625,
+      "xy": [
+        562.5,
+        179
+      ],
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "pointerdown",
+      "chapter": "preview",
+      "at": 28.52,
+      "sourceAt": 1.512654052734375,
+      "frame": 713,
+      "monotonicMs": 33209.012939453125,
+      "xy": [
+        562.5,
+        179
+      ],
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "pointerup",
+      "chapter": "preview",
+      "at": 28.52,
+      "sourceAt": 1.5274541015625,
+      "frame": 713,
+      "monotonicMs": 33223.81298828125,
+      "xy": [
+        562.5,
+        179
+      ],
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "click",
+      "chapter": "preview",
+      "at": 28.52,
+      "sourceAt": 1.52785400390625,
+      "frame": 713,
+      "monotonicMs": 33224.212890625,
+      "xy": [
+        562,
+        179
+      ],
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "pointerup",
+      "chapter": "preview",
+      "at": 28.6,
+      "sourceAt": 1.5849541015625,
+      "frame": 715,
+      "monotonicMs": 33281.31298828125,
+      "xy": [
+        562.5,
+        179
+      ],
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "keydown",
+      "chapter": "preview",
+      "at": 28.6,
+      "sourceAt": 1.5859541015625,
+      "frame": 715,
+      "monotonicMs": 33282.31298828125,
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "input",
+      "chapter": "preview",
+      "at": 28.6,
+      "sourceAt": 1.58675390625,
+      "frame": 715,
+      "monotonicMs": 33283.11279296875,
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "change",
+      "chapter": "preview",
+      "at": 28.6,
+      "sourceAt": 1.5869541015625,
+      "frame": 715,
+      "monotonicMs": 33283.31298828125,
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "keydown",
+      "chapter": "preview",
+      "at": 28.6,
+      "sourceAt": 1.5899541015625,
+      "frame": 715,
+      "monotonicMs": 33286.31298828125,
+      "action": "Choose generic CSV format"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 29.72,
+      "sourceAt": 2.71035400390625,
+      "frame": 743,
+      "monotonicMs": 34406.712890625,
+      "xy": [
+        593.3333129882812,
+        179
+      ],
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 29.72,
+      "sourceAt": 2.727053955078125,
+      "frame": 743,
+      "monotonicMs": 34423.412841796875,
+      "xy": [
+        624.1666870117188,
+        179
+      ],
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 29.76,
+      "sourceAt": 2.74375390625,
+      "frame": 744,
+      "monotonicMs": 34440.11279296875,
+      "xy": [
+        655,
+        179
+      ],
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 29.76,
+      "sourceAt": 2.7604541015625,
+      "frame": 744,
+      "monotonicMs": 34456.81298828125,
+      "xy": [
+        685.8333129882812,
+        179
+      ],
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 29.76,
+      "sourceAt": 2.7769541015625,
+      "frame": 744,
+      "monotonicMs": 34473.31298828125,
+      "xy": [
+        716.6666870117188,
+        179
+      ],
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 29.8,
+      "sourceAt": 2.79375390625,
+      "frame": 745,
+      "monotonicMs": 34490.11279296875,
+      "xy": [
+        747.5,
+        179
+      ],
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 29.8,
+      "sourceAt": 2.81035400390625,
+      "frame": 745,
+      "monotonicMs": 34506.712890625,
+      "xy": [
+        778.3333129882812,
+        179
+      ],
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 29.84,
+      "sourceAt": 2.827154052734375,
+      "frame": 746,
+      "monotonicMs": 34523.512939453125,
+      "xy": [
+        809.1666870117188,
+        179
+      ],
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 29.84,
+      "sourceAt": 2.844053955078125,
+      "frame": 746,
+      "monotonicMs": 34540.412841796875,
+      "xy": [
+        840,
+        179
+      ],
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 29.88,
+      "sourceAt": 2.860553955078125,
+      "frame": 747,
+      "monotonicMs": 34556.912841796875,
+      "xy": [
+        870.8333129882812,
+        179
+      ],
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 29.88,
+      "sourceAt": 2.877053955078125,
+      "frame": 747,
+      "monotonicMs": 34573.412841796875,
+      "xy": [
+        901.6666870117188,
+        179
+      ],
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 29.88,
+      "sourceAt": 2.89375390625,
+      "frame": 747,
+      "monotonicMs": 34590.11279296875,
+      "xy": [
+        932.5,
+        179
+      ],
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 29.92,
+      "sourceAt": 2.90925390625,
+      "frame": 748,
+      "monotonicMs": 34605.61279296875,
+      "xy": [
+        963.3333129882812,
+        179
+      ],
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 29.92,
+      "sourceAt": 2.927053955078125,
+      "frame": 748,
+      "monotonicMs": 34623.412841796875,
+      "xy": [
+        994.1666870117188,
+        179
+      ],
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 29.96,
+      "sourceAt": 2.94375390625,
+      "frame": 749,
+      "monotonicMs": 34640.11279296875,
+      "xy": [
+        1025,
+        179
+      ],
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 29.96,
+      "sourceAt": 2.9604541015625,
+      "frame": 749,
+      "monotonicMs": 34656.81298828125,
+      "xy": [
+        1055.8333740234375,
+        179
+      ],
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 29.96,
+      "sourceAt": 2.976154052734375,
+      "frame": 749,
+      "monotonicMs": 34672.512939453125,
+      "xy": [
+        1086.6666259765625,
+        179
+      ],
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 30,
+      "sourceAt": 2.99375390625,
+      "frame": 750,
+      "monotonicMs": 34690.11279296875,
+      "xy": [
+        1117.5,
+        179
+      ],
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "pointerdown",
+      "chapter": "preview",
+      "at": 30.2,
+      "sourceAt": 3.19635400390625,
+      "frame": 755,
+      "monotonicMs": 34892.712890625,
+      "xy": [
+        1117.5,
+        179
+      ],
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "pointerup",
+      "chapter": "preview",
+      "at": 30.2,
+      "sourceAt": 3.210654052734375,
+      "frame": 755,
+      "monotonicMs": 34907.012939453125,
+      "xy": [
+        1117.5,
+        179
+      ],
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "click",
+      "chapter": "preview",
+      "at": 30.2,
+      "sourceAt": 3.2109541015625,
+      "frame": 755,
+      "monotonicMs": 34907.31298828125,
+      "xy": [
+        1117,
+        179
+      ],
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "pointerup",
+      "chapter": "preview",
+      "at": 30.28,
+      "sourceAt": 3.2684541015625,
+      "frame": 757,
+      "monotonicMs": 34964.81298828125,
+      "xy": [
+        1117.5,
+        179
+      ],
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "keydown",
+      "chapter": "preview",
+      "at": 30.28,
+      "sourceAt": 3.269154052734375,
+      "frame": 757,
+      "monotonicMs": 34965.512939453125,
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "input",
+      "chapter": "preview",
+      "at": 30.28,
+      "sourceAt": 3.2719541015625,
+      "frame": 757,
+      "monotonicMs": 34968.31298828125,
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "change",
+      "chapter": "preview",
+      "at": 30.28,
+      "sourceAt": 3.2719541015625,
+      "frame": 757,
+      "monotonicMs": 34968.31298828125,
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "input",
+      "chapter": "preview",
+      "at": 31.4,
+      "sourceAt": 4.408053955078125,
+      "frame": 785,
+      "monotonicMs": 36104.412841796875,
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "change",
+      "chapter": "preview",
+      "at": 31.4,
+      "sourceAt": 4.408053955078125,
+      "frame": 785,
+      "monotonicMs": 36104.412841796875,
+      "action": "Choose synthetic account"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 33,
+      "sourceAt": 6.01035400390625,
+      "frame": 825,
+      "monotonicMs": 37706.712890625,
+      "xy": [
+        1074.78955078125,
+        191.22222900390625
+      ],
+      "action": "Preview two synthetic CSV rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 33.04,
+      "sourceAt": 6.027154052734375,
+      "frame": 826,
+      "monotonicMs": 37723.512939453125,
+      "xy": [
+        1032.0789794921875,
+        203.44444274902344
+      ],
+      "action": "Preview two synthetic CSV rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 33.04,
+      "sourceAt": 6.0439541015625,
+      "frame": 826,
+      "monotonicMs": 37740.31298828125,
+      "xy": [
+        989.3684692382812,
+        215.6666717529297
+      ],
+      "action": "Preview two synthetic CSV rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 33.08,
+      "sourceAt": 6.06035400390625,
+      "frame": 827,
+      "monotonicMs": 37756.712890625,
+      "xy": [
+        946.657958984375,
+        227.88888549804688
+      ],
+      "action": "Preview two synthetic CSV rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 33.08,
+      "sourceAt": 6.077053955078125,
+      "frame": 827,
+      "monotonicMs": 37773.412841796875,
+      "xy": [
+        903.947509765625,
+        240.11111450195312
+      ],
+      "action": "Preview two synthetic CSV rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 33.08,
+      "sourceAt": 6.09385400390625,
+      "frame": 827,
+      "monotonicMs": 37790.212890625,
+      "xy": [
+        861.2369995117188,
+        252.3333282470703
+      ],
+      "action": "Preview two synthetic CSV rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 33.12,
+      "sourceAt": 6.11035400390625,
+      "frame": 828,
+      "monotonicMs": 37806.712890625,
+      "xy": [
+        818.5264892578125,
+        264.5555419921875
+      ],
+      "action": "Preview two synthetic CSV rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 33.12,
+      "sourceAt": 6.127053955078125,
+      "frame": 828,
+      "monotonicMs": 37823.412841796875,
+      "xy": [
+        775.8159790039062,
+        276.77777099609375
+      ],
+      "action": "Preview two synthetic CSV rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 33.16,
+      "sourceAt": 6.14385400390625,
+      "frame": 829,
+      "monotonicMs": 37840.212890625,
+      "xy": [
+        733.10546875,
+        289
+      ],
+      "action": "Preview two synthetic CSV rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 33.16,
+      "sourceAt": 6.160553955078125,
+      "frame": 829,
+      "monotonicMs": 37856.912841796875,
+      "xy": [
+        690.3949584960938,
+        301.22222900390625
+      ],
+      "action": "Preview two synthetic CSV rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 33.16,
+      "sourceAt": 6.177053955078125,
+      "frame": 829,
+      "monotonicMs": 37873.412841796875,
+      "xy": [
+        647.6844482421875,
+        313.4444580078125
+      ],
+      "action": "Preview two synthetic CSV rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 33.2,
+      "sourceAt": 6.1939541015625,
+      "frame": 830,
+      "monotonicMs": 37890.31298828125,
+      "xy": [
+        604.9739379882812,
+        325.6666564941406
+      ],
+      "action": "Preview two synthetic CSV rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 33.2,
+      "sourceAt": 6.210053955078125,
+      "frame": 830,
+      "monotonicMs": 37906.412841796875,
+      "xy": [
+        562.263427734375,
+        337.8888854980469
+      ],
+      "action": "Preview two synthetic CSV rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 33.24,
+      "sourceAt": 6.227053955078125,
+      "frame": 831,
+      "monotonicMs": 37923.412841796875,
+      "xy": [
+        519.552978515625,
+        350.1111145019531
+      ],
+      "action": "Preview two synthetic CSV rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 33.24,
+      "sourceAt": 6.24375390625,
+      "frame": 831,
+      "monotonicMs": 37940.11279296875,
+      "xy": [
+        476.8424377441406,
+        362.3333435058594
+      ],
+      "action": "Preview two synthetic CSV rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 33.28,
+      "sourceAt": 6.2604541015625,
+      "frame": 832,
+      "monotonicMs": 37956.81298828125,
+      "xy": [
+        434.1319580078125,
+        374.5555419921875
+      ],
+      "action": "Preview two synthetic CSV rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 33.28,
+      "sourceAt": 6.27735400390625,
+      "frame": 832,
+      "monotonicMs": 37973.712890625,
+      "xy": [
+        391.42144775390625,
+        386.77777099609375
+      ],
+      "action": "Preview two synthetic CSV rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "preview",
+      "at": 33.28,
+      "sourceAt": 6.29375390625,
+      "frame": 832,
+      "monotonicMs": 37990.11279296875,
+      "xy": [
+        348.7109375,
+        399
+      ],
+      "action": "Preview two synthetic CSV rows"
+    },
+    {
+      "kind": "pointerdown",
+      "chapter": "preview",
+      "at": 33.48,
+      "sourceAt": 6.49725390625,
+      "frame": 837,
+      "monotonicMs": 38193.61279296875,
+      "xy": [
+        348.7109375,
+        399
+      ],
+      "action": "Preview two synthetic CSV rows"
+    },
+    {
+      "kind": "pointerup",
+      "chapter": "preview",
+      "at": 33.56,
+      "sourceAt": 6.56935400390625,
+      "frame": 839,
+      "monotonicMs": 38265.712890625,
+      "xy": [
+        348.7109375,
+        399
+      ],
+      "action": "Preview two synthetic CSV rows"
+    },
+    {
+      "kind": "click",
+      "chapter": "preview",
+      "at": 33.56,
+      "sourceAt": 6.56935400390625,
+      "frame": 839,
+      "monotonicMs": 38265.712890625,
+      "xy": [
+        348,
+        399
+      ],
+      "action": "Preview two synthetic CSV rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 40,
+      "sourceAt": 1.010802001953125,
+      "frame": 1000,
+      "monotonicMs": 45956.712890625,
+      "xy": [
+        365.4244689941406,
+        399
+      ],
+      "action": "Confirm two synthetic rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 40.04,
+      "sourceAt": 1.027402099609375,
+      "frame": 1001,
+      "monotonicMs": 45973.31298828125,
+      "xy": [
+        382.1380310058594,
+        399
+      ],
+      "action": "Confirm two synthetic rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 40.04,
+      "sourceAt": 1.044001953125,
+      "frame": 1001,
+      "monotonicMs": 45989.912841796875,
+      "xy": [
+        398.8515625,
+        399
+      ],
+      "action": "Confirm two synthetic rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 40.08,
+      "sourceAt": 1.061201904296875,
+      "frame": 1002,
+      "monotonicMs": 46007.11279296875,
+      "xy": [
+        415.5650939941406,
+        399
+      ],
+      "action": "Confirm two synthetic rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 40.08,
+      "sourceAt": 1.077501953125,
+      "frame": 1002,
+      "monotonicMs": 46023.412841796875,
+      "xy": [
+        432.2786560058594,
+        399
+      ],
+      "action": "Confirm two synthetic rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 40.08,
+      "sourceAt": 1.09410205078125,
+      "frame": 1002,
+      "monotonicMs": 46040.012939453125,
+      "xy": [
+        448.9921875,
+        399
+      ],
+      "action": "Confirm two synthetic rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 40.12,
+      "sourceAt": 1.110802001953125,
+      "frame": 1003,
+      "monotonicMs": 46056.712890625,
+      "xy": [
+        465.7057189941406,
+        399
+      ],
+      "action": "Confirm two synthetic rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 40.12,
+      "sourceAt": 1.127501953125,
+      "frame": 1003,
+      "monotonicMs": 46073.412841796875,
+      "xy": [
+        482.4192810058594,
+        399
+      ],
+      "action": "Confirm two synthetic rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 40.16,
+      "sourceAt": 1.14410205078125,
+      "frame": 1004,
+      "monotonicMs": 46090.012939453125,
+      "xy": [
+        499.1328125,
+        399
+      ],
+      "action": "Confirm two synthetic rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 40.16,
+      "sourceAt": 1.160701904296875,
+      "frame": 1004,
+      "monotonicMs": 46106.61279296875,
+      "xy": [
+        515.8463745117188,
+        399
+      ],
+      "action": "Confirm two synthetic rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 40.16,
+      "sourceAt": 1.177402099609375,
+      "frame": 1004,
+      "monotonicMs": 46123.31298828125,
+      "xy": [
+        532.5598754882812,
+        399
+      ],
+      "action": "Confirm two synthetic rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 40.2,
+      "sourceAt": 1.194201904296875,
+      "frame": 1005,
+      "monotonicMs": 46140.11279296875,
+      "xy": [
+        549.2734375,
+        399
+      ],
+      "action": "Confirm two synthetic rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 40.2,
+      "sourceAt": 1.21110205078125,
+      "frame": 1005,
+      "monotonicMs": 46157.012939453125,
+      "xy": [
+        565.9869995117188,
+        399
+      ],
+      "action": "Confirm two synthetic rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 40.24,
+      "sourceAt": 1.227501953125,
+      "frame": 1006,
+      "monotonicMs": 46173.412841796875,
+      "xy": [
+        582.7005004882812,
+        399
+      ],
+      "action": "Confirm two synthetic rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 40.24,
+      "sourceAt": 1.24410205078125,
+      "frame": 1006,
+      "monotonicMs": 46190.012939453125,
+      "xy": [
+        599.4140625,
+        399
+      ],
+      "action": "Confirm two synthetic rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 40.28,
+      "sourceAt": 1.260902099609375,
+      "frame": 1007,
+      "monotonicMs": 46206.81298828125,
+      "xy": [
+        616.1276245117188,
+        399
+      ],
+      "action": "Confirm two synthetic rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 40.28,
+      "sourceAt": 1.277402099609375,
+      "frame": 1007,
+      "monotonicMs": 46223.31298828125,
+      "xy": [
+        632.8411254882812,
+        399
+      ],
+      "action": "Confirm two synthetic rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 40.28,
+      "sourceAt": 1.294201904296875,
+      "frame": 1007,
+      "monotonicMs": 46240.11279296875,
+      "xy": [
+        649.5546875,
+        399
+      ],
+      "action": "Confirm two synthetic rows"
+    },
+    {
+      "kind": "pointerdown",
+      "chapter": "duplicates",
+      "at": 40.48,
+      "sourceAt": 1.497701904296875,
+      "frame": 1012,
+      "monotonicMs": 46443.61279296875,
+      "xy": [
+        649.5546875,
+        399
+      ],
+      "action": "Confirm two synthetic rows"
+    },
+    {
+      "kind": "pointerup",
+      "chapter": "duplicates",
+      "at": 40.56,
+      "sourceAt": 1.57060205078125,
+      "frame": 1014,
+      "monotonicMs": 46516.512939453125,
+      "xy": [
+        649.5546875,
+        399
+      ],
+      "action": "Confirm two synthetic rows"
+    },
+    {
+      "kind": "click",
+      "chapter": "duplicates",
+      "at": 40.56,
+      "sourceAt": 1.570802001953125,
+      "frame": 1014,
+      "monotonicMs": 46516.712890625,
+      "xy": [
+        649,
+        399
+      ],
+      "action": "Confirm two synthetic rows"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 42.2,
+      "sourceAt": 3.210701904296875,
+      "frame": 1055,
+      "monotonicMs": 48156.61279296875,
+      "xy": [
+        632.8411254882812,
+        399
+      ],
+      "action": "Preview the same file to demonstrate duplicates"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 42.24,
+      "sourceAt": 3.227501953125,
+      "frame": 1056,
+      "monotonicMs": 48173.412841796875,
+      "xy": [
+        616.1276245117188,
+        399
+      ],
+      "action": "Preview the same file to demonstrate duplicates"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 42.24,
+      "sourceAt": 3.24410205078125,
+      "frame": 1056,
+      "monotonicMs": 48190.012939453125,
+      "xy": [
+        599.4140625,
+        399
+      ],
+      "action": "Preview the same file to demonstrate duplicates"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 42.28,
+      "sourceAt": 3.260802001953125,
+      "frame": 1057,
+      "monotonicMs": 48206.712890625,
+      "xy": [
+        582.7005004882812,
+        399
+      ],
+      "action": "Preview the same file to demonstrate duplicates"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 42.28,
+      "sourceAt": 3.277402099609375,
+      "frame": 1057,
+      "monotonicMs": 48223.31298828125,
+      "xy": [
+        565.9869995117188,
+        399
+      ],
+      "action": "Preview the same file to demonstrate duplicates"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 42.28,
+      "sourceAt": 3.293501953125,
+      "frame": 1057,
+      "monotonicMs": 48239.412841796875,
+      "xy": [
+        549.2734375,
+        399
+      ],
+      "action": "Preview the same file to demonstrate duplicates"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 42.32,
+      "sourceAt": 3.310802001953125,
+      "frame": 1058,
+      "monotonicMs": 48256.712890625,
+      "xy": [
+        532.5598754882812,
+        399
+      ],
+      "action": "Preview the same file to demonstrate duplicates"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 42.32,
+      "sourceAt": 3.327402099609375,
+      "frame": 1058,
+      "monotonicMs": 48273.31298828125,
+      "xy": [
+        515.8463745117188,
+        399
+      ],
+      "action": "Preview the same file to demonstrate duplicates"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 42.36,
+      "sourceAt": 3.344201904296875,
+      "frame": 1059,
+      "monotonicMs": 48290.11279296875,
+      "xy": [
+        499.1328125,
+        399
+      ],
+      "action": "Preview the same file to demonstrate duplicates"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 42.36,
+      "sourceAt": 3.360802001953125,
+      "frame": 1059,
+      "monotonicMs": 48306.712890625,
+      "xy": [
+        482.4192810058594,
+        399
+      ],
+      "action": "Preview the same file to demonstrate duplicates"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 42.36,
+      "sourceAt": 3.377501953125,
+      "frame": 1059,
+      "monotonicMs": 48323.412841796875,
+      "xy": [
+        465.7057189941406,
+        399
+      ],
+      "action": "Preview the same file to demonstrate duplicates"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 42.4,
+      "sourceAt": 3.394201904296875,
+      "frame": 1060,
+      "monotonicMs": 48340.11279296875,
+      "xy": [
+        448.9921875,
+        399
+      ],
+      "action": "Preview the same file to demonstrate duplicates"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 42.4,
+      "sourceAt": 3.410701904296875,
+      "frame": 1060,
+      "monotonicMs": 48356.61279296875,
+      "xy": [
+        432.2786560058594,
+        399
+      ],
+      "action": "Preview the same file to demonstrate duplicates"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 42.44,
+      "sourceAt": 3.427501953125,
+      "frame": 1061,
+      "monotonicMs": 48373.412841796875,
+      "xy": [
+        415.5650939941406,
+        399
+      ],
+      "action": "Preview the same file to demonstrate duplicates"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 42.44,
+      "sourceAt": 3.444402099609375,
+      "frame": 1061,
+      "monotonicMs": 48390.31298828125,
+      "xy": [
+        398.8515625,
+        399
+      ],
+      "action": "Preview the same file to demonstrate duplicates"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 42.48,
+      "sourceAt": 3.460902099609375,
+      "frame": 1062,
+      "monotonicMs": 48406.81298828125,
+      "xy": [
+        382.1380310058594,
+        399
+      ],
+      "action": "Preview the same file to demonstrate duplicates"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 42.48,
+      "sourceAt": 3.477501953125,
+      "frame": 1062,
+      "monotonicMs": 48423.412841796875,
+      "xy": [
+        365.4244689941406,
+        399
+      ],
+      "action": "Preview the same file to demonstrate duplicates"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "duplicates",
+      "at": 42.48,
+      "sourceAt": 3.494201904296875,
+      "frame": 1062,
+      "monotonicMs": 48440.11279296875,
+      "xy": [
+        348.7109375,
+        399
+      ],
+      "action": "Preview the same file to demonstrate duplicates"
+    },
+    {
+      "kind": "pointerdown",
+      "chapter": "duplicates",
+      "at": 42.68,
+      "sourceAt": 3.696402099609375,
+      "frame": 1067,
+      "monotonicMs": 48642.31298828125,
+      "xy": [
+        348.7109375,
+        399
+      ],
+      "action": "Preview the same file to demonstrate duplicates"
+    },
+    {
+      "kind": "pointerup",
+      "chapter": "duplicates",
+      "at": 42.76,
+      "sourceAt": 3.76810205078125,
+      "frame": 1069,
+      "monotonicMs": 48714.012939453125,
+      "xy": [
+        348.7109375,
+        399
+      ],
+      "action": "Preview the same file to demonstrate duplicates"
+    },
+    {
+      "kind": "click",
+      "chapter": "duplicates",
+      "at": 42.76,
+      "sourceAt": 3.768201904296875,
+      "frame": 1069,
+      "monotonicMs": 48714.11279296875,
+      "xy": [
+        348,
+        399
+      ],
+      "action": "Preview the same file to demonstrate duplicates"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "analysis",
+      "at": 50.52,
+      "sourceAt": 3.520294189453125,
+      "frame": 1263,
+      "monotonicMs": 59124.113037109375,
+      "xy": [
+        397.1158752441406,
+        405.72222900390625
+      ],
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "analysis",
+      "at": 50.52,
+      "sourceAt": 3.53589404296875,
+      "frame": 1263,
+      "monotonicMs": 59139.712890625,
+      "xy": [
+        445.5208435058594,
+        412.4444580078125
+      ],
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "analysis",
+      "at": 50.56,
+      "sourceAt": 3.552694091796875,
+      "frame": 1264,
+      "monotonicMs": 59156.512939453125,
+      "xy": [
+        493.92578125,
+        419.1666564941406
+      ],
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "analysis",
+      "at": 50.56,
+      "sourceAt": 3.56939404296875,
+      "frame": 1264,
+      "monotonicMs": 59173.212890625,
+      "xy": [
+        542.3307495117188,
+        425.8888854980469
+      ],
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "analysis",
+      "at": 50.6,
+      "sourceAt": 3.585994140625,
+      "frame": 1265,
+      "monotonicMs": 59189.81298828125,
+      "xy": [
+        590.7356567382812,
+        432.6111145019531
+      ],
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "analysis",
+      "at": 50.6,
+      "sourceAt": 3.602794189453125,
+      "frame": 1265,
+      "monotonicMs": 59206.613037109375,
+      "xy": [
+        639.140625,
+        439.3333435058594
+      ],
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "analysis",
+      "at": 50.6,
+      "sourceAt": 3.61939404296875,
+      "frame": 1265,
+      "monotonicMs": 59223.212890625,
+      "xy": [
+        687.5455932617188,
+        446.0555419921875
+      ],
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "analysis",
+      "at": 50.64,
+      "sourceAt": 3.636093994140625,
+      "frame": 1266,
+      "monotonicMs": 59239.912841796875,
+      "xy": [
+        735.9505004882812,
+        452.77777099609375
+      ],
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "analysis",
+      "at": 50.64,
+      "sourceAt": 3.652694091796875,
+      "frame": 1266,
+      "monotonicMs": 59256.512939453125,
+      "xy": [
+        784.35546875,
+        459.5
+      ],
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "analysis",
+      "at": 50.68,
+      "sourceAt": 3.668194091796875,
+      "frame": 1267,
+      "monotonicMs": 59272.012939453125,
+      "xy": [
+        832.7604370117188,
+        466.22222900390625
+      ],
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "analysis",
+      "at": 50.68,
+      "sourceAt": 3.686093994140625,
+      "frame": 1267,
+      "monotonicMs": 59289.912841796875,
+      "xy": [
+        881.1653442382812,
+        472.9444580078125
+      ],
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "analysis",
+      "at": 50.72,
+      "sourceAt": 3.702694091796875,
+      "frame": 1268,
+      "monotonicMs": 59306.512939453125,
+      "xy": [
+        929.5703125,
+        479.6666564941406
+      ],
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "analysis",
+      "at": 50.72,
+      "sourceAt": 3.720093994140625,
+      "frame": 1268,
+      "monotonicMs": 59323.912841796875,
+      "xy": [
+        977.9752807617188,
+        486.3888854980469
+      ],
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "analysis",
+      "at": 50.72,
+      "sourceAt": 3.735494140625,
+      "frame": 1268,
+      "monotonicMs": 59339.31298828125,
+      "xy": [
+        1026.3802490234375,
+        493.1111145019531
+      ],
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "analysis",
+      "at": 50.76,
+      "sourceAt": 3.753294189453125,
+      "frame": 1269,
+      "monotonicMs": 59357.113037109375,
+      "xy": [
+        1074.78515625,
+        499.8333435058594
+      ],
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "analysis",
+      "at": 50.76,
+      "sourceAt": 3.769694091796875,
+      "frame": 1269,
+      "monotonicMs": 59373.512939453125,
+      "xy": [
+        1123.1900634765625,
+        506.5555419921875
+      ],
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "analysis",
+      "at": 50.8,
+      "sourceAt": 3.785994140625,
+      "frame": 1270,
+      "monotonicMs": 59389.81298828125,
+      "xy": [
+        1171.5950927734375,
+        513.2777709960938
+      ],
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "analysis",
+      "at": 50.8,
+      "sourceAt": 3.802694091796875,
+      "frame": 1270,
+      "monotonicMs": 59406.512939453125,
+      "xy": [
+        1220,
+        520
+      ],
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "wheel",
+      "chapter": "analysis",
+      "at": 50.84,
+      "sourceAt": 3.836294189453125,
+      "frame": 1271,
+      "monotonicMs": 59440.113037109375,
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "wheel",
+      "chapter": "analysis",
+      "at": 50.88,
+      "sourceAt": 3.88589404296875,
+      "frame": 1272,
+      "monotonicMs": 59489.712890625,
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "wheel",
+      "chapter": "analysis",
+      "at": 50.92,
+      "sourceAt": 3.935994140625,
+      "frame": 1273,
+      "monotonicMs": 59539.81298828125,
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "wheel",
+      "chapter": "analysis",
+      "at": 51,
+      "sourceAt": 4.00289404296875,
+      "frame": 1275,
+      "monotonicMs": 59606.712890625,
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "wheel",
+      "chapter": "analysis",
+      "at": 51.08,
+      "sourceAt": 4.06939404296875,
+      "frame": 1277,
+      "monotonicMs": 59673.212890625,
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "wheel",
+      "chapter": "analysis",
+      "at": 51.12,
+      "sourceAt": 4.136093994140625,
+      "frame": 1278,
+      "monotonicMs": 59739.912841796875,
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "wheel",
+      "chapter": "analysis",
+      "at": 51.2,
+      "sourceAt": 4.185994140625,
+      "frame": 1280,
+      "monotonicMs": 59789.81298828125,
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "wheel",
+      "chapter": "analysis",
+      "at": 51.24,
+      "sourceAt": 4.236093994140625,
+      "frame": 1281,
+      "monotonicMs": 59839.912841796875,
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "wheel",
+      "chapter": "analysis",
+      "at": 51.28,
+      "sourceAt": 4.286093994140625,
+      "frame": 1282,
+      "monotonicMs": 59889.912841796875,
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "wheel",
+      "chapter": "analysis",
+      "at": 51.32,
+      "sourceAt": 4.335994140625,
+      "frame": 1283,
+      "monotonicMs": 59939.81298828125,
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "wheel",
+      "chapter": "analysis",
+      "at": 51.4,
+      "sourceAt": 4.385994140625,
+      "frame": 1285,
+      "monotonicMs": 59989.81298828125,
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "wheel",
+      "chapter": "analysis",
+      "at": 51.44,
+      "sourceAt": 4.435994140625,
+      "frame": 1286,
+      "monotonicMs": 60039.81298828125,
+      "action": "Scroll analytics to spending categories and savings"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 56.04,
+      "sourceAt": 1.021914794921875,
+      "frame": 1401,
+      "monotonicMs": 67289.712890625,
+      "xy": [
+        1177.4088134765625,
+        506.5555419921875
+      ],
+      "action": "Select extra monthly savings of 200 euros"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 56.04,
+      "sourceAt": 1.0385146484375,
+      "frame": 1401,
+      "monotonicMs": 67306.31274414062,
+      "xy": [
+        1134.8177490234375,
+        493.1111145019531
+      ],
+      "action": "Select extra monthly savings of 200 euros"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 56.04,
+      "sourceAt": 1.05511474609375,
+      "frame": 1401,
+      "monotonicMs": 67322.91284179688,
+      "xy": [
+        1092.2265625,
+        479.6666564941406
+      ],
+      "action": "Select extra monthly savings of 200 euros"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 56.08,
+      "sourceAt": 1.071814697265625,
+      "frame": 1402,
+      "monotonicMs": 67339.61279296875,
+      "xy": [
+        1049.6353759765625,
+        466.22222900390625
+      ],
+      "action": "Select extra monthly savings of 200 euros"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 56.08,
+      "sourceAt": 1.08861474609375,
+      "frame": 1402,
+      "monotonicMs": 67356.41284179688,
+      "xy": [
+        1007.0442504882812,
+        452.77777099609375
+      ],
+      "action": "Select extra monthly savings of 200 euros"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 56.12,
+      "sourceAt": 1.10521484375,
+      "frame": 1403,
+      "monotonicMs": 67373.01293945312,
+      "xy": [
+        964.453125,
+        439.3333435058594
+      ],
+      "action": "Select extra monthly savings of 200 euros"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 56.12,
+      "sourceAt": 1.1220146484375,
+      "frame": 1403,
+      "monotonicMs": 67389.81274414062,
+      "xy": [
+        921.8619995117188,
+        425.8888854980469
+      ],
+      "action": "Select extra monthly savings of 200 euros"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 56.12,
+      "sourceAt": 1.138414794921875,
+      "frame": 1403,
+      "monotonicMs": 67406.212890625,
+      "xy": [
+        879.2708129882812,
+        412.4444580078125
+      ],
+      "action": "Select extra monthly savings of 200 euros"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 56.16,
+      "sourceAt": 1.1550146484375,
+      "frame": 1404,
+      "monotonicMs": 67422.81274414062,
+      "xy": [
+        836.6796875,
+        399
+      ],
+      "action": "Select extra monthly savings of 200 euros"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 56.16,
+      "sourceAt": 1.171914794921875,
+      "frame": 1404,
+      "monotonicMs": 67439.712890625,
+      "xy": [
+        794.0885620117188,
+        385.5555419921875
+      ],
+      "action": "Select extra monthly savings of 200 euros"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 56.2,
+      "sourceAt": 1.1880146484375,
+      "frame": 1405,
+      "monotonicMs": 67455.81274414062,
+      "xy": [
+        751.4973754882812,
+        372.1111145019531
+      ],
+      "action": "Select extra monthly savings of 200 euros"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 56.2,
+      "sourceAt": 1.205314697265625,
+      "frame": 1405,
+      "monotonicMs": 67473.11279296875,
+      "xy": [
+        708.90625,
+        358.6666564941406
+      ],
+      "action": "Select extra monthly savings of 200 euros"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 56.24,
+      "sourceAt": 1.221814697265625,
+      "frame": 1406,
+      "monotonicMs": 67489.61279296875,
+      "xy": [
+        666.3151245117188,
+        345.22222900390625
+      ],
+      "action": "Select extra monthly savings of 200 euros"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 56.24,
+      "sourceAt": 1.238814697265625,
+      "frame": 1406,
+      "monotonicMs": 67506.61279296875,
+      "xy": [
+        623.7239379882812,
+        331.77777099609375
+      ],
+      "action": "Select extra monthly savings of 200 euros"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 56.24,
+      "sourceAt": 1.2550146484375,
+      "frame": 1406,
+      "monotonicMs": 67522.81274414062,
+      "xy": [
+        581.1328125,
+        318.3333435058594
+      ],
+      "action": "Select extra monthly savings of 200 euros"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 56.28,
+      "sourceAt": 1.271914794921875,
+      "frame": 1407,
+      "monotonicMs": 67539.712890625,
+      "xy": [
+        538.5416870117188,
+        304.8888854980469
+      ],
+      "action": "Select extra monthly savings of 200 euros"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 56.28,
+      "sourceAt": 1.288814697265625,
+      "frame": 1407,
+      "monotonicMs": 67556.61279296875,
+      "xy": [
+        495.9505310058594,
+        291.4444580078125
+      ],
+      "action": "Select extra monthly savings of 200 euros"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 56.32,
+      "sourceAt": 1.30521484375,
+      "frame": 1408,
+      "monotonicMs": 67573.01293945312,
+      "xy": [
+        453.359375,
+        278
+      ],
+      "action": "Select extra monthly savings of 200 euros"
+    },
+    {
+      "kind": "pointerdown",
+      "chapter": "planning",
+      "at": 56.52,
+      "sourceAt": 1.508814697265625,
+      "frame": 1413,
+      "monotonicMs": 67776.61279296875,
+      "xy": [
+        453.359375,
+        278
+      ],
+      "action": "Select extra monthly savings of 200 euros"
+    },
+    {
+      "kind": "pointerup",
+      "chapter": "planning",
+      "at": 56.6,
+      "sourceAt": 1.58071484375,
+      "frame": 1415,
+      "monotonicMs": 67848.51293945312,
+      "xy": [
+        453.359375,
+        278
+      ],
+      "action": "Select extra monthly savings of 200 euros"
+    },
+    {
+      "kind": "click",
+      "chapter": "planning",
+      "at": 56.6,
+      "sourceAt": 1.580814697265625,
+      "frame": 1415,
+      "monotonicMs": 67848.61279296875,
+      "xy": [
+        453,
+        278
+      ],
+      "action": "Select extra monthly savings of 200 euros"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 57.52,
+      "sourceAt": 2.5050146484375,
+      "frame": 1438,
+      "monotonicMs": 68772.81274414062,
+      "xy": [
+        474.83941650390625,
+        285.52777099609375
+      ],
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 57.52,
+      "sourceAt": 2.521814697265625,
+      "frame": 1438,
+      "monotonicMs": 68789.61279296875,
+      "xy": [
+        496.3194580078125,
+        293.0555419921875
+      ],
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 57.52,
+      "sourceAt": 2.5385146484375,
+      "frame": 1438,
+      "monotonicMs": 68806.31274414062,
+      "xy": [
+        517.7994995117188,
+        300.5833435058594
+      ],
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 57.56,
+      "sourceAt": 2.55511474609375,
+      "frame": 1439,
+      "monotonicMs": 68822.91284179688,
+      "xy": [
+        539.279541015625,
+        308.1111145019531
+      ],
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 57.56,
+      "sourceAt": 2.57171484375,
+      "frame": 1439,
+      "monotonicMs": 68839.51293945312,
+      "xy": [
+        560.759521484375,
+        315.6388854980469
+      ],
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 57.6,
+      "sourceAt": 2.588414794921875,
+      "frame": 1440,
+      "monotonicMs": 68856.212890625,
+      "xy": [
+        582.2395629882812,
+        323.1666564941406
+      ],
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 57.6,
+      "sourceAt": 2.6050146484375,
+      "frame": 1440,
+      "monotonicMs": 68872.81274414062,
+      "xy": [
+        603.7196044921875,
+        330.6944580078125
+      ],
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 57.64,
+      "sourceAt": 2.621814697265625,
+      "frame": 1441,
+      "monotonicMs": 68889.61279296875,
+      "xy": [
+        625.1996459960938,
+        338.22222900390625
+      ],
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 57.64,
+      "sourceAt": 2.6385146484375,
+      "frame": 1441,
+      "monotonicMs": 68906.31274414062,
+      "xy": [
+        646.6796875,
+        345.75
+      ],
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 57.64,
+      "sourceAt": 2.6550146484375,
+      "frame": 1441,
+      "monotonicMs": 68922.81274414062,
+      "xy": [
+        668.1597290039062,
+        353.27777099609375
+      ],
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 57.68,
+      "sourceAt": 2.67171484375,
+      "frame": 1442,
+      "monotonicMs": 68939.51293945312,
+      "xy": [
+        689.6397705078125,
+        360.8055419921875
+      ],
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 57.68,
+      "sourceAt": 2.68861474609375,
+      "frame": 1442,
+      "monotonicMs": 68956.41284179688,
+      "xy": [
+        711.1198120117188,
+        368.3333435058594
+      ],
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 57.72,
+      "sourceAt": 2.7050146484375,
+      "frame": 1443,
+      "monotonicMs": 68972.81274414062,
+      "xy": [
+        732.599853515625,
+        375.8611145019531
+      ],
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 57.72,
+      "sourceAt": 2.72171484375,
+      "frame": 1443,
+      "monotonicMs": 68989.51293945312,
+      "xy": [
+        754.079833984375,
+        383.3888854980469
+      ],
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 57.72,
+      "sourceAt": 2.7385146484375,
+      "frame": 1443,
+      "monotonicMs": 69006.31274414062,
+      "xy": [
+        775.5598754882812,
+        390.9166564941406
+      ],
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 57.76,
+      "sourceAt": 2.75511474609375,
+      "frame": 1444,
+      "monotonicMs": 69022.91284179688,
+      "xy": [
+        797.0399169921875,
+        398.4444580078125
+      ],
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 57.76,
+      "sourceAt": 2.771814697265625,
+      "frame": 1444,
+      "monotonicMs": 69039.61279296875,
+      "xy": [
+        818.5199584960938,
+        405.97222900390625
+      ],
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 57.8,
+      "sourceAt": 2.788414794921875,
+      "frame": 1445,
+      "monotonicMs": 69056.212890625,
+      "xy": [
+        840,
+        413.5
+      ],
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "pointerdown",
+      "chapter": "planning",
+      "at": 58,
+      "sourceAt": 2.9910146484375,
+      "frame": 1450,
+      "monotonicMs": 69258.81274414062,
+      "xy": [
+        840,
+        413.5
+      ],
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "pointerup",
+      "chapter": "planning",
+      "at": 58,
+      "sourceAt": 3.0055146484375,
+      "frame": 1450,
+      "monotonicMs": 69273.31274414062,
+      "xy": [
+        840,
+        413.5
+      ],
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "click",
+      "chapter": "planning",
+      "at": 58,
+      "sourceAt": 3.005814697265625,
+      "frame": 1450,
+      "monotonicMs": 69273.61279296875,
+      "xy": [
+        840,
+        413
+      ],
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "pointerup",
+      "chapter": "planning",
+      "at": 58.08,
+      "sourceAt": 3.063314697265625,
+      "frame": 1452,
+      "monotonicMs": 69331.11279296875,
+      "xy": [
+        840,
+        413.5
+      ],
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "keydown",
+      "chapter": "planning",
+      "at": 58.08,
+      "sourceAt": 3.06421484375,
+      "frame": 1452,
+      "monotonicMs": 69332.01293945312,
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "input",
+      "chapter": "planning",
+      "at": 58.08,
+      "sourceAt": 3.067814697265625,
+      "frame": 1452,
+      "monotonicMs": 69335.61279296875,
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "change",
+      "chapter": "planning",
+      "at": 58.08,
+      "sourceAt": 3.067814697265625,
+      "frame": 1452,
+      "monotonicMs": 69335.61279296875,
+      "action": "Choose synthetic savings goal"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 59.04,
+      "sourceAt": 4.02171484375,
+      "frame": 1476,
+      "monotonicMs": 70289.51293945312,
+      "xy": [
+        840,
+        416.97222900390625
+      ],
+      "action": "Calculate local extra-savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 59.04,
+      "sourceAt": 4.038414794921875,
+      "frame": 1476,
+      "monotonicMs": 70306.212890625,
+      "xy": [
+        840,
+        420.4444580078125
+      ],
+      "action": "Calculate local extra-savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 59.04,
+      "sourceAt": 4.05511474609375,
+      "frame": 1476,
+      "monotonicMs": 70322.91284179688,
+      "xy": [
+        840,
+        423.9166564941406
+      ],
+      "action": "Calculate local extra-savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 59.08,
+      "sourceAt": 4.07171484375,
+      "frame": 1477,
+      "monotonicMs": 70339.51293945312,
+      "xy": [
+        840,
+        427.3888854980469
+      ],
+      "action": "Calculate local extra-savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 59.08,
+      "sourceAt": 4.088414794921875,
+      "frame": 1477,
+      "monotonicMs": 70356.212890625,
+      "xy": [
+        840,
+        430.8611145019531
+      ],
+      "action": "Calculate local extra-savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 59.12,
+      "sourceAt": 4.105414794921875,
+      "frame": 1478,
+      "monotonicMs": 70373.212890625,
+      "xy": [
+        840,
+        434.3333435058594
+      ],
+      "action": "Calculate local extra-savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 59.12,
+      "sourceAt": 4.12171484375,
+      "frame": 1478,
+      "monotonicMs": 70389.51293945312,
+      "xy": [
+        840,
+        437.8055419921875
+      ],
+      "action": "Calculate local extra-savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 59.12,
+      "sourceAt": 4.138414794921875,
+      "frame": 1478,
+      "monotonicMs": 70406.212890625,
+      "xy": [
+        840,
+        441.27777099609375
+      ],
+      "action": "Calculate local extra-savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 59.16,
+      "sourceAt": 4.1550146484375,
+      "frame": 1479,
+      "monotonicMs": 70422.81274414062,
+      "xy": [
+        840,
+        444.75
+      ],
+      "action": "Calculate local extra-savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 59.16,
+      "sourceAt": 4.17171484375,
+      "frame": 1479,
+      "monotonicMs": 70439.51293945312,
+      "xy": [
+        840,
+        448.22222900390625
+      ],
+      "action": "Calculate local extra-savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 59.2,
+      "sourceAt": 4.188314697265625,
+      "frame": 1480,
+      "monotonicMs": 70456.11279296875,
+      "xy": [
+        840,
+        451.6944580078125
+      ],
+      "action": "Calculate local extra-savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 59.2,
+      "sourceAt": 4.205414794921875,
+      "frame": 1480,
+      "monotonicMs": 70473.212890625,
+      "xy": [
+        840,
+        455.1666564941406
+      ],
+      "action": "Calculate local extra-savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 59.24,
+      "sourceAt": 4.221814697265625,
+      "frame": 1481,
+      "monotonicMs": 70489.61279296875,
+      "xy": [
+        840,
+        458.6388854980469
+      ],
+      "action": "Calculate local extra-savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 59.24,
+      "sourceAt": 4.238414794921875,
+      "frame": 1481,
+      "monotonicMs": 70506.212890625,
+      "xy": [
+        840,
+        462.1111145019531
+      ],
+      "action": "Calculate local extra-savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 59.24,
+      "sourceAt": 4.2550146484375,
+      "frame": 1481,
+      "monotonicMs": 70522.81274414062,
+      "xy": [
+        840,
+        465.5833435058594
+      ],
+      "action": "Calculate local extra-savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 59.28,
+      "sourceAt": 4.27161474609375,
+      "frame": 1482,
+      "monotonicMs": 70539.41284179688,
+      "xy": [
+        840,
+        469.0555419921875
+      ],
+      "action": "Calculate local extra-savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 59.28,
+      "sourceAt": 4.288414794921875,
+      "frame": 1482,
+      "monotonicMs": 70556.212890625,
+      "xy": [
+        840,
+        472.52777099609375
+      ],
+      "action": "Calculate local extra-savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 59.32,
+      "sourceAt": 4.304914794921875,
+      "frame": 1483,
+      "monotonicMs": 70572.712890625,
+      "xy": [
+        840,
+        476
+      ],
+      "action": "Calculate local extra-savings scenario"
+    },
+    {
+      "kind": "pointerdown",
+      "chapter": "planning",
+      "at": 59.52,
+      "sourceAt": 4.507414794921875,
+      "frame": 1488,
+      "monotonicMs": 70775.212890625,
+      "xy": [
+        840,
+        476
+      ],
+      "action": "Calculate local extra-savings scenario"
+    },
+    {
+      "kind": "pointerup",
+      "chapter": "planning",
+      "at": 59.6,
+      "sourceAt": 4.580314697265625,
+      "frame": 1490,
+      "monotonicMs": 70848.11279296875,
+      "xy": [
+        840,
+        476
+      ],
+      "action": "Calculate local extra-savings scenario"
+    },
+    {
+      "kind": "click",
+      "chapter": "planning",
+      "at": 59.6,
+      "sourceAt": 4.5805146484375,
+      "frame": 1490,
+      "monotonicMs": 70848.31274414062,
+      "xy": [
+        840,
+        476
+      ],
+      "action": "Calculate local extra-savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 60.6,
+      "sourceAt": 5.6050146484375,
+      "frame": 1515,
+      "monotonicMs": 71872.81274414062,
+      "xy": [
+        861.6666870117188,
+        481.22222900390625
+      ],
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 60.64,
+      "sourceAt": 5.62171484375,
+      "frame": 1516,
+      "monotonicMs": 71889.51293945312,
+      "xy": [
+        883.3333129882812,
+        486.4444580078125
+      ],
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 60.64,
+      "sourceAt": 5.638414794921875,
+      "frame": 1516,
+      "monotonicMs": 71906.212890625,
+      "xy": [
+        905,
+        491.6666564941406
+      ],
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 60.64,
+      "sourceAt": 5.6550146484375,
+      "frame": 1516,
+      "monotonicMs": 71922.81274414062,
+      "xy": [
+        926.6666870117188,
+        496.8888854980469
+      ],
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 60.68,
+      "sourceAt": 5.671914794921875,
+      "frame": 1517,
+      "monotonicMs": 71939.712890625,
+      "xy": [
+        948.3333129882812,
+        502.1111145019531
+      ],
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 60.68,
+      "sourceAt": 5.688414794921875,
+      "frame": 1517,
+      "monotonicMs": 71956.212890625,
+      "xy": [
+        970,
+        507.3333435058594
+      ],
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 60.72,
+      "sourceAt": 5.70511474609375,
+      "frame": 1518,
+      "monotonicMs": 71972.91284179688,
+      "xy": [
+        991.6666870117188,
+        512.5555419921875
+      ],
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 60.72,
+      "sourceAt": 5.72171484375,
+      "frame": 1518,
+      "monotonicMs": 71989.51293945312,
+      "xy": [
+        1013.3333129882812,
+        517.7777709960938
+      ],
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 60.72,
+      "sourceAt": 5.738414794921875,
+      "frame": 1518,
+      "monotonicMs": 72006.212890625,
+      "xy": [
+        1035,
+        523
+      ],
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 60.76,
+      "sourceAt": 5.7550146484375,
+      "frame": 1519,
+      "monotonicMs": 72022.81274414062,
+      "xy": [
+        1056.6666259765625,
+        528.2222290039062
+      ],
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 60.76,
+      "sourceAt": 5.77171484375,
+      "frame": 1519,
+      "monotonicMs": 72039.51293945312,
+      "xy": [
+        1078.3333740234375,
+        533.4444580078125
+      ],
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 60.8,
+      "sourceAt": 5.788414794921875,
+      "frame": 1520,
+      "monotonicMs": 72056.212890625,
+      "xy": [
+        1100,
+        538.6666870117188
+      ],
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 60.8,
+      "sourceAt": 5.80511474609375,
+      "frame": 1520,
+      "monotonicMs": 72072.91284179688,
+      "xy": [
+        1121.6666259765625,
+        543.888916015625
+      ],
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 60.84,
+      "sourceAt": 5.821814697265625,
+      "frame": 1521,
+      "monotonicMs": 72089.61279296875,
+      "xy": [
+        1143.3333740234375,
+        549.111083984375
+      ],
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 60.84,
+      "sourceAt": 5.8385146484375,
+      "frame": 1521,
+      "monotonicMs": 72106.31274414062,
+      "xy": [
+        1165,
+        554.3333129882812
+      ],
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 60.84,
+      "sourceAt": 5.85511474609375,
+      "frame": 1521,
+      "monotonicMs": 72122.91284179688,
+      "xy": [
+        1186.6666259765625,
+        559.5555419921875
+      ],
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 60.88,
+      "sourceAt": 5.87171484375,
+      "frame": 1522,
+      "monotonicMs": 72139.51293945312,
+      "xy": [
+        1208.3333740234375,
+        564.7777709960938
+      ],
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "planning",
+      "at": 60.88,
+      "sourceAt": 5.888414794921875,
+      "frame": 1522,
+      "monotonicMs": 72156.212890625,
+      "xy": [
+        1230,
+        570
+      ],
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "wheel",
+      "chapter": "planning",
+      "at": 60.92,
+      "sourceAt": 5.92171484375,
+      "frame": 1523,
+      "monotonicMs": 72189.51293945312,
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "wheel",
+      "chapter": "planning",
+      "at": 60.96,
+      "sourceAt": 5.971814697265625,
+      "frame": 1524,
+      "monotonicMs": 72239.61279296875,
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "wheel",
+      "chapter": "planning",
+      "at": 61.04,
+      "sourceAt": 6.02171484375,
+      "frame": 1526,
+      "monotonicMs": 72289.51293945312,
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "wheel",
+      "chapter": "planning",
+      "at": 61.08,
+      "sourceAt": 6.07171484375,
+      "frame": 1527,
+      "monotonicMs": 72339.51293945312,
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "wheel",
+      "chapter": "planning",
+      "at": 61.12,
+      "sourceAt": 6.12171484375,
+      "frame": 1528,
+      "monotonicMs": 72389.51293945312,
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "wheel",
+      "chapter": "planning",
+      "at": 61.16,
+      "sourceAt": 6.171814697265625,
+      "frame": 1529,
+      "monotonicMs": 72439.61279296875,
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "wheel",
+      "chapter": "planning",
+      "at": 61.24,
+      "sourceAt": 6.227914794921875,
+      "frame": 1531,
+      "monotonicMs": 72495.712890625,
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "wheel",
+      "chapter": "planning",
+      "at": 61.28,
+      "sourceAt": 6.260314697265625,
+      "frame": 1532,
+      "monotonicMs": 72528.11279296875,
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "wheel",
+      "chapter": "planning",
+      "at": 61.32,
+      "sourceAt": 6.311314697265625,
+      "frame": 1533,
+      "monotonicMs": 72579.11279296875,
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "wheel",
+      "chapter": "planning",
+      "at": 61.36,
+      "sourceAt": 6.36121484375,
+      "frame": 1534,
+      "monotonicMs": 72629.01293945312,
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "wheel",
+      "chapter": "planning",
+      "at": 61.4,
+      "sourceAt": 6.41121484375,
+      "frame": 1535,
+      "monotonicMs": 72679.01293945312,
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "wheel",
+      "chapter": "planning",
+      "at": 61.48,
+      "sourceAt": 6.46121484375,
+      "frame": 1537,
+      "monotonicMs": 72729.01293945312,
+      "action": "Read calculated savings scenario"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 68.04,
+      "sourceAt": 3.021654052734375,
+      "frame": 1701,
+      "monotonicMs": 82256.31298828125,
+      "xy": [
+        1231.849365234375,
+        541.5555419921875
+      ],
+      "action": "Open local crypto CSV import"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 68.04,
+      "sourceAt": 3.03835400390625,
+      "frame": 1701,
+      "monotonicMs": 82273.01293945312,
+      "xy": [
+        1233.69873046875,
+        513.111083984375
+      ],
+      "action": "Open local crypto CSV import"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 68.04,
+      "sourceAt": 3.05485400390625,
+      "frame": 1701,
+      "monotonicMs": 82289.51293945312,
+      "xy": [
+        1235.5482177734375,
+        484.6666564941406
+      ],
+      "action": "Open local crypto CSV import"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 68.08,
+      "sourceAt": 3.071553955078125,
+      "frame": 1702,
+      "monotonicMs": 82306.212890625,
+      "xy": [
+        1237.3975830078125,
+        456.22222900390625
+      ],
+      "action": "Open local crypto CSV import"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 68.08,
+      "sourceAt": 3.08835400390625,
+      "frame": 1702,
+      "monotonicMs": 82323.01293945312,
+      "xy": [
+        1239.2469482421875,
+        427.77777099609375
+      ],
+      "action": "Open local crypto CSV import"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 68.12,
+      "sourceAt": 3.105053955078125,
+      "frame": 1703,
+      "monotonicMs": 82339.712890625,
+      "xy": [
+        1241.0963134765625,
+        399.3333435058594
+      ],
+      "action": "Open local crypto CSV import"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 68.12,
+      "sourceAt": 3.121654052734375,
+      "frame": 1703,
+      "monotonicMs": 82356.31298828125,
+      "xy": [
+        1242.94580078125,
+        370.8888854980469
+      ],
+      "action": "Open local crypto CSV import"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 68.12,
+      "sourceAt": 3.138154052734375,
+      "frame": 1703,
+      "monotonicMs": 82372.81298828125,
+      "xy": [
+        1244.795166015625,
+        342.4444580078125
+      ],
+      "action": "Open local crypto CSV import"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 68.16,
+      "sourceAt": 3.15485400390625,
+      "frame": 1704,
+      "monotonicMs": 82389.51293945312,
+      "xy": [
+        1246.64453125,
+        314
+      ],
+      "action": "Open local crypto CSV import"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 68.16,
+      "sourceAt": 3.171553955078125,
+      "frame": 1704,
+      "monotonicMs": 82406.212890625,
+      "xy": [
+        1248.493896484375,
+        285.5555419921875
+      ],
+      "action": "Open local crypto CSV import"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 68.2,
+      "sourceAt": 3.188154052734375,
+      "frame": 1705,
+      "monotonicMs": 82422.81298828125,
+      "xy": [
+        1250.34326171875,
+        257.1111145019531
+      ],
+      "action": "Open local crypto CSV import"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 68.2,
+      "sourceAt": 3.204953857421875,
+      "frame": 1705,
+      "monotonicMs": 82439.61279296875,
+      "xy": [
+        1252.1927490234375,
+        228.6666717529297
+      ],
+      "action": "Open local crypto CSV import"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 68.24,
+      "sourceAt": 3.221553955078125,
+      "frame": 1706,
+      "monotonicMs": 82456.212890625,
+      "xy": [
+        1254.0421142578125,
+        200.22222900390625
+      ],
+      "action": "Open local crypto CSV import"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 68.24,
+      "sourceAt": 3.23835400390625,
+      "frame": 1706,
+      "monotonicMs": 82473.01293945312,
+      "xy": [
+        1255.8914794921875,
+        171.77777099609375
+      ],
+      "action": "Open local crypto CSV import"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 68.24,
+      "sourceAt": 3.255053955078125,
+      "frame": 1706,
+      "monotonicMs": 82489.712890625,
+      "xy": [
+        1257.7408447265625,
+        143.3333282470703
+      ],
+      "action": "Open local crypto CSV import"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 68.28,
+      "sourceAt": 3.271553955078125,
+      "frame": 1707,
+      "monotonicMs": 82506.212890625,
+      "xy": [
+        1259.59033203125,
+        114.88888549804688
+      ],
+      "action": "Open local crypto CSV import"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 68.28,
+      "sourceAt": 3.28835400390625,
+      "frame": 1707,
+      "monotonicMs": 82523.01293945312,
+      "xy": [
+        1261.439697265625,
+        86.44444274902344
+      ],
+      "action": "Open local crypto CSV import"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 68.32,
+      "sourceAt": 3.305154052734375,
+      "frame": 1708,
+      "monotonicMs": 82539.81298828125,
+      "xy": [
+        1263.2890625,
+        58
+      ],
+      "action": "Open local crypto CSV import"
+    },
+    {
+      "kind": "pointerdown",
+      "chapter": "crypto",
+      "at": 68.52,
+      "sourceAt": 3.507453857421875,
+      "frame": 1713,
+      "monotonicMs": 82742.11279296875,
+      "xy": [
+        1263.2890625,
+        58
+      ],
+      "action": "Open local crypto CSV import"
+    },
+    {
+      "kind": "pointerup",
+      "chapter": "crypto",
+      "at": 68.56,
+      "sourceAt": 3.57975390625,
+      "frame": 1714,
+      "monotonicMs": 82814.41284179688,
+      "xy": [
+        1263.2890625,
+        58
+      ],
+      "action": "Open local crypto CSV import"
+    },
+    {
+      "kind": "click",
+      "chapter": "crypto",
+      "at": 68.56,
+      "sourceAt": 3.579953857421875,
+      "frame": 1714,
+      "monotonicMs": 82814.61279296875,
+      "xy": [
+        1263,
+        58
+      ],
+      "action": "Open local crypto CSV import"
+    },
+    {
+      "kind": "input",
+      "chapter": "crypto",
+      "at": 69.52,
+      "sourceAt": 4.503053955078125,
+      "frame": 1738,
+      "monotonicMs": 83737.712890625,
+      "action": "Open local crypto CSV import"
+    },
+    {
+      "kind": "change",
+      "chapter": "crypto",
+      "at": 69.52,
+      "sourceAt": 4.503154052734375,
+      "frame": 1738,
+      "monotonicMs": 83737.81298828125,
+      "action": "Open local crypto CSV import"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 71.04,
+      "sourceAt": 6.034953857421875,
+      "frame": 1776,
+      "monotonicMs": 85269.61279296875,
+      "xy": [
+        1233.1063232421875,
+        82.94444274902344
+      ],
+      "action": "Preview synthetic crypto quantities and EUR cost"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 71.04,
+      "sourceAt": 6.05725390625,
+      "frame": 1776,
+      "monotonicMs": 85291.91284179688,
+      "xy": [
+        1202.923583984375,
+        107.88888549804688
+      ],
+      "action": "Preview synthetic crypto quantities and EUR cost"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 71.12,
+      "sourceAt": 6.10035400390625,
+      "frame": 1778,
+      "monotonicMs": 85335.01293945312,
+      "xy": [
+        1172.7408447265625,
+        132.8333282470703
+      ],
+      "action": "Preview synthetic crypto quantities and EUR cost"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 71.16,
+      "sourceAt": 6.14425390625,
+      "frame": 1779,
+      "monotonicMs": 85378.91284179688,
+      "xy": [
+        1142.55810546875,
+        157.77777099609375
+      ],
+      "action": "Preview synthetic crypto quantities and EUR cost"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 71.16,
+      "sourceAt": 6.166453857421875,
+      "frame": 1779,
+      "monotonicMs": 85401.11279296875,
+      "xy": [
+        1112.37548828125,
+        182.72222900390625
+      ],
+      "action": "Preview synthetic crypto quantities and EUR cost"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 71.2,
+      "sourceAt": 6.188453857421875,
+      "frame": 1780,
+      "monotonicMs": 85423.11279296875,
+      "xy": [
+        1082.1927490234375,
+        207.6666717529297
+      ],
+      "action": "Preview synthetic crypto quantities and EUR cost"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 71.24,
+      "sourceAt": 6.233453857421875,
+      "frame": 1781,
+      "monotonicMs": 85468.11279296875,
+      "xy": [
+        1052.010009765625,
+        232.61111450195312
+      ],
+      "action": "Preview synthetic crypto quantities and EUR cost"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 71.28,
+      "sourceAt": 6.279453857421875,
+      "frame": 1782,
+      "monotonicMs": 85514.11279296875,
+      "xy": [
+        1021.8272705078125,
+        257.5555419921875
+      ],
+      "action": "Preview synthetic crypto quantities and EUR cost"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 71.32,
+      "sourceAt": 6.30175390625,
+      "frame": 1783,
+      "monotonicMs": 85536.41284179688,
+      "xy": [
+        991.64453125,
+        282.5
+      ],
+      "action": "Preview synthetic crypto quantities and EUR cost"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 71.36,
+      "sourceAt": 6.346154052734375,
+      "frame": 1784,
+      "monotonicMs": 85580.81298828125,
+      "xy": [
+        961.4617919921875,
+        307.4444580078125
+      ],
+      "action": "Preview synthetic crypto quantities and EUR cost"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 71.36,
+      "sourceAt": 6.36935400390625,
+      "frame": 1784,
+      "monotonicMs": 85604.01293945312,
+      "xy": [
+        931.279052734375,
+        332.3888854980469
+      ],
+      "action": "Preview synthetic crypto quantities and EUR cost"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 71.4,
+      "sourceAt": 6.41385400390625,
+      "frame": 1785,
+      "monotonicMs": 85648.51293945312,
+      "xy": [
+        901.0963745117188,
+        357.3333435058594
+      ],
+      "action": "Preview synthetic crypto quantities and EUR cost"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 71.44,
+      "sourceAt": 6.43685400390625,
+      "frame": 1786,
+      "monotonicMs": 85671.51293945312,
+      "xy": [
+        870.9136352539062,
+        382.27777099609375
+      ],
+      "action": "Preview synthetic crypto quantities and EUR cost"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 71.44,
+      "sourceAt": 6.459053955078125,
+      "frame": 1786,
+      "monotonicMs": 85693.712890625,
+      "xy": [
+        840.7308959960938,
+        407.22222900390625
+      ],
+      "action": "Preview synthetic crypto quantities and EUR cost"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 71.52,
+      "sourceAt": 6.502553955078125,
+      "frame": 1788,
+      "monotonicMs": 85737.212890625,
+      "xy": [
+        810.5481567382812,
+        432.1666564941406
+      ],
+      "action": "Preview synthetic crypto quantities and EUR cost"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 71.52,
+      "sourceAt": 6.524654052734375,
+      "frame": 1788,
+      "monotonicMs": 85759.31298828125,
+      "xy": [
+        780.365478515625,
+        457.1111145019531
+      ],
+      "action": "Preview synthetic crypto quantities and EUR cost"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 71.56,
+      "sourceAt": 6.568053955078125,
+      "frame": 1789,
+      "monotonicMs": 85802.712890625,
+      "xy": [
+        750.1827392578125,
+        482.0555419921875
+      ],
+      "action": "Preview synthetic crypto quantities and EUR cost"
+    },
+    {
+      "kind": "pointermove",
+      "chapter": "crypto",
+      "at": 71.56,
+      "sourceAt": 6.569053955078125,
+      "frame": 1789,
+      "monotonicMs": 85803.712890625,
+      "xy": [
+        720,
+        507
+      ],
+      "action": "Preview synthetic crypto quantities and EUR cost"
+    },
+    {
+      "kind": "pointerdown",
+      "chapter": "crypto",
+      "at": 71.76,
+      "sourceAt": 6.770453857421875,
+      "frame": 1794,
+      "monotonicMs": 86005.11279296875,
+      "xy": [
+        720,
+        507
+      ],
+      "action": "Preview synthetic crypto quantities and EUR cost"
+    },
+    {
+      "kind": "pointerup",
+      "chapter": "crypto",
+      "at": 71.84,
+      "sourceAt": 6.84275390625,
+      "frame": 1796,
+      "monotonicMs": 86077.41284179688,
+      "xy": [
+        720,
+        507
+      ],
+      "action": "Preview synthetic crypto quantities and EUR cost"
+    },
+    {
+      "kind": "click",
+      "chapter": "crypto",
+      "at": 71.84,
+      "sourceAt": 6.842953857421875,
+      "frame": 1796,
+      "monotonicMs": 86077.61279296875,
+      "xy": [
+        720,
+        507
+      ],
+      "action": "Preview synthetic crypto quantities and EUR cost"
+    },
+    {
+      "kind": "keydown",
+      "chapter": "crypto",
+      "at": 76.52,
+      "sourceAt": 11.501654052734375,
+      "frame": 1913,
+      "monotonicMs": 90736.31298828125,
+      "action": "Preview synthetic crypto quantities and EUR cost"
+    }
+  ],
+  "requests": {
+    "recordedResponseCount": 34,
+    "externalAttemptCount": 0,
+    "unexpectedFailureCount": 0,
+    "mocks": false,
+    "baselineRestored": true,
+    "description": "Real local authenticated application requests; no bank, market or AI provider calls. Bodies, headers, paths and raw logs remain private."
+  },
+  "reproduction": "node scripts/media/render-finance-demo.mjs --render PRIVATE_WORKDIR PLAYWRIGHT_MODULE PRIVATE_MANIFEST",
+  "sourceTiming": {
+    "clickCount": 13,
+    "capturedBrowserFrames": 4251,
+    "maximumNextCaptureDelayMs": 16.62,
+    "maximumCueQuantizationMs": 17.702,
+    "method": "DOM events use performance.timeOrigin + performance.now, mapped to a process-monotonic clock. Actual CDP screencast timestamps define each clip origin. Click sounds round to the nearest 25fps frame; no invented timestamps."
+  },
+  "inputMethod": "Guided Playwright mouse, keyboard, native-select and file-input actions. No application data or API responses replaced. The only presentation overlay is the actual-event-driven pointer and click halo."
+}

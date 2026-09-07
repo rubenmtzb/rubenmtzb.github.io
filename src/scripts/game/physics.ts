@@ -17,8 +17,8 @@ export const BODY = { width: 28, height: 62 }
 
 export const PHYSICS = {
   gravity: 0.40,
-  jumpForce: -8.8,
-  doubleJumpForce: -8.4,
+  jumpForce: -9.6,
+  doubleJumpForce: -9.2,
   /** Releasing jump mid-rise cuts it short: it gives control over height. */
   jumpCut: 0.45,
   maxRun: 3.0,
@@ -33,6 +33,35 @@ export const PHYSICS = {
   coyoteMs: 140,
   /** Grace window for pressing jump just before landing. */
   bufferMs: 140,
+} as const
+
+/**
+ * Keep the sprite inside the visible stage, including its glow. Zero let him
+ * rest flush against the viewport so a squash frame or a moving ledge could
+ * paint him off-screen, which read as slipping through the side.
+ */
+export const STAGE_PAD = 10
+
+/**
+ * How far is too far.
+ *
+ * The page is full of DOM ledges, so falling past the last *drawn* platform is
+ * not a death: he just lands on a heading further down and cannot climb back.
+ * These two distances are what turn that softlock into a retry.
+ */
+export const PIT = {
+  /** Falling this far without landing, with no aura to glide on. */
+  freeFall: 420,
+  /**
+   * The current orb is this far above: the route was missed, even on the ground.
+   * It has to be more than a single screen-shelf — Identity and Experience share
+   * a viewport, and dying for stepping onto the heading below felt cheap.
+   */
+  missedOrb: 560,
+  /** One tap of Down may skip a single ledge, not a whole section. */
+  dropSafe: 160,
+  /** A stair still under the feet means the route is there. */
+  floorCatch: 200,
 } as const
 
 /** Ground acceleration multiplier while the aura is active. */
@@ -94,10 +123,58 @@ export function cutJump(vy: number, jumpHeld: boolean): number {
 }
 
 /** The character never leaves the viewport: he hits the edge and loses momentum. */
-export function clampToStage(x: number, vx: number, stageWidth: number) {
-  if (x < 0) return { x: 0, vx: 0 }
-  if (x + BODY.width > stageWidth) return { x: stageWidth - BODY.width, vx: 0 }
+export function clampToStage(x: number, vx: number, stageWidth: number, pad = 0) {
+  const min = pad
+  const max = stageWidth - BODY.width - pad
+  if (max <= min) {
+    return { x: Math.max(0, (stageWidth - BODY.width) / 2), vx: 0 }
+  }
+  if (x < min) return { x: min, vx: 0 }
+  if (x > max) return { x: max, vx: 0 }
   return { x, vx }
+}
+
+/**
+ * A ledge that sits inside the stage, never hanging off a side.
+ *
+ * Rescue platforms used to be pinned to x=25 / w-110, which left a gap between
+ * the wall and the ledge: walking to the edge was a fall that looked like
+ * slipping through the screen.
+ */
+export function placeLedge(x: number, width: number, stageWidth: number, pad = STAGE_PAD) {
+  const inner = Math.max(BODY.width + 8, stageWidth - pad * 2)
+  const w = Math.min(width, inner)
+  const min = pad
+  const max = Math.max(min, stageWidth - w - pad)
+  return { x: Math.max(min, Math.min(max, x)), w }
+}
+
+/**
+ * Did this fall leave the route?
+ *
+ * Going step by step is the game: a tap of Down may skip one ledge, and a
+ * stair still under the feet is not a pit. Launching a whole section — holding
+ * Down through empty air, or landing far below the current orb — is a retry.
+ * That speed brake is the point; it is not a false death.
+ */
+export function fellOffRoute(
+  body: { y: number; grounded: boolean },
+  route: {
+    lastGroundY: number
+    orbY: number | null
+    godspeed: boolean
+    dropping?: boolean
+    floorBelow?: number | null
+    reach?: number
+  },
+): boolean {
+  const reach = route.reach ?? PIT.missedOrb
+  const fallen = body.y - route.lastGroundY
+  if (body.grounded && route.orbY !== null && route.orbY < body.y - reach) return true
+  if (route.godspeed || body.grounded) return false
+  if (route.dropping && fallen < PIT.dropSafe) return false
+  if (route.floorBelow != null && route.floorBelow - (body.y + BODY.height) < PIT.floorCatch) return false
+  return fallen > PIT.freeFall
 }
 
 /**

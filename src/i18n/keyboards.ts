@@ -37,7 +37,7 @@ const EN = {
   order: 'Assembly order',
   pieces: 'parts',
   sheet: 'Spec sheet',
-  source: 'Where to get',
+  source: 'Part reference',
   title: 'My build photos',
   /** A build's status label. The key is the status the card displays. */
   status: {
@@ -89,7 +89,7 @@ const ES: typeof EN = {
   order: 'Orden de montaje',
   pieces: 'piezas',
   sheet: 'Ficha técnica',
-  source: 'Dónde conseguir',
+  source: 'Referencia de la pieza',
   title: 'Fotos de mis montajes',
   status: {
     complete: 'MONTAJE REAL',

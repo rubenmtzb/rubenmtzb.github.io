@@ -17,6 +17,7 @@ const cv = cvPath(lang)
 ---
 
 <BaseLayout lang={lang} pageKey={pageKey} pageType="ProfilePage">
+  <link slot="head-extra" rel="preload" href="/avatar.png" as="image" />
   <Nav lang={lang} pageKey={pageKey} />
   <main id="main">
     <Identity lang={lang} cvPath={cv} />

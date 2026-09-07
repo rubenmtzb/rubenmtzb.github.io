@@ -1,0 +1,473 @@
+{
+  "schema": 1,
+  "title": "SARS-CoV-2 Mutation Portal — real public application",
+  "capturedAt": "2026-09-07T10:58:42.464Z",
+  "inspectedAt": "2026-09-06T22:45:12.771Z",
+  "source": "http://sarscov2-mutation-portal.urv.cat/",
+  "videoSha256": "350b7f2a1a2be7c6f176b729da6b25e31fb562485b6b84d9cadb7912d2e9cf87",
+  "bytes": 7953020,
+  "durationSeconds": 81,
+  "outputResolution": "1920x1080",
+  "sourceResolution": "1440x760",
+  "fps": 30,
+  "snapshot": {
+    "displayedGisaidDate": "26/02/2024",
+    "claim": "Date as displayed by the portal; no current-data or completeness claim."
+  },
+  "disclosure": "Real university-hosted public application, original native light presentation. No fixtures, response mocks, synthetic results or changed application CSS. Clearly separated editorial guide panels explain the real interface; camera crops enlarge active regions without rearranging application pixels. Availability is external and variable.",
+  "limitations": [
+    "Point-in-time functional inspection, not exhaustive testing or scientific validation.",
+    "Excel export returned HTTP 500 and net::ERR_INVALID_RESPONSE during inspection. No successful export or download is shown.",
+    "Native select controls are operated by visible keyboard selection; OS dropdown surfaces are not captured and no replacement list is fabricated.",
+    "The native chart instruction alert was acknowledged; browser-modal surfaces are not part of the page capture.",
+    "No dedicated lineage filter or table-row detail links were found. Lineage count is a table column; no unsupported feature is claimed.",
+    "The country condition filters mutation presence; displayed percentages are not asserted to be Spain-specific.",
+    "The original wide table overflows horizontally, so later columns are not visible simultaneously. Editorial focus crops omit unused navigation/footer areas; there is no application CSS patch or fabricated interface.",
+    "The portal logged non-blocking JavaScript errors during homepage navigation; the recorded bounded query, table search, hover and zoom were independently checked to work.",
+    "GISAID-derived on-screen data remain subject to GISAID terms. No dataset or export is redistributed."
+  ],
+  "inputMethod": "Real Playwright mouse movement, pointer presses, keyboard character input and native controls. Every DOM pointermove is recorded. The in-capture cursor is continuously mounted before DOMContentLoaded, persists at the last actual coordinates across navigation, and remains visible during reading and typing. Only click rings decay. No fabricated file picker.",
+  "editing": "Original cyan genomic framing and abstract decorative helix. Large, separately labelled explanatory panels crossfade/settle outside the active application area. Detail crops increase gene/filter text size by 26% versus the approved film; other footage is never scaled smaller. The real application and its single baked cursor stay opaque. Five explicit chapter cuts omit off-chapter navigation, not action time. All mouse glides/drag gestures are real minimum-jerk input paced by wall clock; smooth scrolls use the actual document and animation frames.",
+  "presentation": {
+    "screen": {
+      "x": 80,
+      "y": 104,
+      "width": 1760,
+      "height": 704
+    },
+    "callouts": {
+      "home": [
+        {
+          "start": 0,
+          "end": 4.5,
+          "title": "Una aplicación de investigación real",
+          "detail": "Portal público de la URV · Datos derivados de GISAID"
+        },
+        {
+          "start": 4.5,
+          "end": 9,
+          "title": "Snapshot: 26 de febrero de 2024",
+          "detail": "La fecha del portal no implica datos en tiempo real."
+        }
+      ],
+      "genes": [
+        {
+          "start": 0,
+          "end": 4.5,
+          "title": "Busca una región: spike",
+          "detail": "La búsqueda filtra la tabla mientras escribimos."
+        },
+        {
+          "start": 4.5,
+          "end": 12,
+          "title": "2 regiones, de 36 entradas",
+          "detail": "Coordenadas del gen y descripción de su función."
+        }
+      ],
+      "filters": [
+        {
+          "start": 0,
+          "end": 7,
+          "title": "Un gen + un país",
+          "detail": "spike y Spain · Selección real con el teclado"
+        },
+        {
+          "start": 7,
+          "end": 16,
+          "title": "Porcentaje > 50 · Consulta acotada",
+          "detail": "El país filtra presencia; no recalcula el porcentaje por país."
+        }
+      ],
+      "results": [
+        {
+          "start": 0,
+          "end": 4.5,
+          "title": "4 resultados reales",
+          "detail": "Mutación, posición, cambio de aminoácido y frecuencia."
+        },
+        {
+          "start": 4.5,
+          "end": 8.2,
+          "title": "D614G: localizar sin otra consulta",
+          "detail": "La búsqueda de tabla actúa sobre las cuatro filas recibidas."
+        },
+        {
+          "start": 8.2,
+          "end": 14,
+          "title": "Volvemos a las cuatro filas",
+          "detail": "Limpiar la búsqueda no modifica los datos del portal."
+        }
+      ],
+      "scatter": [
+        {
+          "start": 0,
+          "end": 6,
+          "title": "Del resultado al gráfico",
+          "detail": "Pasa el cursor: cada punto muestra una mutación."
+        },
+        {
+          "start": 6,
+          "end": 11,
+          "title": "Arrastra para ampliar una región",
+          "detail": "Zoom nativo del gráfico · Sin resultados añadidos"
+        },
+        {
+          "start": 11,
+          "end": 16,
+          "title": "Restablece la vista general",
+          "detail": "Reset zoom conserva el conjunto de resultados."
+        }
+      ]
+    },
+    "framing": {
+      "home": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 576
+      },
+      "genes": {
+        "x": 140,
+        "y": 150,
+        "width": 1160,
+        "height": 464
+      },
+      "filters": {
+        "x": 160,
+        "y": 160,
+        "width": 1160,
+        "height": 464
+      },
+      "results": {
+        "x": 0,
+        "y": 90,
+        "width": 1440,
+        "height": 576
+      },
+      "scatter": {
+        "x": 0,
+        "y": 110,
+        "width": 1440,
+        "height": 576
+      }
+    },
+    "minimumSourceScale": 1.2222222222222223,
+    "previousSourceScale": 1.2,
+    "guideTitlePx": 72,
+    "guideBodyPx": 46,
+    "cadence": "30 fps output from genuine timestamped browser paints; static reading frames held, active motion captured at browser paint cadence up to 60 fps."
+  },
+  "sourceClips": [
+    {
+      "chapter": "home",
+      "seconds": 9,
+      "frames": 368,
+      "sourceTimestampStart": 1788779331.82935,
+      "sourceTimestampEnd": 1788779340.746309,
+      "frameLedgerSha256": "2d85945832837c8c745140a9ac99a022c604fe1fd7de3613ee779a56530f8f3d",
+      "frameBytesSha256": "e9873ca1441149fe73a5b987f3c58446af646603da67fbfb7a55bf06e6759aa9",
+      "cursor": {
+        "initialXY": [
+          720,
+          420
+        ],
+        "monitoredSamples": 88,
+        "invisibleSamples": 0,
+        "actualPointerMoves": 102,
+        "largestMonitorGapMs": 256.900146484375
+      },
+      "framing": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 576
+      },
+      "outputScale": 1.2222222222222223,
+      "clockedScreenshots": 82,
+      "maximumScreenshotCaptureIntervalMs": 36,
+      "presentation": "Actual Chromium paints sorted by source timestamp; wall-clock paced 60 Hz minimum-jerk pointer input and requestAnimationFrame scrolling, sampled to 30 fps. Homepage compositor gaps are filled with genuine clocked screenshots, timed at the midpoint of their measured capture interval. Static reading holds are intentional. No optical-flow interpolation, speed changes or substituted responses."
+    },
+    {
+      "chapter": "genes",
+      "seconds": 12,
+      "frames": 250,
+      "sourceTimestampStart": 1788778734.254921,
+      "sourceTimestampEnd": 1788778742.918777,
+      "frameLedgerSha256": "7e65f8baa8c6548a9d4ff2b0fa8cd28c6c1b357cf4e9003bc27cff5eccabfb23",
+      "frameBytesSha256": "29e0e1863c3772952e72b9bfaa277036a127be1665bac4c6566ec729dab76a8f",
+      "cursor": {
+        "initialXY": [
+          720,
+          420
+        ],
+        "monitoredSamples": 120,
+        "invisibleSamples": 0,
+        "actualPointerMoves": 153,
+        "largestMonitorGapMs": 104.39990234375
+      },
+      "framing": {
+        "x": 140,
+        "y": 150,
+        "width": 1160,
+        "height": 464
+      },
+      "outputScale": 1.5172413793103448,
+      "clockedScreenshots": 0,
+      "maximumScreenshotCaptureIntervalMs": 0,
+      "presentation": "Actual Chromium paints sorted by source timestamp; wall-clock paced 60 Hz minimum-jerk pointer input and requestAnimationFrame scrolling, sampled to 30 fps. Homepage compositor gaps are filled with genuine clocked screenshots, timed at the midpoint of their measured capture interval. Static reading holds are intentional. No optical-flow interpolation, speed changes or substituted responses."
+    },
+    {
+      "chapter": "filters",
+      "seconds": 16,
+      "frames": 508,
+      "sourceTimestampStart": 1788778746.451767,
+      "sourceTimestampEnd": 1788778758.185067,
+      "frameLedgerSha256": "2d96577bec91218c6bdab2226c24b1c99635b1a16e0c8356472758d14882981a",
+      "frameBytesSha256": "ee803861c3cb239217aab43967f08cf05df030117339ba66c05cf714d8f0137a",
+      "cursor": {
+        "initialXY": [
+          720,
+          420
+        ],
+        "monitoredSamples": 160,
+        "invisibleSamples": 0,
+        "actualPointerMoves": 255,
+        "largestMonitorGapMs": 133.800048828125
+      },
+      "framing": {
+        "x": 160,
+        "y": 160,
+        "width": 1160,
+        "height": 464
+      },
+      "outputScale": 1.5172413793103448,
+      "clockedScreenshots": 0,
+      "maximumScreenshotCaptureIntervalMs": 0,
+      "presentation": "Actual Chromium paints sorted by source timestamp; wall-clock paced 60 Hz minimum-jerk pointer input and requestAnimationFrame scrolling, sampled to 30 fps. Homepage compositor gaps are filled with genuine clocked screenshots, timed at the midpoint of their measured capture interval. Static reading holds are intentional. No optical-flow interpolation, speed changes or substituted responses."
+    },
+    {
+      "chapter": "results",
+      "seconds": 14,
+      "frames": 103,
+      "sourceTimestampStart": 1788778763.951551,
+      "sourceTimestampEnd": 1788778777.653379,
+      "frameLedgerSha256": "328b5c17f8db5a42db7f111f97949367a4bbd6718a7214936f26aa14e3d0adc4",
+      "frameBytesSha256": "fd405626822b0b00e072a2323535890f521817fd972a9792baa7c58cf8aede71",
+      "cursor": {
+        "initialXY": [
+          720,
+          420
+        ],
+        "monitoredSamples": 140,
+        "invisibleSamples": 0,
+        "actualPointerMoves": 51,
+        "largestMonitorGapMs": 101.60009765625
+      },
+      "framing": {
+        "x": 0,
+        "y": 90,
+        "width": 1440,
+        "height": 576
+      },
+      "outputScale": 1.2222222222222223,
+      "clockedScreenshots": 0,
+      "maximumScreenshotCaptureIntervalMs": 0,
+      "presentation": "Actual Chromium paints sorted by source timestamp; wall-clock paced 60 Hz minimum-jerk pointer input and requestAnimationFrame scrolling, sampled to 30 fps. Homepage compositor gaps are filled with genuine clocked screenshots, timed at the midpoint of their measured capture interval. Static reading holds are intentional. No optical-flow interpolation, speed changes or substituted responses."
+    },
+    {
+      "chapter": "scatter",
+      "seconds": 16,
+      "frames": 537,
+      "sourceTimestampStart": 1788778778.033783,
+      "sourceTimestampEnd": 1788778790.549893,
+      "frameLedgerSha256": "fb5ed89fa6c2f56920a8f919d793fc93e64aa5506f6ae0e44f0633ca032cf8e0",
+      "frameBytesSha256": "7246abfeef81ecd23f9e995551b213e1ea3d28655b92167e59fc6c35ce99b6aa",
+      "cursor": {
+        "initialXY": [
+          720,
+          420
+        ],
+        "monitoredSamples": 160,
+        "invisibleSamples": 0,
+        "actualPointerMoves": 348,
+        "largestMonitorGapMs": 101.5
+      },
+      "framing": {
+        "x": 0,
+        "y": 110,
+        "width": 1440,
+        "height": 576
+      },
+      "outputScale": 1.2222222222222223,
+      "clockedScreenshots": 0,
+      "maximumScreenshotCaptureIntervalMs": 0,
+      "presentation": "Actual Chromium paints sorted by source timestamp; wall-clock paced 60 Hz minimum-jerk pointer input and requestAnimationFrame scrolling, sampled to 30 fps. Homepage compositor gaps are filled with genuine clocked screenshots, timed at the midpoint of their measured capture interval. Static reading holds are intentional. No optical-flow interpolation, speed changes or substituted responses."
+    }
+  ],
+  "chapters": [
+    {
+      "id": "intro",
+      "start": 0,
+      "end": 5,
+      "es": "SARS-CoV-2 Mutation Portal. Una visita real al portal de investigación de la URV.",
+      "en": "SARS-CoV-2 Mutation Portal. A real visit to the URV research portal."
+    },
+    {
+      "id": "home",
+      "start": 5,
+      "end": 14,
+      "es": "La página explica el conjunto de datos. La fecha que muestra es 26 de febrero de 2024; no implica actualización en tiempo real.",
+      "en": "The homepage explains the dataset. Its displayed date is 26 February 2024; this is not a live-data claim."
+    },
+    {
+      "id": "genes",
+      "start": 14,
+      "end": 26,
+      "es": "Escribimos «spike» en la tabla de genes: aparecen dos regiones entre las 36 entradas.",
+      "en": "Typing “spike” in the gene table returns two regions from 36 entries."
+    },
+    {
+      "id": "filters",
+      "start": 26,
+      "end": 42,
+      "es": "Seleccionamos con el teclado spike y Spain, y un porcentaje mayor de 50. Se envía una consulta real y acotada.",
+      "en": "Using the native controls by keyboard, select spike, Spain and a percentage above 50. Submit a real, bounded query."
+    },
+    {
+      "id": "results",
+      "start": 42,
+      "end": 56,
+      "es": "La consulta devuelve cuatro filas. La búsqueda de tabla permite localizar D614G sin otra consulta al servidor.",
+      "en": "The query returns four rows. Table search locates D614G without another server query."
+    },
+    {
+      "id": "scatter",
+      "start": 56,
+      "end": 72,
+      "es": "El gráfico real permite consultar una mutación al pasar el cursor y ampliar una región por selección.",
+      "en": "The actual scatter plot shows mutation information on hover and supports selection zoom."
+    },
+    {
+      "id": "outro",
+      "start": 72,
+      "end": 81,
+      "es": "Captura puntual, no auditoría exhaustiva. La exportación Excel respondió HTTP 500 durante la inspección; no se simula ninguna descarga.",
+      "en": "A point-in-time walkthrough, not an exhaustive audit. Excel export returned HTTP 500 during inspection; no download is simulated."
+    }
+  ],
+  "reproduction": {
+    "inspect": "node scripts/media/inspect-mutation-demo.mjs PRIVATE_WORKDIR PLAYWRIGHT_MODULE",
+    "capture": "node scripts/media/capture-mutation-demo.mjs PRIVATE_WORKDIR PLAYWRIGHT_MODULE",
+    "render": "node scripts/media/render-mutation-demo.mjs PRIVATE_WORKDIR PLAYWRIGHT_MODULE",
+    "cursorVerify": "node scripts/media/verify-mutation-cursor.mjs PRIVATE_WORKDIR",
+    "verify": "node scripts/media/verify-mutation-demo.mjs PRIVATE_WORKDIR",
+    "privacy": "Raw frames, request logs, diagnostics, approved-film backup and audio stems stay in the private sessionfiles/genome-polish directory, outside the portfolio repository."
+  },
+  "eventSummary": {
+    "total": 1171,
+    "byKind": {
+      "pointermove": 909,
+      "pointerdown": 12,
+      "scroll": 199,
+      "keydown": 28,
+      "input": 17,
+      "change": 6
+    },
+    "privateLedgerSha256": "27e28c91410a724055bb08edd88336e63c0092cb0646d3822e2a48793b08bc62"
+  },
+  "requests": [
+    {
+      "method": "GET",
+      "endpoint": "/",
+      "status": 200,
+      "count": 5
+    },
+    {
+      "method": "GET",
+      "endpoint": "/gene.php",
+      "status": 200,
+      "count": 2
+    },
+    {
+      "method": "GET",
+      "endpoint": "/mut.php",
+      "status": 200,
+      "count": 2
+    },
+    {
+      "method": "POST",
+      "endpoint": "/mut.php",
+      "status": 200,
+      "count": 2
+    },
+    {
+      "method": "GET",
+      "endpoint": "/export.php",
+      "status": 500,
+      "count": 1
+    },
+    {
+      "method": "GET",
+      "endpoint": "/export.php",
+      "error": "net::ERR_INVALID_RESPONSE",
+      "count": 1
+    }
+  ],
+  "verifiedFunctions": [
+    {
+      "displayedSnapshot": "26/02/2024"
+    },
+    {
+      "geneSearch": "Showing 1 to 2 of 2 entries (filtered from 36 total entries)"
+    },
+    {
+      "query": {
+        "gene": "spike",
+        "country": "Spain",
+        "percentageGreaterThan": 50
+      },
+      "rows": 4
+    },
+    {
+      "tableSearch": "D614G",
+      "rows": 1
+    },
+    {
+      "dialog": "You can zoom by selecting with the mouse the area you are interested in. To undo the zoom you have to click on the Reset Zoom button. \n\n Hovering the mouse over will give you more information about the graph.",
+      "acknowledged": true,
+      "presentation": "Native browser instruction alert acknowledged off the page capture; no replacement dialog rendered."
+    },
+    {
+      "tooltip": "A23403G missense mutation: 99.453 %"
+    },
+    {
+      "zoom": "Reset zoom control appeared following actual drag"
+    }
+  ],
+  "audio": {
+    "composition": "Helix / original D-Lydian seven-pulse glass motif, 108 BPM subdivisions, Dmaj9–Bm11–Gmaj7(#11)–Asus2 colors. Locally synthesized for this film; no external music.",
+    "keyboard": {
+      "source": "Portfolio owner’s physical HHKB recording, public/keyboards/sound/hhkb.mp3",
+      "sha256": "b1c6895a0cde04e6e6b12cdb8cb719c646cc9c2f69f8d7ea399cfd0d10c11bbe",
+      "sourceSliceSeconds": [
+        0.35672916666666665,
+        0.43172916666666666
+      ],
+      "method": "One short real key transient, softly mixed only at observed alphanumeric keydown events."
+    },
+    "sampleRateHz": 48000,
+    "keyboardCues": 15,
+    "clickCues": 12,
+    "privateCueLedgerSha256": "ad1585320c12f8fa4b4de599a7c013383d3199a26fd25c68ee42f13be103de7b"
+  },
+  "observedPageErrors": [
+    {
+      "message": "Cannot read properties of undefined (reading 'top')",
+      "count": 2
+    }
+  ],
+  "privateEvidence": {
+    "provenanceSha256": "4d0bcde928cbcaf889073d68f49d018fc54df05faf8b3b35f06b56dda33e3ff9",
+    "policy": "Full input/scroll trajectories, event coordinates, per-cue timing and raw source frames stay private. Public metadata contains summaries and cryptographic evidence references only."
+  }
+}

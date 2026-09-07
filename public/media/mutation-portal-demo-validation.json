@@ -1,0 +1,158 @@
+{
+  "schema": 1,
+  "passed": true,
+  "verifiedAt": "2026-09-07T11:24:43.350Z",
+  "videoSha256": "350b7f2a1a2be7c6f176b729da6b25e31fb562485b6b84d9cadb7912d2e9cf87",
+  "video": {
+    "codec": "H.264",
+    "resolution": "1920x1080",
+    "fps": 30,
+    "seconds": 81,
+    "decodedFrames": 2430,
+    "decodedFrameLedgerSha256": "c08659b76cda09ad7e92d3af603c001d55d6020f3ba15ffbb73493c4b3b8a612",
+    "fullDecode": "All frames decoded with FFmpeg -xerror."
+  },
+  "audio": {
+    "codec": "AAC-LC",
+    "sampleRateHz": 48000,
+    "channels": 2,
+    "seconds": 81,
+    "integratedLufs": -21.03,
+    "truePeakDbtp": -5.71,
+    "keyboardCues": 15,
+    "clickCues": 12,
+    "cueFrameErrorMaxMs": 16.566813151040805,
+    "visibleInputRequiredForTypingCues": true,
+    "programmaticFillAndClearTypingCues": 0,
+    "decodedAacAlignment": {
+      "verifiedCues": 27,
+      "maximumAbsoluteLagMs": 0,
+      "minimumCorrelation": 0.99963
+    },
+    "alignmentMethod": "Cross-correlation of each final decoded AAC cue window against the pre-encode real-time mixture at 6 kHz; maximum accepted lag 2 ms."
+  },
+  "source": {
+    "clips": 5,
+    "timestampLedgersVerified": true,
+    "mockedResponses": false,
+    "originalAppTheme": "native light",
+    "dropdowns": "Real keyboard-controlled native selectors; no fabricated popup or OS picker.",
+    "limitations": [
+      "Point-in-time only; displayed dataset date 26/02/2024.",
+      "Filtered Excel export returned HTTP 500.",
+      "No current-data, exhaustive-test or lineage-filter claim."
+    ]
+  },
+  "continuousCursor": {
+    "passed": true,
+    "method": "Pixel-template matching against genuine DOM pointer coordinates in every source paint, plus whole-UI arrow counting on every final encoded application frame. Static holds, typing, scrolling, option selection and chapter boundaries are included.",
+    "cursorCoveredFrames": 2010,
+    "totalUiFrames": 2010,
+    "missingFrames": 0,
+    "multipleCursorFrames": 0,
+    "coordinatesInBoundsFrames": 2010,
+    "finalFrameCoverageLedgerSha256": "cf3950e94c0c79b65d1cd0fd613650bc13fa27c8b90f488c08309f58b9955750",
+    "trajectory": "Genuine wall-clock paced minimum-jerk DOM pointermove trajectories. Explicit editorial chapter cuts omit navigation; there is no invented pointer interpolation or UI fade.",
+    "motion": {
+      "movingFrameTransitions": 333,
+      "medianNativePixelsPerFrame": 19.4164878389476,
+      "p95NativePixelsPerFrame": 61.400325732035,
+      "maxNativePixelsPerFrame": 105.80170130957252,
+      "unintendedCursorStallsOver200ms": 0,
+      "method": "Every 200ms encoded window with over 20 native pixels of real pointer movement must visibly move by at least 3 pixels. Chapter cuts are excluded.",
+      "stalledWindows": []
+    },
+    "checkedPaintFrames": 1766,
+    "actualPointerMoves": 909,
+    "domVisibilitySamples": 668,
+    "invisibleFrames": 0,
+    "persistentDuringReading": true,
+    "persistsAcrossNavigation": true,
+    "clickRingsOnlyDecay": true,
+    "reviewedFramePairs": 9,
+    "reviewScenarios": [
+      "waiting",
+      "typing",
+      "scrolling",
+      "between-actions",
+      "native-option-selection",
+      "chapter-cut-genes",
+      "chapter-cut-filters",
+      "chapter-cut-results",
+      "chapter-cut-scatter"
+    ]
+  },
+  "subtitles": {
+    "es": "de86f8da6f2f407a867bed08a1a7624611b0e55c9aa62a81cc8d08ef34b1cb28",
+    "en": "378d009091140f6798bc91a5733af6685b3e9db2d837db0256e14f2782c3d75a"
+  },
+  "motion": [
+    {
+      "chapter": "genes",
+      "capturedPaints": 250,
+      "intentionalReadingHolds": true,
+      "pointerMotionIntervals": 129,
+      "medianMotionIntervalMs": 16.699951171874616,
+      "activeMotionPaintGapsAbove150ms": 0,
+      "maximumPaintHoldSeconds": 0.5012791156768799
+    },
+    {
+      "chapter": "filters",
+      "capturedPaints": 508,
+      "intentionalReadingHolds": true,
+      "pointerMotionIntervals": 211,
+      "medianMotionIntervalMs": 16.699951171874616,
+      "activeMotionPaintGapsAbove150ms": 0,
+      "maximumPaintHoldSeconds": 0.40279603004455566
+    },
+    {
+      "chapter": "results",
+      "capturedPaints": 103,
+      "intentionalReadingHolds": true,
+      "pointerMotionIntervals": 45,
+      "medianMotionIntervalMs": 16.69995117187506,
+      "activeMotionPaintGapsAbove150ms": 0,
+      "maximumPaintHoldSeconds": 2.342945098876953
+    },
+    {
+      "chapter": "scatter",
+      "capturedPaints": 537,
+      "intentionalReadingHolds": true,
+      "pointerMotionIntervals": 302,
+      "medianMotionIntervalMs": 16.699951171875504,
+      "activeMotionPaintGapsAbove150ms": 0,
+      "maximumPaintHoldSeconds": 1.497136116027832
+    },
+    {
+      "chapter": "home",
+      "capturedPaints": 368,
+      "intentionalReadingHolds": true,
+      "pointerMotionIntervals": 88,
+      "medianMotionIntervalMs": 16.699951171874616,
+      "activeMotionPaintGapsAbove150ms": 0,
+      "maximumPaintHoldSeconds": 0.08101892471313477
+    }
+  ],
+  "presentation": {
+    "guideTitlePx": 72,
+    "guideBodyPx": 46,
+    "minimumUiScale": 1.2222222222222223,
+    "previousUiScale": 1.2,
+    "geneAndFilterUiScale": 1.5172413793103448,
+    "guideDoesNotOverlapUi": true,
+    "nativePixelsOnly": true,
+    "blackApplicationFrames": 0,
+    "guideCueTimingVerified": true,
+    "guideVisibleFrames": 2010,
+    "guideMinimumMeanRed": 35,
+    "guidePresenceMethod": "Every encoded UI frame is area-averaged over the actual guide text band. Mean red must exceed 20; the empty cyan panel background is below 16. No text-free transition frames."
+  },
+  "observedPageErrors": [
+    {
+      "message": "Cannot read properties of undefined (reading 'top')",
+      "count": 2
+    }
+  ],
+  "visualReview": "Private final decoded full-size, mobile-size and contact-sheet frames support manual review. All source and encoded cursor frames are verified. A separately labelled editorial guide never overlaps the application. Actual timestamps control pointer, click and keyboard cues; static reading holds are intentional.",
+  "privateValidationSha256": "a41ebca5b67f46bb8ef325a4b71b8d9fa1595d8858352465a58b63afe964bc0b"
+}

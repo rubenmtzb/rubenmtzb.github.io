@@ -9,7 +9,7 @@ import { onSwipe, pad, trackPointer, whenNear } from '../dom'
 import { createBuildPanel, type BuildPanel } from './panel'
 import { createBuildSound } from './sound'
 
-export function initKeyboardBuildExplorer() {
+export async function initKeyboardBuildExplorer() {
   const root = document.querySelector<HTMLElement>('[data-kb-build-explorer]')
   if (!root) return
 
@@ -62,38 +62,66 @@ export function initKeyboardBuildExplorer() {
   const status = root.querySelector<HTMLElement>('[data-bx-status]')
   const openButtons = [...root.querySelectorAll<HTMLButtonElement>('button[data-bx-open]')]
 
-  const sound = createBuildSound(root)
+  let sound = createBuildSound(root)
 
   /*
-   * The layered models travel in <template> so they are not live DOM on first
-   * paint. They have to be in the tree before a build opens, and they have to
-   * be there before the visitor arrives — cloning on the click is what made
-   * the first open wait. Approaching the archive is the moment: far enough
-   * to finish, close enough that nobody pays for four models while reading
-   * the hero.
+   * Panels, geometry and layered models live in a fragment of their own.
+   * The gallery stays in the home document. This plants the workbenches
+   * before a build opens — the fetch is already in flight once the archive
+   * is close, so the first click does not wait on HTML the hero never needed.
    */
   const panels = new Map<string, BuildPanel>()
   let buildKeys: string[] = []
-  let modelsReady = false
+  let modelsJob: Promise<void> | null = null
 
-  const materializeModels = () => {
-    if (modelsReady) return
-    modelsReady = true
-    for (const template of root.querySelectorAll<HTMLTemplateElement>('template[data-bx-model-template]')) {
-      template.replaceWith(template.content)
-    }
+  const wirePanels = () => {
+    if (panels.size > 0) return
     for (const element of root.querySelectorAll<HTMLElement>('[data-bx-build]')) {
       const key = element.dataset.bxBuild
       if (key) panels.set(key, createBuildPanel(element, root))
     }
     buildKeys = [...panels.keys()]
+    sound = createBuildSound(root)
   }
 
-  if (root.querySelector('[data-bx-build]') === null) return
+  const plantFragment = (host: ParentNode) => {
+    for (const link of [...host.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]')]) {
+      if (!document.querySelector(`link[href="${link.getAttribute('href')}"]`)) {
+        document.head.appendChild(link)
+      }
+    }
+    const geometry = host.querySelector('style[data-bx-geometry]')
+    if (geometry) root.insertBefore(geometry, root.firstChild)
+    const dock = viewer ?? root
+    const nav = dock.querySelector('.bx-build-navigation')
+    for (const panel of host.querySelectorAll('[data-bx-build]')) {
+      dock.insertBefore(panel, nav)
+    }
+  }
+
+  const materializeModels = () => {
+    if (modelsJob) return modelsJob
+    modelsJob = (async () => {
+      const src = root.dataset.bxModelsSrc
+      if (src) {
+        const response = await fetch(src)
+        if (!response.ok) throw new Error(`models fragment ${response.status}`)
+        const holder = document.createElement('div')
+        holder.innerHTML = await response.text()
+        plantFragment(holder)
+      }
+      wirePanels()
+    })().catch((error) => {
+      modelsJob = null
+      throw error
+    })
+    return modelsJob
+  }
 
   const archive = document.getElementById('archive') ?? root
-  whenNear(archive, materializeModels, '1400px')
-  document.getElementById('kb-tab-photos')?.addEventListener('click', materializeModels)
+  whenNear(archive, () => { void materializeModels() }, '1400px')
+  document.getElementById('kb-tab-photos')?.addEventListener('click', () => { void materializeModels() })
+  void materializeModels()
 
   const archivedLabel = status?.textContent ?? ''
   let active: BuildPanel | null = null
@@ -143,21 +171,25 @@ export function initKeyboardBuildExplorer() {
   }
 
   const openBuild = (key: string) => {
-    materializeModels()
-    const panel = panels.get(key)
-    if (!panel) return
-    sound.silence()
-    if (active && active !== panel) active.element.hidden = true
-    active = panel
-    activeKey = key
-    panel.element.hidden = false
-    if (gallery) gallery.hidden = true
-    if (viewer) viewer.hidden = false
-    panel.clearPart()
-    panel.setSpread(0)
-    panel.resetCamera()
-    setViewMode('assembled')
-    closeButtons[0]?.focus()
+    const go = () => {
+      const panel = panels.get(key)
+      if (!panel) return
+      sound.silence()
+      if (active && active !== panel) active.element.hidden = true
+      active = panel
+      activeKey = key
+      panel.element.hidden = false
+      if (gallery) gallery.hidden = true
+      if (viewer) viewer.hidden = false
+      panel.clearPart()
+      panel.setSpread(0)
+      panel.resetCamera()
+      setViewMode('assembled')
+      closeButtons[0]?.focus()
+    }
+    const pending = materializeModels()
+    if (panels.has(key)) go()
+    else void pending.then(go)
   }
 
   closeButtons.forEach((button) => button.addEventListener('click', showGallery))
@@ -362,4 +394,6 @@ export function initKeyboardBuildExplorer() {
     active.zoomBy(event.deltaY > 0 ? .9 : 1.1)
     active.readout?.classList.add('is-visible')
   }, { passive: false })
+
+  await materializeModels()
 }

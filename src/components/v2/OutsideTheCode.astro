@@ -3,9 +3,11 @@ import { Picture } from 'astro:assets'
 import { getCollection } from 'astro:content'
 import { t, type Lang } from '../../i18n/ui'
 import BuildExplorer from './keyboards/BuildExplorer.astro'
+import { keyboardSwitchLabels } from '../../i18n/keyboard-switches'
 
 interface Props { lang: Lang }
 const { lang } = Astro.props
+const switchLabels = keyboardSwitchLabels(lang)
 
 /** The portrait is identity, not archive: it stays out of the photographic narrative. */
 const photos = (await getCollection('personal'))
@@ -81,7 +83,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
     </div>
 
     <!-- Stage of cards fanned out in 3D and freely draggable -->
-    <div class="moments-deck-wrap relative w-full flex flex-col items-center my-4 overflow-visible">
+    <div class="moments-deck-wrap relative w-full flex flex-col items-center my-4">
       <div id="moments-stage" class="moments-stage reveal relative w-full min-h-[420px] sm:min-h-[460px] flex items-center justify-center">
         {photos.map((photo, i) => {
           const rot = ROTATIONS[i % ROTATIONS.length]
@@ -229,7 +231,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
                 class="inline-flex items-center gap-1.5 rounded-lg border border-[color:var(--line)] bg-[color:var(--ink-900)] px-2.5 py-1 text-[0.72rem] font-mono text-[color:var(--fg)] hover:border-[color:var(--blue-bright)] transition"
               >
                 <span class="h-2 w-2 rounded-full bg-[color:var(--cyan)]"></span>
-                <span>Linear (Thock)</span>
+                <span>{switchLabels.linear}</span>
               </button>
             </div>
 
@@ -284,6 +286,14 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
               <div id="monkey-words" class="text-sm sm:text-base leading-relaxed tracking-wide text-[color:var(--fg-3)]">
                 <!-- The words are generated letter by letter on the client -->
               </div>
+              <button
+                type="button"
+                id="monkey-start-btn"
+                class="monkey-start"
+                aria-label={t(lang, 'otc.startTrial')}
+              >
+                {t(lang, 'otc.start')}
+              </button>
             </div>
 
             <!-- MonkeyType-style live statistics board -->
@@ -323,7 +333,7 @@ const OFFSETS_Y = [-10, 2, 8, 8, 2, -10]
                 <span>{t(lang, 'otc.lastKey')}: <strong id="kb-free-last-key" class="text-[color:var(--blue-bright)] font-bold text-sm">—</strong></span>
                 <span>{t(lang, 'otc.typingSpeed')}: <strong id="kb-free-wpm" class="text-[color:var(--live)] font-bold">0 WPM</strong></span>
               </div>
-              <span id="kb-free-sound-pill" class="text-[color:var(--fg-3)]">🔊 45g Linear</span>
+              <span id="kb-free-sound-pill" class="text-[color:var(--fg-3)]">🔊 {switchLabels.linear}</span>
             </div>
           </div>
 

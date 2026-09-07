@@ -6,6 +6,11 @@
  * cursor or touch by pulling away with elastic physics.
  *
  * Fully responsive across phones, tablets and large monitors.
+ *
+ * Hover has to feel instant: the field is ~3,000 glyphs, and `fillText` on
+ * every one of them, plus a lagged pointer, is what made the void trail the
+ * cursor. Glyphs are stamped from a tiny atlas; only particles near the
+ * pointer (or still flying back) run physics; the pointer is the real cursor.
  */
 
 const CHARS = ' .:-=+*#%@'.split('')
@@ -18,7 +23,7 @@ type Particle = {
   x: number; y: number
   tx: number; ty: number
   vx: number; vy: number
-  char: string
+  gi: number
   alpha: number
   cur: number
   delay: number
@@ -28,7 +33,7 @@ type Particle = {
 
 type ParticleRaw = {
   x: number; y: number
-  char: string
+  gi: number
   alpha: number
   isSparkle: boolean
 }
@@ -47,7 +52,8 @@ const sizeFor = (w: number) => {
 }
 
 export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
-  const ctx = canvas.getContext('2d')
+  const ctx = canvas.getContext('2d', { alpha: true, desynchronized: true })
+    ?? canvas.getContext('2d')
   if (!ctx) return
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -67,12 +73,20 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
    * which the result can be seen.
    */
   let pending: { x: number, y: number } | null = null
+  let box = { left: 0, top: 0, width: 1, height: 1 }
+  let boxDirty = true
+
+  const measureBox = () => {
+    const rect = canvas.getBoundingClientRect()
+    box = { left: rect.left, top: rect.top, width: rect.width, height: rect.height }
+    boxDirty = false
+  }
 
   const resolvePointer = () => {
     if (!pending) return
-    const rect = canvas.getBoundingClientRect()
-    pointer.tx = ((pending.x - rect.left) / rect.width) * size
-    pointer.ty = ((pending.y - rect.top) / rect.height) * size
+    if (boxDirty) measureBox()
+    pointer.tx = ((pending.x - box.left) / box.width) * size
+    pointer.ty = ((pending.y - box.top) / box.height) * size
     /*
      * On entering the portrait the cursor has no useful previous position: it
      * comes from outside the canvas. Anchoring it to the first point keeps the
@@ -96,7 +110,7 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
       ty: p.y,
       vx: 0,
       vy: 0,
-      char: p.char,
+      gi: p.gi,
       alpha: p.alpha,
       cur: 0,
       delay: Math.random() * 0.4,
@@ -144,11 +158,12 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
         if (b < 0.34) continue
         const norm = (b - 0.34) / 0.66
         const weight = norm ** 1.4
+        const gi = Math.min(CHARS.length - 1, Math.floor(norm * CHARS.length))
 
         rawList.push({
           x: Math.round(x * 10) / 10,
           y: Math.round(y * 10) / 10,
-          char: CHARS[Math.min(CHARS.length - 1, Math.floor(norm * CHARS.length))],
+          gi,
           alpha: Number((0.2 + weight * 0.8).toFixed(3)),
           isSparkle: norm > 0.75 && Math.random() < 0.25,
         })
@@ -161,8 +176,99 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
     start = performance.now()
   }
 
+  /*
+   * One raster of every glyph, in both accent colours. Stamping those bitmaps
+   * is what a GPU does cheaply; asking the text shaper for 3,000 glyphs a
+   * frame is not.
+   */
+  let atlas: HTMLCanvasElement | null = null
+  let atlasFont = 0
+  let atlasDpr = 0
+  let srcW = 0
+  let srcH = 0
+  let destW = 0
+  let destH = 0
+  let glyphs: (HTMLCanvasElement | undefined)[] = []
+
+  const ensureAtlas = (fontPx: number, dpr: number) => {
+    if (atlas && atlasFont === fontPx && atlasDpr === dpr) return
+    atlasFont = fontPx
+    atlasDpr = dpr
+    glyphs = []
+    destW = Math.ceil(fontPx * 1.7)
+    destH = Math.ceil(fontPx * 1.9)
+    srcW = Math.max(1, Math.round(destW * dpr))
+    srcH = Math.max(1, Math.round(destH * dpr))
+    atlas = document.createElement('canvas')
+    atlas.width = srcW * CHARS.length
+    atlas.height = srcH * 2
+    const g = atlas.getContext('2d')
+    if (!g) return
+    g.imageSmoothingEnabled = false
+    g.font = `${fontPx * dpr}px monospace`
+    g.textAlign = 'center'
+    g.textBaseline = 'middle'
+    const colors = [ACCENT_BASE, ACCENT_GLOW]
+    for (let row = 0; row < 2; row++) {
+      g.fillStyle = `rgb(${colors[row][0]},${colors[row][1]},${colors[row][2]})`
+      for (let col = 0; col < CHARS.length; col++) {
+        g.fillText(CHARS[col], (col + 0.5) * srcW, (row + 0.5) * srcH)
+      }
+    }
+  }
+
+  /*
+   * Alpha is already quantised to 32 steps. Cache those small glyph stamps too:
+   * the canvas otherwise crops the atlas and applies a different globalAlpha
+   * for almost every particle on every frame, including at commit time.
+   */
+  const glyphFor = (gi: number, row: number, alpha: number) => {
+    const key = gi + CHARS.length * (row + alpha * 2)
+    const cached = glyphs[key]
+    if (cached) return cached
+    if (!atlas) return
+    const glyph = document.createElement('canvas')
+    glyph.width = srcW
+    glyph.height = srcH
+    const g = glyph.getContext('2d')
+    if (!g) return
+    g.globalAlpha = alpha / 32
+    g.drawImage(atlas, gi * srcW, row * srcH, srcW, srcH, 0, 0, srcW, srcH)
+    glyphs[key] = glyph
+    return glyph
+  }
+
   /* ---------- Dibujo ---------- */
-  const draw = () => {
+  let lastPaint = 0
+  let fontSize = 0
+  let frozen = false
+  let onScreen = !('IntersectionObserver' in window)
+
+  const wake = () => {
+    if (!frozen && running) return
+    frozen = false
+    if (!onScreen || document.hidden || reduce) return
+    if (!running) {
+      running = true
+      lastPaint = 0
+      raf = requestAnimationFrame(draw)
+    }
+  }
+
+  const draw = (frameNow?: number) => {
+    const now = frameNow ?? performance.now()
+    const t = (now - start) / 1000
+    /*
+     * While the loop is alive it paints at display rate: the void has to track
+     * the cursor, and the field has to spring back at the same speed when the
+     * pointer leaves. Rest is silence — `frozen` — not a slower loop.
+     */
+    if (running && now - lastPaint < 15) {
+      raf = requestAnimationFrame(draw)
+      return
+    }
+    lastPaint = now
+
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
     if (canvas.width !== Math.round(size * dpr)) {
       canvas.width = Math.round(size * dpr)
@@ -170,18 +276,31 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
       canvas.style.width = `${size}px`
       canvas.style.height = `${size}px`
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      fontSize = 0
     }
     ctx.clearRect(0, 0, size, size)
     if (!ready) { if (running) raf = requestAnimationFrame(draw); return }
 
-    const t = (performance.now() - start) / 1000
-    ctx.font = `${fontFor(size)}px monospace`
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
+    const nextFont = fontFor(size)
+    if (nextFont !== fontSize) fontSize = nextFont
+    ensureAtlas(fontSize, dpr)
 
     resolvePointer()
-    pointer.x += (pointer.tx - pointer.x) * 0.18
-    pointer.y += (pointer.ty - pointer.y) * 0.18
+    /*
+     * The glyphs already have inertia. Smoothing the pointer on top of that
+     * stacked two lags and the void trailed the cursor by a couple of hundred
+     * milliseconds. The hole sits on the real pointer; the field flows around it.
+     */
+    if (pointer.active) {
+      pointer.x = pointer.tx
+      pointer.y = pointer.ty
+    }
+
+    const reach = size * 0.24
+    const reachSq = reach * reach
+    const ox = destW / 2
+    const oy = destH / 2
+    ctx.imageSmoothingEnabled = false
 
     for (let i = 0; i < particles.length; i++) {
       const p = particles[i]
@@ -191,59 +310,92 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
       const fade = Math.min(age / 1.4, 1)
       const eased = 1 - (1 - fade) ** 2
       const settling = age < 3
-      const alive = pointer.active || settling
-
-      // Organic pulse and subtle electric sparks
-      const breath = alive ? Math.sin(t * 2.2 + p.shimmer) * 0.1 : Math.sin(t * 1.2 + p.shimmer) * 0.05
-      const sparkle = p.isSparkle && alive ? Math.max(0, Math.sin(t * 6 + p.shimmer * 2)) * 0.35 : 0
-      p.cur = Math.max(0, Math.min(1, p.alpha * eased + breath + sparkle))
+      let sparkle = 0
 
       if (reduce) {
         p.x = p.tx
         p.y = p.ty
+        p.cur = p.alpha
       } else {
-        // Elastic repulsion from the pointer
-        if (pointer.active) {
-          const dx = p.x - pointer.x
-          const dy = p.y - pointer.y
-          const d = Math.hypot(dx, dy)
-          const reach = size * 0.24
-          if (d < reach && d > 0) {
-            const f = ((1 - d / reach) ** 2) * 5.2
-            p.vx += (dx / d) * f
-            p.vy += (dy / d) * f
-          }
-        }
+        const dxp = p.x - pointer.x
+        const dyp = p.y - pointer.y
+        const d2 = pointer.active ? dxp * dxp + dyp * dyp : 0
+        const near = pointer.active && d2 < reachSq
+        const displaced = Math.abs(p.x - p.tx) > 0.05
+          || Math.abs(p.y - p.ty) > 0.05
+          || p.vx * p.vx + p.vy * p.vy > 0.0004
 
-        // Attraction back to the original position
-        const move = Math.min(age / 2.2, 1)
-        const pull = 0.015 + (1 - (1 - move) ** 3) * 0.085
-        p.vx += (p.tx - p.x) * pull
-        p.vy += (p.ty - p.y) * pull
-
-        if (alive) {
-          p.vx += Math.sin(t * 0.6 + p.ty * 0.08) * 0.16
-          p.vy += Math.cos(t * 0.6 + p.tx * 0.08) * 0.16
-          p.vx *= 0.91
-          p.vy *= 0.91
+        if (!settling && !near && !displaced) {
+          p.x = p.tx
+          p.y = p.ty
+          p.vx = 0
+          p.vy = 0
         } else {
-          p.vx *= 0.84
-          p.vy *= 0.84
-          if (age > 3.5 && Math.abs(p.tx - p.x) < 0.05 && Math.abs(p.ty - p.y) < 0.05) {
-            p.x = p.tx
-            p.y = p.ty
-            p.vx = 0
-            p.vy = 0
-          }
-        }
+          const alive = pointer.active || settling
+          const breath = alive ? Math.sin(t * 2.2 + p.shimmer) * 0.1 : Math.sin(t * 1.2 + p.shimmer) * 0.05
+          sparkle = p.isSparkle && alive ? Math.max(0, Math.sin(t * 6 + p.shimmer * 2)) * 0.35 : 0
+          p.cur = Math.max(0, Math.min(1, p.alpha * eased + breath + sparkle))
 
-        p.x += p.vx
-        p.y += p.vy
+          if (near && d2 > 0) {
+            const d = Math.sqrt(d2)
+            const inv = (((1 - d / reach) ** 2) * 5.2) / d
+            p.vx += dxp * inv
+            p.vy += dyp * inv
+          }
+
+          const move = Math.min(age / 2.2, 1)
+          const pull = 0.015 + (1 - (1 - move) ** 3) * 0.085
+          p.vx += (p.tx - p.x) * pull
+          p.vy += (p.ty - p.y) * pull
+
+          if (alive) {
+            p.vx += Math.sin(t * 0.6 + p.ty * 0.08) * 0.16
+            p.vy += Math.cos(t * 0.6 + p.tx * 0.08) * 0.16
+            p.vx *= 0.91
+            p.vy *= 0.91
+          } else {
+            p.vx *= 0.84
+            p.vy *= 0.84
+            if (age > 3.5 && Math.abs(p.tx - p.x) < 0.05 && Math.abs(p.ty - p.y) < 0.05) {
+              p.x = p.tx
+              p.y = p.ty
+              p.vx = 0
+              p.vy = 0
+            }
+          }
+
+          p.x += p.vx
+          p.y += p.vy
+        }
       }
 
-      const color = sparkle > 0.15 ? ACCENT_GLOW : ACCENT_BASE
-      ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${p.cur.toFixed(3)})`
-      ctx.fillText(p.char, p.x, p.y)
+      const alpha = Math.round(p.cur * 32)
+      if (alpha < 1) continue
+      const row = sparkle > 0.15 ? 1 : 0
+      const glyph = glyphFor(p.gi, row, alpha)
+      if (!glyph) continue
+      ctx.drawImage(
+        glyph,
+        p.x - ox,
+        p.y - oy,
+        destW,
+        destH,
+      )
+    }
+
+    if (!pointer.active && t > 3.5) {
+      let resting = true
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i]
+        if (Math.abs(p.x - p.tx) > 0.08 || Math.abs(p.y - p.ty) > 0.08) { resting = false; break }
+        if (Math.abs(p.vx) > 0.02 || Math.abs(p.vy) > 0.02) { resting = false; break }
+      }
+      if (resting) {
+        running = false
+        frozen = true
+        raf = null
+        return
+      }
     }
 
     if (running) raf = requestAnimationFrame(draw)
@@ -254,10 +406,9 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
    * conditions are needed: returning to the tab must not resume a canvas that
    * meanwhile scrolled out of the viewport.
    */
-  let onScreen = true
   const sync = () => {
     const shouldRun = onScreen && !document.hidden && !reduce
-    if (shouldRun && !running) {
+    if (shouldRun && !running && !frozen) {
       running = true
       raf = requestAnimationFrame(draw)
     } else if (!shouldRun && running) {
@@ -272,18 +423,25 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
   const releasePointer = () => {
     pending = null
     pointer.active = false
+    pointer.x = OFFSCREEN
+    pointer.y = OFFSCREEN
     pointer.tx = OFFSCREEN
     pointer.ty = OFFSCREEN
   }
 
   const trackAt = (x: number, y: number) => { pending = { x, y } }
 
-  canvas.addEventListener('pointermove', (e) => trackAt(e.clientX, e.clientY), { passive: true })
+  canvas.addEventListener('pointermove', (e) => { trackAt(e.clientX, e.clientY); wake() }, { passive: true })
   canvas.addEventListener('pointerleave', releasePointer, { passive: true })
   canvas.addEventListener('touchmove', (e) => {
-    if (e.touches.length > 0) trackAt(e.touches[0].clientX, e.touches[0].clientY)
+    if (e.touches.length > 0) {
+      trackAt(e.touches[0].clientX, e.touches[0].clientY)
+      wake()
+    }
   }, { passive: true })
   canvas.addEventListener('touchend', releasePointer, { passive: true })
+  window.addEventListener('scroll', () => { boxDirty = true }, { passive: true })
+  window.addEventListener('resize', () => { boxDirty = true }, { passive: true })
 
   const img = new Image()
   img.decoding = 'async'
@@ -315,12 +473,15 @@ export function initAsciiPortrait(canvas: HTMLCanvasElement, src: string) {
       size = next
       canvas.style.width = `${size}px`
       canvas.style.height = `${size}px`
+      boxDirty = true
       if (!img.complete) return
       build(img)
-      /* With the loop stopped — "reduce motion" — nobody is going to repaint the
-         portrait at the new size, so the rebuild goes unpainted and the browser
-         scales the previous bitmap. One frame is enough. */
-      if (!running) draw()
+      if (reduce) draw()
+      else {
+        // A settled portrait has no loop to finish the new size's entrance.
+        frozen = false
+        sync()
+      }
     }, 100)
   })
 

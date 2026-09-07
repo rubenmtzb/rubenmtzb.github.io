@@ -1,5 +1,6 @@
 /* Moment cards: draggable, flippable in 3D and with toss physics. */
 import { clamp } from './dom'
+import { bounceAxis, confine, pointInRotatedBox, travelLimit, type CardBox } from './moment-bounds'
 
 export function initMomentCards() {
   const stage = document.getElementById('moments-stage')
@@ -21,6 +22,8 @@ export function initMomentCards() {
   const cards = Array.from(stage.querySelectorAll<HTMLElement>('.moment-card'))
   const resetBtn = document.getElementById('moments-reset-btn')
   let highestZ = 20
+  /** The single card currently showing its back on desktop hover. */
+  let peeked: HTMLElement | null = null
 
   /*
    * Safari and Chromium can start a photograph's native drag before the card
@@ -45,10 +48,17 @@ export function initMomentCards() {
       origY: oy,
       origRot: rot,
       animId: 0,
+      z: 10,
+      w: 0,
+      h: 0,
     }
   })
 
   const maxOriginX = Math.max(1, ...cardStates.map((state) => Math.abs(state.origX)))
+  cardStates.forEach((st, i) => {
+    st.z = 10 + i
+    st.el.style.zIndex = String(st.z)
+  })
 
   /**
    * The box of a card and of the stage holding it.
@@ -58,7 +68,6 @@ export function initMomentCards() {
    * drag and the toss works off those numbers. Measuring inside the loop forced
    * a layout recalculation on every frame and for every card.
    */
-  type CardBox = { width: number, height: number, stageWidth: number, stageHeight: number }
   const measure = (card: HTMLElement): CardBox => ({
     width: card.offsetWidth,
     height: card.offsetHeight,
@@ -66,41 +75,86 @@ export function initMomentCards() {
     stageHeight: stage.clientHeight,
   })
 
-  /** Half of the free gap around the card once rotated. */
-  const boundsIn = (box: CardBox, rotation: number) => {
-    const radians = Math.abs(rotation % 180) * Math.PI / 180
-    const cos = Math.abs(Math.cos(radians))
-    const sin = Math.abs(Math.sin(radians))
-    const paintedWidth = box.width * cos + box.height * sin
-    const paintedHeight = box.width * sin + box.height * cos
-    return {
-      x: Math.max(0, (box.stageWidth - paintedWidth) / 2 - 8),
-      y: Math.max(0, (box.stageHeight - paintedHeight) / 2 - 8),
+  const place = (x: number, y: number, box: CardBox, rotation: number) =>
+    confine(x, y, travelLimit(box, rotation))
+
+  let hoverPeek: HTMLElement | null = null
+  let focusPeek: HTMLElement | null = null
+
+  const setPeeked = (card: HTMLElement | null) => {
+    if (peeked === card) return
+    peeked?.classList.remove('is-peeked')
+    peeked = card
+    peeked?.classList.add('is-peeked')
+  }
+
+  const syncPeek = () => setPeeked(hoverPeek || focusPeek)
+
+  /**
+   * Painted rectangle, not the AABB. The outer card only translates and
+   * rotates in Z, so this stays valid while the inner face spins in Y.
+   */
+  const pointOnCard = (st: (typeof cardStates)[number], x: number, y: number) => {
+    const box = st.el.getBoundingClientRect()
+    const width = st.w > 0 ? st.w : box.width
+    const height = st.h > 0 ? st.h : box.height
+    if (width === 0 || height === 0) return false
+    return pointInRotatedBox(
+      x,
+      y,
+      (box.left + box.right) / 2,
+      (box.top + box.bottom) / 2,
+      width,
+      height,
+      st.rot,
+    )
+  }
+
+  const topmostAt = (x: number, y: number) => {
+    let top: HTMLElement | null = null
+    let topZ = -Infinity
+    for (const st of cardStates) {
+      if (!pointOnCard(st, x, y)) continue
+      if (st.z >= topZ) {
+        topZ = st.z
+        top = st.el
+      }
     }
+    return top
   }
 
   // Apply the adaptive starting position for the screen's width
   const applyLayout = () => {
+    hoverPeek = null
+    setPeeked(null)
     const isMobile = window.innerWidth <= 768
 
     /* Everything is measured first and written afterwards: interleaving reads
        and writes forced one layout recalculation per card. */
     const boxes = cardStates.map((st) => measure(st.el))
-    const mobileBounds = boxes[0] ? boundsIn(boxes[0], 0) : { x: 0, y: 0 }
+    const mobileBounds = boxes[0] ? travelLimit(boxes[0], 0) : { x: 0, y: 0 }
     const scaleFactor = isMobile ? Math.min(MOBILE_SCALE, mobileBounds.x / maxOriginX) : 1
 
     cardStates.forEach((st, index) => {
       if (st.animId) cancelAnimationFrame(st.animId)
-      const bounds = boundsIn(boxes[index], st.origRot)
-      st.x = isMobile ? Math.max(-bounds.x, Math.min(bounds.x, st.origX * scaleFactor)) : st.origX
-      st.y = isMobile ? Math.max(-bounds.y, Math.min(bounds.y, st.origY * scaleFactor)) : st.origY
+      const at = place(
+        isMobile ? st.origX * scaleFactor : st.origX,
+        isMobile ? st.origY * scaleFactor : st.origY,
+        boxes[index],
+        st.origRot,
+      )
+      st.x = at.x
+      st.y = at.y
       st.rot = st.origRot
       st.vx = 0
       st.vy = 0
       st.rotVel = 0
-      if (!isMobile) st.el.classList.remove('is-flipped')
+      st.w = boxes[index].width
+      st.h = boxes[index].height
+      if (!isMobile) st.el.classList.remove('is-flipped', 'is-peeked')
       st.el.style.transform = `translate3d(${st.x}px, ${st.y}px, 0) rotate(${st.rot}deg)`
     })
+    if (focusPeek) syncPeek()
   }
 
   applyLayout()
@@ -117,6 +171,51 @@ export function initMomentCards() {
       layoutFrame = null
       applyLayout()
     })
+  }, { passive: true })
+
+  /*
+   * The window listener is what keeps a peeked card stable through the 3D
+   * flip — hit-testing on the stage itself falls through at 90°. It must
+   * not measure every card on every move across the rest of the page:
+   * skip while the deck is off-screen, and skip while the pointer is
+   * outside the stage's box.
+   */
+  let stageOnScreen = true
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(
+      ([entry]) => {
+        stageOnScreen = entry.isIntersecting
+        if (!stageOnScreen) {
+          hoverPeek = null
+          syncPeek()
+        }
+      },
+      { threshold: 0 },
+    ).observe(stage)
+  }
+
+  let dragLock = 0
+  const pointInStage = (x: number, y: number) => {
+    const box = stage.getBoundingClientRect()
+    if (box.width === 0) return true
+    return x >= box.left && x <= box.right && y >= box.top && y <= box.bottom
+  }
+
+  window.addEventListener('pointermove', (event) => {
+    if (event.pointerType !== 'mouse' || window.innerWidth <= 768) return
+    if ((event.buttons ?? 0) !== 0 || dragLock > 0) return
+    if (!stageOnScreen) return
+    const x = event.clientX
+    const y = event.clientY
+    const hovered = hoverPeek && cardStates.find((st) => st.el === hoverPeek)
+    if (hovered && pointOnCard(hovered, x, y)) return
+    if (!pointInStage(x, y)) {
+      hoverPeek = null
+      syncPeek()
+      return
+    }
+    hoverPeek = topmostAt(x, y)
+    syncPeek()
   }, { passive: true })
 
   cardStates.forEach((st) => {
@@ -140,6 +239,7 @@ export function initMomentCards() {
       if (st.animId) cancelAnimationFrame(st.animId)
 
       isDragging = true
+      dragLock++
       hasMoved = false
       box = measure(card)
       startPointerX = e.clientX
@@ -150,6 +250,8 @@ export function initMomentCards() {
       pointerHistory = [{ x: e.clientX, y: e.clientY, time: performance.now() }]
 
       card.classList.remove('is-flying')
+      hoverPeek = null
+      setPeeked(null)
       try { card.setPointerCapture(e.pointerId) } catch { /* Capture improves the gesture, but must never abort it. */ }
     })
 
@@ -161,7 +263,8 @@ export function initMomentCards() {
       if (!hasMoved && Math.hypot(dx, dy) > DRAG_THRESHOLD_PX) {
         hasMoved = true
         highestZ += 2
-        card.style.zIndex = String(highestZ)
+        st.z = highestZ
+        card.style.zIndex = String(st.z)
         card.classList.add('is-dragging')
       }
 
@@ -176,13 +279,9 @@ export function initMomentCards() {
         st.rot = isNarrow
           ? clamp(startCardRot + dx * 0.1, 16)
           : startCardRot + clamp(dx * 0.1, 16)
-        const bounds = boundsIn(box, st.rot)
-        st.x = isNarrow
-          ? Math.max(-bounds.x, Math.min(bounds.x, startCardX + dx))
-          : startCardX + dx
-        st.y = isNarrow
-          ? Math.max(-bounds.y, Math.min(bounds.y, startCardY + dy))
-          : startCardY + dy
+        const at = place(startCardX + dx, startCardY + dy, box, st.rot)
+        st.x = at.x
+        st.y = at.y
 
         const now = performance.now()
         pointerHistory.push({ x: e.clientX, y: e.clientY, time: now })
@@ -195,6 +294,7 @@ export function initMomentCards() {
     const endDrag = (e: PointerEvent) => {
       if (!isDragging) return
       isDragging = false
+      dragLock = Math.max(0, dragLock - 1)
       card.classList.remove('is-dragging')
       try { card.releasePointerCapture(e.pointerId) } catch { /* noop */ }
 
@@ -222,9 +322,10 @@ export function initMomentCards() {
         st.rotVel = clamp(st.vx * 0.18, MAX_SPIN)
 
         /* The whole flight resolves off the gesture's measurement: inside the
-           loop nothing touches layout again, only the transform. */
+           loop nothing touches layout again, only the transform. Rotation
+           still changes the painted box, so the limit is recomputed each
+           frame from that same measurement. */
         const isNarrow = window.innerWidth <= 768
-        const stageHalfW = (box.stageWidth || 900) / 2
 
         const animateThrow = () => {
           st.x += st.vx
@@ -232,33 +333,20 @@ export function initMomentCards() {
           st.rot += st.rotVel
           if (isNarrow) st.rot = clamp(st.rot, 16)
 
-          // Friction and smooth deceleration
           st.vx *= FRICTION
           st.vy *= FRICTION
           st.rotVel *= SPIN_FRICTION
 
-          // Soft bounce against the stage's bounds
-          const mobileBounds = boundsIn(box, st.rot)
-          const boundX = isNarrow ? mobileBounds.x : Math.max(200, stageHalfW - 90)
-          const boundY = isNarrow ? mobileBounds.y : 160
-
-          if (st.x > boundX) {
-            st.x = boundX
-            st.vx = -st.vx * BOUNCE
-            st.rotVel = -st.rotVel * 0.5
-          } else if (st.x < -boundX) {
-            st.x = -boundX
-            st.vx = -st.vx * BOUNCE
+          const limit = travelLimit(box, st.rot)
+          const bouncedX = bounceAxis(st.x, st.vx, limit.x, BOUNCE)
+          st.x = bouncedX.pos
+          if (bouncedX.vel !== st.vx) {
+            st.vx = bouncedX.vel
             st.rotVel = -st.rotVel * 0.5
           }
-
-          if (st.y > boundY) {
-            st.y = boundY
-            st.vy = -st.vy * BOUNCE
-          } else if (st.y < -boundY) {
-            st.y = -boundY
-            st.vy = -st.vy * BOUNCE
-          }
+          const bouncedY = bounceAxis(st.y, st.vy, limit.y, BOUNCE)
+          st.y = bouncedY.pos
+          st.vy = bouncedY.vel
 
           card.style.transform = `translate3d(${Math.round(st.x)}px, ${Math.round(st.y)}px, 0) rotate(${st.rot.toFixed(1)}deg)`
 
@@ -268,6 +356,10 @@ export function initMomentCards() {
             st.vx = 0
             st.vy = 0
             st.rotVel = 0
+            const settled = place(st.x, st.y, box, st.rot)
+            st.x = settled.x
+            st.y = settled.y
+            card.style.transform = `translate3d(${Math.round(st.x)}px, ${Math.round(st.y)}px, 0) rotate(${st.rot.toFixed(1)}deg)`
             card.classList.remove('is-flying')
           }
         }
@@ -275,24 +367,42 @@ export function initMomentCards() {
         st.animId = requestAnimationFrame(animateThrow)
       } else {
         if (!hasMoved && window.innerWidth <= 768) card.classList.toggle('is-flipped')
-        // Settle into the final position
+        const settled = place(st.x, st.y, box, st.rot)
+        st.x = settled.x
+        st.y = settled.y
         card.style.transform = `translate3d(${st.x}px, ${st.y}px, 0) rotate(${st.rot}deg)`
       }
+      syncPeek()
     }
 
     card.addEventListener('pointerup', endDrag)
     card.addEventListener('pointercancel', endDrag)
+
+    card.addEventListener('focus', () => {
+      focusPeek = card
+      syncPeek()
+    })
+    card.addEventListener('blur', () => {
+      if (focusPeek === card) focusPeek = null
+      syncPeek()
+    })
+    card.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return
+      event.preventDefault()
+      event.stopPropagation()
+      card.classList.toggle('is-flipped')
+    })
   })
 
   // Button that rearranges the deck back to its original position
   resetBtn?.addEventListener('click', () => {
     applyLayout()
-    // The stacking returns to its base: otherwise every rearrangement carries
-    // over the z-index accumulated by all the previous drags.
     highestZ = 20
     cardStates.forEach((st, i) => {
-      st.el.classList.remove('is-flying', 'is-dragging', 'is-flipped')
-      st.el.style.zIndex = String(10 + i)
+      st.z = 10 + i
+      st.el.classList.remove('is-flying', 'is-dragging', 'is-flipped', 'is-peeked')
+      st.el.style.zIndex = String(st.z)
     })
+    syncPeek()
   })
 }

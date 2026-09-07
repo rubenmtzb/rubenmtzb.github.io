@@ -1,0 +1,43 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:04.000
+Finance Core: a continuous walkthrough of the real application with synthetic data.
+
+00:00:04.000 --> 00:00:28.080
+Inspect the month, open its options and review the actual transactions for one day. Every amount in this demo is fictitious.
+
+00:00:28.080 --> 00:00:40.200
+Grouped accounts and balance details. Net worth includes manual investments: it is not all liquid cash.
+
+00:00:40.200 --> 00:00:52.280
+GoCardless supports read-only connections with provider configuration and consent. It is not configured here: the local CSV workflow is used.
+
+00:00:52.280 --> 00:01:06.320
+The real file chooser is opened. A brief editorial tray shows the synthetic CSV; that same file is then selected in the application. This is not a native system picker.
+
+00:01:06.320 --> 00:01:24.400
+Preview without writing: two new rows. After confirmation, previewing the same file shows two duplicates and zero new rows.
+
+00:01:24.400 --> 00:01:36.440
+Analytics reflect local transactions, including the new import. Trends, categories and savings, without external market data.
+
+00:01:36.440 --> 00:01:48.560
+The synthetic goal progress is edited from 8,600 to 9,000 euros. This is a local record: no money is transferred.
+
+00:01:48.560 --> 00:02:02.080
+Create an actual 250-euro Health budget and inspect the result. This screen supports creation and deletion, not limit editing.
+
+00:02:02.080 --> 00:02:16.160
+Type extra savings, select a goal and calculate a local scenario. It is an estimate, not a financial promise.
+
+00:02:16.160 --> 00:02:28.200
+Pause and reactivate local subscription tracking. This does not cancel or modify any provider contract.
+
+00:02:28.200 --> 00:02:46.280
+AI disabled. Manual context is typed and saved in the advisor’s local memory; it is not a generated answer or an external request.
+
+00:02:46.280 --> 00:03:05.640
+Local crypto: quantities and recorded cost. Synthetic text is typed and three positions are previewed, without confirmation. No market prices, P&L, connected wallets or trading.
+
+00:03:05.640 --> 00:03:11.640
+Synthetic data; private source. Changes made for this recording have been restored. No external connections or mocked results.

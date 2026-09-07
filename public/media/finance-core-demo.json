@@ -1,0 +1,1248 @@
+{
+  "schema": 2,
+  "title": "Finance Core — continuous real application walkthrough",
+  "durationSeconds": 191.64,
+  "videoSha256": "f5f258d12c918ee3e12f5c472a8fa3b055e9b4c3ece0ead61095f90b7b893a7b",
+  "bytes": 15515457,
+  "outputResolution": "1920x1080",
+  "sourceResolution": "1440x760",
+  "fps": 25,
+  "uiFrames": 4541,
+  "totalFrames": 4791,
+  "chapters": [
+    {
+      "id": "intro",
+      "seconds": 4,
+      "title": "Finance Core",
+      "subtitle": "Finanzas personales, con contexto.",
+      "start": 0,
+      "end": 4
+    },
+    {
+      "id": "calendar",
+      "seconds": 24.08,
+      "title": "01 / Del mes al detalle",
+      "subtitle": "Indicadores · calendario mensual · movimientos del día",
+      "start": 4,
+      "end": 28.08
+    },
+    {
+      "id": "accounts",
+      "seconds": 12.120000000000005,
+      "title": "02 / Tus cuentas, conectadas al contexto",
+      "subtitle": "Entidades · saldos · inversión manual",
+      "start": 28.08,
+      "end": 40.2
+    },
+    {
+      "id": "banks",
+      "seconds": 12.079999999999998,
+      "title": "03 / Conectar exige consentimiento",
+      "subtitle": "GoCardless de solo lectura · no configurado en esta demo",
+      "start": 40.2,
+      "end": 52.28
+    },
+    {
+      "id": "file-selection",
+      "seconds": 14.039999999999992,
+      "title": "04 / Elegir el origen de los datos",
+      "subtitle": "CSV sintético local · selección explicada sin mostrar archivos personales",
+      "start": 52.28,
+      "end": 66.32
+    },
+    {
+      "id": "csv-review",
+      "seconds": 18.080000000000013,
+      "title": "Revisar. Confirmar. No duplicar.",
+      "subtitle": "Vista previa real · dos filas · protección de duplicados",
+      "start": 66.32,
+      "end": 84.4
+    },
+    {
+      "id": "analysis",
+      "seconds": 12.039999999999992,
+      "title": "05 / Reconocer los hábitos",
+      "subtitle": "Tendencias · categorías · ahorro",
+      "start": 84.4,
+      "end": 96.44
+    },
+    {
+      "id": "goals",
+      "seconds": 12.120000000000005,
+      "title": "06 / Convertir el ahorro en objetivos",
+      "subtitle": "Objetivo sintético · progreso real y reversible",
+      "start": 96.44,
+      "end": 108.56
+    },
+    {
+      "id": "budgets",
+      "seconds": 13.519999999999996,
+      "title": "07 / Poner límites con perspectiva",
+      "subtitle": "Presupuesto local · límite y gasto acumulado",
+      "start": 108.56,
+      "end": 122.08
+    },
+    {
+      "id": "planning",
+      "seconds": 14.079999999999998,
+      "title": "08 / Explorar una decisión",
+      "subtitle": "Escenario de ahorro extra · estimación, no promesa",
+      "start": 122.08,
+      "end": 136.16
+    },
+    {
+      "id": "subscriptions",
+      "seconds": 12.039999999999992,
+      "title": "09 / Revisar los pagos recurrentes",
+      "subtitle": "Registro local · no cancela servicios de terceros",
+      "start": 136.16,
+      "end": 148.2
+    },
+    {
+      "id": "advisor",
+      "seconds": 18.080000000000013,
+      "title": "10 / Contexto antes de preguntar",
+      "subtitle": "Asesor: datos y memoria locales · chat externo no disponible",
+      "start": 148.2,
+      "end": 166.28
+    },
+    {
+      "id": "crypto",
+      "seconds": 19.359999999999985,
+      "title": "11 / Registrar cantidades y coste",
+      "subtitle": "Sin precios, P&L, wallets conectadas ni operaciones",
+      "start": 166.28,
+      "end": 185.64
+    },
+    {
+      "id": "outro",
+      "seconds": 6,
+      "title": "Claridad, sin cajas negras.",
+      "subtitle": "Aplicación real · datos sintéticos · código privado",
+      "start": 185.64,
+      "end": 191.64
+    }
+  ],
+  "audio": {
+    "seconds": 191.64,
+    "sampleRateHz": 48000,
+    "channels": 2,
+    "pcmBits": 24,
+    "tempoBpm": 96,
+    "seed": "0x46494e32",
+    "clickCount": 54,
+    "keyCount": 97,
+    "peakDbfs": -19.59,
+    "composition": "Original D-major / B-minor / G / A plucked-string pattern, short bass and light syncopated shaker. Deterministic Karplus–Strong/additive synthesis; no pads, samples or third-party music.",
+    "interactionAudio": "Soft distinct click and keyboard transients are scheduled only from genuine recorded pointerdown/keydown events. No invented typing cues."
+  },
+  "events": [
+    {
+      "id": "e20",
+      "kind": "pointerdown",
+      "at": 7.12,
+      "source": "application",
+      "frame": 178
+    },
+    {
+      "id": "e43",
+      "kind": "pointerdown",
+      "at": 9.92,
+      "source": "application",
+      "frame": 248
+    },
+    {
+      "id": "e118",
+      "kind": "pointerdown",
+      "at": 13.08,
+      "source": "application",
+      "frame": 327
+    },
+    {
+      "id": "e225",
+      "kind": "pointerdown",
+      "at": 23.36,
+      "source": "application",
+      "frame": 584
+    },
+    {
+      "id": "e261",
+      "kind": "pointerdown",
+      "at": 29.36,
+      "source": "application",
+      "frame": 734
+    },
+    {
+      "id": "e282",
+      "kind": "pointerdown",
+      "at": 30.36,
+      "source": "application",
+      "frame": 759
+    },
+    {
+      "id": "e305",
+      "kind": "pointerdown",
+      "at": 33.64,
+      "source": "application",
+      "frame": 841
+    },
+    {
+      "id": "e329",
+      "kind": "pointerdown",
+      "at": 41.04,
+      "source": "application",
+      "frame": 1026
+    },
+    {
+      "id": "e351",
+      "kind": "pointerdown",
+      "at": 47.24,
+      "source": "application",
+      "frame": 1181
+    },
+    {
+      "id": "e372",
+      "kind": "pointerdown",
+      "at": 48.28,
+      "source": "application",
+      "frame": 1207
+    },
+    {
+      "id": "e398",
+      "kind": "pointerdown",
+      "at": 53.2,
+      "source": "application",
+      "frame": 1330
+    },
+    {
+      "id": "e422",
+      "kind": "pointerdown",
+      "at": 55.16,
+      "source": "application",
+      "frame": 1379
+    },
+    {
+      "id": "e451",
+      "kind": "pointerdown",
+      "at": 56.8,
+      "source": "application",
+      "frame": 1420
+    },
+    {
+      "id": "e472",
+      "kind": "pointerdown",
+      "at": 58.68,
+      "source": "application",
+      "frame": 1467
+    },
+    {
+      "id": "e497",
+      "kind": "pointerdown",
+      "at": 60.16,
+      "source": "application",
+      "frame": 1504
+    },
+    {
+      "id": "e521",
+      "kind": "pointerdown",
+      "at": 61.24,
+      "source": "editorial",
+      "frame": 1531
+    },
+    {
+      "id": "e568",
+      "kind": "pointerdown",
+      "at": 67.32,
+      "source": "application",
+      "frame": 1683
+    },
+    {
+      "id": "e621",
+      "kind": "pointerdown",
+      "at": 72.16,
+      "source": "application",
+      "frame": 1804
+    },
+    {
+      "id": "e645",
+      "kind": "pointerdown",
+      "at": 74.2,
+      "source": "application",
+      "frame": 1855
+    },
+    {
+      "id": "e696",
+      "kind": "pointerdown",
+      "at": 85.28,
+      "source": "application",
+      "frame": 2132
+    },
+    {
+      "id": "e719",
+      "kind": "pointerdown",
+      "at": 86.36,
+      "source": "application",
+      "frame": 2159
+    },
+    {
+      "id": "e771",
+      "kind": "pointerdown",
+      "at": 97.28,
+      "source": "application",
+      "frame": 2432
+    },
+    {
+      "id": "e792",
+      "kind": "pointerdown",
+      "at": 98.32,
+      "source": "application",
+      "frame": 2458
+    },
+    {
+      "id": "e838",
+      "kind": "pointerdown",
+      "at": 102.4,
+      "source": "application",
+      "frame": 2560
+    },
+    {
+      "id": "e861",
+      "kind": "pointerdown",
+      "at": 103.68,
+      "source": "application",
+      "frame": 2592
+    },
+    {
+      "id": "e866",
+      "kind": "keydown",
+      "at": 103.96,
+      "source": "application",
+      "frame": 2599
+    },
+    {
+      "id": "e867",
+      "kind": "keydown",
+      "at": 103.96,
+      "source": "application",
+      "frame": 2599
+    },
+    {
+      "id": "e868",
+      "kind": "keydown",
+      "at": 104.08,
+      "source": "application",
+      "frame": 2602
+    },
+    {
+      "id": "e869",
+      "kind": "keydown",
+      "at": 104.2,
+      "source": "application",
+      "frame": 2605
+    },
+    {
+      "id": "e870",
+      "kind": "keydown",
+      "at": 104.28,
+      "source": "application",
+      "frame": 2607
+    },
+    {
+      "id": "e890",
+      "kind": "pointerdown",
+      "at": 105.8,
+      "source": "application",
+      "frame": 2645
+    },
+    {
+      "id": "e921",
+      "kind": "pointerdown",
+      "at": 109.64,
+      "source": "application",
+      "frame": 2741
+    },
+    {
+      "id": "e956",
+      "kind": "pointerdown",
+      "at": 111.56,
+      "source": "application",
+      "frame": 2789
+    },
+    {
+      "id": "e984",
+      "kind": "pointerdown",
+      "at": 113.16,
+      "source": "application",
+      "frame": 2829
+    },
+    {
+      "id": "e1012",
+      "kind": "pointerdown",
+      "at": 116.44,
+      "source": "application",
+      "frame": 2911
+    },
+    {
+      "id": "e1035",
+      "kind": "pointerdown",
+      "at": 118,
+      "source": "application",
+      "frame": 2950
+    },
+    {
+      "id": "e1040",
+      "kind": "keydown",
+      "at": 118.28,
+      "source": "application",
+      "frame": 2957
+    },
+    {
+      "id": "e1041",
+      "kind": "keydown",
+      "at": 118.28,
+      "source": "application",
+      "frame": 2957
+    },
+    {
+      "id": "e1042",
+      "kind": "keydown",
+      "at": 118.36,
+      "source": "application",
+      "frame": 2959
+    },
+    {
+      "id": "e1043",
+      "kind": "keydown",
+      "at": 118.48,
+      "source": "application",
+      "frame": 2962
+    },
+    {
+      "id": "e1064",
+      "kind": "pointerdown",
+      "at": 119.84,
+      "source": "application",
+      "frame": 2996
+    },
+    {
+      "id": "e1094",
+      "kind": "pointerdown",
+      "at": 123.12,
+      "source": "application",
+      "frame": 3078
+    },
+    {
+      "id": "e1123",
+      "kind": "pointerdown",
+      "at": 124.88,
+      "source": "application",
+      "frame": 3122
+    },
+    {
+      "id": "e1128",
+      "kind": "keydown",
+      "at": 125.12,
+      "source": "application",
+      "frame": 3128
+    },
+    {
+      "id": "e1129",
+      "kind": "keydown",
+      "at": 125.12,
+      "source": "application",
+      "frame": 3128
+    },
+    {
+      "id": "e1130",
+      "kind": "keydown",
+      "at": 125.24,
+      "source": "application",
+      "frame": 3131
+    },
+    {
+      "id": "e1131",
+      "kind": "keydown",
+      "at": 125.36,
+      "source": "application",
+      "frame": 3134
+    },
+    {
+      "id": "e1150",
+      "kind": "pointerdown",
+      "at": 126.48,
+      "source": "application",
+      "frame": 3162
+    },
+    {
+      "id": "e1173",
+      "kind": "pointerdown",
+      "at": 128.4,
+      "source": "application",
+      "frame": 3210
+    },
+    {
+      "id": "e1197",
+      "kind": "pointerdown",
+      "at": 129.84,
+      "source": "application",
+      "frame": 3246
+    },
+    {
+      "id": "e1254",
+      "kind": "pointerdown",
+      "at": 136.96,
+      "source": "application",
+      "frame": 3424
+    },
+    {
+      "id": "e1275",
+      "kind": "pointerdown",
+      "at": 137.96,
+      "source": "application",
+      "frame": 3449
+    },
+    {
+      "id": "e1310",
+      "kind": "pointerdown",
+      "at": 140.92,
+      "source": "application",
+      "frame": 3523
+    },
+    {
+      "id": "e1331",
+      "kind": "pointerdown",
+      "at": 143.56,
+      "source": "application",
+      "frame": 3589
+    },
+    {
+      "id": "e1366",
+      "kind": "pointerdown",
+      "at": 149.44,
+      "source": "application",
+      "frame": 3736
+    },
+    {
+      "id": "e1387",
+      "kind": "pointerdown",
+      "at": 150.48,
+      "source": "application",
+      "frame": 3762
+    },
+    {
+      "id": "e1412",
+      "kind": "pointerdown",
+      "at": 153.68,
+      "source": "application",
+      "frame": 3842
+    },
+    {
+      "id": "e1434",
+      "kind": "pointerdown",
+      "at": 154.76,
+      "source": "application",
+      "frame": 3869
+    },
+    {
+      "id": "e1455",
+      "kind": "pointerdown",
+      "at": 155.8,
+      "source": "application",
+      "frame": 3895
+    },
+    {
+      "id": "e1460",
+      "kind": "keydown",
+      "at": 156.04,
+      "source": "application",
+      "frame": 3901
+    },
+    {
+      "id": "e1461",
+      "kind": "keydown",
+      "at": 156.04,
+      "source": "application",
+      "frame": 3901
+    },
+    {
+      "id": "e1462",
+      "kind": "keydown",
+      "at": 156.16,
+      "source": "application",
+      "frame": 3904
+    },
+    {
+      "id": "e1463",
+      "kind": "keydown",
+      "at": 156.28,
+      "source": "application",
+      "frame": 3907
+    },
+    {
+      "id": "e1464",
+      "kind": "keydown",
+      "at": 156.36,
+      "source": "application",
+      "frame": 3909
+    },
+    {
+      "id": "e1465",
+      "kind": "keydown",
+      "at": 156.48,
+      "source": "application",
+      "frame": 3912
+    },
+    {
+      "id": "e1466",
+      "kind": "keydown",
+      "at": 156.6,
+      "source": "application",
+      "frame": 3915
+    },
+    {
+      "id": "e1467",
+      "kind": "keydown",
+      "at": 156.72,
+      "source": "application",
+      "frame": 3918
+    },
+    {
+      "id": "e1468",
+      "kind": "keydown",
+      "at": 156.8,
+      "source": "application",
+      "frame": 3920
+    },
+    {
+      "id": "e1469",
+      "kind": "keydown",
+      "at": 156.92,
+      "source": "application",
+      "frame": 3923
+    },
+    {
+      "id": "e1470",
+      "kind": "keydown",
+      "at": 157.04,
+      "source": "application",
+      "frame": 3926
+    },
+    {
+      "id": "e1471",
+      "kind": "keydown",
+      "at": 157.16,
+      "source": "application",
+      "frame": 3929
+    },
+    {
+      "id": "e1472",
+      "kind": "keydown",
+      "at": 157.24,
+      "source": "application",
+      "frame": 3931
+    },
+    {
+      "id": "e1473",
+      "kind": "keydown",
+      "at": 157.36,
+      "source": "application",
+      "frame": 3934
+    },
+    {
+      "id": "e1492",
+      "kind": "pointerdown",
+      "at": 158.48,
+      "source": "application",
+      "frame": 3962
+    },
+    {
+      "id": "e1498",
+      "kind": "keydown",
+      "at": 158.76,
+      "source": "application",
+      "frame": 3969
+    },
+    {
+      "id": "e1499",
+      "kind": "keydown",
+      "at": 158.76,
+      "source": "application",
+      "frame": 3969
+    },
+    {
+      "id": "e1500",
+      "kind": "keydown",
+      "at": 158.88,
+      "source": "application",
+      "frame": 3972
+    },
+    {
+      "id": "e1501",
+      "kind": "keydown",
+      "at": 158.96,
+      "source": "application",
+      "frame": 3974
+    },
+    {
+      "id": "e1502",
+      "kind": "keydown",
+      "at": 159.08,
+      "source": "application",
+      "frame": 3977
+    },
+    {
+      "id": "e1503",
+      "kind": "keydown",
+      "at": 159.2,
+      "source": "application",
+      "frame": 3980
+    },
+    {
+      "id": "e1504",
+      "kind": "keydown",
+      "at": 159.4,
+      "source": "application",
+      "frame": 3985
+    },
+    {
+      "id": "e1505",
+      "kind": "keydown",
+      "at": 159.52,
+      "source": "application",
+      "frame": 3988
+    },
+    {
+      "id": "e1506",
+      "kind": "keydown",
+      "at": 159.64,
+      "source": "application",
+      "frame": 3991
+    },
+    {
+      "id": "e1507",
+      "kind": "keydown",
+      "at": 159.72,
+      "source": "application",
+      "frame": 3993
+    },
+    {
+      "id": "e1508",
+      "kind": "keydown",
+      "at": 159.84,
+      "source": "application",
+      "frame": 3996
+    },
+    {
+      "id": "e1509",
+      "kind": "keydown",
+      "at": 159.96,
+      "source": "application",
+      "frame": 3999
+    },
+    {
+      "id": "e1510",
+      "kind": "keydown",
+      "at": 160.08,
+      "source": "application",
+      "frame": 4002
+    },
+    {
+      "id": "e1511",
+      "kind": "keydown",
+      "at": 160.16,
+      "source": "application",
+      "frame": 4004
+    },
+    {
+      "id": "e1512",
+      "kind": "keydown",
+      "at": 160.28,
+      "source": "application",
+      "frame": 4007
+    },
+    {
+      "id": "e1513",
+      "kind": "keydown",
+      "at": 160.4,
+      "source": "application",
+      "frame": 4010
+    },
+    {
+      "id": "e1514",
+      "kind": "keydown",
+      "at": 160.48,
+      "source": "application",
+      "frame": 4012
+    },
+    {
+      "id": "e1515",
+      "kind": "keydown",
+      "at": 160.6,
+      "source": "application",
+      "frame": 4015
+    },
+    {
+      "id": "e1516",
+      "kind": "keydown",
+      "at": 160.72,
+      "source": "application",
+      "frame": 4018
+    },
+    {
+      "id": "e1517",
+      "kind": "keydown",
+      "at": 160.84,
+      "source": "application",
+      "frame": 4021
+    },
+    {
+      "id": "e1518",
+      "kind": "keydown",
+      "at": 160.92,
+      "source": "application",
+      "frame": 4023
+    },
+    {
+      "id": "e1519",
+      "kind": "keydown",
+      "at": 161.04,
+      "source": "application",
+      "frame": 4026
+    },
+    {
+      "id": "e1520",
+      "kind": "keydown",
+      "at": 161.16,
+      "source": "application",
+      "frame": 4029
+    },
+    {
+      "id": "e1521",
+      "kind": "keydown",
+      "at": 161.24,
+      "source": "application",
+      "frame": 4031
+    },
+    {
+      "id": "e1522",
+      "kind": "keydown",
+      "at": 161.36,
+      "source": "application",
+      "frame": 4034
+    },
+    {
+      "id": "e1523",
+      "kind": "keydown",
+      "at": 161.48,
+      "source": "application",
+      "frame": 4037
+    },
+    {
+      "id": "e1524",
+      "kind": "keydown",
+      "at": 161.6,
+      "source": "application",
+      "frame": 4040
+    },
+    {
+      "id": "e1525",
+      "kind": "keydown",
+      "at": 161.68,
+      "source": "application",
+      "frame": 4042
+    },
+    {
+      "id": "e1526",
+      "kind": "keydown",
+      "at": 161.8,
+      "source": "application",
+      "frame": 4045
+    },
+    {
+      "id": "e1527",
+      "kind": "keydown",
+      "at": 161.92,
+      "source": "application",
+      "frame": 4048
+    },
+    {
+      "id": "e1528",
+      "kind": "keydown",
+      "at": 162,
+      "source": "application",
+      "frame": 4050
+    },
+    {
+      "id": "e1547",
+      "kind": "pointerdown",
+      "at": 163.16,
+      "source": "application",
+      "frame": 4079
+    },
+    {
+      "id": "e1573",
+      "kind": "pointerdown",
+      "at": 167.16,
+      "source": "application",
+      "frame": 4179
+    },
+    {
+      "id": "e1595",
+      "kind": "pointerdown",
+      "at": 168.24,
+      "source": "application",
+      "frame": 4206
+    },
+    {
+      "id": "e1630",
+      "kind": "pointerdown",
+      "at": 172.68,
+      "source": "application",
+      "frame": 4317
+    },
+    {
+      "id": "e1657",
+      "kind": "pointerdown",
+      "at": 174.24,
+      "source": "application",
+      "frame": 4356
+    },
+    {
+      "id": "e1679",
+      "kind": "pointerdown",
+      "at": 175.48,
+      "source": "application",
+      "frame": 4387
+    },
+    {
+      "id": "e1684",
+      "kind": "keydown",
+      "at": 175.76,
+      "source": "application",
+      "frame": 4394
+    },
+    {
+      "id": "e1685",
+      "kind": "keydown",
+      "at": 175.76,
+      "source": "application",
+      "frame": 4394
+    },
+    {
+      "id": "e1686",
+      "kind": "keydown",
+      "at": 175.88,
+      "source": "application",
+      "frame": 4397
+    },
+    {
+      "id": "e1687",
+      "kind": "keydown",
+      "at": 176,
+      "source": "application",
+      "frame": 4400
+    },
+    {
+      "id": "e1688",
+      "kind": "keydown",
+      "at": 176.12,
+      "source": "application",
+      "frame": 4403
+    },
+    {
+      "id": "e1689",
+      "kind": "keydown",
+      "at": 176.2,
+      "source": "application",
+      "frame": 4405
+    },
+    {
+      "id": "e1690",
+      "kind": "keydown",
+      "at": 176.32,
+      "source": "application",
+      "frame": 4408
+    },
+    {
+      "id": "e1691",
+      "kind": "keydown",
+      "at": 176.44,
+      "source": "application",
+      "frame": 4411
+    },
+    {
+      "id": "e1692",
+      "kind": "keydown",
+      "at": 176.52,
+      "source": "application",
+      "frame": 4413
+    },
+    {
+      "id": "e1693",
+      "kind": "keydown",
+      "at": 176.64,
+      "source": "application",
+      "frame": 4416
+    },
+    {
+      "id": "e1694",
+      "kind": "keydown",
+      "at": 176.76,
+      "source": "application",
+      "frame": 4419
+    },
+    {
+      "id": "e1695",
+      "kind": "keydown",
+      "at": 176.88,
+      "source": "application",
+      "frame": 4422
+    },
+    {
+      "id": "e1696",
+      "kind": "keydown",
+      "at": 176.96,
+      "source": "application",
+      "frame": 4424
+    },
+    {
+      "id": "e1697",
+      "kind": "keydown",
+      "at": 177.08,
+      "source": "application",
+      "frame": 4427
+    },
+    {
+      "id": "e1698",
+      "kind": "keydown",
+      "at": 177.2,
+      "source": "application",
+      "frame": 4430
+    },
+    {
+      "id": "e1699",
+      "kind": "keydown",
+      "at": 177.32,
+      "source": "application",
+      "frame": 4433
+    },
+    {
+      "id": "e1700",
+      "kind": "keydown",
+      "at": 177.4,
+      "source": "application",
+      "frame": 4435
+    },
+    {
+      "id": "e1701",
+      "kind": "keydown",
+      "at": 177.52,
+      "source": "application",
+      "frame": 4438
+    },
+    {
+      "id": "e1702",
+      "kind": "keydown",
+      "at": 177.64,
+      "source": "application",
+      "frame": 4441
+    },
+    {
+      "id": "e1703",
+      "kind": "keydown",
+      "at": 177.72,
+      "source": "application",
+      "frame": 4443
+    },
+    {
+      "id": "e1704",
+      "kind": "keydown",
+      "at": 177.84,
+      "source": "application",
+      "frame": 4446
+    },
+    {
+      "id": "e1705",
+      "kind": "keydown",
+      "at": 177.96,
+      "source": "application",
+      "frame": 4449
+    },
+    {
+      "id": "e1706",
+      "kind": "keydown",
+      "at": 178.08,
+      "source": "application",
+      "frame": 4452
+    },
+    {
+      "id": "e1707",
+      "kind": "keydown",
+      "at": 178.16,
+      "source": "application",
+      "frame": 4454
+    },
+    {
+      "id": "e1708",
+      "kind": "keydown",
+      "at": 178.28,
+      "source": "application",
+      "frame": 4457
+    },
+    {
+      "id": "e1709",
+      "kind": "keydown",
+      "at": 178.4,
+      "source": "application",
+      "frame": 4460
+    },
+    {
+      "id": "e1710",
+      "kind": "keydown",
+      "at": 178.48,
+      "source": "application",
+      "frame": 4462
+    },
+    {
+      "id": "e1711",
+      "kind": "keydown",
+      "at": 178.6,
+      "source": "application",
+      "frame": 4465
+    },
+    {
+      "id": "e1712",
+      "kind": "keydown",
+      "at": 178.72,
+      "source": "application",
+      "frame": 4468
+    },
+    {
+      "id": "e1713",
+      "kind": "keydown",
+      "at": 178.8,
+      "source": "application",
+      "frame": 4470
+    },
+    {
+      "id": "e1714",
+      "kind": "keydown",
+      "at": 178.92,
+      "source": "application",
+      "frame": 4473
+    },
+    {
+      "id": "e1715",
+      "kind": "keydown",
+      "at": 179.04,
+      "source": "application",
+      "frame": 4476
+    },
+    {
+      "id": "e1716",
+      "kind": "keydown",
+      "at": 179.16,
+      "source": "application",
+      "frame": 4479
+    },
+    {
+      "id": "e1717",
+      "kind": "keydown",
+      "at": 179.24,
+      "source": "application",
+      "frame": 4481
+    },
+    {
+      "id": "e1718",
+      "kind": "keydown",
+      "at": 179.36,
+      "source": "application",
+      "frame": 4484
+    },
+    {
+      "id": "e1719",
+      "kind": "keydown",
+      "at": 179.48,
+      "source": "application",
+      "frame": 4487
+    },
+    {
+      "id": "e1720",
+      "kind": "keydown",
+      "at": 179.56,
+      "source": "application",
+      "frame": 4489
+    },
+    {
+      "id": "e1721",
+      "kind": "keydown",
+      "at": 179.68,
+      "source": "application",
+      "frame": 4492
+    },
+    {
+      "id": "e1722",
+      "kind": "keydown",
+      "at": 179.8,
+      "source": "application",
+      "frame": 4495
+    },
+    {
+      "id": "e1742",
+      "kind": "pointerdown",
+      "at": 181.28,
+      "source": "application",
+      "frame": 4532
+    }
+  ],
+  "pointer": {
+    "policy": "One composed pointer from actual trusted DOM trajectories on EVERY UI frame. No source-baked pointer, no UI/cursor fades, no invented interpolation.",
+    "realPointerMoves": 1348,
+    "editorialPointerMoves": 39,
+    "privateLedgerSha256": "f2f3cb3026e4cf3d9d9b98e9b8367e136318d6173e2516c78d62809e0efcb549"
+  },
+  "fileSelection": {
+    "treatment": "Explicitly labelled compact editorial tray, not a native system picker or application modal.",
+    "start": 60.491519931640624,
+    "end": 63.29390168164062,
+    "filename": "DEMO-extracto-generico.csv",
+    "fileSha256": "73fd1bf9fc457921f752dcc7ef2a165a99ef41facb979f1cec49aef5174bbbc0",
+    "fileBytes": 111,
+    "realChooserObserved": true,
+    "selectedFileHashMatched": true
+  },
+  "application": {
+    "documentRequests": 1,
+    "reloadsAfterEntry": 0,
+    "externalAttempts": 0,
+    "pageErrors": 0,
+    "realResponses": 49,
+    "failedResponses": 0,
+    "mocks": false,
+    "sourceAndRawEvidence": "Private; no source, session data, headers, request bodies or local endpoints are published."
+  },
+  "restoration": {
+    "passed": true,
+    "movements": 67,
+    "accounts": 4,
+    "crypto": 3,
+    "goals": 3,
+    "budgets": 3,
+    "subscriptions": 3,
+    "memory": 0,
+    "wealth": 30335.6,
+    "goalOriginalRestored": true,
+    "subscriptionOriginalRestored": true
+  },
+  "editing": "One continuous browser capture, chronological chapter framing only. Actual native options and actual API changes. The single disclosed file-selection tray temporarily replaces the pointer context; no desktop/OS recording. Original plucked-string/percussion score and observed-key/click sounds.",
+  "limits": [
+    "Synthetic isolated SQLite data, not production migration validation.",
+    "GoCardless read-only connector not configured or exercised externally.",
+    "Advisor chat/AI unavailable; only genuine local manual memory is demonstrated.",
+    "Crypto is quantities/cost, without live valuation, P&L, wallet or trading integration.",
+    "Subscription changes affect local tracking only. Savings projections are estimates.",
+    "Current browser supports progressive native select styling; other engines are not claimed as tested."
+  ],
+  "originalBackup": "finance-core-demo-original.mp4",
+  "reproduction": "node scripts/media/render-finance-demo-v2.mjs PRIVATE_CAPTURE_JSON PRIVATE_WORKDIR PLAYWRIGHT_MODULE"
+}

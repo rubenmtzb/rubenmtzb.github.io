@@ -59,6 +59,11 @@ export const TECH: Record<string, TechMeta> = {
     glow: 'rgba(255, 222, 87, 0.3)',
     url: 'https://www.python.org/',
   },
+  FastAPI: {
+    color: '#009688',
+    glow: 'rgba(0, 150, 136, 0.3)',
+    url: 'https://fastapi.tiangolo.com/',
+  },
   PHP: {
     icon: '/icons/php.svg',
     color: '#777bb4',
@@ -82,6 +87,24 @@ export const TECH: Record<string, TechMeta> = {
     color: '#ff5d01',
     glow: 'rgba(255, 93, 1, 0.3)',
     url: 'https://astro.build/',
+  },
+  'yt-dlp': {
+    icon: '/icons/yt-dlp.svg',
+    color: '#5b9bff',
+    glow: 'rgba(91, 155, 255, 0.32)',
+    url: 'https://github.com/yt-dlp/yt-dlp',
+  },
+  'whisper.cpp': {
+    icon: '/icons/whisper.svg',
+    color: '#a78bfa',
+    glow: 'rgba(167, 139, 250, 0.32)',
+    url: 'https://github.com/ggml-org/whisper.cpp',
+  },
+  DeepL: {
+    icon: '/icons/deepl.svg',
+    color: '#0ea5e9',
+    glow: 'rgba(14, 165, 233, 0.3)',
+    url: 'https://www.deepl.com/',
   },
   'Tailwind CSS': {
     icon: '/icons/tailwind.svg',

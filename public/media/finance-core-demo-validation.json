@@ -1,0 +1,268 @@
+{
+  "success": true,
+  "videoSha256": "f5f258d12c918ee3e12f5c472a8fa3b055e9b4c3ece0ead61095f90b7b893a7b",
+  "bytes": 15515457,
+  "durationSeconds": 191.64,
+  "resolution": "1920x1080",
+  "fps": 25,
+  "decodedFrames": 4791,
+  "fullDecode": true,
+  "everyPresentationTimestampVerified": true,
+  "decodedFrameMd5Sha256": "5520e70be6f709ab4916c0d855b91c7ce3cbe46a7d5617cfb70c2dc663338faa",
+  "audio": {
+    "codec": "AAC-LC",
+    "channels": 2,
+    "sampleRateHz": 48000,
+    "integratedLufs": -20.96,
+    "truePeakDbtp": -3.6,
+    "actualClickCues": 54,
+    "observedTypingCues": 97
+  },
+  "continuousCursor": {
+    "cursorCoveredFrames": 4541,
+    "totalUiFrames": 4541,
+    "missingFrames": 0,
+    "applicationTrajectoryFrames": 4471,
+    "editorialTrajectoryFrames": 70,
+    "singlePointerEveryUiFrame": true,
+    "sourceBakedPointerFrames": 0,
+    "outOfBoundsFrames": 0,
+    "maximumAdjacentFrameStepPixels": 109.444,
+    "verifiedTypingCues": 97,
+    "method": "Every UI output frame, not only click frames: decoded glyph visibility/uniqueness, clean-source pointer count, bounds, actual-event coordinates, continuity and genuine visible key-input correspondence.",
+    "multipleCursorFrames": 0,
+    "coordinatesInBoundsFrames": 4541,
+    "fullUiAreaScanned": true,
+    "glyphMatchTolerance": 32,
+    "reviewFramePairs": [
+      {
+        "kind": "waiting",
+        "frames": [
+          100,
+          125
+        ]
+      },
+      {
+        "kind": "typing",
+        "frames": [
+          2599,
+          2603
+        ]
+      },
+      {
+        "kind": "scrolling",
+        "frames": [
+          281,
+          289
+        ]
+      },
+      {
+        "kind": "between-actions",
+        "frames": [
+          980,
+          998
+        ]
+      },
+      {
+        "kind": "open-native-options-0",
+        "frames": [
+          1345,
+          1375
+        ]
+      },
+      {
+        "kind": "open-native-options-1",
+        "frames": [
+          1435,
+          1463
+        ]
+      },
+      {
+        "kind": "open-native-options-2",
+        "frames": [
+          2844,
+          2906
+        ]
+      },
+      {
+        "kind": "open-native-options-3",
+        "frames": [
+          3178,
+          3206
+        ]
+      },
+      {
+        "kind": "chapter-accounts",
+        "frames": [
+          701,
+          702
+        ]
+      },
+      {
+        "kind": "chapter-banks",
+        "frames": [
+          1004,
+          1005
+        ]
+      },
+      {
+        "kind": "chapter-file-selection",
+        "frames": [
+          1306,
+          1307
+        ]
+      },
+      {
+        "kind": "chapter-csv-review",
+        "frames": [
+          1657,
+          1658
+        ]
+      },
+      {
+        "kind": "chapter-analysis",
+        "frames": [
+          2109,
+          2110
+        ]
+      },
+      {
+        "kind": "chapter-goals",
+        "frames": [
+          2410,
+          2411
+        ]
+      },
+      {
+        "kind": "chapter-budgets",
+        "frames": [
+          2713,
+          2714
+        ]
+      },
+      {
+        "kind": "chapter-planning",
+        "frames": [
+          3051,
+          3052
+        ]
+      },
+      {
+        "kind": "chapter-subscriptions",
+        "frames": [
+          3403,
+          3404
+        ]
+      },
+      {
+        "kind": "chapter-advisor",
+        "frames": [
+          3704,
+          3705
+        ]
+      },
+      {
+        "kind": "chapter-crypto",
+        "frames": [
+          4156,
+          4157
+        ]
+      },
+      {
+        "kind": "editorial-entry",
+        "frames": [
+          1512,
+          1513
+        ]
+      },
+      {
+        "kind": "editorial-return",
+        "frames": [
+          1582,
+          1583
+        ]
+      }
+    ],
+    "coverageLedgerSha256": "ea00a2c2642807c034d2535a958e4e634ed19fe2685701ab85da5ecff7e1261e"
+  },
+  "darkModeEveryFrame": {
+    "inspectedFrames": 4791,
+    "maximumMeanLuma": 38.23770135030483,
+    "maximumBrightNeutralFraction": 0.00019290123456790122
+  },
+  "subtitles": {
+    "es": {
+      "cues": 14,
+      "sha256": "72a2c6d58740d0022c4352804871ec3e64def2ecfabb9a721a7fbb8eba35457b",
+      "fullDuration": true
+    },
+    "en": {
+      "cues": 14,
+      "sha256": "64692e20814448fbfc94659e196b850901dc98183d35dab6a5e2d13e5669eaed",
+      "fullDuration": true
+    }
+  },
+  "application": {
+    "documentRequests": 1,
+    "reloadsAfterEntry": 0,
+    "externalAttempts": 0,
+    "pageErrors": 0,
+    "realResponses": 49,
+    "failedResponses": 0,
+    "mocks": false,
+    "sourceAndRawEvidence": "Private; no source, session data, headers, request bodies or local endpoints are published."
+  },
+  "restoration": {
+    "passed": true,
+    "movements": 67,
+    "accounts": 4,
+    "crypto": 3,
+    "goals": 3,
+    "budgets": 3,
+    "subscriptions": 3,
+    "memory": 0,
+    "wealth": 30335.6,
+    "goalOriginalRestored": true,
+    "subscriptionOriginalRestored": true
+  },
+  "fileSelection": {
+    "treatment": "Explicitly labelled compact editorial tray, not a native system picker or application modal.",
+    "start": 60.491519931640624,
+    "end": 63.29390168164062,
+    "filename": "DEMO-extracto-generico.csv",
+    "fileSha256": "73fd1bf9fc457921f752dcc7ef2a165a99ef41facb979f1cec49aef5174bbbc0",
+    "fileBytes": 111,
+    "realChooserObserved": true,
+    "selectedFileHashMatched": true
+  },
+  "immutableOriginalsVerified": 6,
+  "verificationCommand": "node scripts/media/verify-finance-demo-v2.mjs PRIVATE_RENDER_DIRECTORY",
+  "nativePlayback": {
+    "completed": true,
+    "durationSeconds": 191.64,
+    "droppedFrames": 0,
+    "pageErrors": 0,
+    "externalRequests": 0,
+    "captionTracks": [
+      {
+        "language": "es",
+        "cues": 14
+      },
+      {
+        "language": "en",
+        "cues": 14
+      }
+    ]
+  },
+  "audioSync": {
+    "videoSha256": "f5f258d12c918ee3e12f5c472a8fa3b055e9b4c3ece0ead61095f90b7b893a7b",
+    "passed": true,
+    "checkedInteractionCues": 151,
+    "maximumCueQuantizationMs": 19.969,
+    "decodedWindows": 6,
+    "maximumDecodedLagSamples": 0,
+    "maximumDecodedLagMs": 0,
+    "minimumCorrelation": 0.978419,
+    "method": "All click/key cues compared to their trusted recorded event times; six PCM/AAC cross-correlation windows verify post-encode soundtrack alignment, without relying only on container start times."
+  }
+}

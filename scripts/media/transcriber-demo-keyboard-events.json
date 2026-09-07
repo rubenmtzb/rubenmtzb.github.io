@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "policy": "Audio-only editorial keyboard cues for visibly growing input text. The approved guided picture stream, clicks, loading cues and Quiet Signals arrangement are retained. No new cursor, upload dialog, typing animation, file chooser or success UI.",
+  "source": {
+    "recording": "page@f3669ff2b6325fafb6e2cdecccc2f61b.webm",
+    "sha256": "463c32e76c7253812e3e4546df7c885b007c566e4609a14cb88782e802bce477",
+    "script": "record-demo.mjs",
+    "scriptSha256": "4b3a06dae10fbec94a208c7495f7b640f0dc849b3967f3711fdc00a65f28488f",
+    "frameRate": 25,
+    "sourceResolution": [1280, 800],
+    "sourceCrop": [0, 0, 1280, 720],
+    "montageOffset": [568, 191],
+    "guidedBackupSha256": "804e3111f960ecac5bbcb8070db8deeba1c12891f976d484141c4806903796c1"
+  },
+  "alignment": {
+    "method": "Inspected every native 25 fps source frame in 3.84-6.64 and 21.80-23.60; read visible prefixes from cropped input fields with source PTS. Compared the corresponding approved guided input crops at the selected frame and immediately preceding frame. These intervals map source PTS to montage PTS without an offset.",
+    "precision": "Each [sourcePTS, visibleCharacterCount] pair marks the first recorded frame showing the longer prefix. Actual keyboard dispatch can precede it by a frame and was not measured. The 42/150 ms scripted delays are corroboration only, not generated timestamps.",
+    "grouping": "At 4.72, 5.60 and 5.96 two URL characters become visible together. Emit ONE soft attack per observed growth frame, not guessed sub-frame keystrokes: 43 URL characters across 40 attacks, plus 9 search characters across 9 attacks.",
+    "nativeFramePrecisionSeconds": 0.04,
+    "characterCount": 52,
+    "keyboardAttackCount": 49
+  },
+  "runs": [
+    {
+      "id": "youtube-url",
+      "kind": "keyboard-input",
+      "text": "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+      "sourceScriptLines": [25, 26],
+      "scriptedDelayMs": 42,
+      "sourceInputRect": [320, 305, 490, 54],
+      "montageInputRect": [888, 496, 490, 54],
+      "sourceToMontageOffsetSeconds": 0,
+      "precedingFrame": { "at": 4.12, "visibleCharacterCount": 0, "state": "Placeholder, not typing" },
+      "growthFrames": [
+        [4.16, 1], [4.20, 2], [4.24, 3], [4.28, 4],
+        [4.36, 5], [4.40, 6], [4.44, 7], [4.48, 8],
+        [4.52, 9], [4.56, 10], [4.60, 11], [4.64, 12],
+        [4.72, 14], [4.80, 15], [4.84, 16], [4.88, 17],
+        [4.92, 18], [4.96, 19], [5.00, 20], [5.04, 21],
+        [5.08, 22], [5.12, 23], [5.20, 24], [5.24, 25],
+        [5.28, 26], [5.32, 27], [5.36, 28], [5.40, 29],
+        [5.44, 30], [5.48, 31], [5.56, 32], [5.60, 34],
+        [5.68, 35], [5.72, 36], [5.76, 37], [5.80, 38],
+        [5.84, 39], [5.88, 40], [5.96, 42], [6.00, 43]
+      ]
+    },
+    {
+      "id": "transcript-search",
+      "kind": "keyboard-input",
+      "text": "elefantes",
+      "sourceScriptLines": [39, 40],
+      "scriptedDelayMs": 150,
+      "sourceInputRect": [480, 237, 650, 43],
+      "montageInputRect": [1048, 428, 650, 43],
+      "sourceToMontageOffsetSeconds": 0,
+      "precedingFrame": { "at": 21.88, "visibleCharacterCount": 0, "state": "Focus only, no keyboard cue" },
+      "growthFrames": [
+        [21.92, 1], [22.04, 2], [22.20, 3],
+        [22.36, 4], [22.48, 5], [22.64, 6],
+        [22.80, 7], [22.96, 8], [23.12, 9]
+      ]
+    }
+  ],
+  "excludedActions": [
+    { "sourceAt": 21.88, "reason": "Programmatic focus with no visible character yet; no key sound." },
+    { "sourceAt": 25.48, "reason": "search.fill('') clears the field programmatically; no fabricated backspace storm." },
+    { "reason": "No keyboard sound for Enter, clicks, playback, exports, download completion, pauses, caret blink or language selection." },
+    { "reason": "Transcriber accepts a URL and has no upload workflow. Do not invent a file chooser. Recorded downloads remain unchanged." }
+  ]
+}

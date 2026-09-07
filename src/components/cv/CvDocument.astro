@@ -1,329 +1,124 @@
 ---
 import Icon from '../Icon.astro'
 import {
-  formatDuration,
-  formatMonthYear,
-  formatPeriod,
-  getCerts,
-  getAlternate,
-  getEducation,
-  getExperience,
-  getProfile,
-  getProjects,
-  getStackByGroup,
-  cvPdfPath,
-  homePath,
-  tenureMonths,
-  formatYears,
-  withYears,
+  abs, casePath, cvPdfPath, formatPeriod, formatYears, getAlternate,
+  getEducation, getExperience, getProfile, getProjects, homePath,
+  projectRepos, tenureMonths, withYears,
 } from '../../lib/content'
-import { STACK_GROUPS } from '../../site.config'
-import { t, type Lang, type UiKey } from '../../i18n/ui'
-import { localizedTerm } from '../../i18n/terms'
+import { SITE } from '../../site.config'
+import { t, type Lang } from '../../i18n/ui'
 
 interface Props { lang: Lang }
 const { lang } = Astro.props
-
-const profile = await getProfile(lang)
-const experience = await getExperience(lang)
-const education = await getEducation(lang)
-const certs = await getCerts(lang)
-const projects = (await getProjects(lang)).filter((p) => p.inCv)
-const stack = await getStackByGroup()
-
-const other = await getAlternate('cv', lang)
-const home = homePath(lang)
-const pdfHref = cvPdfPath(lang)
-
-/**
- * Company seniority derived from the current role, that is, from the structured
- * date that already exists in `experience`. It is recomputed on every build: the
- * hand-written "3+ years" goes away without losing the signal.
- */
-const yearsPhrase = formatYears(tenureMonths(experience), lang)
-
-/** A readable profile identifier; the href keeps the full URL. */
-const handle = (url: string) =>
-  url.replace(/^https?:\/\/(www\.)?[^/]+\//, '').replace(/\/$/, '')
-
-const socials = profile.socials.map((s) => ({ ...s, handle: handle(s.href) }))
-
-const groups = STACK_GROUPS.map((g) => ({
-  label: t(lang, `about.group.${g}` as UiKey),
-  items: (stack.get(g) ?? []).filter((s) => s.tier !== 'secundaria'),
-})).filter((g) => g.items.length > 0)
+const [profile, allExperience, allEducation, allProjects, other] = await Promise.all([
+  getProfile(lang), getExperience(lang), getEducation(lang), getProjects(lang), getAlternate('cv', lang),
+])
+const experience = allExperience.flatMap(item => {
+  if (!item.cv) return []
+  const reference = item.cv.project ? casePath(item.cv.project, lang) : null
+  if (item.cv.project && !reference) throw new Error(`CV: missing case study for ${item.cv.project}`)
+  return [{ ...item, cv: item.cv, reference }]
+})
+const projects = allProjects.filter(project => project.inCv).map(project => {
+  if (!project.cvSummary) throw new Error(`CV: missing concise summary for ${project.key}`)
+  return { ...project, cvSummary: project.cvSummary, caseHref: casePath(project.key, lang) }
+})
+const education = allEducation.filter(item => ['uoc', 'daw'].includes(item.key))
+const currentRole = allExperience.find(item => item.end === null)
+if (!currentRole) throw new Error('CV: a current technical role is required for the core stack')
+const coreStack = currentRole.tech
+const years = formatYears(tenureMonths(allExperience), lang)
+const shortUrl = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')
 ---
 
-<div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
-  <!-- Toolbar: not printed -->
-  <div class="no-print mb-8 flex flex-wrap items-center justify-between gap-3">
-    <a
-      href={home}
-      class="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/5 px-4 py-2 text-xs uppercase tracking-[0.2em] text-cyan-200 transition hover:border-cyan-200/60 hover:bg-cyan-400/10 hover:text-cyan-100"
-    >
-      <Icon name="arrowLeft" class="h-4 w-4" />
-      {t(lang, 'cv.back')}
-    </a>
-    <div class="flex flex-wrap gap-3">
-      <a
-        href={other.path}
-        hreflang={other.lang}
-        rel="alternate"
-        aria-label={t(lang, 'cv.langSwitch')}
-        class="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200 transition hover:border-cyan-200/60 hover:bg-cyan-400/10 hover:text-cyan-100"
-      >
-        <Icon name="globe" class="h-4 w-4" />
-        {t(lang, 'nav.langNext')}
+<div class="cv-workspace">
+  <nav class="cv-toolbar no-print" aria-label={t(lang, 'cv.actions')}>
+    <a href={homePath(lang)}><Icon name="arrowLeft" />{t(lang, 'cv.back')}</a>
+    <div class="cv-toolbar-actions">
+      <a href={other.path} hreflang={other.lang} rel="alternate" data-language-switch aria-label={t(lang, 'cv.langSwitch')}>
+        <Icon name="globe" />{t(lang, 'nav.langNext')}
       </a>
-      <a
-        href={pdfHref}
-        download
-        class="inline-flex items-center gap-2 rounded-full border border-green-300/45 bg-green-500/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-green-100 transition hover:bg-green-500/20"
-      >
-        <Icon name="download" class="h-4 w-4" />
-        {t(lang, 'cv.print')}
+      <a class="cv-download" href={cvPdfPath(lang)} download>
+        <Icon name="download" />{t(lang, 'cv.print')}
       </a>
     </div>
-  </div>
+  </nav>
+  <p class="cv-format no-print">{t(lang, 'cv.format')}</p>
 
-  <article class="cv-page rounded-2xl border border-cyan-400/25 p-6 backdrop-blur-sm sm:p-10">
-    <!-- Cabecera -->
-    <header class="border-b border-cyan-400/20 pb-8">
-      <p class="text-[0.68rem] uppercase tracking-[0.35em] text-cyan-200">&gt; premium.cv / export</p>
-      <h1 class="text-glow-cv mt-3 text-3xl font-black tracking-tight text-white sm:text-5xl">{profile.name}</h1>
-      <p class="mt-2 text-lg font-semibold text-green-300 text-glow-green">{profile.jobTitle}</p>
-      <p class="mt-4 max-w-2xl leading-7 text-slate-300/90">{profile.bioLong}</p>
-      <p class="mt-4 inline-block rounded-full border border-cyan-400/25 bg-cyan-400/5 px-3 py-1.5 text-xs text-cyan-200">
-        {profile.cvOnly.availability}
-      </p>
-
-      {/*
-        Contact grid: each cell is a column of its own with the label above the
-        value. LinkedIn's full URL overflowed its cell and collided with the one
-        next to it, so the identifier is shown instead — the usual convention on
-        a CV — and the href keeps the whole URL.
-      */}
-      <dl class="mt-6 grid gap-x-8 gap-y-4 text-sm text-slate-300 sm:grid-cols-2">
-        <div class="min-w-0">
-          <dt class="text-xs uppercase tracking-[0.2em] text-dim">{t(lang, 'cv.contact')}</dt>
-          <dd class="mt-1 truncate">
-            <a href={`mailto:${profile.email}`} class="text-green-300 hover:text-green-100">{profile.email}</a>
-          </dd>
-        </div>
-        <div class="min-w-0">
-          <dt class="text-xs uppercase tracking-[0.2em] text-dim">{t(lang, 'cv.location')}</dt>
-          <dd class="mt-1 truncate">{profile.locality}, {profile.region}</dd>
-        </div>
-        {
-          socials.map((s) => (
-            <div class="min-w-0">
-              <dt class="text-xs uppercase tracking-[0.2em] text-dim">{s.label}</dt>
-              <dd class="mt-1 truncate">
-                <a href={s.href} class="text-green-300 hover:text-green-100" title={s.href}>
-                  {s.handle}
-                </a>
-              </dd>
-            </div>
-          ))
-        }
-        <div class="min-w-0">
-          <dt class="text-xs uppercase tracking-[0.2em] text-dim">{t(lang, 'cv.portfolio')}</dt>
-          <dd class="mt-1 truncate">
-            <a href="https://rubenitx.me" class="text-green-300 hover:text-green-100">rubenitx.me</a>
-          </dd>
-        </div>
-      </dl>
+  <article class="cv-document cv-sheet" data-cv-sheet="1" aria-labelledby="cv-name">
+    <header class="cv-header">
+      <h1 id="cv-name">{profile.name}</h1>
+      <div class="cv-heading-meta">
+        <p class="cv-role">{profile.jobTitle}</p>
+        <p class="cv-location">{profile.locality}, {profile.region}</p>
+      </div>
+      <address class="cv-contact" aria-label={t(lang, 'cv.contact')}>
+        <a href={`mailto:${profile.email}`}>{profile.email}</a>
+        <a href={abs(homePath(lang))} aria-label={`${t(lang, 'cv.portfolio')}: ${shortUrl(SITE)}`}>{shortUrl(SITE)}</a>
+        {profile.socials.map(social => <a href={social.href}>{shortUrl(social.href)}</a>)}
+      </address>
+      <p class="cv-summary">{withYears(profile.cvOnly.summary, years)}</p>
     </header>
 
-    <!-- Professional summary: exclusive to the CV -->
-    <section class="border-b border-cyan-400/15 py-8">
-      <h2 class="text-sm font-bold uppercase tracking-[0.3em] text-green-300">{profile.cvOnly.summaryTitle}</h2>
-      <p class="mt-1 text-xs text-dim">{profile.cvOnly.summaryKicker}</p>
-      <p class="mt-4 font-semibold text-white">{withYears(profile.cvOnly.summaryLead, yearsPhrase)}</p>
-      <p class="mt-3 leading-7 text-slate-300/90">{profile.cvOnly.summaryBody}</p>
-      <ul class="mt-6 grid gap-4 sm:grid-cols-3">
-        {
-          profile.cvOnly.metrics.map((m) => (
-            <li class="rounded-lg border border-cyan-400/15 bg-cyan-400/5 p-4">
-              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-green-300">{m.title}</p>
-              <p class="mt-2 text-sm leading-6 text-slate-300/85">{withYears(m.description, yearsPhrase)}</p>
-            </li>
-          ))
-        }
-      </ul>
+    <section class="cv-section cv-skills" aria-labelledby="cv-skills-title">
+      <h2 id="cv-skills-title">{t(lang, 'cv.skills')}</h2>
+      <p>{coreStack.join(' · ')}</p>
     </section>
 
-    <!-- Experience: this is where the full bullets do belong -->
-    <section class="border-b border-cyan-400/15 py-8">
-      <h2 class="text-sm font-bold uppercase tracking-[0.3em] text-green-300">{t(lang, 'cv.experience')}</h2>
-      <ol class="mt-6 space-y-7">
-        {
-          experience.map((item) => {
-            const duration = formatDuration(item.start, item.end, lang)
-            /* The three lists print together, so all three decide whether there is a rule. */
-            const tags = [...item.tech, ...item.practices, ...item.domains]
-            return (
-              <li>
-                <div class="flex flex-wrap items-baseline justify-between gap-2">
-                  <h3 class="text-lg font-semibold text-white">{item.role}</h3>
-                  <p class="text-xs text-dim">
-                    {formatPeriod(item.start, item.end, lang)}
-                    {duration && ` · ${duration}`}
-                  </p>
-                </div>
-                <p class="text-sm font-medium text-green-300">
-                  {item.company}
-                  {item.location && <span class="text-dim"> · {item.location}</span>}
-                  {item.mode && <span class="text-dim"> · {item.mode}</span>}
-                </p>
-                <ul class="mt-3 space-y-1.5">
-                  {item.bullets.map((b) => (
-                    <li class="flex gap-2.5 text-sm leading-6 text-slate-300/90">
-                      <span class="mt-2 h-1 w-1 shrink-0 rounded-full bg-cyan-300" aria-hidden="true" />
-                      {b}
-                    </li>
-                  ))}
-                </ul>
-                {tags.length > 0 && (
-                  <p class="mt-2.5 text-xs text-dim">
-                    <span class="font-semibold">{t(lang, 'cv.technologies')}: </span>
-                    {tags.map((tag) => localizedTerm(tag, lang)).join(', ')}
-                  </p>
-                )}
-              </li>
-            )
-          })
-        }
+    <section class="cv-section cv-experience" aria-labelledby="cv-experience-title">
+      <h2 id="cv-experience-title">{t(lang, 'cv.experience')}</h2>
+      <ol class="cv-entries">
+        {experience.map(item => (
+          <li class="cv-entry" data-cv-experience={item.key}>
+            <div class="cv-entry-heading">
+              <h3>{item.company}</h3>
+              <p class="cv-date">{formatPeriod(item.start, item.end, lang)}</p>
+            </div>
+            <p class="cv-entry-role">{item.role}</p>
+            <ul class="cv-bullets">{item.cv.bullets.map(bullet => <li>{bullet}</li>)}</ul>
+            {item.reference && <p class="cv-evidence"><a href={abs(item.reference)}>{t(lang, 'cv.caseStudy')}</a></p>}
+          </li>
+        ))}
       </ol>
     </section>
 
-    <!-- Own projects (D9): never presented as experience -->
-    <section class="border-b border-cyan-400/15 py-8">
-      <h2 class="text-sm font-bold uppercase tracking-[0.3em] text-green-300">{t(lang, 'cv.projects')}</h2>
-      <ul class="mt-6 space-y-5">
-        {
-          projects.map((p) => (
-            <li>
-              <h3 class="text-base font-semibold text-white">{p.title}</h3>
-              <p class="mt-1 text-sm leading-6 text-slate-300/90">{p.description}</p>
-              <p class="mt-1.5 text-xs text-dim">{[...p.tech, ...p.domains].map((tag) => localizedTerm(tag, lang)).join(', ')}</p>
-              <p class="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-xs">
-                {p.link && (
-                  <a href={p.link} class="text-cyan-200 hover:text-cyan-100">
-                    {p.link.replace(/^https?:\/\//, '')}
-                  </a>
-                )}
-                {p.publication && (
-                  <a href={p.publication.href} class="text-purple-200 hover:text-purple-100">
-                    {p.publication.label}
-                  </a>
-                )}
-              </p>
-            </li>
-          ))
-        }
+    <section class="cv-section cv-projects" aria-labelledby="cv-projects-title">
+      <h2 id="cv-projects-title">{t(lang, 'cv.projects')}</h2>
+      <ul class="cv-entries">
+        {projects.map(project => (
+          <li class="cv-entry" data-cv-project={project.key}>
+            <div class="cv-entry-heading">
+              <h3>{project.title}</h3>
+              {project.badge === 'private' && <span class="cv-private">{t(lang, 'work.badge.private')}</span>}
+            </div>
+            <p>{project.cvSummary}</p>
+            <div class="cv-project-links">
+              {project.caseHref && <a href={abs(project.caseHref)}>{t(lang, 'cv.caseStudy')}</a>}
+              {project.link && <a href={project.link}>{shortUrl(project.link)}</a>}
+              {projectRepos(project.github).map(repo => <a href={repo.href}>{repo.label === 'GitHub' ? 'GitHub' : `GitHub ${repo.label}`}</a>)}
+            </div>
+          </li>
+        ))}
       </ul>
     </section>
 
-    <!-- Skills: functional grouping, technologies and practices kept apart -->
-    <section class="border-b border-cyan-400/15 py-8">
-      <h2 class="text-sm font-bold uppercase tracking-[0.3em] text-green-300">{t(lang, 'cv.skills')}</h2>
-      <dl class="mt-5 space-y-3">
-        {
-          groups.map((g) => (
-            <div class="flex flex-col gap-1 sm:flex-row sm:gap-4">
-              <dt class="w-48 shrink-0 text-sm font-semibold text-green-200">{g.label}</dt>
-              <dd class="text-sm leading-6 text-slate-300/90">
-                {g.items
-                  .map((s) => {
-                    const name = localizedTerm(s.name, lang)
-                    return s.tier === 'actual' ? name : `${name} (${t(lang, `about.tier.${s.tier}` as UiKey)})`
-                  })
-                  .join(', ')}
-              </dd>
-            </div>
-          ))
-        }
-      </dl>
+    <section class="cv-section cv-education" aria-labelledby="cv-education-title">
+      <h2 id="cv-education-title">{t(lang, 'cv.education')}</h2>
+      <ul class="cv-entries">
+        {education.map(item => (
+          <li class="cv-entry">
+            <h3>{item.title}</h3>
+            <p>{item.institution} · {item.periodLabel}{item.inProgress && ` · ${t(lang, 'background.inProgress')}`}
+              {item.credential && <> · <a href={item.credential.verifyUrl}>{t(lang, 'background.verify')}</a></>}
+            </p>
+          </li>
+        ))}
+      </ul>
     </section>
 
-    <!-- Education and certifications -->
-    <div class="grid gap-8 border-b border-cyan-400/15 py-8 md:grid-cols-2">
-      <section>
-        <h2 class="text-sm font-bold uppercase tracking-[0.3em] text-green-300">{t(lang, 'cv.education')}</h2>
-        <ul class="mt-5 space-y-4">
-          {
-            education.map((e) => (
-              <li>
-                <h3 class="text-sm font-semibold text-white">{e.title}</h3>
-                <p class="text-xs text-green-300">{e.institution}</p>
-                <p class="text-xs text-dim">
-                  {e.periodLabel}
-                  {e.inProgress && ` · ${t(lang, 'background.inProgress')}`}
-                  {e.grade && ` · ${t(lang, 'background.grade')}: ${e.grade}`}
-                </p>
-                {e.credential && (
-                  <a href={e.credential.verifyUrl} class="text-xs text-green-300 hover:text-green-100">
-                    {t(lang, 'background.verify')}
-                  </a>
-                )}
-              </li>
-            ))
-          }
-        </ul>
-      </section>
-
-      <section>
-        <h2 class="text-sm font-bold uppercase tracking-[0.3em] text-green-300">{t(lang, 'cv.certifications')}</h2>
-        <ul class="mt-5 space-y-4">
-          {
-            certs.map((c) => (
-              <li>
-                <h3 class="text-sm font-semibold text-white">{c.title}</h3>
-                <p class="text-xs text-green-300">
-                  {c.issuer} · {formatMonthYear(c.date, lang)}
-                </p>
-                <a href={c.verifyUrl} class="text-xs text-green-300 hover:text-green-100">
-                  {t(lang, 'background.verify')}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </section>
-    </div>
-
-    <!-- Languages and interests -->
-    <div class="grid gap-8 py-8 md:grid-cols-2">
-      <section>
-        <h2 class="text-sm font-bold uppercase tracking-[0.3em] text-green-300">{t(lang, 'cv.languages')}</h2>
-        <ul class="mt-5 space-y-2">
-          {
-            profile.languages.map((l) => (
-              <li class="text-sm text-slate-300/90">
-                <span class="font-semibold text-white">{l.name}</span> · {l.level}
-              </li>
-            ))
-          }
-        </ul>
-      </section>
-      <section>
-        <h2 class="text-sm font-bold uppercase tracking-[0.3em] text-green-300">{t(lang, 'cv.interests')}</h2>
-        <ul class="mt-5 space-y-3">
-          {
-            profile.cvOnly.interests.map((i) => (
-              <li>
-                <p class="text-sm font-semibold text-white">{i.title}</p>
-                <p class="text-xs leading-5 text-slate-300/85">{i.description}</p>
-              </li>
-            ))
-          }
-        </ul>
-      </section>
-    </div>
-
-    <footer class="border-t border-cyan-400/15 pt-6 text-xs text-dim">
-      {profile.cvOnly.referencesNote}
+    <footer class="cv-languages">
+      <h2>{t(lang, 'cv.languages')}</h2>
+      <ul>{profile.languages.map(language => <li>{language.name}</li>)}</ul>
     </footer>
   </article>
 </div>

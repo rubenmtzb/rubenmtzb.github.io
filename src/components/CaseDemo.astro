@@ -1,0 +1,80 @@
+---
+import Icon from './Icon.astro'
+import { t, type Lang } from '../i18n/ui'
+import type { ProjectDemo } from '../lib/content'
+
+interface Props {
+  lang: Lang
+  projectKey: string
+  demo: ProjectDemo
+  sectionNumber: string
+}
+const { lang, projectKey, demo, sectionNumber } = Astro.props
+const isTranscriber = projectKey === 'youtube-transcriber'
+const isFinance = projectKey === 'financial-architecture'
+const isMutation = projectKey === 'sars-cov-2'
+---
+
+<section id="demo" class="mt-12 scroll-mt-24 case-section case-demo reveal" aria-labelledby="case-demo">
+  <h2 id="case-demo" class="t-meta text-[color:var(--cyan)]"><span class="case-section-number" aria-hidden="true">{sectionNumber}</span>{t(lang, 'v2.case.demo')}</h2>
+  <figure class="mt-5">
+    <div class="case-video-frame">
+      {isTranscriber && <div class="case-demo-toolbar" aria-hidden="true"><span class="case-demo-dots"><i /><i /><i /></span><span>yt.rubenitx.me</span><span>1080P / DEMO</span></div>}
+      {isFinance && <div class="case-demo-toolbar"><span class="case-demo-dots" aria-hidden="true"><i /><i /><i /></span><span>{t(lang, 'v2.finance.workspace')}</span><Icon name="lock" class="h-3 w-3" /></div>}
+      {isMutation && <div class="case-demo-toolbar"><span class="case-demo-dots" aria-hidden="true"><i /><i /><i /></span><span>{t(lang, 'v2.mutation.workspace')}</span><Icon name="microscope" class="h-3 w-3" /></div>}
+      <video
+        controls
+        playsinline
+        preload="none"
+        poster={demo.poster}
+        aria-labelledby="case-demo"
+        aria-describedby="demo-caption"
+        class="aspect-video w-full rounded-xl border border-[color:var(--line)] bg-[color:var(--ink-950)]"
+        width="1920"
+        height="1080"
+      >
+        <source src={demo.src} type="video/mp4" />
+        {demo.tracks.map((track) => (
+          <track kind="captions" src={track.src} srclang={track.lang} label={track.label} default={track.lang === lang} />
+        ))}
+        <a href={demo.src}>{t(lang, 'v2.case.videoFallback')}</a>
+      </video>
+    </div>
+    <figcaption id="demo-caption" class="mt-3 text-sm leading-relaxed text-[color:var(--fg-3)]">{demo.caption}</figcaption>
+    <div class="case-demo-actions">
+      <button type="button" class="case-demo-expand" data-demo-fullscreen hidden>
+        <Icon name="expand" class="h-4 w-4" />{t(lang, 'v2.case.fullscreen')}
+      </button>
+      <a href={demo.src} download class="case-demo-download">
+        <Icon name="download" class="h-4 w-4" />{t(lang, 'v2.case.download')}
+      </a>
+    </div>
+    <p class="case-demo-hint">{t(lang, 'v2.case.viewingHint')}</p>
+    <p class="case-demo-error" data-demo-error role="status" hidden>{t(lang, 'v2.case.fullscreenError')}</p>
+  </figure>
+  <ol class="mt-5 list-decimal space-y-2 pl-5 text-sm leading-relaxed text-[color:var(--fg-2)] case-demo-steps">
+    {demo.steps.map((step) => <li>{step}</li>)}
+  </ol>
+</section>
+
+<script>
+  const video = document.querySelector<HTMLVideoElement>('#demo video')
+  const expand = document.querySelector<HTMLButtonElement>('[data-demo-fullscreen]')
+  const error = document.querySelector<HTMLElement>('[data-demo-error]')
+  type WebkitVideo = HTMLVideoElement & { webkitEnterFullscreen?: () => void }
+  if (video && expand && error) {
+    const webkitVideo: WebkitVideo = video
+    if (document.fullscreenEnabled || webkitVideo.webkitEnterFullscreen) {
+      expand.hidden = false
+      expand.addEventListener('click', async () => {
+        error.hidden = true
+        try {
+          if (document.fullscreenEnabled) await video.requestFullscreen()
+          else webkitVideo.webkitEnterFullscreen?.()
+        } catch {
+          error.hidden = false
+        }
+      })
+    }
+  }
+</script>

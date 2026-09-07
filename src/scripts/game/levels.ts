@@ -11,7 +11,7 @@
  * anyone to open the file where the game is played.
  */
 
-export type Rect = { x: number; y: number; w: number; isCustom?: boolean }
+export type Rect = { x: number; y: number; w: number; isCustom?: boolean; page?: boolean }
 export type MovingLedge = { x: number; y: number; w: number; originX: number; range: number; speed: number; dir: number }
 export type CustomLedge = { x: number; y: number; w: number; alpha: number }
 export type SectionOrb = {
@@ -62,8 +62,8 @@ export const LEVELS: LevelConfig[] = [
     sub: { es: 'Navega sobre plataformas móviles entre Proyectos y Archivo.', en: 'Ride moving platforms across Projects & Archive.' },
     targets: [
       { selector: '#work', fallbackRatio: { x: 0.25, y: 0.22 }, name: { es: 'Entrada Greed Island', en: 'Greed Island Entry' } },
-      { selector: '#project-deck .project-grid-card:nth-of-type(1)', fallbackRatio: { x: 0.30, y: 0.40 }, name: { es: 'Proyecto Destacado (Izq)', en: 'Featured Project (Left)' } },
-      { selector: '#project-deck .project-grid-card:nth-of-type(2)', fallbackRatio: { x: 0.70, y: 0.46 }, name: { es: 'Proyecto Destacado (Der)', en: 'Featured Project (Right)' } },
+      { selector: '#project-carousel', fallbackRatio: { x: 0.30, y: 0.40 }, name: { es: 'Proyectos destacados', en: 'Featured projects' } },
+      { selector: '#project-deck .project-reference', fallbackRatio: { x: 0.70, y: 0.46 }, name: { es: 'Código del portafolio', en: 'Portfolio source' } },
       { selector: '#archive .moment-card:nth-of-type(1)', fallbackRatio: { x: 0.48, y: 0.65 }, name: { es: 'Más allá del código', en: 'Outside the Code' } },
     ],
   },

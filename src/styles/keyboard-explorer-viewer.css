@@ -1,0 +1,16 @@
+/**
+ * Viewer-only explorer styles: the layered model, its three architectures,
+ * the explode scrub and the sound bench.
+ *
+ * The gallery's sheet stays on the home page. This one is imported the moment
+ * the archive is close, so the hero does not pay for four keyboard skins.
+ */
+@import './keyboard-explorer/quip.css';
+@import './keyboard-explorer/sound.css';
+@import './keyboard-explorer/viewer.css';
+@import './keyboard-explorer/model.css';
+@import './keyboard-explorer/hhkb.css';
+@import './keyboard-explorer/evo75.css';
+@import './keyboard-explorer/corne.css';
+@import './keyboard-explorer/scrub.css';
+@import './keyboard-explorer/specs.css';

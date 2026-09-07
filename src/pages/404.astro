@@ -47,7 +47,7 @@ import '../styles/v2.css'
     tomorrow, that one stays untranslated instead of aborting the rest halfway.
   -->
   <script is:inline>
-    if (location.pathname === '/es' || location.pathname.startsWith('/es/')) {
+    if (['/es', '/v1/es'].some((prefix) => location.pathname === prefix || location.pathname.startsWith(`${prefix}/`))) {
       const write = (selector, text) => {
         const node = document.querySelector(selector)
         if (node) node.textContent = text

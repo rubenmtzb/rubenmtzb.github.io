@@ -16,7 +16,8 @@
   justify-content: space-between;
   gap: 1rem;
 }
-.bx-header { padding-bottom: .85rem; border-bottom: 1px solid var(--line-soft); }
+.bx-header { flex-wrap: wrap; padding-bottom: .85rem; border-bottom: 1px solid var(--line-soft); }
+.bx-header > div { min-width: 0; }
 .bx-kicker {
   display: block;
   color: var(--cyan);
@@ -28,12 +29,17 @@
   display: inline-flex;
   align-items: center;
   gap: .45rem;
+  min-width: 0;
+  max-width: 100%;
   color: var(--fg-3);
-  font: 500 .64rem/1 var(--font-mono);
+  font: 500 .64rem/1.45 var(--font-mono);
   letter-spacing: .06em;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
+.bx-status [data-bx-status] { min-width: 0; }
 .bx-status i {
+  flex-shrink: 0;
   width: .35rem;
   height: .35rem;
   border-radius: 50%;

@@ -1,0 +1,22 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:05.000
+SARS-CoV-2 Mutation Portal. Una visita real al portal de investigación de la URV.
+
+00:00:05.000 --> 00:00:14.000
+La página explica el conjunto de datos. La fecha que muestra es 26 de febrero de 2024; no implica actualización en tiempo real.
+
+00:00:14.000 --> 00:00:26.000
+Escribimos «spike» en la tabla de genes: aparecen dos regiones entre las 36 entradas.
+
+00:00:26.000 --> 00:00:42.000
+Seleccionamos con el teclado spike y Spain, y un porcentaje mayor de 50. Se envía una consulta real y acotada.
+
+00:00:42.000 --> 00:00:56.000
+La consulta devuelve cuatro filas. La búsqueda de tabla permite localizar D614G sin otra consulta al servidor.
+
+00:00:56.000 --> 00:01:12.000
+El gráfico real permite consultar una mutación al pasar el cursor y ampliar una región por selección.
+
+00:01:12.000 --> 00:01:21.000
+Captura puntual, no auditoría exhaustiva. La exportación Excel respondió HTTP 500 durante la inspección; no se simula ninguna descarga.

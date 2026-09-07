@@ -28,12 +28,12 @@ const profile = await getProfile(lang)
       <h3 class="reveal text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-[color:var(--fg)] leading-snug" style="--i:1">
         <span
           data-contact-type
-          data-contact-message={t(lang, 'v2.contact.headline')}
-        >{t(lang, 'v2.contact.headline')}</span><span class="contact-type-cursor" aria-hidden="true">_</span>
+          data-contact-message={profile.contactHeadline}
+        >{profile.contactHeadline}</span><span class="contact-type-cursor" aria-hidden="true">_</span>
       </h3>
 
       <p class="reveal text-sm sm:text-base text-[color:var(--fg-3)] mt-3 leading-relaxed max-w-xl" style="--i:2">
-        {t(lang, 'v2.contact.lede')}
+        {profile.contactSubheadline}
       </p>
     </div>
 

@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import 'tailwindcss' source('../');
 /* Self-hosted typography: removes the Google Fonts third party and its
    render-blocking request. The Latin subset only. */
 @import '@fontsource-variable/jetbrains-mono/wght.css';
@@ -48,30 +48,6 @@ body {
 }
 
 .text-dim { color: var(--green-dim); }
-
-body.cv-body {
-  background:
-    radial-gradient(ellipse 85% 46% at 8% -8%, rgba(34, 211, 238, .15), transparent 72%),
-    radial-gradient(ellipse 65% 42% at 100% 100%, rgba(34, 197, 94, .12), transparent 76%),
-    #030712;
-}
-
-.cv-page {
-  background:
-    linear-gradient(135deg, rgba(8, 47, 73, .2), transparent 30%),
-    linear-gradient(315deg, rgba(20, 83, 45, .13), transparent 34%),
-    rgba(3, 7, 18, .78);
-  box-shadow:
-    0 0 0 1px rgba(34, 211, 238, .06),
-    0 28px 80px -42px rgba(34, 211, 238, .35),
-    0 24px 70px -46px rgba(34, 197, 94, .28);
-}
-
-.text-glow-cv {
-  text-shadow:
-    0 0 22px rgba(34, 211, 238, .18),
-    0 0 32px rgba(34, 197, 94, .12);
-}
 
 :where(a, button, [tabindex]):focus-visible {
   outline: 2px solid #7fd4a6;
@@ -225,10 +201,9 @@ html.js .nav-pill {
    the script only toggles the hidden attribute. */
 #mobile-menu[hidden] { display: none; }
 
-/* ---------- CV PRINTING ---------- */
+/* ---------- V1 PRINTING ---------- */
 @media print {
   .no-print { display: none !important; }
   html, body { background: #fff !important; color: #111 !important; }
   a { color: #111 !important; text-decoration: underline; }
-  .cv-page { box-shadow: none !important; border: 0 !important; }
 }
