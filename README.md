@@ -65,8 +65,8 @@ stops matching its cluster, a section that ships at `opacity: 0` because the bun
 a Spanish page quietly missing a link its English twin has, a photograph served at ten times
 the size the card can display. None of that throws, none of it looks wrong in a component,
 and all of it is only visible in the finished output. So the assertions live where the
-evidence is. Every one of them was written after a real defect got through, which is why
-there are 613 of them and why the list keeps growing rather than being trimmed.
+evidence is. These checks follow real defects and release requirements, so the suite
+keeps growing rather than being trimmed.
 
 **Weight is a contract too.** `verify-dist.mjs` holds three budgets, each written after it
 was breached: no emitted image slice may exceed 500 kB; no page may carry more than 32 kB of
@@ -383,6 +383,61 @@ npm run check     # astro check — types across .astro and .ts
 npm run verify    # assertions over the generated HTML in dist/
 npm test          # check + build + verify, exactly what CI runs
 ```
+
+### Focused developer CV
+
+The English and Spanish CVs are **one A4 page each**, not an export of every
+portfolio section. They prioritize two software-development roles, the current
+Java / Spring Boot / React stack, two selected applications and relevant formal
+education. Non-technical roles, extensive skill inventories, interests and short
+course lists remain available on the portfolio rather than crowding the resume.
+
+The design follows [MIT's resume guidance](https://capd.mit.edu/resources/resumes/)
+and [Harvard's recommendations](https://careerservices.fas.harvard.edu/resources/create-a-strong-resume/):
+relevance to the target role, clear headings, readable type, concrete contributions
+and no invented impact figures. The PDF has a single reading column, selectable
+Unicode text, embedded fonts, real hyperlinks and Chromium-generated document
+tags. These checks do **not** certify PDF/UA compliance or universal ATS compatibility.
+Language names are included without asserting unconfirmed proficiency levels.
+
+The web CV has localized developer-focused titles, descriptions, original
+1200 x 630 social cards, canonical URLs, hreflang and ProfilePage/Person data.
+This follows [Google's people-first content guidance](https://developers.google.com/search/docs/fundamentals/creating-helpful-content),
+not keyword stuffing or a promise of search rankings.
+
+Both formats use `CvDocument.astro`, the typed content collections and `cv.css`.
+Experience is curated in each role's optional `cv` record; selected projects use
+`inCv` and `cvSummary`. Full portfolio content is not removed.
+
+**Regenerating the PDFs:** use the existing Playwright/Chromium installation used
+by the demo tools, plus Poppler's `pdfinfo`, `pdftotext` and `pdffonts`. These are
+authoring tools, not additional browser or deployment dependencies.
+
+```bash
+npm run build
+npm run preview -- --host 127.0.0.1 --port 4321
+```
+
+In a second terminal:
+
+```bash
+npm run cv:pdf -- http://127.0.0.1:4321 /path/to/playwright/index.mjs
+npm run build
+npm run verify
+```
+
+Generation permits only the local preview and checks both languages before
+replacing either public PDF: one A4 page, at most 360 words, no overflow, complete
+text extraction in natural and layout reading modes, hyperlinks and embedded
+Unicode-mapped fonts. `public/cv/manifest.json` binds each PDF hash to its rendered
+document, language, title and print stylesheet. The normal deployment verifier
+rejects stale PDFs, changed binaries or a return to a multi-page CV.
+
+Regenerate CV social cards with `node scripts/generate-social-cards.mjs cv`.
+Regenerate the faithfully localized project cover with
+`node scripts/generate-project-covers.mjs`. The real product recordings retain
+their original UI language, with bilingual caption tracks; they are not reskinned
+or re-recorded to translate the surrounding portfolio.
 
 ---
 
