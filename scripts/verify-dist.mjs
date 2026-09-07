@@ -11,6 +11,7 @@ import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs'
 import { createHash } from 'node:crypto'
 import { join } from 'node:path'
 import { parseHTML } from 'linkedom'
+import { cvFingerprint, sha256 } from './cv-artifacts.mjs'
 
 const DIST = 'dist'
 const SITE = 'https://rubenitx.me'
@@ -417,6 +418,7 @@ const PAIRS = [
   ['cv/index.html', 'es/cv/index.html'],
   ['work/sars-cov-2/index.html', 'es/work/sars-cov-2/index.html'],
   ['work/youtube-transcriber/index.html', 'es/work/youtube-transcriber/index.html'],
+  ['work/finance-core/index.html', 'es/work/finance-core/index.html'],
   ['v1/index.html', 'v1/es/index.html'],
 ]
 for (const [enFile, esFile] of PAIRS) {
@@ -463,6 +465,47 @@ for (const asset of [
   'CNAME',
 ]) {
   assert(existsSync(join(DIST, asset)), `/${asset} preserved`)
+}
+
+console.log('\n· Bilingual CV artifacts')
+const cvManifest = JSON.parse(read('cv/manifest.json'))
+assert(cvManifest.version === 1 && cvManifest.documents.length === 2, 'exactly two documented CV PDFs')
+for (const lang of ['en', 'es']) {
+  const file = `CV_RubenMartinez_${lang.toUpperCase()}.pdf`
+  const entry = cvManifest.documents.find(document => document.lang === lang)
+  const html = read(`${lang === 'es' ? 'es/' : ''}cv/index.html`)
+  const { document } = parseHTML(html)
+  const pdf = readFileSync(join(DIST, 'cv', file))
+  assert(entry?.file === file && entry.sha256 === sha256(pdf) && entry.bytes === pdf.length,
+    `${lang}: deployed CV PDF matches the validated artifact`)
+  assert(entry?.documentSha256 === cvFingerprint(html, DIST),
+    `${lang}: CV PDF matches the current document and print stylesheet; regenerate PDFs when this fails`)
+  assert(pdf.subarray(0, 5).toString() === '%PDF-' && pdf.length < 500_000,
+    `${lang}: CV is a PDF within the 500 kB download budget`)
+  const pdfSource = pdf.toString('latin1')
+  assert((pdfSource.match(/\/Type\s*\/Page\b/g) ?? []).length === 1 && entry?.pages === 1,
+    `${lang}: the actual PDF has exactly one page`)
+  assert(pdfSource.includes('/StructTreeRoot') && /\/Marked\s+true/.test(pdfSource),
+    `${lang}: the PDF contains a marked structure tree`)
+  assert(document.querySelectorAll('[data-cv-sheet]').length === 1 && entry?.words <= 360,
+    `${lang}: online CV is a focused single sheet within 360 words`)
+  assert(document.querySelectorAll('link[rel="preload"][as="font"]').length === 1,
+    `${lang}: CV preloads only the font it actually uses`)
+  assert(document.querySelectorAll('[data-cv-experience]').length === 2
+    && document.querySelector('[data-cv-experience="egarsat"]')
+    && document.querySelector('[data-cv-experience="urv"]')
+    && document.querySelectorAll('[data-cv-project]').length === 2,
+    `${lang}: CV prioritizes two technical roles and two selected projects`)
+  assert(document.querySelector('.cv-download')?.getAttribute('href') === `/cv/${file}`,
+    `${lang}: CV download selects the correct language`)
+  const finance = document.querySelector('[data-cv-project="financial-architecture"]')
+  assert(finance?.querySelectorAll('a').length === 1
+    && finance.querySelector('a').getAttribute('href') === `${SITE}${lang === 'es' ? '/es' : ''}/work/finance-core/`
+    && finance.querySelector('.cv-private'),
+    `${lang}: CV links Finance only to its public, explicitly private case study`)
+  assert(document.querySelector('a[href="https://github.com/rubenmtzb"]')
+    && !document.querySelector('a[href="https://github.com/rubenitx"]'),
+    `${lang}: CV uses the current GitHub identity`)
 }
 
 /* ---------- Weight budget ---------- */

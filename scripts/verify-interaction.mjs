@@ -17,11 +17,14 @@
  * switch panels, and that the keyboard records hits, misses and deletions.
  */
 import { readFileSync, readdirSync, existsSync } from 'node:fs'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { parseHTML } from 'linkedom'
+import { createHash } from 'node:crypto'
+import ts from 'typescript'
 
 const DIST = 'dist'
+const languageSourceOnly = process.argv.includes('--language-source')
 const PAGES = [
   {
     file: 'index.html',
@@ -59,16 +62,201 @@ const PAGES = [
   },
 ]
 
-const bundleName = readdirSync(join(DIST, '_astro'))
+const bundleName = languageSourceOnly ? null : readdirSync(join(DIST, '_astro'))
   .find((f) => f.startsWith('V2Layout') && f.endsWith('.js'))
-if (!bundleName) {
+if (!languageSourceOnly && !bundleName) {
   console.error('✗ no V2 bundle in dist/_astro: has the site been built?')
   process.exit(1)
 }
-const bundleUrl = pathToFileURL(join(process.cwd(), DIST, '_astro', bundleName)).href
+const bundleUrl = bundleName ? pathToFileURL(join(process.cwd(), DIST, '_astro', bundleName)).href : null
 
 let pass = 0
 let fail = 0
+
+async function languageSuite() {
+  console.log('\n· Language source regressions')
+  const check = (cond, msg) => {
+    if (cond) { pass++; console.log(`  ✓ ${msg}`) }
+    else { fail++; console.error(`  ✗ ${msg}`) }
+  }
+  const read = (file) => readFileSync(file, 'utf8')
+  const json = (file) => JSON.parse(read(file))
+  const moduleUrls = new Map()
+  const sourceModuleUrl = (file) => {
+    if (moduleUrls.has(file)) return moduleUrls.get(file)
+    let code = ts.transpileModule(read(file), {
+      compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext },
+    }).outputText
+    for (const match of [...code.matchAll(/\bfrom\s+(['"])(\.[^'"]+)\1/g)]) {
+      const target = sourceModuleUrl(join(dirname(file), `${match[2]}.ts`))
+      code = code.replace(match[0], `from ${JSON.stringify(target)}`)
+    }
+    const url = `data:text/javascript,${encodeURIComponent(code)}`
+    moduleUrls.set(file, url)
+    return url
+  }
+  const { initLanguageSwitch } = await import(sourceModuleUrl('src/scripts/language-switch.ts'))
+  const { createSwitchAudio } = await import(sourceModuleUrl('src/scripts/v2/keyboard/switch-audio.ts'))
+  const priorWindow = Object.getOwnPropertyDescriptor(globalThis, 'window')
+  const priorDocument = Object.getOwnPropertyDescriptor(globalThis, 'document')
+  try {
+    const routes = [
+      ['/', '/es/'], ['/es/', '/'], ['/v1/', '/v1/es/'], ['/v1/es/', '/v1/'],
+      ...['finance-core', 'youtube-transcriber', 'sars-cov-2'].flatMap((slug) => [
+        [`/work/${slug}/`, `/es/work/${slug}/`],
+        [`/es/work/${slug}/`, `/work/${slug}/`],
+      ]),
+    ]
+    for (const [route, alternate] of routes) {
+      const { document, window: domWindow } = parseHTML(`<html><body>
+        <a data-language-switch href="${alternate}">Language</a>
+        <a data-language-switch href="https://example.invalid/es/">External</a>
+        <a data-language-switch href="//example.invalid/es/">Protocol relative</a>
+        <a data-language-switch href="/\\example.invalid/es/">Backslash host</a>
+        <a href="/unrelated/">Unrelated</a>
+        </body></html>`)
+      const listeners = new Map()
+      const browserWindow = {
+        location: new URL(`https://portfolio.example${route}?from=project-carousel&next=https%3A%2F%2Fexample.invalid#demo`),
+        addEventListener(type, handler) { listeners.set(type, handler) },
+      }
+      Object.defineProperties(globalThis, {
+        window: { configurable: true, writable: true, value: browserWindow },
+        document: { configurable: true, writable: true, value: document },
+      })
+      const link = document.querySelector('a')
+      check(link.getAttribute('href') === alternate, `${route}: no-JS alternate stays canonical`)
+      initLanguageSwitch()
+      check(link.getAttribute('href') === `${alternate}${browserWindow.location.search}#demo`,
+        `${route}: switching preserves query and section without interpreting query URLs`)
+      browserWindow.location.hash = '#contact'
+      listeners.get('hashchange')()
+      check(link.getAttribute('href').endsWith('#contact'), `${route}: a later hash change is preserved`)
+      browserWindow.location.search = '?from=project-deck'
+      listeners.get('popstate')()
+      check(link.getAttribute('href') === `${alternate}?from=project-deck#contact`,
+        `${route}: back/forward refreshes case origin`)
+      browserWindow.location.search = '?from=project-carousel'
+      link.dispatchEvent(new domWindow.Event('click'))
+      check(link.getAttribute('href') === `${alternate}?from=project-carousel#contact`,
+        `${route}: click refreshes context changed via history APIs`)
+      check(document.querySelectorAll('a')[1].getAttribute('href') === 'https://example.invalid/es/'
+        && document.querySelectorAll('a')[2].getAttribute('href') === '//example.invalid/es/'
+        && document.querySelectorAll('a')[3].getAttribute('href') === '/\\example.invalid/es/'
+        && document.querySelectorAll('a')[4].getAttribute('href') === '/unrelated/',
+        `${route}: external, disguised-host and unrelated links are not rewritten`)
+    }
+  } finally {
+    if (priorWindow) Object.defineProperty(globalThis, 'window', priorWindow)
+    else delete globalThis.window
+    if (priorDocument) Object.defineProperty(globalThis, 'document', priorDocument)
+    else delete globalThis.document
+  }
+  for (const file of ['src/components/v1/Nav.astro', 'src/components/v2/Nav.astro', 'src/layouts/CaseLayout.astro']) {
+    const source = read(file)
+    check(source.includes('data-language-switch') && source.includes('initLanguageSwitch()')
+      && source.includes('href={other.path}'), `${file}: progressive helper leaves canonical SSR links intact`)
+  }
+  for (const [lang, expected] of [
+    ['en', ['Linear (Thock)', 'Clicky (Crisp)', 'Tactile (Pop)']],
+    ['es', ['Lineal (sonido grave)', 'Con clic (sonido nítido)', 'Táctil (sonido seco)']],
+  ]) {
+    const audio = createSwitchAudio(lang)
+    check(audio.label === expected[0] && audio.nextProfile() === expected[1]
+      && audio.label === expected[1] && audio.nextProfile() === expected[2]
+      && audio.nextProfile() === expected[0], `${lang}: all runtime switch labels cycle in the chosen language`)
+  }
+  const keyboardView = read('src/components/v2/OutsideTheCode.astro')
+  check(keyboardView.includes('keyboardSwitchLabels(lang)')
+    && (keyboardView.match(/\{switchLabels.linear\}/g) ?? []).length === 2,
+    'SSR switch selector and sandbox pill use the same translated initial profile')
+
+  const notFound = read('src/pages/404.astro')
+  const localize404 = new Function('location', 'document', notFound.match(/<script is:inline>([\s\S]*?)<\/script>/)[1])
+  for (const [pathname, lang] of [
+    ['/missing/', 'en'], ['/es/missing/', 'es'], ['/v1/es/missing/', 'es'],
+    ['/v1/es', 'es'], ['/es', 'es'], ['/v1/esoteric/', 'en'],
+  ]) {
+    const { document } = parseHTML(`<html lang="en"><body><a class="skip-link">Skip to content</a>${notFound.match(/<main[\s\S]*?<\/main>/)[0]}</body></html>`)
+    localize404({ pathname }, document)
+    check(document.documentElement.lang === lang
+      && document.querySelector('#not-found-cv').getAttribute('href') === (lang === 'es' ? '/es/cv/' : '/cv/'),
+      `${pathname}: 404 language and CV destination are correct`)
+  }
+  const gameControls = read('src/scripts/game-mode.ts').match(/<div class="gm-mobile-controls[\s\S]*?(?=\n\s*`\n)/)[0]
+  for (const [spanish, expected] of [[false, ['Left', 'Right', 'Down', 'Jump']], [true, ['Izquierda', 'Derecha', 'Abajo', 'Saltar']]]) {
+    const { document } = parseHTML(new Function('isSpanish', `return \`${gameControls}\``)(spanish))
+    check(['left', 'right', 'down', 'jump'].every((key, i) =>
+      document.querySelector(`#gm-btn-${key}`).getAttribute('aria-label') === expected[i]),
+    `${spanish ? 'es' : 'en'}: rendered mobile game controls have localized accessible names`)
+  }
+
+  const uiSource = read('src/i18n/ui.ts')
+  const caseSource = read('src/components/CaseStudy.astro')
+  for (const [key, en, es] of [
+    ['v2.case.input', 'INPUT', 'ENTRADA'],
+    ['v2.case.process', 'PROCESS', 'PROCESO'],
+    ['v2.case.output', 'OUTPUT', 'SALIDA'],
+    ['v2.mutation.explorer', 'GENOMIC EXPLORER', 'EXPLORADOR GENÓMICO'],
+  ]) check(uiSource.includes(`'${key}': '${en}'`) && uiSource.includes(`'${key}': '${es}'`)
+    && caseSource.includes(`t(lang, '${key}')`), `${key}: both translations are consumed by the case diagram`)
+  check(uiSource.includes("'v2.finance.originalVersion': 'Previous Finance Core walkthrough'")
+    && uiSource.includes("'v2.finance.originalVersion': 'Recorrido anterior de Finance Core'"),
+    'both preserved recording labels retain the Finance Core proper name')
+  check(uiSource.includes("'v2.case.transcript': 'Texto con marcas de tiempo'"),
+    'the transcript flow label consistently names timestamps')
+
+  const projects = json('src/content/projects.json')
+  const project = (id) => projects.find((entry) => entry.id === id)
+  const education = json('src/content/education.json')
+  const uocEnglish = education.find((entry) => entry.id === 'en:uoc')
+  const uocSpanish = education.find((entry) => entry.id === 'es:uoc')
+  check(uocEnglish.title === "Bachelor's Degree in Computer Engineering"
+    && uocSpanish.title === 'Grado en Ingeniería Informática'
+    && [uocEnglish, uocSpanish].every((entry) => entry.inProgress && entry.end === null),
+    'UOC uses its official English degree name without implying completion')
+  check(project('es:portfolio').link === 'https://rubenitx.me/es/'
+    && new URL(project('en:portfolio').link).pathname === '/', 'the portfolio Visit destination follows the record language')
+  check(project('es:youtube-transcriber').caseStudy.demo.caption.includes('al pulsar el botón de reproducción')
+    && !/\bpipeline\b|\bfallback\b/.test(project('es:youtube-transcriber').imageAlt),
+    'Spanish Transcriber instructions and alternate text use translated editorial labels')
+  check(json('src/content/keyboards.json').find((entry) => entry.key === 'neo65').summary.es
+    === '65 % · Montaje con juntas · Hotswap · Conexión por cable',
+    'Neo65 distinguishes hotswap switches from the wired connection')
+  const climbing = json('src/content/personal.json').find((entry) => entry.key === 'climbing').alt
+  check(climbing.en.includes('climbing wall') && !climbing.en.includes('bouldering')
+    && climbing.en.includes('roped in') && climbing.es.includes('cuerda'), 'climbing alt text describes roped climbing consistently')
+  const keyboardCopy = read('src/i18n/keyboards.ts')
+  check(keyboardCopy.includes("source: 'Part reference'") && keyboardCopy.includes("source: 'Referencia de la pieza'"),
+    'part documentation links no longer promise a purchasing destination')
+  for (const [key, asset] of [['financial-architecture', 'finance-core-es.svg'], ['youtube-transcriber', 'youtube-transcriber-es.png']]) {
+    check(project(`es:${key}`).image.endsWith(asset) && existsSync(`src/assets/projects/${asset}`)
+      && project(`en:${key}`).image !== project(`es:${key}`).image, `${key}: Spanish artwork is available and selected only for Spanish`)
+  }
+  const financeArt = read('src/assets/projects/finance-core-es.svg')
+  const transcriberArt = read('scripts/artwork/youtube-transcriber-cover-es.svg')
+  check(['CUENTAS', 'GASTOS', 'OBJETIVOS DE AHORRO', 'CÓDIGO PRIVADO'].every((label) => financeArt.includes(`>${label}<`) || financeArt.includes(` / ${label}<`))
+    && !/>PRIVATE \/ DEMO<|>OVERVIEW<|>ACCOUNTS<|>SAVINGS GOALS</.test(financeArt),
+    'Finance artwork translates its authored interface labels')
+  check(transcriberArt.includes('>SUBTÍTULOS<') && transcriberArt.includes('>SIN SUBTÍTULOS<')
+    && transcriberArt.includes('SUBTÍTULOS PRIMERO') && transcriberArt.includes('The system boundary is the request.')
+    && transcriberArt.includes('El l&#237;mite del sistema es la petici&#243;n.'),
+    'Transcriber artwork translates chrome while retaining its intentional bilingual example')
+
+  const caption = read('public/media/finance-core-demo.es.vtt')
+  const validation = json('public/media/finance-core-demo-validation.json')
+  const metadata = json('public/media/finance-core-demo.json')
+  const cues = [...caption.matchAll(/(\d{2}:\d{2}:\d{2}\.\d{3}) --> (\d{2}:\d{2}:\d{2}\.\d{3})\n([^\n]+)/g)]
+  const time = (value) => value.split(':').reduce((sum, part) => sum * 60 + Number(part), 0)
+  check(!caption.includes('wallets') && caption.includes('carteras conectadas')
+    && read('scripts/media/render-finance-demo-v2.mjs').includes(cues[12][3]),
+    'current Spanish crypto caption and its generator use the same translated wording')
+  check(cues.length === metadata.chapters.length && cues.every((cue, i) =>
+    Math.abs(time(cue[1]) - metadata.chapters[i].start) < .001
+    && Math.abs(time(cue[2]) - metadata.chapters[i].end) < .001)
+    && createHash('sha256').update(caption).digest('hex') === validation.subtitles.es.sha256,
+    'caption checksum matches its validation record and all original chapter timings remain unchanged')
+}
 
 /**
  * Runs the bundle against a page and returns the tools for interrogating the
@@ -493,9 +681,17 @@ function suite(page, dom) {
     'clearing returns the sandbox to zero')
 
   console.log('\n· Keyboard controls')
-  fire(el('kb-switch-type'), 'click')
-  check(el('kb-switch-type').textContent === 'Clicky (Crisp)', `it cycles the switch profile ("${el('kb-switch-type').textContent}")`)
-  check(el('kb-free-sound-pill').textContent.includes('Clicky'), 'the sandbox pill reflects the profile')
+  const profileLabels = page.lang === 'es'
+    ? ['Con clic (sonido nítido)', 'Táctil (sonido seco)', 'Lineal (sonido grave)']
+    : ['Clicky (Crisp)', 'Tactile (Pop)', 'Linear (Thock)']
+  check(el('kb-switch-type').textContent.trim() === profileLabels[2],
+    'the initial switch selector is localized')
+  for (const label of profileLabels) {
+    fire(el('kb-switch-type'), 'click')
+    check(el('kb-switch-type').textContent === label
+      && el('kb-free-sound-pill').textContent === `🔊 ${label}`,
+      `selector and sandbox pill share the localized profile "${label}"`)
+  }
   fire(el('kb-sound-toggle'), 'click')
   check(el('kb-sound-label').textContent === page.soundOff, `the toggle uses i18n ("${el('kb-sound-label').textContent}")`)
   fire(el('kb-sound-toggle'), 'click')
@@ -911,7 +1107,9 @@ function suite(page, dom) {
   check(/^UTC[+-]\d+$/.test(el('local-offset').textContent), `the offset is derived from the zone ("${el('local-offset').textContent}")`)
 }
 
-for (const [i, page] of PAGES.entries()) {
+await languageSuite()
+
+for (const [i, page] of (languageSourceOnly ? [] : PAGES).entries()) {
   console.log(`\n${'═'.repeat(52)}\n${page.file} — ${bundleName}\n${'═'.repeat(52)}`)
   let dom
   try {
