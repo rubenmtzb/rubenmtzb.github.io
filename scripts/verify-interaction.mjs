@@ -90,6 +90,7 @@ async function run(page, runIndex) {
    * only way to reach the end of a round without typing the whole phrase.
    */
   const intervals = new Map()
+  const viewportEntries = new Map()
   let nextIntervalId = 1
   const fetchFromDist = async (input) => {
     const href = typeof input === 'string' ? input : String(input?.url ?? input)
@@ -110,9 +111,13 @@ async function run(page, runIndex) {
     clearInterval: (id) => { intervals.delete(id) },
     getComputedStyle: () => ({ gap: '24px' }),
     IntersectionObserver: class {
-      constructor(callback) { this.callback = callback }
-      observe(el) { this.callback([{ isIntersecting: true, target: el }], this) }
-      unobserve() {} disconnect() {}
+      constructor(callback, options) { this.callback = callback; this.options = options; this.disconnected = false }
+      observe(el) {
+        if (el.matches('.project-cover-title')) viewportEntries.set(el, this)
+        else this.callback([{ isIntersecting: true, target: el }], this)
+      }
+      unobserve() {}
+      disconnect() { this.disconnected = true }
     },
     ResizeObserver: class { observe() {} disconnect() {} },
     AudioContext: class { constructor() { throw new Error('no audio output in Node') } },
@@ -189,6 +194,11 @@ async function run(page, runIndex) {
     document,
     el,
     all: (sel) => [...document.querySelectorAll(sel)],
+    intersect(node, isIntersecting) {
+      const observer = viewportEntries.get(node)
+      if (observer && !observer.disconnected) observer.callback([{ isIntersecting, target: node }], observer)
+      return observer?.options
+    },
     fire(node, type, init = {}) {
       const ev = new window.Event(type, { bubbles: true, cancelable: true })
       Object.assign(ev, init)
@@ -258,6 +268,33 @@ function suite(page, dom) {
     for (let i = 1; i < slides.length; i++) fire(el(c.next), 'click')
     check(activeIndex() === 0, `${c.name}: wraps around on reaching the end`)
   }
+
+  const projectSlides = all('.project-slide')
+  const projectCarousel = el('project-carousel')
+  check(projectSlides[0]?.dataset.project === 'youtube-transcriber',
+    'the showcase starts with the inspectable Transcriber app')
+  const projectTitle = projectSlides[0]?.querySelector('.project-cover-title')
+  check(!projectTitle?.classList.contains('has-entered'), 'the first title does not animate during carousel boot')
+  const visibilityOptions = dom.intersect(projectTitle, false)
+  check(!projectTitle?.classList.contains('has-entered')
+    && visibilityOptions?.rootMargin === '-72px 0px -12% 0px',
+  'the title remains pending outside the visible viewport, not in the prefetch margin')
+  dom.intersect(projectTitle, true)
+  check(projectTitle?.classList.contains('has-entered'), 'entering the viewport enables the title animation')
+  dom.intersect(projectTitle, false)
+  check(projectTitle?.classList.contains('has-entered'), 'the one-shot reveal does not reset on leaving the viewport')
+  fire(projectCarousel, 'keydown', { key: 'End' })
+  check(projectSlides.at(-1)?.classList.contains('is-active')
+    && projectSlides.filter((slide) => slide.getAttribute('aria-hidden') === 'false').length === 1,
+  'End selects the final project and exposes exactly one slide to assistive technology')
+  fire(projectCarousel, 'keydown', { key: 'Home' })
+  check(projectSlides[0]?.classList.contains('is-active'), 'Home restores the first project')
+  const repoLink = projectSlides[0]?.querySelector('.project-repo-link')
+  fire(repoLink, 'keydown', { key: 'ArrowRight' })
+  check(projectSlides[0]?.classList.contains('is-active'), 'arrow keys inside a project link do not navigate the carousel')
+  check(all('#project-deck .project-grid-card').length === 1
+    && !el('project-deck-next') && !el('project-deck-prev'),
+  'secondary projects remain visible without another set of carousel controls')
 
   console.log('\n· Draggable personal photos')
   const momentCard = document.querySelector('.moment-card')

@@ -8,6 +8,7 @@
  * verifiable rather than an intention.
  */
 import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs'
+import { createHash } from 'node:crypto'
 import { join } from 'node:path'
 import { parseHTML } from 'linkedom'
 
@@ -29,6 +30,10 @@ const EXPECTED = [
   { path: '/es/cv/', file: 'es/cv/index.html', lang: 'es', cluster: 'cv', indexable: true, kind: 'cv' },
   { path: '/work/sars-cov-2/', file: 'work/sars-cov-2/index.html', lang: 'en', cluster: 'case', indexable: true, kind: 'case' },
   { path: '/es/work/sars-cov-2/', file: 'es/work/sars-cov-2/index.html', lang: 'es', cluster: 'case', indexable: true, kind: 'case' },
+  { path: '/work/youtube-transcriber/', file: 'work/youtube-transcriber/index.html', lang: 'en', cluster: 'transcriber', indexable: true, kind: 'case' },
+  { path: '/es/work/youtube-transcriber/', file: 'es/work/youtube-transcriber/index.html', lang: 'es', cluster: 'transcriber', indexable: true, kind: 'case' },
+  { path: '/work/finance-core/', file: 'work/finance-core/index.html', lang: 'en', cluster: 'finance', indexable: true, kind: 'case' },
+  { path: '/es/work/finance-core/', file: 'es/work/finance-core/index.html', lang: 'es', cluster: 'finance', indexable: true, kind: 'case' },
   { path: '/v1/', file: 'v1/index.html', lang: 'en', cluster: null, indexable: false, kind: 'v1' },
   { path: '/v1/es/', file: 'v1/es/index.html', lang: 'es', cluster: null, indexable: false, kind: 'v1' },
   { path: '/builds/models/', file: 'builds/models/index.html', lang: 'en', cluster: null, indexable: false, kind: 'fragment' },
@@ -39,6 +44,8 @@ const CLUSTERS = {
   home: { en: '/', es: '/es/', xDefault: '/' },
   cv: { en: '/cv/', es: '/es/cv/', xDefault: '/cv/' },
   case: { en: '/work/sars-cov-2/', es: '/es/work/sars-cov-2/', xDefault: '/work/sars-cov-2/' },
+  transcriber: { en: '/work/youtube-transcriber/', es: '/es/work/youtube-transcriber/', xDefault: '/work/youtube-transcriber/' },
+  finance: { en: '/work/finance-core/', es: '/es/work/finance-core/', xDefault: '/work/finance-core/' },
 }
 
 const LEGACY_ANCHORS = ['stack', 'experience', 'projects', 'research', 'education', 'certifications', 'resume']
@@ -214,6 +221,29 @@ for (const page of EXPECTED) {
   for (const sel of ['meta[property="og:title"]', 'meta[property="og:image"]', 'meta[name="twitter:card"]']) {
     assert(Boolean(document.querySelector(sel)), `${sel} present`)
   }
+  if (page.kind === 'case' || page.kind === 'v2') {
+    const image = document.querySelector('meta[property="og:image"]')?.getAttribute('content')
+    const imagePath = image ? join(DIST, new URL(image).pathname) : ''
+    assert(Boolean(imagePath) && existsSync(imagePath), 'the original social card exists in the build')
+    if (imagePath && existsSync(imagePath)) {
+      const png = readFileSync(imagePath)
+      assert(
+        png.subarray(1, 4).toString() === 'PNG' && png.readUInt32BE(16) === 1200 && png.readUInt32BE(20) === 630,
+        'the social card is a real 1200 × 630 PNG',
+      )
+    }
+    assert(
+      document.querySelector('meta[property="og:image:width"]')?.getAttribute('content') === '1200'
+        && document.querySelector('meta[property="og:image:height"]')?.getAttribute('content') === '630',
+      'Open Graph declares the actual image dimensions',
+    )
+    assert(
+      document.querySelector('meta[property="og:title"]')?.getAttribute('content') === title
+        && document.querySelector('meta[property="og:description"]')?.getAttribute('content') === desc
+        && document.querySelector('meta[name="twitter:image"]')?.getAttribute('content') === image,
+      'social metadata shares the page-specific title, description and card',
+    )
+  }
 
   // 7. JSON-LD: it parses and there is a single Person entity with a stable @id
   const ld = document.querySelector('script[type="application/ld+json"]')?.textContent
@@ -381,11 +411,12 @@ for (const c of Object.values(CLUSTERS)) {
  * showed. Nothing caught it.
  */
 console.log('\n· Language parity')
-const AFFORDANCES = ['a[href]', 'button', 'img', 'input', 'audio', 'picture', 'source', 'svg', 'details', 'form']
+const AFFORDANCES = ['a[href]', 'button', 'img', 'input', 'audio', 'video', 'track', 'picture', 'source', 'svg', 'details', 'form']
 const PAIRS = [
   ['index.html', 'es/index.html'],
   ['cv/index.html', 'es/cv/index.html'],
   ['work/sars-cov-2/index.html', 'es/work/sars-cov-2/index.html'],
+  ['work/youtube-transcriber/index.html', 'es/work/youtube-transcriber/index.html'],
   ['v1/index.html', 'v1/es/index.html'],
 ]
 for (const [enFile, esFile] of PAIRS) {
@@ -497,6 +528,230 @@ const css = existsSync(cssDir)
   : ''
 assert(/\.reveal\{[^}]*opacity:1/.test(css.replace(/\s/g, '')), '.reveal defaults to opacity:1')
 assert(css.includes('prefers-reduced-motion'), 'prefers-reduced-motion accounted for')
+assert(!css.includes('var(…)'), 'Tailwind does not emit placeholder utilities from documentation')
+
+console.log('\n· Project repository actions')
+for (const page of EXPECTED.filter((page) => page.kind === 'v2')) {
+  const { document } = parseHTML(read(page.file))
+  const project = document.querySelector('[data-project="youtube-transcriber"]')
+  const repos = [...(project?.querySelectorAll('.project-repo-link') ?? [])]
+  assert(
+    repos.length === 2 && ['Frontend', 'API'].every((label) =>
+      repos.some((link) => link.textContent.trim() === label && link.getAttribute('aria-label')?.includes(label)),
+    ),
+    `${page.path} exposes readable Frontend and API repository actions`,
+  )
+  assert(
+    !project?.querySelector('.project-repo-callout'),
+    `${page.path} does not overlay decorative labels on repository actions`,
+  )
+  assert(
+    document.querySelector('#job-tabs')?.parentElement?.parentElement?.classList.contains('grid-cols-1'),
+    `${page.path} constrains the mobile experience grid to the viewport`,
+  )
+  const cards = [...document.querySelectorAll('#work [data-project]')]
+  const keys = cards.map((card) => card.dataset.project)
+  assert(
+    keys.length === 4 && new Set(keys).size === 4 && keys[0] === 'youtube-transcriber',
+    `${page.path} presents each project once, with Transcriber first`,
+  )
+  assert(
+    document.querySelectorAll('.project-slide').length === 3
+      && document.querySelector('.project-slide[data-project="financial-architecture"] .project-private-source')
+      && !document.querySelector('.project-slide[data-project="financial-architecture"] a[href*="github.com"]')
+      && !document.querySelector('#project-deck button, .project-deck-track')
+      && !document.querySelector('#project-deck')?.hasAttribute('aria-roledescription'),
+    `${page.path} features Finance without exposing private source, with one carousel and a static secondary grid`,
+  )
+  assert(
+    [...document.querySelectorAll('.project-slide')].every((slide) =>
+      !slide.hasAttribute('aria-hidden') && slide.querySelector('p')?.textContent.trim()),
+    `${page.path} ships readable project descriptions without hiding slides from no-JS readers`,
+  )
+}
+
+console.log('\n· Verified demonstration assets')
+for (const [name, duration, uiFrames] of [
+  ['transcriber-demo', 42.64, 916],
+  ['finance-core-demo', 191.64, 4541],
+  ['mutation-portal-demo', 81, 1675],
+]) {
+  const validation = JSON.parse(readFileSync(join(DIST, 'media', `${name}-validation.json`), 'utf8'))
+  const videoHash = createHash('sha256').update(readFileSync(join(DIST, 'media', `${name}.mp4`))).digest('hex')
+  const cursor = validation.continuousCursor
+  assert(
+    validation.videoSha256 === videoHash
+      && (validation.decodedFrames ?? validation.video?.decodedFrames) === Math.round(duration * 25)
+      && (validation.durationSeconds ?? validation.video?.seconds) === duration,
+    `${name} ships the exact fully decoded and validated film`,
+  )
+  assert(
+    cursor?.totalUiFrames === uiFrames && cursor.cursorCoveredFrames === uiFrames
+      && cursor.missingFrames === 0 && cursor.multipleCursorFrames === 0
+      && cursor.coordinatesInBoundsFrames === uiFrames,
+    `${name} has a single visible in-bounds cursor throughout every application frame`,
+  )
+  for (const language of ['en', 'es']) {
+    const subtitles = readFileSync(join(DIST, 'media', `${name}.${language}.vtt`), 'utf8')
+    const times = [...subtitles.matchAll(/(\d{2}):(\d{2}):(\d{2}\.\d{3}) --> (\d{2}):(\d{2}):(\d{2}\.\d{3})/g)]
+      .map(match => ({
+        start: Number(match[1]) * 3600 + Number(match[2]) * 60 + Number(match[3]),
+        end: Number(match[4]) * 3600 + Number(match[5]) * 60 + Number(match[6]),
+      }))
+    assert(
+      subtitles.startsWith('WEBVTT') && times.length > 0 && times[0].start === 0
+        && Math.abs(times.at(-1).end - duration) < 0.001
+        && times.every((cue, index) => cue.start < cue.end && cue.end <= duration
+          && (!index || cue.start >= times[index - 1].end)),
+      `${name} ${language} captions cover the film with ordered, valid cue times`,
+    )
+  }
+}
+
+console.log('\n· Project case studies')
+for (const page of EXPECTED.filter((page) => page.cluster === 'finance')) {
+  const { document } = parseHTML(read(page.file))
+  const article = document.querySelector('.finance-case')
+  const text = article?.textContent ?? ''
+  assert(
+    article?.querySelector('h1')?.getAttribute('aria-label') === 'Finance Core'
+      && article.querySelector('.finance-privacy')
+      && article.querySelector('.finance-signal[aria-hidden="true"]')
+      && article.querySelectorAll('.case-pipeline li').length === 3,
+    `${page.path} presents Finance with a private, accessible editorial identity`,
+  )
+  assert(
+    ['React', 'TypeScript', 'FastAPI', 'Python', 'PostgreSQL', 'SQLite', 'GoCardless', 'CoinMarketCap', 'CSV'].every(term => text.includes(term))
+      && !/Spring Boot/.test(text)
+      && ![...article.querySelectorAll('a')].some(link => /github\.com\/.*finance|127\.0\.0\.1|localhost/.test(link.getAttribute('href'))),
+    `${page.path} documents the verified stack without linking private repositories or local services`,
+  )
+  assert(
+    (page.lang === 'es' ? /no conecta bancos/.test(text) && /datos sintéticos/.test(text) : /no bank connection/.test(text) && /synthetic data/.test(text))
+      && article.querySelectorAll('#case-decisions + div .case-decision').length === 6,
+    `${page.path} distinguishes the implemented connector from the disconnected synthetic walkthrough`,
+  )
+  const player = article.querySelector('#demo video')
+  const tracks = [...(player?.querySelectorAll('track') ?? [])]
+  assert(
+    player?.getAttribute('preload') === 'none' && player.hasAttribute('controls')
+      && !player.hasAttribute('autoplay') && !player.hasAttribute('loop')
+      && player.querySelector('source')?.getAttribute('src') === '/media/finance-core-demo.mp4'
+      && player.getAttribute('poster') === '/media/finance-core-demo-poster.jpg'
+      && ['finance-core-demo.mp4', 'finance-core-demo-poster.jpg'].every(file => existsSync(join(DIST, 'media', file))),
+    `${page.path} serves the actual dark Finance demo on demand`,
+  )
+  assert(
+    tracks.length === 2 && tracks.every(track => existsSync(join(DIST, track.getAttribute('src'))))
+      && tracks.filter(track => track.hasAttribute('default')).length === 1
+      && tracks.find(track => track.hasAttribute('default'))?.getAttribute('srclang') === page.lang
+      && (article.querySelector('#demo-caption')?.textContent ?? '').includes(
+        new Intl.NumberFormat(page.lang).format(JSON.parse(readFileSync(join(DIST, 'media/finance-core-demo.json'), 'utf8')).durationSeconds),
+      )
+      && article.querySelector('a[href="/media/finance-core-demo-original.mp4"][download]')
+      && existsSync(join(DIST, 'media/finance-core-demo-original.mp4'))
+      && !article.querySelector('a[href*="transcriber-demo"]'),
+    `${page.path} offers bilingual Finance captions without unrelated backup links`,
+  )
+}
+for (const page of EXPECTED.filter((page) => page.cluster === 'case')) {
+  const { document } = parseHTML(read(page.file))
+  assert(
+    document.querySelector('.mutation-case.editorial-case h1')?.getAttribute('aria-label') === 'The Mutational Landscape of SARS-CoV-2'
+      && document.querySelectorAll('.mutation-overview .mutation-icon svg').length === 4
+      && document.querySelector('.mutation-signal[aria-hidden="true"]')
+      && document.querySelector('.case-publication a[href="https://www.mdpi.com/1422-0067/24/10/9072"]'),
+    `${page.path} retains the research evidence with its own accessible editorial presentation`,
+  )
+  const player = document.querySelector('#demo video')
+  const tracks = [...(player?.querySelectorAll('track') ?? [])]
+  assert(
+    player?.getAttribute('preload') === 'none' && player.hasAttribute('controls')
+      && !player.hasAttribute('autoplay') && !player.hasAttribute('loop')
+      && player.querySelector('source')?.getAttribute('src') === '/media/mutation-portal-demo.mp4'
+      && player.getAttribute('poster') === '/media/mutation-portal-demo-poster.jpg'
+      && ['mutation-portal-demo.mp4', 'mutation-portal-demo-poster.jpg'].every(file => existsSync(join(DIST, 'media', file)))
+      && tracks.length === 2 && tracks.every(track => existsSync(join(DIST, track.getAttribute('src'))))
+      && tracks.filter(track => track.hasAttribute('default')).length === 1
+      && tracks.find(track => track.hasAttribute('default'))?.getAttribute('srclang') === page.lang,
+    `${page.path} provides the recorded research walkthrough on demand with bilingual captions`,
+  )
+}
+for (const page of EXPECTED.filter((page) => page.kind === 'v2')) {
+  const { document } = parseHTML(read(page.file))
+  assert(
+    document.querySelectorAll('#project-carousel .project-actions[role="group"]').length === document.querySelectorAll('.project-slide').length
+      && [...document.querySelectorAll('#project-carousel .project-action')].every((link) => link.querySelector('strong')?.textContent.trim())
+      && !document.querySelector('.project-overlay .project-actions'),
+    `${page.path} exposes labelled project actions in a dedicated dock, not over the cover`,
+  )
+  assert(
+    ![...document.querySelectorAll('a[href*="github.com"]')].filter((link) => !link.closest('#project-carousel'))
+      .some((link) => link.matches('.project-action, .project-repo-link')),
+    `${page.path} limits the new repository controls to featured projects`,
+  )
+}
+for (const page of EXPECTED.filter((page) => page.cluster === 'transcriber')) {
+  const { document } = parseHTML(read(page.file))
+  for (const id of ['case-problem', 'case-decisions', 'case-limits', 'case-outcome', 'demo']) {
+    assert(Boolean(document.getElementById(id)), `${page.path} includes ${id} in static HTML`)
+  }
+  const player = document.querySelector('#demo video')
+  assert(
+    document.querySelector('h1')?.getAttribute('aria-label') === 'YouTube Transcriber'
+      && document.querySelectorAll('.case-letter').length === 11
+      && document.querySelector('.case-hero.reveal')
+      && document.querySelector('.case-signal[aria-hidden="true"]')
+      && document.querySelectorAll('.case-pipeline li').length === 3,
+    `${page.path} enhances the title and pipeline without fragmenting its accessible name`,
+  )
+  assert(
+    player?.getAttribute('preload') === 'none' && player.hasAttribute('controls')
+      && !player.hasAttribute('autoplay') && !player.hasAttribute('loop'),
+    `${page.path} only plays the demo on demand`,
+  )
+  const src = player?.querySelector('source')?.getAttribute('src')
+  const poster = player?.getAttribute('poster')
+  assert(
+    src === '/media/transcriber-demo.mp4' && poster === '/media/transcriber-demo-poster.jpg'
+      && existsSync(join(DIST, src)) && existsSync(join(DIST, poster)),
+    `${page.path} serves the supplied recording and poster, not placeholders`,
+  )
+  assert(
+    document.querySelector('a[href="/media/transcriber-demo-silent.mp4"][download]')
+      && existsSync(join(DIST, 'media/transcriber-demo-silent.mp4'))
+      && document.querySelector('a[href="/media/transcriber-demo-music-original.mp4"][download]')
+      && existsSync(join(DIST, 'media/transcriber-demo-music-original.mp4'))
+      && document.querySelector('a[href="/media/transcriber-demo-guided-original.mp4"][download]')
+      && existsSync(join(DIST, 'media/transcriber-demo-guided-original.mp4')),
+    `${page.path} keeps all three exact approved demos available separately`,
+  )
+  const caption = document.getElementById('demo-caption')?.textContent ?? ''
+  const tracks = [...(player?.querySelectorAll('track') ?? [])]
+  assert(
+    tracks.length === 2 && tracks.every((track) =>
+      track.getAttribute('kind') === 'captions' && existsSync(join(DIST, track.getAttribute('src'))))
+      && tracks.filter((track) => track.hasAttribute('default')).length === 1
+      && tracks.find((track) => track.hasAttribute('default'))?.getAttribute('srclang') === page.lang,
+    `${page.path} offers both caption tracks with its own language selected`,
+  )
+  assert(
+    /benchmark/.test(caption) && /latenc/.test(caption) && /edit/i.test(caption)
+      && player?.getAttribute('aria-describedby') === 'demo-caption',
+    `${page.path} labels the edited demo, not a benchmark or latency guarantee`,
+  )
+  const text = document.querySelector('main')?.textContent ?? ''
+  assert(
+    ['yt-dlp', 'whisper.cpp', 'DeepL', 'SSE', 'YouTube'].every((term) => text.includes(term))
+      && (page.lang === 'es' ? /cinco/.test(text) && /registros/.test(text) : /five/.test(text) && /logs/.test(text)),
+    `${page.path} documents the real pipeline, history and data handling`,
+  )
+  assert(
+    ['https://yt.rubenitx.me/', 'https://github.com/rubenmtzb/yt-transcriber-web', 'https://github.com/rubenmtzb/yt-transcriber-api']
+      .every((href) => document.querySelector(`main a[href="${href}"]`)),
+    `${page.path} exposes the live app and both evidence repositories`,
+  )
+}
 
 /* ---------- Sound samples ---------- */
 /*
