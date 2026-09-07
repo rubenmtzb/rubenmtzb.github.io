@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import 'tailwindcss' source('../');
 /* Self-hosted typography: removes the Google Fonts third party and its
    render-blocking request. The Latin subset only. */
 @import '@fontsource-variable/jetbrains-mono/wght.css';
