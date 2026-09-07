@@ -1,3 +1,8 @@
+/* Pausing preserves the approved effect and resumes its phase on return. */
+[data-motion-paused],
+[data-motion-paused]::before,
+[data-motion-paused]::after { animation-play-state: paused !important; }
+
 /* ---------------- REDUCED MOTION ---------------- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

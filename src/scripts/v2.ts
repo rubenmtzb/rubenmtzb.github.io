@@ -18,6 +18,7 @@ import { initHeader } from './v2/header'
 import { initTypewriter } from './v2/typewriter'
 import { initJobList } from './v2/job-list'
 import { initGameMode } from './v2/game-launcher'
+import { initAmbientMotion } from './v2/ambient-motion'
 
 /** The hero's ASCII portrait. With no canvas it never mounts and the rest is unaffected. */
 function initPortrait() {
@@ -31,6 +32,7 @@ initTypewriter()
 initPortrait()
 initJobList()
 initGameMode()
+initAmbientMotion()
 
 const modelsHref = document.querySelector('[data-bx-models-src]')?.getAttribute('data-bx-models-src')
 const archive = document.getElementById('archive')
