@@ -503,9 +503,10 @@ for (const lang of ['en', 'es']) {
     && finance.querySelector('a').getAttribute('href') === `${SITE}${lang === 'es' ? '/es' : ''}/work/finance-core/`
     && finance.querySelector('.cv-private'),
     `${lang}: CV links Finance only to its public, explicitly private case study`)
-  assert(document.querySelector('a[href="https://github.com/rubenmtzb"]')
-    && !document.querySelector('a[href="https://github.com/rubenitx"]'),
-    `${lang}: CV uses the current GitHub identity`)
+  const cvGithub = [...document.querySelectorAll('.cv-document a[href*="github.com"]')]
+    .map(link => link.getAttribute('href'))
+  assert(cvGithub.length > 0 && cvGithub.every(href => /^https:\/\/github\.com\/rubenitx(\/|$)/.test(href)),
+    `${lang}: CV points every repository link at the current GitHub account`)
 }
 
 /* ---------- Weight budget ---------- */
@@ -608,7 +609,7 @@ for (const page of EXPECTED.filter((page) => page.kind === 'v2')) {
   )
   const reference = document.querySelector('#project-deck .project-reference')
   assert(
-    reference?.querySelector('a[href="https://github.com/rubenmtzb/rubenmtzb.github.io"]')
+    reference?.querySelector('a[href="https://github.com/rubenitx/rubenitx.github.io"]')
       && !document.querySelector('#other-projects-title, .project-grid-card')
       && !reference.querySelector('h3, h4, img, .tech-chip')
       && reference.querySelectorAll('a').length === 1,
@@ -828,7 +829,7 @@ for (const page of EXPECTED.filter((page) => page.cluster === 'transcriber')) {
     `${page.path} documents the real pipeline, history and data handling`,
   )
   assert(
-    ['https://yt.rubenitx.me/', 'https://github.com/rubenmtzb/yt-transcriber-web', 'https://github.com/rubenmtzb/yt-transcriber-api']
+    ['https://yt.rubenitx.me/', 'https://github.com/rubenitx/yt-transcriber-web', 'https://github.com/rubenitx/yt-transcriber-api']
       .every((href) => document.querySelector(`main a[href="${href}"]`)),
     `${page.path} exposes the live app and both evidence repositories`,
   )

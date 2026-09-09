@@ -138,8 +138,8 @@
     "domains": [],
     "link": "https://yt.rubenitx.me/",
     "github": [
-      { "label": "Frontend", "href": "https://github.com/rubenmtzb/yt-transcriber-web" },
-      { "label": "API", "href": "https://github.com/rubenmtzb/yt-transcriber-api" }
+      { "label": "Frontend", "href": "https://github.com/rubenitx/yt-transcriber-web" },
+      { "label": "API", "href": "https://github.com/rubenitx/yt-transcriber-api" }
     ],
     "image": "./../assets/projects/youtube-transcriber.png",
     "imageAlt": "Illustration of YouTube Transcriber: timestamped dual-language transcript and processing pipeline from yt-dlp captions, with whisper.cpp fallback and DeepL translation.",
@@ -211,8 +211,8 @@
     "domains": [],
     "link": "https://yt.rubenitx.me/",
     "github": [
-      { "label": "Frontend", "href": "https://github.com/rubenmtzb/yt-transcriber-web" },
-      { "label": "API", "href": "https://github.com/rubenmtzb/yt-transcriber-api" }
+      { "label": "Frontend", "href": "https://github.com/rubenitx/yt-transcriber-web" },
+      { "label": "API", "href": "https://github.com/rubenitx/yt-transcriber-api" }
     ],
     "image": "./../assets/projects/youtube-transcriber-es.png",
     "imageAlt": "Ilustración de YouTube Transcriber: transcripción bilingüe con marcas de tiempo y proceso de extracción de subtítulos mediante yt-dlp, con whisper.cpp como alternativa y traducción con DeepL.",
@@ -386,7 +386,7 @@
     "tech": ["Astro", "Tailwind CSS", "TypeScript"],
     "domains": [],
     "link": "https://rubenitx.me",
-    "github": "https://github.com/rubenmtzb/rubenmtzb.github.io",
+    "github": "https://github.com/rubenitx/rubenitx.github.io",
     "image": "./../assets/projects/portfolio.png",
     "imageAlt": "Cover for the Personal Portfolio project, showing a terminal window running the production build and deploy commands.",
     "deep": null
@@ -406,7 +406,7 @@
     "tech": ["Astro", "Tailwind CSS", "TypeScript"],
     "domains": [],
     "link": "https://rubenitx.me/es/",
-    "github": "https://github.com/rubenmtzb/rubenmtzb.github.io",
+    "github": "https://github.com/rubenitx/rubenitx.github.io",
     "image": "./../assets/projects/portfolio.png",
     "imageAlt": "Portada del proyecto Portafolio Personal, con una ventana de terminal ejecutando los comandos de compilación y despliegue en producción.",
     "deep": null
