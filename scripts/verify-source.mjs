@@ -134,13 +134,21 @@ assert(
  * token rather than just the owner segment, and it reads the name where it is
  * written instead of where it is rendered, artifacts included. The stale form is
  * assembled from pieces so the rule never matches itself.
+ *
+ * It names what it cannot read rather than what it can. The first draft listed
+ * the text extensions it knew about and so walked straight past forty-one SVGs,
+ * the stylesheets, the subtitles and CNAME — the domain itself — without saying
+ * a word: a rule that skips in silence is worse than no rule, because it reports
+ * success. Everything that is not a compressed image, a recording or a font gets
+ * read, PDFs included, and a new kind of text file is covered the day it lands.
  */
 console.log('\n· GitHub identity')
 const IDENTITY = 'rubenitx'
 const stale = new RegExp(['ruben', 'mtzb'].join(''))
+const OPAQUE = /\.(png|jpe?g|webp|gif|ico|avif|mp4|m4a|mp3|woff2?|ttf|otf)$/i
 const identityFiles = spawnSync('git', ['ls-files', '-z'], { encoding: 'utf8' })
   .stdout.split('\0')
-  .filter((file) => file && /\.(astro|ts|mjs|js|json|md|yml|txt|pdf)$/.test(file))
+  .filter((file) => file && !OPAQUE.test(file))
 const staleNames = identityFiles.filter((file) => stale.test(readFileSync(file, 'latin1')))
 assert(
   staleNames.length === 0,
