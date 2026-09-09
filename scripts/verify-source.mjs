@@ -122,6 +122,41 @@ assert(
   `no V2 colour is improvised outside the palette${improvised.length ? ` — these do: ${improvised.join('; ')}` : ''}`,
 )
 
+/* ---------- Nothing is still called by the old name ---------- */
+/*
+ * The GitHub account was renamed, and the repository after it. The old name
+ * stayed behind in the profile, in the projects, in two views, in the README, in
+ * the package manifest and — printed, where nobody looks again — inside both CV
+ * PDFs. Every one of those links kept working, which is exactly the trap: they
+ * resolved through GitHub's courtesy redirects from the old account and the old
+ * repository, and a redirect dies the day someone else registers the name it
+ * comes from. Nothing answers to the old name any more, so the rule is the whole
+ * token rather than just the owner segment, and it reads the name where it is
+ * written instead of where it is rendered, artifacts included. The stale form is
+ * assembled from pieces so the rule never matches itself.
+ *
+ * It names what it cannot read rather than what it can. The first draft listed
+ * the text extensions it knew about and so walked straight past forty-one SVGs,
+ * the stylesheets, the subtitles and CNAME — the domain itself — without saying
+ * a word: a rule that skips in silence is worse than no rule, because it reports
+ * success. Everything that is not a compressed image, a recording or a font gets
+ * read, PDFs included, and a new kind of text file is covered the day it lands.
+ */
+console.log('\n· GitHub identity')
+const IDENTITY = 'rubenitx'
+const stale = new RegExp(['ruben', 'mtzb'].join(''))
+const OPAQUE = /\.(png|jpe?g|webp|gif|ico|avif|mp4|m4a|mp3|woff2?|ttf|otf)$/i
+const identityFiles = spawnSync('git', ['ls-files', '-z'], { encoding: 'utf8' })
+  .stdout.split('\0')
+  .filter((file) => file && !OPAQUE.test(file))
+const staleNames = identityFiles.filter((file) => stale.test(readFileSync(file, 'latin1')))
+assert(
+  staleNames.length === 0,
+  `every account and repository name is ${IDENTITY}${
+    staleNames.length ? ` — these still carry the old one: ${staleNames.join(', ')}` : ''
+  }`,
+)
+
 console.log('\n· Deployable media')
 for (const [path, expectedStatus] of [
   ['public/media/transcriber-demo.mp4', 1],
