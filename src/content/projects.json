@@ -386,7 +386,7 @@
     "tech": ["Astro", "Tailwind CSS", "TypeScript"],
     "domains": [],
     "link": "https://rubenitx.me",
-    "github": "https://github.com/rubenitx/rubenmtzb.github.io",
+    "github": "https://github.com/rubenitx/rubenitx.github.io",
     "image": "./../assets/projects/portfolio.png",
     "imageAlt": "Cover for the Personal Portfolio project, showing a terminal window running the production build and deploy commands.",
     "deep": null
@@ -406,7 +406,7 @@
     "tech": ["Astro", "Tailwind CSS", "TypeScript"],
     "domains": [],
     "link": "https://rubenitx.me/es/",
-    "github": "https://github.com/rubenitx/rubenmtzb.github.io",
+    "github": "https://github.com/rubenitx/rubenitx.github.io",
     "image": "./../assets/projects/portfolio.png",
     "imageAlt": "Portada del proyecto Portafolio Personal, con una ventana de terminal ejecutando los comandos de compilación y despliegue en producción.",
     "deep": null

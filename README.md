@@ -219,8 +219,8 @@ print-ready CV artifacts.
 Requires **Node.js 22.6 or newer**.
 
 ```bash
-git clone git@github.com:rubenitx/rubenmtzb.github.io.git
-cd rubenmtzb.github.io
+git clone git@github.com:rubenitx/rubenitx.github.io.git
+cd rubenitx.github.io
 npm install
 npm run dev
 ```

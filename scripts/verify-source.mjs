@@ -122,30 +122,30 @@ assert(
   `no V2 colour is improvised outside the palette${improvised.length ? ` — these do: ${improvised.join('; ')}` : ''}`,
 )
 
-/* ---------- Every repository link names the current account ---------- */
+/* ---------- Nothing is still called by the old name ---------- */
 /*
- * The GitHub account was renamed and the old handle stayed behind in the
- * profile, in the projects, in two views, in the README and — printed, where
- * nobody looks again — inside both CV PDFs. Every one of those links kept
- * working, which is the trap: they only resolve through GitHub's courtesy
- * redirect from the old name, and that redirect dies the day anyone else
- * registers it. So the handle is checked where it is written and not only where
- * it is rendered, artifacts included. Only the owner segment is matched: the
- * repository is still called rubenmtzb.github.io and that name is legitimate.
- * The stale form is assembled from pieces so the rule never matches itself.
+ * The GitHub account was renamed, and the repository after it. The old name
+ * stayed behind in the profile, in the projects, in two views, in the README, in
+ * the package manifest and — printed, where nobody looks again — inside both CV
+ * PDFs. Every one of those links kept working, which is exactly the trap: they
+ * resolved through GitHub's courtesy redirects from the old account and the old
+ * repository, and a redirect dies the day someone else registers the name it
+ * comes from. Nothing answers to the old name any more, so the rule is the whole
+ * token rather than just the owner segment, and it reads the name where it is
+ * written instead of where it is rendered, artifacts included. The stale form is
+ * assembled from pieces so the rule never matches itself.
  */
 console.log('\n· GitHub identity')
-const OWNER = 'rubenitx'
-const staleOwner = new RegExp(`github\\.com[/:]${['ruben', 'mtzb'].join('')}\\b`)
+const IDENTITY = 'rubenitx'
+const stale = new RegExp(['ruben', 'mtzb'].join(''))
 const identityFiles = spawnSync('git', ['ls-files', '-z'], { encoding: 'utf8' })
   .stdout.split('\0')
-  .filter((file) => file && file !== 'package-lock.json'
-    && /\.(astro|ts|mjs|js|json|md|yml|txt|pdf)$/.test(file))
-const staleLinks = identityFiles.filter((file) => staleOwner.test(readFileSync(file, 'latin1')))
+  .filter((file) => file && /\.(astro|ts|mjs|js|json|md|yml|txt|pdf)$/.test(file))
+const staleNames = identityFiles.filter((file) => stale.test(readFileSync(file, 'latin1')))
 assert(
-  staleLinks.length === 0,
-  `every GitHub link names github.com/${OWNER}${
-    staleLinks.length ? ` — these still name the old account: ${staleLinks.join(', ')}` : ''
+  staleNames.length === 0,
+  `every account and repository name is ${IDENTITY}${
+    staleNames.length ? ` — these still carry the old one: ${staleNames.join(', ')}` : ''
   }`,
 )
 

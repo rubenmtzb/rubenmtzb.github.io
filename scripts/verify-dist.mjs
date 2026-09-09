@@ -609,7 +609,7 @@ for (const page of EXPECTED.filter((page) => page.kind === 'v2')) {
   )
   const reference = document.querySelector('#project-deck .project-reference')
   assert(
-    reference?.querySelector('a[href="https://github.com/rubenitx/rubenmtzb.github.io"]')
+    reference?.querySelector('a[href="https://github.com/rubenitx/rubenitx.github.io"]')
       && !document.querySelector('#other-projects-title, .project-grid-card')
       && !reference.querySelector('h3, h4, img, .tech-chip')
       && reference.querySelectorAll('a').length === 1,
