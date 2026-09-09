@@ -17,7 +17,7 @@
   &nbsp;·&nbsp;
   <a href="https://rubenitx.me/cv/">CV</a>
   &nbsp;·&nbsp;
-  <a href="https://github.com/rubenmtzb">GITHUB</a>
+  <a href="https://github.com/rubenitx">GITHUB</a>
 </p>
 
 <p>
@@ -108,8 +108,8 @@ from a Java/Spring Boot API.
 
 [Read the case](https://rubenitx.me/work/youtube-transcriber/)
 · [Open the app](https://yt.rubenitx.me/)
-· [Frontend source](https://github.com/rubenmtzb/yt-transcriber-web)
-· [API source](https://github.com/rubenmtzb/yt-transcriber-api)
+· [Frontend source](https://github.com/rubenitx/yt-transcriber-web)
+· [API source](https://github.com/rubenitx/yt-transcriber-api)
 
 ### Finance Core
 
@@ -219,7 +219,7 @@ print-ready CV artifacts.
 Requires **Node.js 22.6 or newer**.
 
 ```bash
-git clone git@github.com:rubenmtzb/rubenmtzb.github.io.git
+git clone git@github.com:rubenitx/rubenmtzb.github.io.git
 cd rubenmtzb.github.io
 npm install
 npm run dev
@@ -258,7 +258,7 @@ npm test          # The complete CI gate
 - [Portfolio — Español](https://rubenitx.me/es/)
 - [Developer CV](https://rubenitx.me/cv/)
 - [Previous portfolio version](https://rubenitx.me/v1/)
-- [GitHub profile](https://github.com/rubenmtzb)
+- [GitHub profile](https://github.com/rubenitx)
 - [LinkedIn](https://www.linkedin.com/in/rubenmartinezbernabe/)
 
 ---

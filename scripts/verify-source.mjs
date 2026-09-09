@@ -122,6 +122,33 @@ assert(
   `no V2 colour is improvised outside the palette${improvised.length ? ` — these do: ${improvised.join('; ')}` : ''}`,
 )
 
+/* ---------- Every repository link names the current account ---------- */
+/*
+ * The GitHub account was renamed and the old handle stayed behind in the
+ * profile, in the projects, in two views, in the README and — printed, where
+ * nobody looks again — inside both CV PDFs. Every one of those links kept
+ * working, which is the trap: they only resolve through GitHub's courtesy
+ * redirect from the old name, and that redirect dies the day anyone else
+ * registers it. So the handle is checked where it is written and not only where
+ * it is rendered, artifacts included. Only the owner segment is matched: the
+ * repository is still called rubenmtzb.github.io and that name is legitimate.
+ * The stale form is assembled from pieces so the rule never matches itself.
+ */
+console.log('\n· GitHub identity')
+const OWNER = 'rubenitx'
+const staleOwner = new RegExp(`github\\.com[/:]${['ruben', 'mtzb'].join('')}\\b`)
+const identityFiles = spawnSync('git', ['ls-files', '-z'], { encoding: 'utf8' })
+  .stdout.split('\0')
+  .filter((file) => file && file !== 'package-lock.json'
+    && /\.(astro|ts|mjs|js|json|md|yml|txt|pdf)$/.test(file))
+const staleLinks = identityFiles.filter((file) => staleOwner.test(readFileSync(file, 'latin1')))
+assert(
+  staleLinks.length === 0,
+  `every GitHub link names github.com/${OWNER}${
+    staleLinks.length ? ` — these still name the old account: ${staleLinks.join(', ')}` : ''
+  }`,
+)
+
 console.log('\n· Deployable media')
 for (const [path, expectedStatus] of [
   ['public/media/transcriber-demo.mp4', 1],

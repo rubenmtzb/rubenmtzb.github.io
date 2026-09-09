@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "chromium": "151.0.7922.34",
+  "chromium": "141.0.7390.37",
   "documents": [
     {
       "lang": "en",
       "file": "CV_RubenMartinez_EN.pdf",
-      "sha256": "362d3f6bcaf56ea8d0029c920eaa345843948abe86ecf48b59d2c16cdb269d52",
-      "documentSha256": "9b4dad4cd1d15578c17246939ae1099fe4c1ef6058c11a5c05ce5bfff98f6dda",
-      "bytes": 178098,
+      "sha256": "61f0840aa4998553f10d73d1f403004a4141af09f2fc292bfaf14a3f9ef969b2",
+      "documentSha256": "46fd926352e536aec5085a364736245c61975a91d79dae88574ba41860b17947",
+      "bytes": 196802,
       "pages": 1,
       "words": 218,
       "tagged": true,
@@ -21,9 +21,9 @@
     {
       "lang": "es",
       "file": "CV_RubenMartinez_ES.pdf",
-      "sha256": "56a4d87435420d8ee8dd53891e7e81efb829c77e933c6d1023364ec4e99bbd24",
-      "documentSha256": "835c9f0595608b24c7f52890ad360e4519919a84818cc5a0ceaf89dc53d92a27",
-      "bytes": 188009,
+      "sha256": "732df8f4417631328964ef29ccb815634c06eca535f2557229f6994cf33078fe",
+      "documentSha256": "ad2b9301fddbf010ef0414e5a86d3d9f2270c5199671729fc1be845fed98db43",
+      "bytes": 205996,
       "pages": 1,
       "words": 235,
       "tagged": true,
